@@ -1,56 +1,12 @@
 "use client";
 
 import { useState } from "react";
-
-const articles = [
-  {
-    title: "Shadow AI Applications",
-    summary:
-      "Shadow AI applications are already emerging. Rapid experimentation outside governance creates risk and opportunity.",
-    tags: ["governance", "risk", "adoption"],
-    category: "Context",
-  },
-  {
-    title: "Immediate Institutional Reality",
-    summary:
-      "Fear and uncertainty across technical teams. Institutional structures lag the technology. Connected agent tools to secure on-prem models.",
-    tags: ["institutional", "adoption", "security"],
-    category: "Context",
-  },
-  {
-    title: "Agent Orchestrator Role Definition",
-    summary:
-      "Systems thinker with broad generalist understanding. Decomposes processes and explains workflows clearly. Bridges domain experts, infrastructure, and agents.",
-    tags: ["roles", "agents", "workforce"],
-    category: "Roles",
-  },
-  {
-    title: "Greenfield vs Brownfield Reality",
-    summary:
-      "Greenfield: AI-native systems, clean APIs, high autonomy. Brownfield: legacy integration, adapters/RPA, high friction. Most universities operate in brownfield reality.",
-    tags: ["architecture", "strategy", "implementation"],
-    category: "Architecture",
-  },
-  {
-    title: "SaaS Market Implications",
-    summary:
-      "As custom tool creation accelerates, SaaS value shifts. Vendors must improve dramatically or reduce prices. Institutions gain leverage in contract negotiations.",
-    tags: ["market", "strategy", "procurement"],
-    category: "Strategy",
-  },
-  {
-    title: "Research Amplification",
-    summary:
-      "This isn't just automation — it's capability expansion. Solution proliferation and rapid experimentation. Research amplification effects are enormous.",
-    tags: ["research", "strategy", "impact"],
-    category: "Strategy",
-  },
-];
+import { knowledgeArticles } from "@/lib/data";
 
 export default function KnowledgePage() {
   const [query, setQuery] = useState("");
 
-  const filtered = articles.filter((a) => {
+  const filtered = knowledgeArticles.filter((a) => {
     const q = query.toLowerCase();
     if (!q) return true;
     return (
@@ -60,7 +16,7 @@ export default function KnowledgePage() {
     );
   });
 
-  const allTags = Array.from(new Set(articles.flatMap((a) => a.tags)));
+  const allTags = Array.from(new Set(knowledgeArticles.flatMap((a) => a.tags)));
 
   return (
     <div className="space-y-10">
@@ -160,10 +116,11 @@ export default function KnowledgePage() {
 
       <div className="rounded-xl border border-dashed border-gray-300 bg-white/50 p-8 text-center">
         <p className="text-sm text-gray-500">
-          Contribute articles by adding MDX files to{" "}
+          Contribute articles by adding entries to{" "}
           <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs">
-            /content/knowledge/
-          </code>
+            lib/data.ts
+          </code>{" "}
+          in the knowledgeArticles array
         </p>
       </div>
     </div>
