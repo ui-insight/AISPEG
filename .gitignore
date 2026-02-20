@@ -34,3 +34,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# source documents
+Development_Activity_Report_Feb2026.docx
+Updates and lessons.docx
