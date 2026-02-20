@@ -25,7 +25,7 @@ export const keyMetrics = {
 
 export const projects = [
   {
-    name: "VERASUnlimited",
+    name: "OpenERA",
     daysActive: 6,
     netNewLines: 81344,
     linesAdded: 88604,
@@ -174,10 +174,10 @@ export const repositoryTimeline = [
     description: "Dissertation-to-LaTeX converter web app",
   },
   {
-    name: "VERASUnlimited",
+    name: "OpenERA",
     firstCommit: "Feb 14",
     lastCommit: "Feb 19",
-    description: "Budget and approval workflow system (U of I)",
+    description: "Open-source electronic research administration system (U of I)",
   },
   {
     name: "CerealPestAID",
@@ -492,10 +492,10 @@ export const knowledgeArticles = [
     category: "Coordination",
   },
   {
-    title: "VERASUnlimited Scope Analysis",
+    title: "OpenERA Scope Analysis",
     summary:
       "A full-stack research administration platform rated medium-high to high complexity. 338 tracked files, 41,154 source LOC, 363 pytest tests, 27 ORM tables, 24 route files with 94 handlers. Covers pre-award proposal workflow, role-based auth, budget planning with Excel import/export, document upload pipelines, and compliance review engines. Solo-dev estimate without AI: 9-14 months for comparable breadth.",
-    tags: ["projects", "analysis", "complexity", "veras"],
+    tags: ["projects", "analysis", "complexity", "openera"],
     category: "Projects",
   },
   {
@@ -508,7 +508,7 @@ export const knowledgeArticles = [
   {
     title: "Repository Profiles",
     summary:
-      "Seven repositories spanning ML/AI, full-stack web, DevOps, and research tools. Includes deep learning ensembles (WildVE, CerealPestAID), reinforcement learning (skillbag), LangGraph agent pipelines (proposalforge), GPU-aware microservice orchestration (mindrouter2), institutional workflows (VERASUnlimited), and AI document processing (dissertation). Each represents production-grade software with Docker deployment, testing suites, and professional documentation.",
+      "Seven repositories spanning ML/AI, full-stack web, DevOps, and research tools. Includes deep learning ensembles (WildVE, CerealPestAID), reinforcement learning (skillbag), LangGraph agent pipelines (proposalforge), GPU-aware microservice orchestration (mindrouter2), institutional workflows (OpenERA), and AI document processing (dissertation). Each represents production-grade software with Docker deployment, testing suites, and professional documentation.",
     tags: ["projects", "repositories", "overview"],
     category: "Projects",
   },
