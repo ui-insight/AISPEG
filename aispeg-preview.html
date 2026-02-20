@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AISPEG - AI Strategic Planning & Evaluation Group</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --gold: #B5A36A;
+    --gold-light: #D4C68A;
+    --gold-dark: #8A7D50;
+    --charcoal: #1a1a2e;
+    --dark: #16213e;
+    --mid: #0f3460;
+    --surface: #f8f9fa;
+    --card: #ffffff;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-400: #9ca3af;
+    --gray-500: #6b7280;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --green-100: #dcfce7;
+    --green-400: #4ade80;
+    --green-500: #22c55e;
+    --green-700: #15803d;
+  }
+  body { font-family: system-ui, -apple-system, sans-serif; background: var(--surface); color: #111827; line-height: 1.5; }
+  a { color: inherit; text-decoration: none; }
+
+  /* Sidebar */
+  .sidebar {
+    position: fixed; left: 0; top: 0; width: 256px; height: 100vh;
+    background: var(--charcoal); color: white; display: flex; flex-direction: column;
+    z-index: 40; transition: transform 0.3s;
+  }
+  .sidebar-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  .sidebar-logo {
+    width: 36px; height: 36px; border-radius: 8px; background: var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: bold; color: var(--charcoal); font-size: 14px;
+  }
+  .sidebar-title { font-size: 18px; font-weight: 700; letter-spacing: -0.025em; }
+  .sidebar-subtitle { font-size: 12px; color: rgba(255,255,255,0.5); }
+  .sidebar-nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; overflow-y: auto; }
+  .nav-item {
+    display: flex; align-items: center; gap: 12px; padding: 10px 12px;
+    border-radius: 8px; font-size: 14px; font-weight: 500;
+    color: rgba(255,255,255,0.7); cursor: pointer; transition: all 0.15s;
+  }
+  .nav-item:hover { background: rgba(255,255,255,0.05); color: white; }
+  .nav-item.active { background: rgba(181,163,106,0.2); color: var(--gold); }
+  .nav-item svg { width: 20px; height: 20px; flex-shrink: 0; }
+  .sidebar-footer {
+    padding: 16px 24px; border-top: 1px solid rgba(255,255,255,0.1);
+    font-size: 12px; color: rgba(255,255,255,0.4);
+  }
+
+  /* Mobile */
+  .mobile-toggle {
+    display: none; position: fixed; top: 16px; left: 16px; z-index: 50;
+    background: var(--charcoal); color: white; border: none; border-radius: 8px;
+    padding: 8px; cursor: pointer;
+  }
+  .mobile-toggle svg { width: 24px; height: 24px; }
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 30; }
+
+  @media (max-width: 1023px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .mobile-toggle { display: block; }
+    .overlay.open { display: block; }
+    .main-content { margin-left: 0 !important; }
+    .main-content { padding-top: 64px !important; }
+  }
+
+  /* Main */
+  .main-content { margin-left: 256px; min-height: 100vh; }
+  .content-wrapper { max-width: 1152px; margin: 0 auto; padding: 32px 24px; }
+
+  /* Page sections */
+  .section { display: none; }
+  .section.active { display: block; }
+  .section > * + * { margin-top: 40px; }
+
+  /* Typography */
+  h1 { font-size: 30px; font-weight: 700; color: var(--charcoal); }
+  h1 + .subtitle { margin-top: 8px; color: var(--gray-600); }
+  h2 { font-size: 18px; font-weight: 600; color: var(--charcoal); margin-bottom: 16px; }
+  .small-text { font-size: 14px; color: var(--gray-500); }
+  .tiny-text { font-size: 12px; color: var(--gray-400); }
+
+  /* Grid */
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  @media (max-width: 1023px) { .grid-4 { grid-template-columns: repeat(2, 1fr); } .grid-3 { grid-template-columns: 1fr; } }
+  @media (max-width: 639px) { .grid-4 { grid-template-columns: 1fr; } .grid-2 { grid-template-columns: 1fr; } }
+
+  /* Card */
+  .card {
+    background: var(--card); border: 1px solid var(--gray-200);
+    border-radius: 12px; padding: 24px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  }
+
+  /* Metric Card */
+  .metric-value { font-size: 30px; font-weight: 700; color: var(--charcoal); }
+  .metric-label { margin-top: 4px; font-size: 14px; font-weight: 500; color: var(--gray-600); }
+  .metric-sub { margin-top: 2px; font-size: 12px; color: var(--gray-400); }
+
+  /* Callout */
+  .callout {
+    border-left: 4px solid var(--gold); background: white; padding: 24px;
+    border-radius: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  }
+  .callout-label { font-size: 14px; font-weight: 500; color: var(--gray-500); }
+  .callout-strike { margin-top: 8px; color: var(--gray-500); text-decoration: line-through; }
+  .callout-main { margin-top: 4px; font-size: 18px; font-weight: 600; color: var(--charcoal); }
+
+  /* Hero block */
+  .hero-block {
+    background: var(--charcoal); border-radius: 12px; padding: 32px;
+    text-align: center; color: white;
+  }
+  .hero-big { font-size: 48px; font-weight: 700; color: var(--gold); }
+  .hero-label { margin-top: 8px; font-size: 18px; font-weight: 500; }
+  .hero-sub { margin-top: 4px; font-size: 14px; color: rgba(255,255,255,0.6); }
+
+  /* Takeaway list */
+  .takeaway-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+  .takeaway-item { display: flex; align-items: flex-start; gap: 12px; }
+  .takeaway-num {
+    width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0;
+    background: rgba(181,163,106,0.15); display: flex; align-items: center;
+    justify-content: center; font-size: 12px; font-weight: 700; color: var(--gold-dark);
+  }
+  .takeaway-text { color: var(--gray-700); }
+
+  /* Badge */
+  .badge {
+    display: inline-block; padding: 2px 10px; border-radius: 999px;
+    font-size: 12px; font-weight: 500;
+  }
+  .badge-gold { background: rgba(181,163,106,0.15); color: var(--gold-dark); }
+  .badge-blue { background: rgba(15,52,96,0.1); color: var(--mid); }
+  .badge-green { background: var(--green-100); color: var(--green-700); }
+  .badge-gray { background: var(--gray-100); color: var(--gray-500); }
+
+  /* Principle card */
+  .principle-card { background: white; border: 1px solid var(--gray-200); border-radius: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: box-shadow 0.15s; }
+  .principle-card:hover { box-shadow: 0 4px 6px rgba(0,0,0,0.07); }
+  .principle-btn {
+    width: 100%; display: flex; align-items: flex-start; gap: 16px;
+    padding: 24px; text-align: left; background: none; border: none;
+    cursor: pointer; font: inherit; color: inherit;
+  }
+  .principle-btn-content { flex: 1; }
+  .principle-title { margin-top: 8px; font-size: 18px; font-weight: 600; color: var(--charcoal); }
+  .principle-summary { margin-top: 4px; font-size: 14px; color: var(--gray-600); }
+  .principle-chevron {
+    margin-top: 4px; width: 20px; height: 20px; flex-shrink: 0;
+    color: var(--gray-400); transition: transform 0.2s;
+  }
+  .principle-chevron.open { transform: rotate(180deg); }
+  .principle-details {
+    display: none; border-top: 1px solid var(--gray-100);
+    padding: 16px 24px; font-size: 14px; color: var(--gray-700); line-height: 1.6;
+  }
+  .principle-details.open { display: block; }
+
+  /* Lesson card */
+  .lesson-card { background: white; border: 1px solid var(--gray-200); border-radius: 12px; padding: 24px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+  .lesson-title { margin-top: 12px; font-size: 18px; font-weight: 600; color: var(--charcoal); }
+  .lesson-context { margin-top: 4px; font-size: 14px; color: var(--gray-500); }
+  .lesson-list { margin-top: 16px; list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .lesson-item { display: flex; align-items: flex-start; gap: 8px; font-size: 14px; color: var(--gray-700); }
+  .lesson-check { width: 16px; height: 16px; flex-shrink: 0; color: var(--gold); margin-top: 2px; }
+
+  /* Table */
+  .table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid var(--gray-200); background: white; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+  table { width: 100%; text-align: left; font-size: 14px; border-collapse: collapse; }
+  thead tr { background: var(--gray-50); border-bottom: 1px solid var(--gray-200); }
+  th { padding: 12px 24px; font-weight: 600; color: var(--gray-700); cursor: pointer; white-space: nowrap; user-select: none; }
+  th.right, td.right { text-align: right; }
+  tbody tr { border-bottom: 1px solid var(--gray-100); }
+  tbody tr:hover { background: rgba(249,250,251,0.5); }
+  td { padding: 12px 24px; color: var(--gray-600); white-space: nowrap; }
+  td.name { font-weight: 500; color: var(--charcoal); }
+  td.multiplier { font-weight: 600; color: var(--gold-dark); }
+  tfoot tr { border-top: 2px solid var(--gray-300); background: var(--gray-50); font-weight: 600; }
+  tfoot td { color: var(--gray-700); }
+  .table-note { padding: 8px 24px; font-size: 12px; color: var(--gray-400); }
+
+  /* Search */
+  .search-wrap { position: relative; }
+  .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; color: var(--gray-400); }
+  .search-input {
+    width: 100%; padding: 12px 16px 12px 40px; border-radius: 12px;
+    border: 1px solid var(--gray-200); background: white; font-size: 14px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05); outline: none;
+  }
+  .search-input:focus { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold); }
+
+  /* Tags */
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tag {
+    padding: 4px 12px; border-radius: 999px; border: 1px solid var(--gray-200);
+    background: white; font-size: 12px; font-weight: 500; color: var(--gray-600);
+    cursor: pointer; transition: all 0.15s;
+  }
+  .tag:hover { border-color: var(--gray-300); }
+  .tag.active { border-color: var(--gold); background: rgba(181,163,106,0.15); color: var(--gold-dark); }
+
+  /* Timeline */
+  .timeline { display: flex; flex-direction: column; gap: 0; }
+  .timeline-item { display: flex; gap: 24px; }
+  .timeline-track { display: flex; flex-direction: column; align-items: center; }
+  .timeline-dot {
+    width: 32px; height: 32px; border-radius: 50%; display: flex;
+    align-items: center; justify-content: center; font-size: 14px;
+    font-weight: 700; flex-shrink: 0;
+  }
+  .timeline-dot.green { background: var(--green-500); color: white; }
+  .timeline-dot.gold { background: var(--gold); color: white; }
+  .timeline-dot.gray { background: var(--gray-200); color: var(--gray-500); }
+  .timeline-line { width: 2px; flex: 1; background: var(--gray-200); }
+  .timeline-content { flex: 1; padding-bottom: 32px; }
+  .timeline-header { display: flex; align-items: center; gap: 12px; }
+  .timeline-title { font-size: 18px; font-weight: 600; color: var(--charcoal); }
+  .timeline-items { margin-top: 12px; list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .timeline-items li { display: flex; align-items: flex-start; gap: 8px; font-size: 14px; color: var(--gray-600); }
+  .timeline-bullet { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 6px; }
+  .timeline-bullet.green { background: var(--green-400); }
+  .timeline-bullet.gray { background: var(--gray-300); }
+
+  /* Dark hero for takeaways */
+  .dark-block { background: var(--charcoal); border-radius: 12px; padding: 24px; color: white; }
+  .dark-block h2 { color: var(--gold); }
+  .dark-block .takeaway-num { background: rgba(181,163,106,0.2); color: var(--gold); }
+  .dark-block .takeaway-text { color: rgba(255,255,255,0.8); font-size: 14px; }
+
+  /* Dashed placeholder */
+  .placeholder {
+    border: 1px dashed var(--gray-300); border-radius: 12px;
+    padding: 32px; text-align: center; background: rgba(255,255,255,0.5);
+  }
+  .placeholder p { font-size: 14px; color: var(--gray-500); }
+  .placeholder code {
+    background: var(--gray-100); padding: 2px 6px; border-radius: 4px;
+    font-size: 12px;
+  }
+
+  /* Info bar */
+  .info-bar {
+    background: var(--gray-100); border-radius: 8px; padding: 12px 16px;
+    font-size: 14px; color: var(--gray-600);
+  }
+
+  /* Repo chips */
+  .chip-wrap { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .chip {
+    padding: 6px 12px; border-radius: 999px; border: 1px solid var(--gray-200);
+    background: white; font-size: 14px; font-weight: 500; color: var(--charcoal);
+  }
+
+  /* Playbook card (simple) */
+  .playbook-card { background: white; border: 1px solid var(--gray-200); border-radius: 12px; padding: 24px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+  .playbook-title { font-size: 16px; font-weight: 600; color: var(--charcoal); }
+  .playbook-desc { margin-top: 8px; font-size: 14px; color: var(--gray-600); line-height: 1.6; }
+
+  /* Dark principle block */
+  .dark-principle { background: var(--charcoal); border-radius: 12px; padding: 24px; color: white; }
+  .dark-principle .label { font-size: 14px; font-weight: 500; color: var(--gold); }
+  .dark-principle p { margin-top: 8px; font-size: 18px; }
+
+  /* KB article */
+  .kb-article { background: white; border: 1px solid var(--gray-200); border-radius: 12px; padding: 24px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+  .kb-title { margin-top: 8px; font-size: 16px; font-weight: 600; color: var(--charcoal); }
+  .kb-summary { margin-top: 4px; font-size: 14px; color: var(--gray-600); }
+  .kb-tags { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .kb-tag { background: var(--gray-100); padding: 2px 8px; border-radius: 4px; font-size: 12px; color: var(--gray-500); }
+
+  .closing-card { background: white; border: 1px solid var(--gray-200); border-radius: 12px; padding: 24px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+  .closing-main { font-size: 16px; font-weight: 500; color: var(--charcoal); }
+  .closing-sub { margin-top: 8px; font-size: 14px; color: var(--gray-600); }
+</style>
+</head>
+<body>
+
+<!-- Mobile Toggle -->
+<button class="mobile-toggle" id="mobileToggle" onclick="toggleSidebar()">
+  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+</button>
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">AI</div>
+    <div>
+      <div class="sidebar-title">AISPEG</div>
+      <div class="sidebar-subtitle">University of Idaho</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-item active" data-section="dashboard" onclick="showSection('dashboard')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-item" data-section="principles" onclick="showSection('principles')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+      Strategic Principles
+    </div>
+    <div class="nav-item" data-section="lessons" onclick="showSection('lessons')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+      Lessons Learned
+    </div>
+    <div class="nav-item" data-section="playbook" onclick="showSection('playbook')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+      Agent Playbook
+    </div>
+    <div class="nav-item" data-section="projects" onclick="showSection('projects')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+      Projects &amp; Metrics
+    </div>
+    <div class="nav-item" data-section="knowledge" onclick="showSection('knowledge')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      Knowledge Base
+    </div>
+    <div class="nav-item" data-section="roadmap" onclick="showSection('roadmap')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+      Planning &amp; Roadmap
+    </div>
+  </nav>
+  <div class="sidebar-footer">AI Strategic Planning &amp;<br>Evaluation Group</div>
+</aside>
+
+<!-- Main Content -->
+<div class="main-content">
+<div class="content-wrapper">
+
+<!-- ==================== DASHBOARD ==================== -->
+<div class="section active" id="section-dashboard">
+  <div>
+    <h1>AI Strategic Planning &amp; Evaluation Group</h1>
+    <p class="subtitle">A collaborative hub for planning, lessons learned, and knowledge sharing around agentic AI at the University of Idaho.</p>
+  </div>
+
+  <div class="callout">
+    <p class="callout-label">The Institutional Question</p>
+    <p class="callout-strike">&ldquo;Should we adopt AI?&rdquo;</p>
+    <p class="callout-main">&ldquo;How do we design an institution where agents safely amplify our mission?&rdquo;</p>
+  </div>
+
+  <div>
+    <h2>Development Activity &mdash; Feb 1&ndash;19, 2026</h2>
+    <p class="small-text">Agentic development with Claude Code &middot; Prepared by Luke Sheneman</p>
+    <div class="grid-4" style="margin-top:16px">
+      <div class="card"><div class="metric-value">248</div><div class="metric-label">Total Commits</div><div class="metric-sub">~13/day</div></div>
+      <div class="card"><div class="metric-value">142,095</div><div class="metric-label">Net New Lines of Code</div><div class="metric-sub">~7,500/day</div></div>
+      <div class="card"><div class="metric-value">878</div><div class="metric-label">Unique Files Modified</div></div>
+      <div class="card"><div class="metric-value">7</div><div class="metric-label">Active Repositories</div></div>
+      <div class="card"><div class="metric-value">48</div><div class="metric-label">Pull Requests</div></div>
+      <div class="card"><div class="metric-value">90</div><div class="metric-label">Issues Tracked</div></div>
+      <div class="card"><div class="metric-value">10&ndash;15x</div><div class="metric-label">Productivity Multiplier</div><div class="metric-sub">Manual estimate: 6&ndash;9 months</div></div>
+      <div class="card"><div class="metric-value">19 days</div><div class="metric-label">Calendar Days</div><div class="metric-sub">3 contributors</div></div>
+    </div>
+  </div>
+
+  <div class="hero-block">
+    <div class="hero-big">10&ndash;15x</div>
+    <div class="hero-label">Productivity Multiplier</div>
+    <div class="hero-sub">Estimated manual: 6&ndash;9 months &middot; Actual: 19 days, 2&ndash;3 contributors with agentic AI</div>
+  </div>
+
+  <div>
+    <h2>Strategic Takeaways</h2>
+    <ul class="takeaway-list">
+      <li class="takeaway-item"><span class="takeaway-num">1</span><span class="takeaway-text">AI is a force multiplier, not a job replacer</span></li>
+      <li class="takeaway-item"><span class="takeaway-num">2</span><span class="takeaway-text">Demand for tools will increase</span></li>
+      <li class="takeaway-item"><span class="takeaway-num">3</span><span class="takeaway-text">Redesign workflows; don&rsquo;t automate broken ones</span></li>
+      <li class="takeaway-item"><span class="takeaway-num">4</span><span class="takeaway-text">Agent orchestration is a new institutional role</span></li>
+      <li class="takeaway-item"><span class="takeaway-num">5</span><span class="takeaway-text">Start small and scale safely</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ==================== PRINCIPLES ==================== -->
+<div class="section" id="section-principles">
+  <div>
+    <h1>Strategic Principles</h1>
+    <p class="subtitle">Core principles guiding agentic AI adoption and institutional strategy at the University of Idaho.</p>
+  </div>
+
+  <div>
+    <h2>Foundation</h2>
+    <div style="display:flex;flex-direction:column;gap:16px" id="principles-foundation"></div>
+  </div>
+  <div>
+    <h2>Workforce</h2>
+    <div style="display:flex;flex-direction:column;gap:16px" id="principles-workforce"></div>
+  </div>
+  <div>
+    <h2>Strategy</h2>
+    <div style="display:flex;flex-direction:column;gap:16px" id="principles-strategy"></div>
+  </div>
+  <div>
+    <h2>Implementation</h2>
+    <div style="display:flex;flex-direction:column;gap:16px" id="principles-implementation"></div>
+  </div>
+</div>
+
+<!-- ==================== LESSONS ==================== -->
+<div class="section" id="section-lessons">
+  <div>
+    <h1>Lessons Learned</h1>
+    <p class="subtitle">Insights from repo-scale multi-agent collaboration and real-world agentic AI development.</p>
+  </div>
+
+  <div class="grid-3" id="lessons-grid"></div>
+
+  <div class="placeholder"><p>Team members can contribute new lessons by adding MDX files to <code>/content/lessons/</code></p></div>
+</div>
+
+<!-- ==================== PLAYBOOK ==================== -->
+<div class="section" id="section-playbook">
+  <div>
+    <h1>Agent Playbook</h1>
+    <p class="subtitle">Guidelines for agents AND humans. Preferred stacks, security patterns, and conventions for agentic development.</p>
+  </div>
+
+  <div>
+    <h2>Roles</h2>
+    <div class="grid-2">
+      <div class="playbook-card"><div class="playbook-title">The Agent Orchestrator Role</div><div class="playbook-desc">Systems thinker with broad generalist understanding. Decomposes processes and explains workflows clearly. Bridges domain experts, infrastructure, and agents.</div></div>
+    </div>
+  </div>
+
+  <div>
+    <h2>Standards</h2>
+    <div class="grid-2">
+      <div class="playbook-card"><div class="playbook-title">Guidelines for Agents, Not Just Humans</div><div class="playbook-desc">Preferred stacks by project type. Security, deployment, documentation patterns. Data access conventions and reusable primitives. Guidelines should guide agents as much as people.</div></div>
+      <div class="playbook-card"><div class="playbook-title">Preferred Stacks by Project Type</div><div class="playbook-desc">Define approved technology stacks for different project categories. Provide secure deployment paths and reusable patterns to make the right thing easy.</div></div>
+    </div>
+  </div>
+
+  <div>
+    <h2>Infrastructure</h2>
+    <div class="grid-2">
+      <div class="playbook-card"><div class="playbook-title">Security &amp; Deployment Patterns</div><div class="playbook-desc">Establish security baselines, deployment pipelines, and documentation standards that agents can follow consistently.</div></div>
+    </div>
+  </div>
+
+  <div class="dark-principle">
+    <div class="label">Key Principle</div>
+    <p>Guidelines should guide agents as much as people. Write documentation and standards that are machine-readable and human-friendly.</p>
+  </div>
+
+  <div class="placeholder"><p>Contribute playbook entries by adding MDX files to <code>/content/playbook/</code></p></div>
+</div>
+
+<!-- ==================== PROJECTS ==================== -->
+<div class="section" id="section-projects">
+  <div>
+    <h1>Projects &amp; Metrics</h1>
+    <p class="subtitle">Development activity report &mdash; February 1&ndash;19, 2026. Agentic development with Claude Code.</p>
+    <p class="tiny-text" style="margin-top:4px">Prepared by Luke Sheneman</p>
+  </div>
+
+  <div class="grid-4">
+    <div class="card"><div class="metric-value">248</div><div class="metric-label">Total Commits</div><div class="metric-sub">~13/day</div></div>
+    <div class="card"><div class="metric-value">142,095</div><div class="metric-label">Net New Lines</div><div class="metric-sub">~7,500/day</div></div>
+    <div class="card"><div class="metric-value">48</div><div class="metric-label">Pull Requests</div></div>
+    <div class="card"><div class="metric-value">90</div><div class="metric-label">Issues Tracked</div></div>
+  </div>
+
+  <div class="info-bar">19 calendar days &middot; 3 contributors &middot; ~13 commits/day &middot; ~7,500 net lines/day &middot; Spanning ML/AI, full-stack web, DevOps, and research tools</div>
+
+  <div>
+    <h2>Per-Project Effort Estimates</h2>
+    <div class="table-wrap">
+      <table id="projectTable">
+        <thead>
+          <tr>
+            <th onclick="sortTable('name')">Repository</th>
+            <th class="right" onclick="sortTable('days')">Days Active</th>
+            <th class="right" onclick="sortTable('lines')">Net New Lines</th>
+            <th class="right">Low Est.</th>
+            <th class="right">High Est.</th>
+            <th class="right">Multiplier</th>
+          </tr>
+        </thead>
+        <tbody id="projectTableBody"></tbody>
+        <tfoot>
+          <tr>
+            <td class="name">TOTALS</td>
+            <td class="right">19*</td>
+            <td class="right">142,095</td>
+            <td class="right">947 days (3.6 yr)</td>
+            <td class="right">1,421 days (5.4 yr)</td>
+            <td class="right multiplier">50&ndash;75x</td>
+          </tr>
+        </tfoot>
+      </table>
+      <div class="table-note">*Total reporting period. Days Active = first commit to last commit (inclusive). Multiplier = Low/High estimate &divide; Days Active. Working days at 22/month.</div>
+    </div>
+  </div>
+
+  <div class="hero-block">
+    <div class="hero-big">10&ndash;15x</div>
+    <div class="hero-label">Productivity Multiplier</div>
+    <div class="hero-sub">Estimated manual: 6&ndash;9 months &middot; Actual: 19 days, 2&ndash;3 contributors with agentic AI</div>
+  </div>
+
+  <div>
+    <h2>Repository Summary</h2>
+    <p class="small-text">7 Repositories &middot; 142,095 Lines &middot; 19 Days</p>
+    <div class="chip-wrap" id="repoChips"></div>
+  </div>
+</div>
+
+<!-- ==================== KNOWLEDGE ==================== -->
+<div class="section" id="section-knowledge">
+  <div>
+    <h1>Knowledge Base</h1>
+    <p class="subtitle">Wiki-style collaborative space for sharing knowledge about agentic AI at the university.</p>
+  </div>
+
+  <div class="search-wrap">
+    <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+    <input type="text" class="search-input" id="kbSearch" placeholder="Search articles by title, content, or tag..." oninput="filterKB()">
+  </div>
+
+  <div class="tags" id="kbTags"></div>
+
+  <div id="kbArticles" style="display:flex;flex-direction:column;gap:16px"></div>
+
+  <div class="placeholder"><p>Contribute articles by adding MDX files to <code>/content/knowledge/</code></p></div>
+</div>
+
+<!-- ==================== ROADMAP ==================== -->
+<div class="section" id="section-roadmap">
+  <div>
+    <h1>Planning &amp; Roadmap</h1>
+    <p class="subtitle">Strategic direction and phased approach for agentic AI adoption at the University of Idaho.</p>
+  </div>
+
+  <div class="callout">
+    <p class="callout-label">The Institutional Question</p>
+    <p class="callout-strike">&ldquo;Should we adopt AI?&rdquo;</p>
+    <p class="callout-main">&ldquo;How do we design an institution where agents safely amplify our mission?&rdquo;</p>
+  </div>
+
+  <div class="timeline" id="timeline"></div>
+
+  <div class="dark-block">
+    <h2>Strategic Takeaways</h2>
+    <ul class="takeaway-list" style="margin-top:16px">
+      <li class="takeaway-item"><span class="takeaway-num">1</span><span class="takeaway-text">AI is a force multiplier, not a job replacer</span></li>
+      <li class="takeaway-item"><span class="takeaway-num">2</span><span class="takeaway-text">Demand for tools will increase</span></li>
+      <li class="takeaway-item"><span class="takeaway-num">3</span><span class="takeaway-text">Redesign workflows; don&rsquo;t automate broken ones</span></li>
+      <li class="takeaway-item"><span class="takeaway-num">4</span><span class="takeaway-text">Agent orchestration is a new institutional role</span></li>
+      <li class="takeaway-item"><span class="takeaway-num">5</span><span class="takeaway-text">Start small and scale safely</span></li>
+    </ul>
+  </div>
+
+  <div class="closing-card">
+    <p class="closing-main">Agentic AI changes who builds tools, how they&rsquo;re built, and how many exist.</p>
+    <p class="closing-sub">Treat this as research and mission amplification infrastructure.</p>
+  </div>
+</div>
+
+</div>
+</div>
+
+<script>
+// === DATA ===
+var projects = [
+  {name:"VERASUnlimited", days:6, lines:81344, low:"542 days (24.7 mo)", high:"813 days (37.0 mo)", mult:"90\u2013136x"},
+  {name:"mindrouter2", days:17, lines:27132, low:"181 days (8.2 mo)", high:"271 days (12.3 mo)", mult:"11\u201316x"},
+  {name:"proposalforge", days:1, lines:17163, low:"114 days (5.2 mo)", high:"172 days (7.8 mo)", mult:"114\u2013172x"},
+  {name:"skillbag", days:3, lines:7833, low:"52 days (2.4 mo)", high:"78 days (3.5 mo)", mult:"17\u201326x"},
+  {name:"dissertation", days:1, lines:5107, low:"34 days (1.5 mo)", high:"51 days (2.3 mo)", mult:"34\u201351x"},
+  {name:"CerealPestAID", days:1, lines:1984, low:"13 days (0.6 mo)", high:"20 days (0.9 mo)", mult:"13\u201320x"},
+  {name:"WildVE", days:3, lines:1532, low:"10 days (0.5 mo)", high:"15 days (0.7 mo)", mult:"3\u20135x"}
+];
+
+var principles = [
+  {cat:"foundation",title:"Core Institutional Principle",summary:"Make the right thing easy, and the wrong thing difficult.",details:"Provide approved stacks, secure deployment paths, reusable patterns, and documentation standards. Innovation scales within compliance when the environment is designed well.",badge:"Foundation"},
+  {cat:"workforce",title:"Jobs Are Changing, Not Disappearing",summary:"AI doesn\u2019t change WHY roles exist.",details:"It changes WHAT people do and HOW they do it. This applies across development, research administration, and IT/OIT.",badge:"Workforce"},
+  {cat:"workforce",title:"The Demand Misconception",summary:"Fear assumes demand stays constant while productivity rises.",details:"More likely: application cost decreases, development speed increases, experimentation increases, and demand increases. The result is more work, but different work.",badge:"Workforce"},
+  {cat:"strategy",title:"AI as a Mission Force Multiplier",summary:"Frame AI as amplifying mission outcomes.",details:"Research productivity, administrative capacity, innovation throughput. Institutional intelligence and faster iteration loops.",badge:"Strategy"},
+  {cat:"implementation",title:"Do Not Automate Broken Workflows",summary:"Don\u2019t ask \u201cHow can we make this workflow faster?\u201d",details:"Ask: \u201cWhy does this workflow exist, and how should it work?\u201d Agentic AI rewards redesign over optimization.",badge:"Implementation"},
+  {cat:"implementation",title:"Greenfield vs Brownfield AI",summary:"Most universities operate in brownfield reality.",details:"Greenfield means AI-native systems, clean APIs, high autonomy. Brownfield means legacy integration, adapters/RPA, high friction. Understanding where you are determines your approach.",badge:"Implementation"},
+  {cat:"implementation",title:"Start Small, Then Expand",summary:"Begin with a small ecosystem and trusted stack.",details:"Establish safe patterns and governance. Demonstrate value, then scale outward.",badge:"Implementation"},
+  {cat:"strategy",title:"Market Implication: SaaS Pressure",summary:"As custom tool creation accelerates, SaaS value shifts.",details:"Vendors must improve dramatically or reduce prices. Institutions gain leverage in contract negotiations.",badge:"Strategy"},
+  {cat:"strategy",title:"Most People Are Thinking Too Small",summary:"This isn\u2019t just automation \u2014 it\u2019s capability expansion.",details:"Solution proliferation and rapid experimentation. Research amplification effects are enormous.",badge:"Strategy"}
+];
+
+var lessons = [
+  {title:"Multi-Agent Coordination",context:"Repo-scale multi-agent collaboration",cat:"Coordination",recs:["Define scope boundaries and conflict prevention","Create a skill registry and output contracts","Establish escalation and handoff protocols","Single-agent assumptions break quickly"]},
+  {title:"Explicit Agent Rules",context:"Maintaining consistency across agents and collaborators",cat:"Governance",recs:["Separate background context from normative MUST rules","Naming conventions, checks before commit, terminology, branching","Rules reduce drift across agents and collaborators"]},
+  {title:"Preserve Architectural Intent",context:"Preventing accidental regressions of intentional design decisions",cat:"Architecture",recs:["Capture \u201cwhy\u201d via Architecture Decision Records (ADRs)","Prevents accidental \u201cfixes\u201d of intentional patterns","Enables consistent evolution and onboarding for agents and humans"]}
+];
+
+var kbArticles = [
+  {title:"Shadow AI Applications",summary:"Shadow AI applications are already emerging. Rapid experimentation outside governance creates risk and opportunity.",tags:["governance","risk","adoption"],cat:"Context"},
+  {title:"Immediate Institutional Reality",summary:"Fear and uncertainty across technical teams. Institutional structures lag the technology. Connected agent tools to secure on-prem models.",tags:["institutional","adoption","security"],cat:"Context"},
+  {title:"Agent Orchestrator Role Definition",summary:"Systems thinker with broad generalist understanding. Decomposes processes and explains workflows clearly. Bridges domain experts, infrastructure, and agents.",tags:["roles","agents","workforce"],cat:"Roles"},
+  {title:"Greenfield vs Brownfield Reality",summary:"Greenfield: AI-native systems, clean APIs, high autonomy. Brownfield: legacy integration, adapters/RPA, high friction. Most universities operate in brownfield reality.",tags:["architecture","strategy","implementation"],cat:"Architecture"},
+  {title:"SaaS Market Implications",summary:"As custom tool creation accelerates, SaaS value shifts. Vendors must improve dramatically or reduce prices. Institutions gain leverage in contract negotiations.",tags:["market","strategy","procurement"],cat:"Strategy"},
+  {title:"Research Amplification",summary:"This isn\u2019t just automation \u2014 it\u2019s capability expansion. Solution proliferation and rapid experimentation. Research amplification effects are enormous.",tags:["research","strategy","impact"],cat:"Strategy"}
+];
+
+var phases = [
+  {name:"Phase 1: Foundation",status:"green",items:["Connect agent tools to secure on-prem models","Build initial internal AI applications","Evaluate repo-scale agent collaboration","Establish AISPEG collaborative hub"],badge:"In Progress",badgeClass:"badge-green"},
+  {name:"Phase 2: Governance & Standards",status:"gold",items:["Define approved stacks and deployment paths","Create agent playbook and guidelines","Establish security and documentation patterns","Build reusable primitives and patterns"],badge:"Upcoming",badgeClass:"badge-gold"},
+  {name:"Phase 3: Scaling",status:"gold",items:["Expand agentic AI to additional teams","Develop agent orchestrator training","Redesign workflows (not just automate them)","Measure and report productivity multipliers"],badge:"Upcoming",badgeClass:"badge-gold"},
+  {name:"Phase 4: Institutional Integration",status:"gray",items:["Institution-wide AI strategy alignment","SaaS vendor evaluation with AI leverage","Cross-department knowledge sharing","Mission-aligned AI capability expansion"],badge:"Future",badgeClass:"badge-gray"}
+];
+
+// === NAVIGATION ===
+function showSection(name) {
+  document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+  document.getElementById('section-' + name).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
+  document.querySelector('.nav-item[data-section="'+name+'"]').classList.add('active');
+  var sb = document.getElementById('sidebar');
+  if (sb.classList.contains('open')) toggleSidebar();
+  window.scrollTo(0, 0);
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('open');
+}
+
+// === PRINCIPLES ===
+function renderPrinciples() {
+  var groups = {foundation:[], workforce:[], strategy:[], implementation:[]};
+  principles.forEach(function(p) { groups[p.cat].push(p); });
+  Object.keys(groups).forEach(function(cat) {
+    var container = document.getElementById('principles-' + cat);
+    if (!container) return;
+    groups[cat].forEach(function(p, i) {
+      var id = cat + '-' + i;
+      container.innerHTML += '<div class="principle-card">' +
+        '<button class="principle-btn" onclick="togglePrinciple(\''+id+'\')">' +
+          '<div class="principle-btn-content">' +
+            '<span class="badge badge-gold">' + p.badge + '</span>' +
+            '<div class="principle-title">' + p.title + '</div>' +
+            '<div class="principle-summary">' + p.summary + '</div>' +
+          '</div>' +
+          '<svg class="principle-chevron" id="chev-'+id+'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>' +
+        '</button>' +
+        '<div class="principle-details" id="det-'+id+'">' + p.details + '</div>' +
+      '</div>';
+    });
+  });
+}
+function togglePrinciple(id) {
+  var det = document.getElementById('det-' + id);
+  var chev = document.getElementById('chev-' + id);
+  det.classList.toggle('open');
+  chev.classList.toggle('open');
+}
+
+// === LESSONS ===
+function renderLessons() {
+  var container = document.getElementById('lessons-grid');
+  lessons.forEach(function(l) {
+    var recs = l.recs.map(function(r) {
+      return '<li class="lesson-item"><svg class="lesson-check" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>' + r + '</li>';
+    }).join('');
+    container.innerHTML += '<div class="lesson-card"><span class="badge badge-blue">' + l.cat + '</span><div class="lesson-title">' + l.title + '</div><div class="lesson-context">' + l.context + '</div><ul class="lesson-list">' + recs + '</ul></div>';
+  });
+}
+
+// === PROJECT TABLE ===
+var sortKey = 'lines', sortAsc = false;
+function renderProjectTable() {
+  var sorted = projects.slice().sort(function(a, b) {
+    var dir = sortAsc ? 1 : -1;
+    if (sortKey === 'name') return dir * a.name.localeCompare(b.name);
+    if (sortKey === 'days') return dir * (a.days - b.days);
+    return dir * (a.lines - b.lines);
+  });
+  var tbody = document.getElementById('projectTableBody');
+  tbody.innerHTML = sorted.map(function(p) {
+    return '<tr><td class="name">' + p.name + '</td><td class="right">' + p.days + '</td><td class="right">' + p.lines.toLocaleString() + '</td><td class="right" style="color:var(--gray-500)">' + p.low + '</td><td class="right" style="color:var(--gray-500)">' + p.high + '</td><td class="right multiplier">' + p.mult + '</td></tr>';
+  }).join('');
+}
+function sortTable(key) {
+  if (sortKey === key) { sortAsc = !sortAsc; } else { sortKey = key; sortAsc = false; }
+  renderProjectTable();
+}
+
+function renderRepoChips() {
+  var container = document.getElementById('repoChips');
+  projects.forEach(function(p) {
+    container.innerHTML += '<span class="chip">' + p.name + '</span>';
+  });
+}
+
+// === KNOWLEDGE BASE ===
+var kbQuery = '';
+function renderKB() {
+  var container = document.getElementById('kbArticles');
+  var q = kbQuery.toLowerCase();
+  var filtered = kbArticles.filter(function(a) {
+    if (!q) return true;
+    return a.title.toLowerCase().indexOf(q) !== -1 || a.summary.toLowerCase().indexOf(q) !== -1 || a.tags.some(function(t) { return t.indexOf(q) !== -1; });
+  });
+  if (filtered.length === 0) {
+    container.innerHTML = '<p style="text-align:center;padding:32px;color:var(--gray-400);font-size:14px">No articles found matching \u201c' + kbQuery + '\u201d</p>';
+    return;
+  }
+  container.innerHTML = filtered.map(function(a) {
+    var tags = a.tags.map(function(t) { return '<span class="kb-tag">' + t + '</span>'; }).join('');
+    return '<div class="kb-article"><span class="badge badge-blue">' + a.cat + '</span><div class="kb-title">' + a.title + '</div><div class="kb-summary">' + a.summary + '</div><div class="kb-tags">' + tags + '</div></div>';
+  }).join('');
+}
+function renderKBTags() {
+  var allTags = [];
+  kbArticles.forEach(function(a) { a.tags.forEach(function(t) { if (allTags.indexOf(t) === -1) allTags.push(t); }); });
+  var container = document.getElementById('kbTags');
+  container.innerHTML = allTags.map(function(t) {
+    return '<span class="tag' + (kbQuery === t ? ' active' : '') + '" onclick="setKBTag(\'' + t + '\')">' + t + '</span>';
+  }).join('') + (kbQuery ? '<span class="tag" onclick="setKBTag(\'\')" style="color:var(--gray-400)">Clear</span>' : '');
+}
+function filterKB() {
+  kbQuery = document.getElementById('kbSearch').value;
+  renderKB();
+  renderKBTags();
+}
+function setKBTag(tag) {
+  kbQuery = (kbQuery === tag) ? '' : tag;
+  document.getElementById('kbSearch').value = kbQuery;
+  renderKB();
+  renderKBTags();
+}
+
+// === ROADMAP ===
+function renderTimeline() {
+  var container = document.getElementById('timeline');
+  container.innerHTML = phases.map(function(ph, i) {
+    var dotClass = ph.status;
+    var bulletClass = ph.status === 'green' ? 'green' : 'gray';
+    var items = ph.items.map(function(item) {
+      return '<li><div class="timeline-bullet ' + bulletClass + '"></div>' + item + '</li>';
+    }).join('');
+    var line = i < phases.length - 1 ? '<div class="timeline-line"></div>' : '';
+    return '<div class="timeline-item"><div class="timeline-track"><div class="timeline-dot ' + dotClass + '">' + (i+1) + '</div>' + line + '</div><div class="timeline-content"><div class="timeline-header"><span class="timeline-title">' + ph.name + '</span><span class="badge ' + ph.badgeClass + '">' + ph.badge + '</span></div><ul class="timeline-items">' + items + '</ul></div></div>';
+  }).join('');
+}
+
+// === INIT ===
+renderPrinciples();
+renderLessons();
+renderProjectTable();
+renderRepoChips();
+renderKB();
+renderKBTags();
+renderTimeline();
+</script>
+</body>
+</html>

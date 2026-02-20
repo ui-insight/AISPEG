@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ui-gold: #B5A36A;
+  --color-ui-gold-light: #D4C68A;
+  --color-ui-gold-dark: #8A7D50;
+  --color-ui-black: #000000;
+  --color-ui-charcoal: #1a1a2e;
+  --color-ui-dark: #16213e;
+  --color-ui-mid: #0f3460;
+  --color-ui-accent: #B5A36A;
+  --color-surface: #f8f9fa;
+  --color-surface-dark: #1a1a2e;
+  --color-card: #ffffff;
+  --color-card-dark: #16213e;
+}
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* Dark mode support */
+.dark {
+  color-scheme: dark;
+}
