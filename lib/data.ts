@@ -8,7 +8,7 @@ export const keyMetrics = {
   totalLinesAdded: 154491,
   totalLinesDeleted: 12396,
   uniqueFiles: 878,
-  activeRepos: 7,
+  activeRepos: 8,
   pullRequests: 48,
   issuesTracked: 90,
   calendarDays: 19,
@@ -136,6 +136,22 @@ export const projects = [
     description:
       "Built from scratch in just 3 days. WildVE implements a 6-model ensemble for wildlife detection in video, incorporating MegaDetector V5/V6, YOLOv8 with EnlightenGAN, Florence-2, and CLIP. Key work included dependency management via pyproject.toml and uv, a CLI-based model selection interface, an --allframes processing mode, and licensing under Apache 2.0.",
   },
+  {
+    name: "TEMPLATE-app",
+    daysActive: 1,
+    netNewLines: 10097,
+    linesAdded: 10097,
+    linesDeleted: 0,
+    filesChanged: 45,
+    commits: 4,
+    contributors: "ProfessorPolymorphic",
+    activePeriod: "Feb 24",
+    lowEstimate: "67 days (3.1 mo)",
+    highEstimate: "101 days (4.6 mo)",
+    multiplier: "67-101x",
+    description:
+      "A GitHub template repository that codifies the University of Idaho's standards for AI-assisted application development. Defines the approved tech stack (React 19 + Vite + Tailwind CSS v4 frontend, FastAPI + async SQLAlchemy + Pydantic backend), 15 normative agent rules in CLAUDE.md, three CI/CD workflows (backend-test, frontend-test, security-scan), a four-level data governance framework, JWT/RBAC security standards with a 10-item production checklist, MkDocs Material documentation structure, PR and issue templates with agent attribution, and coding conventions enforced by Ruff and ESLint. Based on patterns validated in OpenERA. New projects are created via GitHub's 'Use this template' feature.",
+  },
 ];
 
 export const projectTotals = {
@@ -191,6 +207,13 @@ export const repositoryTimeline = [
     lastCommit: "Feb 19",
     description: "AI-powered proposal generation pipeline",
   },
+  {
+    name: "TEMPLATE-app",
+    firstCommit: "Feb 24",
+    lastCommit: "Feb 24",
+    description:
+      "Institutional standards template for AI-assisted development",
+  },
 ];
 
 export const methodologyNote =
@@ -206,7 +229,7 @@ export const principles = [
     title: "Core Institutional Principle",
     summary: "Make the right thing easy, and the wrong thing difficult.",
     details:
-      "Provide approved stacks, secure deployment paths, reusable patterns, and documentation standards. This allows us to optimize innovation with security and compliance. Innovation scales within compliance when the environment is designed well.",
+      "Provide approved stacks, secure deployment paths, reusable patterns, and documentation standards. TEMPLATE-app (github.com/ui-insight/TEMPLATE-app) embodies this principle: clicking 'Use this template' on GitHub gives teams a project that inherits governance, security standards, CI/CD pipelines, and coding conventions automatically. Innovation scales within compliance when the environment is designed well.",
     category: "Foundation",
   },
   {
@@ -257,7 +280,7 @@ export const principles = [
     title: "Start Small, Then Expand",
     summary: "Begin with a small ecosystem and trusted stack.",
     details:
-      "Let's start with a small ecosystem and build out from there. Establish safe patterns and governance. Demonstrate value, then scale outward.",
+      "Start with a small ecosystem and build out from there. TEMPLATE-app is the concrete starting point: a single approved stack validated through OpenERA, with governance and security baked in. New projects inherit all standards by default. As the institution matures, the template evolves. Demonstrate value with the first few projects, then scale outward as confidence and evidence accumulate.",
     category: "Implementation",
   },
   {
@@ -304,12 +327,12 @@ export const lessons = [
     id: "explicit-agent-rules",
     title: "Explicit Agent Rules",
     context:
-      "CLAUDE.md currently reads as context. For multi-agent work, parts of it should be normative rules, not just information.",
+      "CLAUDE.md should contain normative rules, not just context. TEMPLATE-app's CLAUDE.md implements this lesson directly with a structured Agent Rules section containing 15 explicit constraints divided into 'Never Do' and 'Always Do' categories.",
     recommendations: [
-      "Separate background context from normative MUST rules -- make it unambiguous what's a constraint vs. background info",
-      "Codify naming conventions, pre-commit checks, terminology, and branching rules",
-      "Rules reduce drift across agents and collaborators",
-      "Examples: NEVER modify database column naming convention, ALWAYS run checks before committing, NEVER add component libraries",
+      "Separate background context from normative MUST rules -- TEMPLATE-app's CLAUDE.md demonstrates this with distinct Agent Rules and Project Overview sections",
+      "Codify naming conventions, pre-commit checks, terminology, and branching rules -- all present in TEMPLATE-app's Coding Conventions and Git Conventions sections",
+      "Rules reduce drift across agents and collaborators -- TEMPLATE-app's 15 rules are shared across all projects created from the template",
+      "Concrete examples now codified: NEVER add CSS component libraries (Rule 1), ALWAYS run tests before claiming work is complete (Rule 11), NEVER commit secrets (Rule 3), ALWAYS use feature branches (Rule 12)",
     ],
     category: "Governance",
   },
@@ -317,12 +340,12 @@ export const lessons = [
     id: "preserve-architectural-intent",
     title: "Preserve Architectural Intent",
     context:
-      "The 'why' behind decisions is scattered across docs. Agents may accidentally 'fix' things that were intentional design choices.",
+      "The 'why' behind decisions must be captured in a format agents can discover and reference. TEMPLATE-app implements this with a structured ADR framework at docs/architecture/adr.md.",
     recommendations: [
-      "Capture 'why' via Architecture Decision Records (ADRs) -- machine-readable context agents can reference",
-      "Prevents accidental 'fixes' of intentional patterns (e.g., specific naming conventions, data modeling choices)",
-      "Enables consistent evolution and onboarding for agents and humans",
-      "Store ADRs in a discoverable location (e.g., docs/adr/) so agents find them automatically",
+      "Capture 'why' via Architecture Decision Records -- TEMPLATE-app provides a template with Status, Context, Decision, and Consequences fields",
+      "Seed ADRs included: ADR-001 (React + FastAPI stack selection) and ADR-002 (Tailwind CSS only, no component libraries) demonstrate the pattern",
+      "Prevents accidental 'fixes' of intentional patterns -- agents encountering the Tailwind-only constraint can reference ADR-002 for rationale",
+      "Store ADRs at docs/architecture/adr.md so agents find them automatically during project onboarding",
     ],
     category: "Architecture",
   },
@@ -330,12 +353,12 @@ export const lessons = [
     id: "shadow-ai-governance",
     title: "Shadow AI & Governance",
     context:
-      "Shadow AI applications are already emerging -- rapid experimentation happening outside governance structures.",
+      "Shadow AI applications are already emerging -- rapid experimentation happening outside governance structures. TEMPLATE-app is the institutional response: an approved starting point that makes governed development easier than ungoverned development.",
     recommendations: [
       "Acknowledge that shadow applications are being created across the institution",
-      "Provide approved stacks and secure deployment paths to channel innovation",
-      "Make the right thing easy so people don't route around governance",
-      "Institutional structures lag the technology -- close the gap proactively",
+      "TEMPLATE-app provides the approved stack and secure deployment path -- projects created from the template inherit governance, security, and CI standards automatically",
+      "Make the right thing easy: 'Use this template' on GitHub gives teams a governed starting point with zero configuration overhead",
+      "Institutional structures lag the technology -- TEMPLATE-app closes the gap by encoding standards into the project scaffold itself",
     ],
     category: "Governance",
   },
@@ -356,12 +379,12 @@ export const lessons = [
     id: "agent-attribution",
     title: "Agent Attribution & Review",
     context:
-      "When a human reviews an AI-generated PR, they need to know the level of AI involvement and what decisions were made autonomously.",
+      "When a human reviews an AI-generated PR, they need to know the level of AI involvement and what decisions were made autonomously. TEMPLATE-app's PR template and CONTRIBUTING.md formalize this.",
     recommendations: [
-      "Classify contributions: human-guided, AI-proposed (human approved), or fully autonomous",
-      "Include agent context in PRs -- what key choices were made and why",
-      "Formalize Co-Authored-By conventions for agent commits",
-      "Establish review protocols that account for AI-generated code patterns",
+      "Classify contributions using TEMPLATE-app's PR template: Agent name, Authorship level (fully generated / agent-assisted / human-reviewed), Key decisions made by agent",
+      "Include agent context in PRs -- the PR template has a dedicated Agent Context section for this information",
+      "Co-Authored-By is a mandatory agent rule in CLAUDE.md: a constraint on every AI-assisted commit",
+      "Label all AI-assisted pull requests with 'ai-assisted' per CONTRIBUTING.md guidelines",
     ],
     category: "Governance",
   },
@@ -383,21 +406,21 @@ export const playbookItems = [
     id: "guidelines-for-agents",
     title: "Guidelines for Agents, Not Just Humans",
     description:
-      "Part of what we can do institutionally is write guidelines related to preferred tech stacks for common project types. Also materials related to security, deployment, documentation. These guidelines are for the AGENTS, not people. Guidelines should guide agents as much as people.",
+      "TEMPLATE-app (github.com/ui-insight/TEMPLATE-app) codifies this principle with a comprehensive CLAUDE.md containing 15 normative agent rules: 8 'Never Do' constraints (no CSS component libraries, no class components, no committed secrets, no direct .env modification, no skipping type safety, no raw SQL, no unsolicited improvements, no premature abstraction) and 7 'Always Do' requirements (async patterns, Pydantic validation, run tests before completion, feature branches, Co-Authored-By attribution, follow existing patterns, document API endpoints). These rules are machine-readable constraints, not suggestions.",
     category: "Standards",
   },
   {
     id: "preferred-stacks",
     title: "Preferred Stacks by Project Type",
     description:
-      "Define approved technology stacks for different project categories. Provide secure deployment paths and reusable patterns to make the right thing easy.",
+      "The approved stack for university business applications is defined in TEMPLATE-app: React 19 + TypeScript + Vite 7 + Tailwind CSS v4 + React Router v7 (frontend); Python 3.11+ with FastAPI, async SQLAlchemy 2.0, Pydantic 2.x, PyJWT, bcrypt (backend); SQLite for development, PostgreSQL 16 for production; Docker/Docker Compose with nginx reverse proxy; MkDocs Material for documentation. Vitest for frontend testing, pytest/pytest-asyncio for backend testing. Ruff for Python linting, ESLint for TypeScript. OpenERA is the canonical reference implementation of this stack.",
     category: "Standards",
   },
   {
     id: "security-patterns",
     title: "Security & Deployment Patterns",
     description:
-      "Establish security baselines, deployment pipelines, and documentation standards that agents can follow consistently. Include Docker containerization, CI gates, SBOM generation, and security hardening.",
+      "TEMPLATE-app defines concrete security standards: JWT (HS256) authentication, bcrypt password hashing, role-based access control (RBAC), Pydantic validation on all API inputs, and all secrets via environment variables. A 10-item production checklist covers SECRET_KEY rotation, DEV_MODE=false, PostgreSQL, HTTPS, rate limiting, and dependency auditing. Docker multi-stage builds with nginx reverse proxy handle deployment. An institutional security review checklist in docs/security/ covers system classification, data protection, network architecture, and compliance.",
     category: "Infrastructure",
   },
   {
@@ -418,22 +441,50 @@ export const playbookItems = [
     id: "architecture-decision-records",
     title: "Architecture Decision Records (ADRs)",
     description:
-      "Capture the 'why' behind key decisions in a machine-readable format. Prevents agents from 'improving' things that were intentional design choices. Store in docs/adr/ so agents discover them automatically during onboarding.",
+      "TEMPLATE-app provides an ADR structure at docs/architecture/adr.md with a standard template: Title, Status (Accepted/Proposed/Deprecated/Superseded), Context, Decision, and Consequences. Two seed ADRs are included: ADR-001 (React + FastAPI stack selection) and ADR-002 (Tailwind CSS only, no component libraries). This machine-readable format prevents agents from accidentally 'fixing' intentional design choices and enables consistent onboarding for both humans and agents.",
     category: "Standards",
   },
   {
     id: "agent-attribution-review",
     title: "Agent Attribution & Review Protocol",
     description:
-      "Classify PRs as human-guided, AI-proposed (human approved), or fully autonomous. Include agent context sections listing key decisions made. Formalize commit attribution with Co-Authored-By conventions.",
+      "TEMPLATE-app formalizes this with a PR template that includes an Agent Context section with fields for Agent name, Authorship level (fully generated / agent-assisted / human-reviewed), and Key decisions made by agent. CONTRIBUTING.md requires ai-assisted labels on PRs and Co-Authored-By lines in commits. This is a mandatory agent rule, not a suggestion.",
     category: "Coordination",
   },
   {
     id: "ci-enforcement",
     title: "CI Enforcement for Agent Work",
     description:
-      "Gate backend tests (pytest) and linting (Ruff, ESLint) in CI so that agent-pushed changes are automatically validated. An agent could push breaking changes that aren't caught without CI enforcement.",
+      "TEMPLATE-app ships three GitHub Actions workflows. backend-test.yml: Ruff lint, Ruff format check, and pytest on Python 3.12 (triggered on backend/ changes). frontend-test.yml: ESLint with zero-warnings policy, TypeScript type checking (tsc -b), production build, and Vitest (triggered on frontend/ changes). security-scan.yml: pip-audit and npm audit running on push, PR, and weekly schedule. All three must pass before PR merge, ensuring agent-pushed changes are automatically validated against the full standard.",
     category: "Infrastructure",
+  },
+  {
+    id: "data-governance-framework",
+    title: "Data Governance Framework",
+    description:
+      "TEMPLATE-app defines a four-level data classification system aligned with university data governance policy: Public (no restrictions), Internal (requires authentication), Confidential (RBAC, encryption at rest recommended), and Restricted (PII/FERPA/HIPAA, encryption required, audit logging mandatory). Handling rules specify controls for each level across authentication, authorization, encryption, audit logging, retention, and disposal. A data inventory template tracks each data element's classification, storage location, access roles, and applicable regulations.",
+    category: "Standards",
+  },
+  {
+    id: "documentation-standards",
+    title: "Documentation Standards",
+    description:
+      "Every project built from TEMPLATE-app must maintain: README.md (project overview and quick start), CLAUDE.md (agent context, kept current as the project evolves), CONTRIBUTING.md (contribution guidelines), SECURITY.md (vulnerability reporting), CODE_OF_CONDUCT.md, docs/architecture/ (system architecture and ADRs), docs/governance/ (data governance and classification), and docs/security/ (detailed security documentation and institutional review checklist). MkDocs Material provides a documentation site with navigation sections and code copy buttons.",
+    category: "Standards",
+  },
+  {
+    id: "project-structure-conventions",
+    title: "Project Structure Conventions",
+    description:
+      "TEMPLATE-app enforces a one-file-per-resource pattern: backend/app/api/v1/{resource}.py for route handlers, backend/app/models/{resource}.py for SQLAlchemy ORM models, backend/app/schemas/{resource}.py for Pydantic schemas, and backend/app/services/ for business logic. Frontend mirrors this with src/api/ (one client module per resource), src/components/ (one component per file), src/pages/ (route pages), and src/types/ (TypeScript interfaces). Tests mirror source structure. This predictable layout enables agents to locate and modify code reliably.",
+    category: "Standards",
+  },
+  {
+    id: "coding-standards",
+    title: "Coding Standards & Conventions",
+    description:
+      "Backend: Ruff for linting and formatting (line length 88), snake_case for functions/variables, PascalCase for classes. Frontend: ESLint with zero-warnings policy, tsc -b must pass, functional components with hooks only, Tailwind CSS utility classes exclusively (no CSS component libraries, no CSS modules, no inline styles), PascalCase for components, camelCase for functions/variables. Git: feature/fix/docs branch naming, imperative mood commit messages, all changes through pull requests, CI must pass before merge.",
+    category: "Standards",
   },
 ];
 
@@ -487,8 +538,8 @@ export const knowledgeArticles = [
   {
     title: "Multi-Agent Coordination Recommendations",
     summary:
-      "Priority improvements for scaling agentic collaboration: (1) Formalize CLAUDE.md rules section, (2) Add backend CI gates, (3) Create agent coordination docs, (4) Root-level CONTRIBUTING.md and SECURITY.md, (5) Expand PR templates with agent attribution, (6) Add issue templates, (7) ADRs for key decisions, (8) Skill definition templates, (9) CI linting enforcement, (10) Onboarding guide with AI tooling setup.",
-    tags: ["coordination", "agents", "governance", "ci"],
+      "Many priority items are now codified in TEMPLATE-app (github.com/ui-insight/TEMPLATE-app). Completed: formalized CLAUDE.md with 15 normative rules, three CI workflows (backend-test, frontend-test, security-scan), CONTRIBUTING.md and SECURITY.md at root level, PR template with agent attribution section, ADR structure in docs/architecture/adr.md, and ESLint/Ruff linting enforcement in CI. Remaining for project-level implementation: skill definition templates, onboarding guides with AI tooling setup, and agent coordination docs specific to each project's domain.",
+    tags: ["coordination", "agents", "governance", "ci", "template-app"],
     category: "Coordination",
   },
   {
@@ -519,6 +570,48 @@ export const knowledgeArticles = [
     tags: ["workforce", "demand", "strategy", "culture"],
     category: "Strategy",
   },
+  {
+    title: "TEMPLATE-app: Institutional Standards Template",
+    summary:
+      "TEMPLATE-app (github.com/ui-insight/TEMPLATE-app) is a GitHub template repository that codifies the University of Idaho's standards for AI-assisted application development. It provides a production-ready starting point with an approved tech stack (React 19 + FastAPI), 15 normative agent rules in CLAUDE.md, three CI/CD workflows, a data governance framework with four classification levels, security standards including JWT auth and a 10-item production checklist, MkDocs documentation structure, and coding conventions. Projects are created by clicking 'Use this template' on GitHub. OpenERA is the canonical reference implementation.",
+    tags: ["template-app", "standards", "governance", "infrastructure"],
+    category: "Standards",
+  },
+  {
+    title: "Approved Tech Stack for University Applications",
+    summary:
+      "The TEMPLATE-app approved stack for university business applications: Frontend uses React 19, TypeScript, Vite 7, Tailwind CSS v4, React Router v7, and Vitest. Backend uses Python 3.11+, FastAPI, async SQLAlchemy 2.0, Pydantic 2.x, PyJWT with bcrypt for auth, and pytest. Infrastructure includes SQLite for development (zero config), PostgreSQL 16 for production, Docker/Docker Compose for deployment, nginx for reverse proxy, and MkDocs Material for documentation. Linting via Ruff (Python) and ESLint (TypeScript). This stack was validated through OpenERA development.",
+    tags: ["tech-stack", "template-app", "standards", "architecture"],
+    category: "Standards",
+  },
+  {
+    title: "Data Governance Framework",
+    summary:
+      "TEMPLATE-app defines four data classification levels: Public (no restrictions), Internal (requires authentication), Confidential (RBAC, encryption at rest recommended), and Restricted (PII/FERPA/HIPAA, encryption required, audit logging mandatory). Core principles: classify before storing, minimize collection, document lineage, and secure by default. Handling rules specify authentication, authorization, encryption, audit logging, retention, and disposal requirements for each classification level. Never store SSNs, dates of birth, or banking information unless absolutely required.",
+    tags: ["governance", "data", "security", "compliance", "template-app"],
+    category: "Governance",
+  },
+  {
+    title: "Security Standards & Production Checklist",
+    summary:
+      "TEMPLATE-app security architecture: JWT (HS256) token authentication, bcrypt password hashing, RBAC authorization, Pydantic input validation on all endpoints, and CORS restricted to known origins. Dependency security via Dependabot, pip-audit, and npm audit in CI. The production checklist requires: SECRET_KEY changed from default, DEV_MODE=false, PostgreSQL configured, CORS restricted, HTTPS enabled, file upload limits set, rate limiting configured, logging enabled, and dependency audits passing. An institutional security review checklist covers 10 categories for IT team evaluation.",
+    tags: ["security", "production", "template-app", "compliance"],
+    category: "Security",
+  },
+  {
+    title: "CI/CD Pipeline Standards",
+    summary:
+      "TEMPLATE-app ships three GitHub Actions workflows. backend-test.yml runs on backend/ changes: Ruff lint check, Ruff format check, and pytest. frontend-test.yml runs on frontend/ changes: ESLint with --max-warnings 0, TypeScript type check (tsc -b), production build, and Vitest. security-scan.yml runs on all pushes, PRs, and weekly: pip-audit on Python dependencies and npm audit at high severity. All three pipelines must pass before merging, ensuring both human and agent contributions meet quality and security gates.",
+    tags: ["ci", "testing", "infrastructure", "template-app"],
+    category: "Infrastructure",
+  },
+  {
+    title: "Coding Standards & Conventions",
+    summary:
+      "TEMPLATE-app coding standards: Python backend uses Ruff for linting and formatting (line-length 88), snake_case for functions/variables, PascalCase for classes. TypeScript frontend uses ESLint with zero-warnings policy, functional components with hooks only, Tailwind utility classes exclusively (no CSS component libraries, no CSS modules, no inline styles), PascalCase for components, camelCase for functions/variables. One file per resource for models, schemas, routes, and API clients. Git workflow uses feature/fix/docs branch naming, imperative mood commits, and mandatory PR review with CI passage.",
+    tags: ["standards", "coding", "conventions", "template-app"],
+    category: "Standards",
+  },
 ];
 
 // ============================================================
@@ -531,6 +624,7 @@ export const strategicTakeaways = [
   "Redesign workflows; don't automate broken ones",
   "Agent orchestration is a new institutional role",
   "Start small and scale safely",
+  "Standardized templates enable safe scaling across teams",
 ];
 
 export const institutionalQuestion = {
