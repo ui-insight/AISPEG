@@ -53,3 +53,46 @@ npm run dev    # Start dev server
 npm run build  # Production build
 npm run lint   # Run ESLint
 ```
+
+## Deployment
+
+### Remote Server
+- **Host**: `devops@openera.insight.uidaho.edu`
+- **Networking**: Use `10.x.x.x` address space (not Docker default `172.x.x.x`)
+
+### Port Mapping Table (All Insight Apps)
+| URL | Port |
+|---|---|
+| https://openera.insight.uidaho.edu | 9200 |
+| https://openera-dev.insight.uidaho.edu | 9210 |
+| https://strategicplan.insight.uidaho.edu | 9220 |
+| https://strategicplan-dev.insight.uidaho.edu | 9230 |
+| https://processmapping.insight.uidaho.edu | 9240 |
+| https://processmapping-dev.insight.uidaho.edu | 9250 |
+| **https://aispeg.insight.uidaho.edu** | **9260** |
+| **https://aispeg-dev.insight.uidaho.edu** | **9270** |
+| https://ucmnews.insight.uidaho.edu | 9280 |
+| https://ucmnews-dev.insight.uidaho.edu | 9290 |
+
+### Deploy Commands
+```bash
+# Deploy production (port 9260)
+docker compose --profile prod up -d --build
+
+# Deploy dev (port 9270)
+docker compose --profile dev up -d --build
+
+# View logs
+docker compose --profile prod logs -f
+docker compose --profile dev logs -f
+
+# Stop
+docker compose --profile prod down
+docker compose --profile dev down
+```
+
+### Deploy via Claude Code
+```
+Deploy AISPEG in prod using docker on the remote server accessible via devops@openera.insight.uidaho.edu. Map it to host port 9260. Because of routing conflicts, use 10.x.x.x address space, not the docker default 172.x.x.x address space.
+```
+Replace `prod` / `9260` with `dev` / `9270` for the dev deployment.

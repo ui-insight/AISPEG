@@ -1,0 +1,29 @@
+networks:
+  aispeg-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.10.9.0/24
+
+services:
+  aispeg-prod:
+    build: .
+    container_name: aispeg-prod
+    restart: unless-stopped
+    ports:
+      - "9260:3000"
+    networks:
+      - aispeg-net
+    profiles:
+      - prod
+
+  aispeg-dev:
+    build: .
+    container_name: aispeg-dev
+    restart: unless-stopped
+    ports:
+      - "9270:3000"
+    networks:
+      - aispeg-net
+    profiles:
+      - dev
