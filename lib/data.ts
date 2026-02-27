@@ -3,20 +3,20 @@
 // ============================================================
 
 export const keyMetrics = {
-  totalCommits: 248,
-  netNewLines: 142095,
-  totalLinesAdded: 154491,
-  totalLinesDeleted: 12396,
-  uniqueFiles: 878,
-  activeRepos: 8,
-  pullRequests: 48,
-  issuesTracked: 90,
-  calendarDays: 19,
-  contributors: 3,
-  commitsPerDay: 13,
-  linesPerDay: 7500,
-  productivityMultiplier: "10-15x",
-  manualEstimate: "6-9 months",
+  totalCommits: 830,
+  netNewLines: 237900,
+  totalLinesAdded: 273611,
+  totalLinesDeleted: 35711,
+  uniqueFiles: 3132,
+  activeRepos: 11,
+  pullRequests: 116,
+  issuesTracked: 164,
+  calendarDays: 26,
+  contributors: 8,
+  commitsPerDay: 32,
+  linesPerDay: 9150,
+  productivityMultiplier: "10-16x",
+  manualEstimate: "72-108 months for a single developer",
 };
 
 // ============================================================
@@ -25,68 +25,100 @@ export const keyMetrics = {
 
 export const projects = [
   {
-    name: "OpenERA",
-    daysActive: 6,
-    netNewLines: 81344,
-    linesAdded: 88604,
-    linesDeleted: 7260,
-    filesChanged: 354,
-    commits: 129,
-    contributors: "ProfessorPolymorphic (115), Dependabot (12), sheneman (2)",
-    activePeriod: "Feb 14-19",
-    lowEstimate: "542 days (24.7 mo)",
-    highEstimate: "813 days (37.0 mo)",
-    multiplier: "90-136x",
+    name: "Vandalizer",
+    daysActive: 25,
+    netNewLines: 80691,
+    linesAdded: 85916,
+    linesDeleted: 5225,
+    filesChanged: 1083,
+    commits: 54,
+    contributors: "John Brunsfeld (29), ViaJables (25)",
+    activePeriod: "Feb 2-26",
+    lowEstimate: "538 days (24.4 mo)",
+    highEstimate: "807 days (36.7 mo)",
+    multiplier: "22-32x",
     description:
-      "The largest and most active repository, with 48 pull requests (44 merged) and 90 issues (67 closed, 23 open). A multi-contributor project focused on a budget system aligned to the University of Idaho FY26 template. Key work included role-based approval workflows, a review pipeline, Docker containerization, CI gates, accessibility compliance, Architecture Decision Records, contributor onboarding, security hardening, and SBOM generation.",
+      "AI-powered document intelligence platform with LLM extraction workflows, RAG chat, and team collaboration. Completely refactored codebase from Flask to React and FastAPI in less than one week. Deploy as Open Source in Q1 2026, part of the AI4RA Community of Practice.",
+  },
+  {
+    name: "OpenERA",
+    daysActive: 12,
+    netNewLines: 62500,
+    linesAdded: 68410,
+    linesDeleted: 5910,
+    filesChanged: 1153,
+    commits: 185,
+    contributors: "ProfessorPolymorphic (166), dependabot[bot] (17), sheneman (2)",
+    activePeriod: "Feb 14-25",
+    lowEstimate: "417 days (18.9 mo)",
+    highEstimate: "625 days (28.4 mo)",
+    multiplier: "35-52x",
+    description:
+      "Open-source electronic research administration platform (React + FastAPI). Replaces legacy pre-award systems with a modern platform guiding researchers from opportunity discovery through institutional approval. Created by a researcher with no software development experience in one weekend. 77 pull requests, 58 issues tracked.",
   },
   {
     name: "mindrouter2",
-    daysActive: 17,
-    netNewLines: 27132,
-    linesAdded: 29429,
-    linesDeleted: 2297,
-    filesChanged: 118,
-    commits: 60,
-    contributors: "sheneman",
-    activePeriod: "Feb 3-19",
-    lowEstimate: "181 days (8.2 mo)",
-    highEstimate: "271 days (12.3 mo)",
-    multiplier: "11-16x",
+    daysActive: 18,
+    netNewLines: 37191,
+    linesAdded: 38175,
+    linesDeleted: 984,
+    filesChanged: 153,
+    commits: 169,
+    contributors: "sheneman (168), Luke Sheneman (1)",
+    activePeriod: "Feb 9-26",
+    lowEstimate: "248 days (11.3 mo)",
+    highEstimate: "372 days (16.9 mo)",
+    multiplier: "14-21x",
     description:
-      "The most active personal repository by commit count. Massive feature development over 17 days, including sidecar GPU monitoring, Docker Compose orchestration, an administrative UI, backend management services, endpoint discovery (later removed for security hardening), and Tesseract OCR integration. The breadth of work spans containerization, monitoring, security, and AI integration.",
+      "GPU-enabled AI router with admin UI and Docker orchestration. Provides fair, efficient access to shared GPU clusters by routing AI requests across heterogeneous backends (Ollama, vLLM). Now v0.18.7 operational on UI Research Computing infrastructure with 63 available models and 225M+ total tokens served.",
   },
   {
     name: "proposalforge",
-    daysActive: 1,
-    netNewLines: 17163,
-    linesAdded: 17222,
-    linesDeleted: 59,
-    filesChanged: 282,
-    commits: 2,
-    contributors: "sheneman",
-    activePeriod: "Feb 19",
-    lowEstimate: "114 days (5.2 mo)",
-    highEstimate: "172 days (7.8 mo)",
-    multiplier: "114-172x",
+    daysActive: 6,
+    netNewLines: 18814,
+    linesAdded: 20173,
+    linesDeleted: 1359,
+    filesChanged: 268,
+    commits: 60,
+    contributors: "sheneman (60)",
+    activePeriod: "Feb 21-26",
+    lowEstimate: "125 days (5.7 mo)",
+    highEstimate: "188 days (8.5 mo)",
+    multiplier: "21-31x",
     description:
-      "Launched with an initial release (v0.1) and immediately iterated to v0.2 with an architecture split into Core Server and App Gateway. The full stack includes FastAPI, a LangGraph agent pipeline, Celery task queuing, PostgreSQL, MinIO object storage, and Docker Compose orchestration -- all created in a single day.",
+      "AI-powered proposal generation with LangGraph pipeline. Full stack includes FastAPI, a LangGraph agent pipeline, Celery task queuing, PostgreSQL, MinIO object storage, and Docker Compose orchestration. Proposal wizard integrated with UDM and Lakehouse.",
   },
   {
-    name: "skillbag",
-    daysActive: 3,
-    netNewLines: 7833,
-    linesAdded: 9795,
-    linesDeleted: 1962,
-    filesChanged: 48,
-    commits: 24,
-    contributors: "sheneman",
-    activePeriod: "Feb 12-14",
-    lowEstimate: "52 days (2.4 mo)",
-    highEstimate: "78 days (3.5 mo)",
-    multiplier: "17-26x",
+    name: "StratPlanTactics",
+    daysActive: 2,
+    netNewLines: 18555,
+    linesAdded: 19805,
+    linesDeleted: 1250,
+    filesChanged: 164,
+    commits: 35,
+    contributors: "ProfessorPolymorphic (24), dependabot[bot] (11)",
+    activePeriod: "Feb 24-25",
+    lowEstimate: "124 days (5.6 mo)",
+    highEstimate: "186 days (8.4 mo)",
+    multiplier: "62-93x",
     description:
-      "A complete Bag-of-Skills reinforcement learning framework built in 3 days, featuring LLM plan generation, TextWorld environments, a GRPO trainer, dual-GPU architecture, a telemetry system, and curriculum tuning. Ships with 109 passing tests, reflecting production-grade code quality achieved at remarkable speed.",
+      "Strategic plan dashboard — alignment tool for 21 units, 337 tactics. Built in just 2 days with 20 pull requests and 7 issues tracked.",
+  },
+  {
+    name: "Lakehouse",
+    daysActive: 23,
+    netNewLines: 9875,
+    linesAdded: 12745,
+    linesDeleted: 2870,
+    filesChanged: 89,
+    commits: 245,
+    contributors: "Nathan Layman (245)",
+    activePeriod: "Feb 4-26",
+    lowEstimate: "66 days (3.0 mo)",
+    highEstimate: "99 days (4.5 mo)",
+    multiplier: "3-4x",
+    description:
+      "Data lakehouse with adapter-based ETL pipelines. Establishes a shared, open data standard for research administration — enabling interoperability across institutions and systems while respecting local autonomy. Provides the common language for tools like OpenERA. ~25,000 new lines of committed code in the last 6 days. 12 PRs and 79 issues tracked.",
   },
   {
     name: "dissertation",
@@ -94,9 +126,9 @@ export const projects = [
     netNewLines: 5107,
     linesAdded: 5170,
     linesDeleted: 63,
-    filesChanged: 44,
+    filesChanged: 52,
     commits: 2,
-    contributors: "sheneman",
+    contributors: "sheneman (2)",
     activePeriod: "Feb 13",
     lowEstimate: "34 days (1.5 mo)",
     highEstimate: "51 days (2.3 mo)",
@@ -105,20 +137,36 @@ export const projects = [
       "A dissertation-to-LaTeX converter web application with AI-powered document analysis and multi-LLM backend support, complete with Docker deployment. Built and committed in a single day.",
   },
   {
+    name: "Water Rights",
+    daysActive: 15,
+    netNewLines: 4821,
+    linesAdded: 5011,
+    linesDeleted: 190,
+    filesChanged: 37,
+    commits: 39,
+    contributors: "awchild (22), Andrew Child (17)",
+    activePeriod: "Feb 9-23",
+    lowEstimate: "32 days (1.5 mo)",
+    highEstimate: "48 days (2.2 mo)",
+    multiplier: "2-3x",
+    description:
+      "AI-assisted water rights web application with document OCR and metadata extraction.",
+  },
+  {
     name: "CerealPestAID",
-    daysActive: 1,
+    daysActive: 2,
     netNewLines: 1984,
     linesAdded: 2024,
     linesDeleted: 40,
-    filesChanged: 25,
+    filesChanged: 28,
     commits: 5,
-    contributors: "sheneman",
-    activePeriod: "Feb 15",
+    contributors: "sheneman (4), Luke Sheneman (1)",
+    activePeriod: "Feb 14-15",
     lowEstimate: "13 days (0.6 mo)",
     highEstimate: "20 days (0.9 mo)",
-    multiplier: "13-20x",
+    multiplier: "7-10x",
     description:
-      "An initial release featuring three cereal pest classifiers (EfficientNet-B6, MobileNetV3-Large, and InceptionV3) covering 26 pest species. Includes complete training pipelines, evaluation scripts, ONNX model conversion, and TFLite inference code -- built and shipped in a single day.",
+      "Cereal pest classifier with 3 CNN architectures (EfficientNet-B6, MobileNetV3-Large, InceptionV3) covering 26 pest species. Includes complete training pipelines, evaluation scripts, ONNX model conversion, and TFLite inference code.",
   },
   {
     name: "WildVE",
@@ -126,98 +174,268 @@ export const projects = [
     netNewLines: 1532,
     linesAdded: 2247,
     linesDeleted: 715,
-    filesChanged: 7,
+    filesChanged: 41,
     commits: 26,
-    contributors: "Luke Sheneman",
+    contributors: "sheneman (23), Luke Sheneman (3)",
     activePeriod: "Feb 12-14",
     lowEstimate: "10 days (0.5 mo)",
     highEstimate: "15 days (0.7 mo)",
     multiplier: "3-5x",
     description:
-      "Built from scratch in just 3 days. WildVE implements a 6-model ensemble for wildlife detection in video, incorporating MegaDetector V5/V6, YOLOv8 with EnlightenGAN, Florence-2, and CLIP. Key work included dependency management via pyproject.toml and uv, a CLI-based model selection interface, an --allframes processing mode, and licensing under Apache 2.0.",
+      "Wildlife video extraction with 6-model ML ensemble incorporating MegaDetector V5/V6, YOLOv8 with EnlightenGAN, Florence-2, and CLIP. Built from scratch in 3 days.",
   },
   {
-    name: "TEMPLATE-app",
-    daysActive: 1,
-    netNewLines: 10097,
-    linesAdded: 10097,
-    linesDeleted: 0,
-    filesChanged: 45,
-    commits: 4,
-    contributors: "ProfessorPolymorphic",
-    activePeriod: "Feb 24",
-    lowEstimate: "67 days (3.1 mo)",
-    highEstimate: "101 days (4.6 mo)",
-    multiplier: "67-101x",
+    name: "ReactFast (Control)",
+    daysActive: 25,
+    netNewLines: 324,
+    linesAdded: 16201,
+    linesDeleted: 15877,
+    filesChanged: 259,
+    commits: 175,
+    contributors: "prateekrauniyar345 (44), Jarred6068 (42), Arpan Pal (31), sns-sakib (18), + 5 others",
+    activePeriod: "Feb 1-25",
+    lowEstimate: "N/A",
+    highEstimate: "N/A",
+    multiplier: "Control",
     description:
-      "A GitHub template repository that codifies the University of Idaho's standards for AI-assisted application development. Defines the approved tech stack (React 19 + Vite + Tailwind CSS v4 frontend, FastAPI + async SQLAlchemy + Pydantic backend), 15 normative agent rules in CLAUDE.md, three CI/CD workflows (backend-test, frontend-test, security-scan), a four-level data governance framework, JWT/RBAC security standards with a 10-item production checklist, MkDocs Material documentation structure, PR and issue templates with agent attribution, and coding conventions enforced by Ruff and ESLint. Based on patterns validated in OpenERA. New projects are created via GitHub's 'Use this template' feature.",
+      "Control repository: Full-stack Vite + FastAPI application developed by a team of 9 contributors using traditional development workflows (no agentic AI tools). 175 commits produced only +324 net new lines of code, highlighting the iterative churn typical of manual development — in stark contrast to the agentic projects.",
+  },
+  {
+    name: "AI4RA-UDM",
+    daysActive: 15,
+    netNewLines: -3170,
+    linesAdded: 13935,
+    linesDeleted: 17105,
+    filesChanged: 64,
+    commits: 10,
+    contributors: "Nathan Layman (9), github-actions[bot] (1)",
+    activePeriod: "Feb 11-25",
+    lowEstimate: "N/A",
+    highEstimate: "N/A",
+    multiplier: "Refactor",
+    description:
+      "Universal data model for research administration analytics. Net negative lines reflect a major refactoring effort — simplifying and consolidating the codebase. 6 PRs and 8 issues tracked.",
   },
 ];
 
 export const projectTotals = {
-  daysActive: 19,
-  netNewLines: 142095,
-  linesAdded: 154491,
-  linesDeleted: 12396,
-  lowEstimate: "947 days (3.6 yr)",
-  highEstimate: "1,421 days (5.4 yr)",
-  multiplier: "50-75x",
+  daysActive: 26,
+  netNewLines: 237900,
+  linesAdded: 273611,
+  linesDeleted: 35711,
+  lowEstimate: "1,586 days (72 mo)",
+  highEstimate: "2,379 days (108 mo)",
+  multiplier: "10-16x",
 };
 
 export const repositoryTimeline = [
   {
+    name: "ReactFast (Control)",
+    firstCommit: "2026-02-01",
+    lastCommit: "2026-02-25",
+    description: "Full-stack Vite + FastAPI — traditional workflow",
+  },
+  {
+    name: "Vandalizer",
+    firstCommit: "2026-02-02",
+    lastCommit: "2026-02-26",
+    description: "AI-powered document intelligence platform",
+  },
+  {
+    name: "Lakehouse",
+    firstCommit: "2026-02-04",
+    lastCommit: "2026-02-26",
+    description: "Data lakehouse with adapter-based ETL pipelines",
+  },
+  {
     name: "mindrouter2",
-    firstCommit: "Feb 3",
-    lastCommit: "Feb 19",
-    description: "GPU-enabled AI router with admin UI, Docker orchestration",
+    firstCommit: "2026-02-09",
+    lastCommit: "2026-02-26",
+    description: "GPU-enabled AI router with admin UI, Docker",
+  },
+  {
+    name: "Water Rights",
+    firstCommit: "2026-02-09",
+    lastCommit: "2026-02-23",
+    description: "AI-assisted water rights web application",
+  },
+  {
+    name: "AI4RA-UDM",
+    firstCommit: "2026-02-11",
+    lastCommit: "2026-02-25",
+    description: "Universal data model for research admin analytics",
   },
   {
     name: "WildVE",
-    firstCommit: "Feb 12",
-    lastCommit: "Feb 14",
+    firstCommit: "2026-02-12",
+    lastCommit: "2026-02-14",
     description: "Wildlife video extraction with 6-model ML ensemble",
   },
   {
-    name: "skillbag",
-    firstCommit: "Feb 12",
-    lastCommit: "Feb 14",
-    description: "Bag-of-Skills reinforcement learning framework",
-  },
-  {
     name: "dissertation",
-    firstCommit: "Feb 13",
-    lastCommit: "Feb 13",
+    firstCommit: "2026-02-13",
+    lastCommit: "2026-02-13",
     description: "Dissertation-to-LaTeX converter web app",
   },
   {
     name: "OpenERA",
-    firstCommit: "Feb 14",
-    lastCommit: "Feb 19",
-    description: "Open-source electronic research administration system (U of I)",
+    firstCommit: "2026-02-14",
+    lastCommit: "2026-02-25",
+    description: "Open-source electronic research administration",
   },
   {
     name: "CerealPestAID",
-    firstCommit: "Feb 15",
-    lastCommit: "Feb 15",
+    firstCommit: "2026-02-14",
+    lastCommit: "2026-02-15",
     description: "Cereal pest classifier with 3 CNN architectures",
   },
   {
     name: "proposalforge",
-    firstCommit: "Feb 19",
-    lastCommit: "Feb 19",
-    description: "AI-powered proposal generation pipeline",
+    firstCommit: "2026-02-21",
+    lastCommit: "2026-02-26",
+    description: "AI-powered proposal generation, LangGraph",
   },
   {
-    name: "TEMPLATE-app",
-    firstCommit: "Feb 24",
-    lastCommit: "Feb 24",
-    description:
-      "Institutional standards template for AI-assisted development",
+    name: "StratPlanTactics",
+    firstCommit: "2026-02-24",
+    lastCommit: "2026-02-25",
+    description: "Strategic plan dashboard — 21 units, 337 tactics",
   },
 ];
 
 export const methodologyNote =
-  "The manual development time estimate is based on published industry benchmarks that place senior developer productivity at 100-150 lines of production-quality code per day (including associated design, testing, code review, and documentation time). This figure is consistent with research from sources such as The Mythical Man-Month and contemporary software engineering productivity studies. The productivity multiplier (10-15x) is derived by comparing the actual 19-day delivery window against the estimated 6-9 month manual timeline, adjusted for the number of active contributors (2-3 humans assisted by agentic AI tools).";
+  "Data for this report was collected from GitHub repository activity logs covering the period of February 1-26, 2026. Metrics include commit counts, lines of code added and deleted, files changed, pull requests, and issues. All line counts are based on git diff statistics and include code, configuration, documentation, and test files. The manual development time estimate is based on published industry benchmarks that place senior developer productivity at 100-150 lines of production-quality code per day (including associated design, testing, code review, and documentation time). This figure is consistent with research from sources such as The Mythical Man-Month and contemporary software engineering productivity studies. The productivity multiplier (10-16x) is derived by comparing the estimated traditional effort (1,586-2,379 developer-days) to the actual human effort (152 developer-days: 8 contributors x 19 working days). Repository data was gathered using the GitHub API and git clone statistics. Automated commits (Dependabot, GitHub Actions) are counted in commit totals but noted separately in contributor breakdowns.";
+
+// ============================================================
+// Adoption Phases
+// ============================================================
+
+export const adoptionPhases = [
+  {
+    phase: "Pre-Agentic",
+    period: "Feb 1-5",
+    avgCommitsPerDay: 2.6,
+    avgNetLOCPerDay: 539,
+  },
+  {
+    phase: "Tools Available",
+    period: "Feb 6-11",
+    avgCommitsPerDay: 8.5,
+    avgNetLOCPerDay: 4681,
+  },
+  {
+    phase: "Robison & Sheneman Adopt",
+    period: "Feb 12-19",
+    avgCommitsPerDay: 32.1,
+    avgNetLOCPerDay: 14777,
+  },
+  {
+    phase: "Full Team",
+    period: "Feb 20-26",
+    avgCommitsPerDay: 72.7,
+    avgNetLOCPerDay: 12701,
+  },
+];
+
+// ============================================================
+// Shadow Applications
+// ============================================================
+
+export const shadowApplications = [
+  { name: "Dissertation reformatting", owner: "Jerry McMurtry" },
+  { name: "Strategic Plan Dashboard", owner: "Michele Bartlett" },
+  { name: "Agentic AI coordination site", owner: "AISPEG" },
+  { name: "RFD Career Dashboard", owner: "Carly Cummings" },
+  { name: "Out of State Tax tool", owner: "Cretia Bunney" },
+  { name: "SEM Experiential Learning Dashboard", owner: "Dean Kahler, SEM Vibe Coder in Chief" },
+  { name: "Public Administration Education Tool", owner: "Michael Overton" },
+  { name: "UCM Daily Register Newsletter Application", owner: "Jodi Walker" },
+  { name: "GPSA Exhibition Judging Application", owner: "GPSA" },
+  { name: "Process Mapping Dashboard", owner: "AI4RA" },
+];
+
+// ============================================================
+// ORED Projects Leveraging Agentic AI
+// ============================================================
+
+export const oredProjects = [
+  { name: "AI4RA UDM / Data Lakehouse", lead: "Layman", unit: "AI4RA", featured: true },
+  { name: "Vandalizer", lead: "Brunsfeld", unit: "AI4RA", featured: true },
+  { name: "MindRouter 2.0", lead: "Sheneman", unit: "RCDS", featured: true },
+  { name: "OpenERA", lead: "Robison", unit: "AI4RA", featured: true },
+  { name: "ProposalForge", lead: "Sheneman", unit: "RCDS", featured: false },
+  { name: "Idaho Unfiltered", lead: "Child", unit: "RCDS", featured: false },
+];
+
+// ============================================================
+// Current Constraints & Recommendations
+// ============================================================
+
+export const currentConstraints = [
+  "Cultural resistance: 'Yeah, but...' framing limits exploration",
+  "Cannot deploy the tools with university data and systems",
+  "No approved deployment target for shadow applications increases risks and reduces ROI",
+];
+
+export const recommendations = [
+  {
+    title: "Framing and Culture",
+    description: "YES, AND... — shift from resistance framing to additive exploration",
+  },
+  {
+    title: "Internal Infrastructure",
+    description: "Enterprise agreement(s) that allow us to securely use these tools with institutional data and systems. Institutional Ecosystem supporting templated development, testing, and deployment of Agentic AI coded applications.",
+  },
+  {
+    title: "New Approach to SaaS",
+    description: "Create and implement a plan for data repatriation alongside the governance and data modernization initiative. Open Source deployment into the higher ed sector is an opportunity for widespread impact.",
+  },
+];
+
+// ============================================================
+// Presentations & Reports
+// ============================================================
+
+export const presentations = [
+  {
+    id: "presidential-brief-feb-2026",
+    title: "Agentic AI: Evidence of Impact, Current Constraints, and Recommendations",
+    date: "February 7, 2026",
+    author: "Barrie Robison",
+    type: "Presidential Brief",
+    audience: "University of Idaho Executive Leadership",
+    description: "Briefing for executive leadership on the transformative potential and organizational risks of Agentic AI. Covers active ORED projects leveraging agentic AI, force multiplier evidence, institutional constraints, and near-term recommendations.",
+    sections: [
+      "ORED Projects Leveraging Agentic AI",
+      "Evidence of Impact and Risk",
+      "Software Development Force Multiplier",
+      "Documentation, Governance, and Templates",
+      "Shadow Applications",
+      "Current Constraints",
+      "Recommendations",
+    ],
+    sourceFile: "AgenticAIPresidentialBriefFeb26_2026_UITemplate.pdf",
+  },
+  {
+    id: "dev-activity-report-feb-2026",
+    title: "Development Activity Report: Agentic Development with Claude Code",
+    date: "February 26, 2026",
+    author: "Barrie Robison",
+    type: "Activity Report",
+    audience: "AISPEG / ORED Leadership",
+    description: "Comprehensive analysis of software development activity across 11 GitHub repositories during Feb 1-26, 2026. Demonstrates extraordinary productivity levels achieved through agentic development tools. Includes repository-by-repository analysis, adoption timeline, productivity metrics, and methodology.",
+    sections: [
+      "Executive Summary",
+      "Key Findings at a Glance",
+      "Key Metrics",
+      "Repository Summary",
+      "Adoption Timeline & Acceleration Analysis",
+      "Detailed Repository Analysis",
+      "Methodology & Notes",
+    ],
+    sourceFile: "AgenticAIPresidentialBriefFeb26_2026_UITemplate.pdf",
+  },
+];
 
 // ============================================================
 // Principles
@@ -611,6 +829,41 @@ export const knowledgeArticles = [
       "TEMPLATE-app coding standards: Python backend uses Ruff for linting and formatting (line-length 88), snake_case for functions/variables, PascalCase for classes. TypeScript frontend uses ESLint with zero-warnings policy, functional components with hooks only, Tailwind utility classes exclusively (no CSS component libraries, no CSS modules, no inline styles), PascalCase for components, camelCase for functions/variables. One file per resource for models, schemas, routes, and API clients. Git workflow uses feature/fix/docs branch naming, imperative mood commits, and mandatory PR review with CI passage.",
     tags: ["standards", "coding", "conventions", "template-app"],
     category: "Standards",
+  },
+  {
+    title: "Shadow APPocalypse: Emerging Applications",
+    summary:
+      "At least 10 shadow applications have been created across the institution by non-developers leveraging agentic AI tools. These include dissertation reformatting, strategic plan dashboards, career dashboards, tax tools, experiential learning dashboards, newsletter applications, exhibition judging apps, and process mapping dashboards. This demonstrates both the opportunity and risk — these tools empower rapid creation but lack institutional governance and approved deployment targets.",
+    tags: ["shadow-ai", "governance", "risk", "applications"],
+    category: "Context",
+  },
+  {
+    title: "Current Institutional Constraints",
+    summary:
+      "Three key constraints limit agentic AI adoption at the university: (1) Cultural resistance framed as 'Yeah, but...' limiting exploration, (2) inability to deploy tools with university data and systems due to lack of enterprise agreements, and (3) no approved deployment target for shadow applications, which increases risks and reduces ROI. These constraints are addressable through framing shifts, infrastructure agreements, and a new approach to SaaS.",
+    tags: ["constraints", "institutional", "governance", "infrastructure"],
+    category: "Context",
+  },
+  {
+    title: "Adoption Timeline & Acceleration Analysis",
+    summary:
+      "Agentic tools were not available uniformly across the Feb 1-26 reporting period. Three inflection points shaped development activity: Feb 6 (Anthropic released Opus 4.6 and Codex 5.3), Feb 12 (Robison and Sheneman began actively using agentic tools), and Feb 20 (Layman gained full access). Commit velocity accelerated from 2.6/day pre-agentic to 72.7/day with the full team, a 28x increase in daily commit rate.",
+    tags: ["adoption", "metrics", "productivity", "timeline"],
+    category: "Metrics",
+  },
+  {
+    title: "ORED Projects Leveraging Agentic AI",
+    summary:
+      "Six significant ORED projects are actively leveraging agentic AI: AI4RA UDM / Data Lakehouse (Layman, AI4RA), Vandalizer (Brunsfeld, AI4RA), MindRouter 2.0 (Sheneman, RCDS), OpenERA (Robison, AI4RA), ProposalForge (Sheneman, RCDS), and Idaho Unfiltered (Child, RCDS). These span document intelligence, data infrastructure, GPU orchestration, research administration, proposal generation, and media analysis.",
+    tags: ["projects", "ored", "ai4ra", "rcds"],
+    category: "Projects",
+  },
+  {
+    title: "Presidential Brief Recommendations",
+    summary:
+      "Three recommendations from the Feb 2026 presidential brief: (1) Framing and Culture — shift to 'YES, AND...' approach rather than resistance framing. (2) Internal Infrastructure — establish enterprise agreements for secure use of agentic tools with institutional data and systems, build ecosystem for templated development, testing, and deployment. (3) New Approach to SaaS — implement data repatriation alongside governance modernization; leverage open source deployment for widespread higher-ed impact.",
+    tags: ["recommendations", "strategy", "institutional", "infrastructure"],
+    category: "Strategy",
   },
 ];
 

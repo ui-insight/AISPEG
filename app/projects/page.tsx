@@ -17,11 +17,11 @@ export default function ProjectsPage() {
           Projects & Metrics
         </h1>
         <p className="mt-2 text-gray-600">
-          Development activity report &mdash; February 1&ndash;19, 2026.
-          Agentic development with Claude Code.
+          Development activity report &mdash; February 1&ndash;26, 2026.
+          Agentic development with Claude Code across 11 repositories.
         </p>
         <p className="mt-1 text-sm text-gray-400">
-          Prepared by Luke Sheneman &middot; University of Idaho
+          Prepared by Barrie Robison &middot; University of Idaho
         </p>
       </div>
 
@@ -29,13 +29,14 @@ export default function ProjectsPage() {
       <div className="rounded-xl border-l-4 border-ui-gold bg-white p-6 shadow-sm">
         <p className="text-sm font-medium text-gray-500">Executive Summary</p>
         <p className="mt-2 text-sm leading-relaxed text-gray-700">
-          The scope and complexity of the work is notable: the repositories
-          include deep learning model ensembles, reinforcement learning
-          frameworks, full-stack applications with LangGraph agent pipelines,
-          GPU-aware microservice orchestration, institutional budget and approval
-          workflows, and AI-powered document processing. Each project represents
-          production-grade software with Docker deployment, testing suites, and
-          professional documentation.
+          Analysis of software development activity across 11 GitHub repositories
+          during 26 days. The repositories span electronic research
+          administration, data lakehouse ETL, strategic planning analytics,
+          GPU-aware microservice orchestration, AI-powered proposal generation,
+          document intelligence, water rights processing, wildlife video
+          analysis, agricultural pest classification, and more. Each project
+          represents production-grade software with modern architecture, testing,
+          and documentation.
         </p>
       </div>
 
@@ -87,11 +88,12 @@ export default function ProjectsPage() {
 
       {/* Productivity highlight */}
       <div className="rounded-xl bg-ui-charcoal p-8 text-center text-white">
-        <p className="text-5xl font-bold text-ui-gold">10&ndash;15x</p>
+        <p className="text-5xl font-bold text-ui-gold">10&ndash;16x</p>
         <p className="mt-2 text-lg font-medium">Productivity Multiplier</p>
         <p className="mt-1 text-sm text-white/60">
-          Estimated manual: 6&ndash;9 months &middot; Actual: 19 days, 2&ndash;3
-          contributors with agentic AI
+          Estimated traditional: 1,586&ndash;2,379 developer-days (72&ndash;108
+          months) &middot; Actual: 152 developer-days (8 contributors &times; 19
+          working days)
         </p>
       </div>
 
@@ -101,9 +103,9 @@ export default function ProjectsPage() {
           Repository Creation Timeline
         </h2>
         <p className="mb-4 text-sm text-gray-500">
-          Five of seven repositories were created after February 12,
-          demonstrating a burst of project initiation in the second half of the
-          period.
+          12 repositories tracked across the reporting period, with three key
+          inflection points shaping adoption: Feb 6 (tools released), Feb 12
+          (early adopters), Feb 20 (full team access).
         </p>
         <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
           <table className="w-full text-left text-sm">

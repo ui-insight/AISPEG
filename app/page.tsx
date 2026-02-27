@@ -15,6 +15,7 @@ import {
   knowledgeArticles,
   playbookItems,
   projects,
+  presentations,
 } from "@/lib/data";
 
 /* ---------------------------------------------------------- */
@@ -44,6 +45,12 @@ const navCards = [
     label: "Projects & Metrics",
     count: `${projects.length} repositories`,
     icon: "📊",
+  },
+  {
+    href: "/reports",
+    label: "Reports & Briefs",
+    count: `${presentations.length} documents`,
+    icon: "📄",
   },
   {
     href: "/knowledge",
