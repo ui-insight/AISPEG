@@ -884,3 +884,517 @@ export const institutionalQuestion = {
   wrong: "Should we adopt AI?",
   right: "How do we design an institution where agents safely amplify our mission?",
 };
+
+// ============================================================
+// Institutional Standards Roadmap
+// ============================================================
+
+export const standardsRoadmapSource = {
+  document: "AI Next Steps March 2026",
+  author: "VP of OIT",
+  date: "March 2026",
+  description:
+    "Call to develop and enforce institutional standards across seven key areas to support safe, scalable AI adoption at the University of Idaho.",
+};
+
+export const institutionalStandards = [
+  {
+    id: "code-development",
+    name: "Code Development",
+    description:
+      "Standards for writing, reviewing, and maintaining code produced by both humans and AI agents. Covers approved stacks, coding conventions, project structure, and agent-specific rules.",
+    currentStatus: "Strong" as const,
+    existsToday: [
+      "TEMPLATE-app defines approved stack (React 19 + FastAPI)",
+      "CLAUDE.md with 15 normative agent rules",
+      "Coding conventions codified (Ruff, ESLint, naming patterns)",
+      "Project structure conventions (one-file-per-resource)",
+      "OpenERA serves as canonical reference implementation",
+    ],
+    gapsToFill: [
+      "Formal adoption mandate across all new projects",
+      "Version-pinning policy for stack components",
+      "Automated template compliance checking",
+    ],
+    owner: "AISPEG / RCDS",
+    enforcement: "CI/CD pipelines (backend-test, frontend-test workflows), PR review",
+    phase: "Phase 1" as const,
+  },
+  {
+    id: "cybersecurity",
+    name: "Cybersecurity",
+    description:
+      "Security architecture, authentication patterns, data classification, vulnerability management, and production hardening standards.",
+    currentStatus: "Strong" as const,
+    existsToday: [
+      "JWT + bcrypt auth pattern in TEMPLATE-app",
+      "Four-level data classification framework",
+      "Security scan CI workflow (pip-audit, npm audit)",
+      "10-item production checklist",
+      "SECURITY.md and institutional review checklist",
+    ],
+    gapsToFill: [
+      "Penetration testing cadence for deployed applications",
+      "Incident response playbook for AI-generated vulnerabilities",
+      "Secret rotation automation",
+    ],
+    owner: "OIT Security / AISPEG",
+    enforcement:
+      "security-scan.yml CI workflow, institutional security review checklist, pre-deployment audit",
+    phase: "Phase 1" as const,
+  },
+  {
+    id: "documentation",
+    name: "Documentation",
+    description:
+      "Standards for project documentation, architecture decision records, agent context files, and knowledge management.",
+    currentStatus: "Strong" as const,
+    existsToday: [
+      "Required files: README, CLAUDE.md, CONTRIBUTING.md, SECURITY.md, CODE_OF_CONDUCT",
+      "ADR framework at docs/architecture/adr.md",
+      "MkDocs Material documentation site structure",
+      "Data governance docs at docs/governance/",
+    ],
+    gapsToFill: [
+      "Documentation completeness scoring / audit tool",
+      "Living documentation update cadence policy",
+      "Cross-project documentation index",
+    ],
+    owner: "AISPEG",
+    enforcement: "PR checklist, CI documentation build verification",
+    phase: "Phase 1" as const,
+  },
+  {
+    id: "qa-testing",
+    name: "QA / Testing",
+    description:
+      "Testing standards for agent-generated code, including unit tests, integration tests, and quality gates.",
+    currentStatus: "Moderate" as const,
+    existsToday: [
+      "Vitest for frontend, pytest for backend in TEMPLATE-app",
+      "CI enforces test passage before merge",
+      "ESLint zero-warnings policy",
+    ],
+    gapsToFill: [
+      "Minimum code coverage thresholds",
+      "Integration and end-to-end testing standards",
+      "Agent-specific testing requirements (validation of AI-generated output)",
+      "Performance and load testing standards",
+      "Test data management policy",
+    ],
+    owner: "RCDS / Project Leads",
+    enforcement: "CI coverage gates, PR review checklist, quarterly quality audits",
+    phase: "Phase 2" as const,
+  },
+  {
+    id: "accessibility",
+    name: "Accessibility",
+    description:
+      "Web accessibility standards ensuring all university applications meet WCAG compliance and inclusive design principles.",
+    currentStatus: "Moderate" as const,
+    existsToday: [
+      "Tailwind CSS provides accessible primitives",
+      "Semantic HTML encouraged in coding conventions",
+      "eslint-plugin-jsx-a11y enforced in ESLint config (alt-text, ARIA props, roles, headings)",
+      "CI workflow runs accessibility linting on every push and PR",
+    ],
+    gapsToFill: [
+      "WCAG 2.1 AA compliance standard definition",
+      "Runtime accessibility testing (axe-core, Pa11y) beyond static analysis",
+      "Accessibility review checklist for PR process",
+      "Screen reader testing protocol",
+      "Color contrast and keyboard navigation standards",
+      "Training materials for accessible development",
+    ],
+    owner: "UX Lead / AISPEG",
+    enforcement: "eslint-plugin-jsx-a11y in CI, manual review checklist, annual audit",
+    phase: "Phase 2" as const,
+  },
+  {
+    id: "user-experience",
+    name: "User Experience",
+    description:
+      "UX design standards, component patterns, and user research practices for consistent, high-quality interfaces across applications.",
+    currentStatus: "Weak" as const,
+    existsToday: [
+      "Tailwind CSS v4 as standard styling framework",
+      "University of Idaho color palette (Gold, Charcoal)",
+      "Functional component patterns established",
+    ],
+    gapsToFill: [
+      "Shared UI component library or pattern guide",
+      "Design system documentation (spacing, typography, interaction patterns)",
+      "User research and usability testing protocol",
+      "Responsive design breakpoint standards",
+      "Loading state and error handling UX patterns",
+    ],
+    owner: "AISPEG / UX Committee",
+    enforcement: "Design review in PR process, pattern library compliance checks",
+    phase: "Phase 3" as const,
+  },
+  {
+    id: "integration",
+    name: "Integration",
+    description:
+      "Standards for API design, inter-system communication, data exchange formats, and third-party integrations.",
+    currentStatus: "Missing" as const,
+    existsToday: [
+      "FastAPI provides OpenAPI spec generation",
+      "Pydantic validation on API inputs",
+      "AI4RA UDM establishing shared data standards",
+    ],
+    gapsToFill: [
+      "API design guide (RESTful conventions, versioning, pagination)",
+      "Authentication standards for inter-service communication",
+      "Data exchange format standards (JSON schemas, contract testing)",
+      "Integration testing framework",
+      "Third-party API governance (approval, monitoring, fallback)",
+      "Event-driven architecture patterns for cross-system workflows",
+    ],
+    owner: "RCDS / Infrastructure Team",
+    enforcement: "API contract tests in CI, integration review board, API registry",
+    phase: "Phase 3" as const,
+  },
+];
+
+export const standardsPhases = [
+  {
+    name: "Phase 1: Formalize Existing Standards",
+    window: "Q1–Q2 2026",
+    status: "in-progress" as const,
+    goal: "Document, publish, and enforce standards that already exist in practice through TEMPLATE-app and the playbook.",
+    standards: ["Code Development", "Cybersecurity", "Documentation"],
+    deliverables: [
+      "Published standards documents for each area with clear ownership",
+      "All three standards enforced via CI/CD across active projects",
+      "Compliance dashboard tracking adoption across repositories",
+      "Training materials for onboarding new projects to standards",
+    ],
+  },
+  {
+    name: "Phase 2: Fill Critical Gaps",
+    window: "Q2–Q3 2026",
+    status: "next" as const,
+    goal: "Address high-risk gaps in testing and accessibility that could create liability or quality issues at scale.",
+    standards: ["QA / Testing", "Accessibility"],
+    deliverables: [
+      "Code coverage thresholds enforced in CI for all projects",
+      "WCAG 2.1 AA compliance checklist integrated into PR process",
+      "Automated accessibility testing added to CI pipelines",
+      "End-to-end testing framework selected and documented",
+    ],
+  },
+  {
+    name: "Phase 3: Build from Scratch",
+    window: "Q3–Q4 2026",
+    status: "planned" as const,
+    goal: "Develop strategic, higher-effort standards for UX consistency and system integration that require broader institutional coordination.",
+    standards: ["User Experience", "Integration"],
+    deliverables: [
+      "UI pattern library or design system published",
+      "API design guide and contract testing framework operational",
+      "Integration review board established",
+      "Cross-project UX consistency audit completed",
+    ],
+  },
+];
+
+// ============================================================
+// Formal Standard Documents (Phase 1)
+// ============================================================
+
+export const standardDocuments = [
+  {
+    id: "code-development",
+    title: "Code Development Standard",
+    version: "1.0",
+    effectiveDate: "March 2026",
+    lastReviewed: "March 6, 2026",
+    owner: "AISPEG / RCDS",
+    scope:
+      "All software development projects at the University of Idaho that use AI-assisted or agentic development workflows. Applies to both human developers and AI agents.",
+    sections: [
+      {
+        heading: "Approved Technology Stack",
+        content: [
+          "All new university business applications must use the approved stack defined in TEMPLATE-app (github.com/ui-insight/TEMPLATE-app)",
+          "Frontend: React 19, TypeScript, Vite 7, Tailwind CSS v4, React Router v7",
+          "Backend: Python 3.11+, FastAPI, async SQLAlchemy 2.0, Pydantic 2.x, PyJWT, bcrypt",
+          "Database: SQLite for development, PostgreSQL 16 for production",
+          "Infrastructure: Docker / Docker Compose with nginx reverse proxy",
+          "Documentation: MkDocs Material",
+          "Testing: Vitest (frontend), pytest / pytest-asyncio (backend)",
+          "Linting: Ruff (Python), ESLint (TypeScript)",
+          "OpenERA is the canonical reference implementation of this stack",
+        ],
+      },
+      {
+        heading: "Coding Conventions",
+        content: [
+          "Backend: Ruff for linting and formatting (line-length 88), snake_case for functions and variables, PascalCase for classes",
+          "Frontend: ESLint with zero-warnings policy, tsc -b must pass, functional components with hooks only, Tailwind CSS utility classes exclusively (no CSS component libraries, no CSS modules, no inline styles), PascalCase for components, camelCase for functions and variables",
+          "Git workflow: feature/fix/docs branch naming, imperative mood commit messages, all changes through pull requests, CI must pass before merge",
+        ],
+      },
+      {
+        heading: "Project Structure",
+        content: [
+          "All projects must follow the one-file-per-resource pattern defined in TEMPLATE-app:",
+          "Backend: backend/app/api/v1/{resource}.py for routes, backend/app/models/{resource}.py for ORM models, backend/app/schemas/{resource}.py for Pydantic schemas, backend/app/services/ for business logic",
+          "Frontend: src/api/ (one client module per resource), src/components/ (one component per file), src/pages/ (route pages), src/types/ (TypeScript interfaces)",
+          "Tests must mirror the source structure",
+        ],
+      },
+      {
+        heading: "Agent Rules (CLAUDE.md)",
+        content: [
+          "Every project must include a CLAUDE.md file with normative agent rules. The TEMPLATE-app standard includes 15 rules:",
+          "Never Do: No CSS component libraries, no class components, no committed secrets, no direct .env modification, no skipping type safety, no raw SQL, no unsolicited improvements, no premature abstraction",
+          "Always Do: Use async patterns, Pydantic validation on all inputs, run tests before completion, use feature branches, include Co-Authored-By attribution, follow existing patterns, document API endpoints",
+          "These are machine-readable constraints, not suggestions. Agents that violate them fail review.",
+        ],
+      },
+      {
+        heading: "Architecture Decision Records",
+        content: [
+          "All significant technical decisions must be recorded as ADRs in docs/architecture/adr.md",
+          "ADR template: Title, Status (Accepted/Proposed/Deprecated/Superseded), Context, Decision, Consequences",
+          "ADRs prevent agents from accidentally overriding intentional design choices and enable consistent onboarding",
+        ],
+      },
+      {
+        heading: "Agent Attribution & Review",
+        content: [
+          "All AI-assisted contributions must include proper attribution:",
+          "PRs must use the agent context template: Agent name, Authorship level (fully generated / agent-assisted / human-reviewed), Key decisions made by agent",
+          "Commits must include Co-Authored-By lines for agent contributions",
+          "PRs must carry an ai-assisted label",
+        ],
+      },
+      {
+        heading: "CI/CD Enforcement",
+        content: [
+          "Three GitHub Actions workflows must be active on all projects:",
+          "backend-test.yml: Ruff lint, Ruff format check, pytest (triggered on backend/ changes)",
+          "frontend-test.yml: ESLint with zero-warnings, TypeScript type check (tsc -b), production build, Vitest (triggered on frontend/ changes)",
+          "security-scan.yml: pip-audit and npm audit (triggered on push, PR, and weekly schedule)",
+          "All three must pass before PR merge. No exceptions.",
+        ],
+      },
+    ],
+    enforcement:
+      "CI/CD pipelines automatically enforce coding standards, linting, type checking, and test passage. PRs require human review with agent attribution. Non-compliant code cannot be merged.",
+    references: [
+      {
+        label: "TEMPLATE-app Repository",
+        href: "https://github.com/ui-insight/TEMPLATE-app",
+      },
+      {
+        label: "OpenERA Reference Implementation",
+        href: "https://github.com/ui-insight/OpenERA",
+      },
+    ],
+  },
+  {
+    id: "cybersecurity",
+    title: "Cybersecurity Standard",
+    version: "1.0",
+    effectiveDate: "March 2026",
+    lastReviewed: "March 6, 2026",
+    owner: "OIT Security / AISPEG",
+    scope:
+      "All applications developed or deployed by University of Idaho units that handle institutional data. Applies to both new development and existing systems undergoing AI-enabled modernization.",
+    sections: [
+      {
+        heading: "Authentication & Authorization",
+        content: [
+          "JWT (HS256) token-based authentication is the standard pattern",
+          "Passwords must be hashed with bcrypt — no plaintext or reversible encryption",
+          "Role-based access control (RBAC) must be implemented for all multi-user applications",
+          "CORS must be restricted to known origins in production",
+          "All secrets must be stored in environment variables — never committed to source control",
+        ],
+      },
+      {
+        heading: "Data Classification",
+        content: [
+          "All data must be classified before storage using the four-level framework:",
+          "Public: No restrictions on access",
+          "Internal: Requires authentication to access",
+          "Confidential: Requires RBAC, encryption at rest recommended",
+          "Restricted (PII/FERPA/HIPAA): Encryption required, audit logging mandatory",
+          "Classify before storing, minimize collection, document lineage, secure by default",
+          "Never store SSNs, dates of birth, or banking information unless absolutely required and justified",
+        ],
+      },
+      {
+        heading: "Data Handling Rules",
+        content: [
+          "Each classification level specifies controls across six dimensions:",
+          "Authentication: Who can access (none / authenticated users / authorized roles / named individuals)",
+          "Authorization: How access is controlled (open / role-based / attribute-based / explicit approval)",
+          "Encryption: At rest and in transit requirements per level",
+          "Audit logging: Required for Confidential and Restricted data",
+          "Retention: Data retention schedules must be documented",
+          "Disposal: Secure deletion procedures for each classification level",
+        ],
+      },
+      {
+        heading: "Input Validation & API Security",
+        content: [
+          "Pydantic validation is required on all API inputs — no unvalidated data enters the system",
+          "File upload limits must be configured",
+          "Rate limiting must be enabled on all public-facing endpoints",
+          "HTTPS is required for all production deployments",
+        ],
+      },
+      {
+        heading: "Production Checklist",
+        content: [
+          "Before any application goes to production, all 10 items must be verified:",
+          "SECRET_KEY changed from default and rotated",
+          "DEV_MODE set to false",
+          "PostgreSQL configured (not SQLite)",
+          "CORS restricted to known origins",
+          "HTTPS enabled",
+          "File upload limits configured",
+          "Rate limiting enabled",
+          "Logging enabled and configured",
+          "Dependency audits passing (pip-audit, npm audit)",
+          "Institutional security review checklist completed",
+        ],
+      },
+      {
+        heading: "Dependency Security",
+        content: [
+          "Dependabot must be enabled on all repositories",
+          "pip-audit (Python) and npm audit (JavaScript) run in CI on every push, PR, and weekly",
+          "High-severity vulnerabilities must be addressed before merge",
+          "Dependencies should be pinned to specific versions in production",
+        ],
+      },
+      {
+        heading: "Institutional Security Review",
+        content: [
+          "An institutional security review checklist in docs/security/ covers 10 categories:",
+          "System classification, data protection scope, network architecture, authentication mechanisms, authorization model, encryption standards, audit logging, incident response contacts, compliance requirements, and deployment security",
+          "This review must be completed before production deployment and updated annually",
+        ],
+      },
+    ],
+    enforcement:
+      "security-scan.yml CI workflow runs automated dependency audits on every push and PR. The production checklist is verified before deployment. Institutional security review is required for all production applications.",
+    references: [
+      {
+        label: "TEMPLATE-app Security Patterns",
+        href: "https://github.com/ui-insight/TEMPLATE-app",
+      },
+    ],
+  },
+  {
+    id: "documentation",
+    title: "Documentation Standard",
+    version: "1.0",
+    effectiveDate: "March 2026",
+    lastReviewed: "March 6, 2026",
+    owner: "AISPEG",
+    scope:
+      "All software projects developed under AISPEG coordination. Applies to both new projects created from TEMPLATE-app and existing projects being brought into compliance.",
+    sections: [
+      {
+        heading: "Required Project Files",
+        content: [
+          "Every project must maintain the following files at the repository root:",
+          "README.md — Project overview, purpose, quick start instructions, and tech stack summary",
+          "CLAUDE.md — Agent context file with normative rules, kept current as the project evolves. This is the primary interface between the project and AI agents.",
+          "CONTRIBUTING.md — Contribution guidelines, branch naming, PR process, and agent attribution requirements",
+          "SECURITY.md — Vulnerability reporting procedures and security contact information",
+          "CODE_OF_CONDUCT.md — Expected behavior standards for contributors",
+        ],
+      },
+      {
+        heading: "Architecture Documentation",
+        content: [
+          "All projects must maintain architecture documentation in docs/architecture/:",
+          "System architecture overview with component diagrams",
+          "Architecture Decision Records (ADRs) using the standard template: Title, Status, Context, Decision, Consequences",
+          "ADRs must be created for all significant technical decisions — they are the institutional memory of why choices were made",
+          "Two seed ADRs are required: stack selection rationale and styling approach rationale",
+        ],
+      },
+      {
+        heading: "Governance Documentation",
+        content: [
+          "Projects handling institutional data must maintain governance docs in docs/governance/:",
+          "Data governance documentation including data classification for all data elements",
+          "Data inventory tracking each element's classification, storage location, access roles, and applicable regulations",
+          "Compliance documentation for applicable regulations (FERPA, HIPAA, etc.)",
+        ],
+      },
+      {
+        heading: "Security Documentation",
+        content: [
+          "All projects must maintain security documentation in docs/security/:",
+          "Detailed security architecture and authentication flow",
+          "Institutional security review checklist (10 categories)",
+          "Incident response contacts and procedures",
+        ],
+      },
+      {
+        heading: "Documentation Site",
+        content: [
+          "MkDocs Material is the standard documentation site generator",
+          "Documentation sites must include navigation sections, code copy buttons, and search functionality",
+          "Documentation must be buildable from the repository (no external dependencies for viewing)",
+        ],
+      },
+      {
+        heading: "CLAUDE.md Standards",
+        content: [
+          "The CLAUDE.md file is a critical institutional artifact — it defines how AI agents interact with the project:",
+          "Must include project overview and tech stack",
+          "Must include normative rules (Never Do / Always Do) specific to the project",
+          "Must be updated when project conventions change — stale CLAUDE.md files cause agent errors",
+          "Must reference ADRs for major design decisions so agents understand constraints",
+          "Should include development commands, deployment instructions, and testing expectations",
+        ],
+      },
+    ],
+    enforcement:
+      "PR review checklist verifies documentation is updated alongside code changes. CI documentation build verification ensures docs compile. CLAUDE.md currency is checked during sprint reviews.",
+    references: [
+      {
+        label: "TEMPLATE-app Documentation Structure",
+        href: "https://github.com/ui-insight/TEMPLATE-app",
+      },
+    ],
+  },
+];
+
+export const standardsSuccessMetrics = [
+  {
+    metric: "Standards Coverage",
+    target: "All 7 standard areas have published, versioned documentation",
+    measureBy: "Q4 2026",
+  },
+  {
+    metric: "CI Enforcement",
+    target: "100% of active projects enforce applicable standards via automated CI gates",
+    measureBy: "Q3 2026",
+  },
+  {
+    metric: "Compliance Rate",
+    target: "All new projects created from TEMPLATE-app pass standards audit at launch",
+    measureBy: "Q2 2026",
+  },
+  {
+    metric: "Accessibility Baseline",
+    target: "All public-facing applications pass WCAG 2.1 AA automated checks",
+    measureBy: "Q4 2026",
+  },
+  {
+    metric: "Integration Maturity",
+    target: "API design guide adopted by at least 3 inter-system integrations",
+    measureBy: "Q4 2026",
+  },
+];

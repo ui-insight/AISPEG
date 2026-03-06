@@ -24,6 +24,19 @@ interface ProjectTableProps {
 
 type SortKey = "name" | "daysActive" | "netNewLines";
 
+function SortIcon({ column, sortKey, sortAsc }: { column: SortKey; sortKey: SortKey; sortAsc: boolean }) {
+  if (sortKey !== column) return null;
+  return (
+    <svg className="ml-1 inline h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+      {sortAsc ? (
+        <path d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L10 6.414l-3.293 3.293a1 1 0 01-1.414 0z" />
+      ) : (
+        <path d="M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L10 13.586l3.293-3.293a1 1 0 011.414 0z" />
+      )}
+    </svg>
+  );
+}
+
 export default function ProjectTable({ projects, totals }: ProjectTableProps) {
   const [sortKey, setSortKey] = useState<SortKey>("netNewLines");
   const [sortAsc, setSortAsc] = useState(false);
@@ -43,19 +56,6 @@ export default function ProjectTable({ projects, totals }: ProjectTableProps) {
     }
   }
 
-  function SortIcon({ column }: { column: SortKey }) {
-    if (sortKey !== column) return null;
-    return (
-      <svg className="ml-1 inline h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
-        {sortAsc ? (
-          <path d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L10 6.414l-3.293 3.293a1 1 0 01-1.414 0z" />
-        ) : (
-          <path d="M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L10 13.586l3.293-3.293a1 1 0 011.414 0z" />
-        )}
-      </svg>
-    );
-  }
-
   return (
     <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
       <table className="w-full text-left text-sm">
@@ -65,19 +65,19 @@ export default function ProjectTable({ projects, totals }: ProjectTableProps) {
               className="cursor-pointer px-6 py-3 font-semibold text-gray-700"
               onClick={() => handleSort("name")}
             >
-              Repository <SortIcon column="name" />
+              Repository <SortIcon column="name" sortKey={sortKey} sortAsc={sortAsc} />
             </th>
             <th
               className="cursor-pointer px-6 py-3 text-right font-semibold text-gray-700"
               onClick={() => handleSort("daysActive")}
             >
-              Days Active <SortIcon column="daysActive" />
+              Days Active <SortIcon column="daysActive" sortKey={sortKey} sortAsc={sortAsc} />
             </th>
             <th
               className="cursor-pointer px-6 py-3 text-right font-semibold text-gray-700"
               onClick={() => handleSort("netNewLines")}
             >
-              Net New Lines <SortIcon column="netNewLines" />
+              Net New Lines <SortIcon column="netNewLines" sortKey={sortKey} sortAsc={sortAsc} />
             </th>
             <th className="px-6 py-3 text-right font-semibold text-gray-700">
               Low Est.

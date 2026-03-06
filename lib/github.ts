@@ -49,8 +49,7 @@ export async function fetchIssues(): Promise<GitHubIssue[]> {
     const data = await res.json();
 
     // Filter out pull requests (GitHub API returns PRs as issues)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (data as any[]).filter((issue) => !issue.pull_request) as GitHubIssue[];
+    return (data as GitHubIssue[]).filter((issue) => !("pull_request" in issue));
   } catch (error) {
     console.error("Failed to fetch GitHub issues:", error);
     return [];
