@@ -1,7 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { standardDocuments, institutionalStandards } from "@/lib/data";
+import {
+  standardDocuments,
+  institutionalStandards,
+  playbookItems,
+  knowledgeArticles,
+} from "@/lib/data";
 
 export function generateStaticParams() {
   return standardDocuments.map((doc) => ({ id: doc.id }));
@@ -102,6 +107,75 @@ export default async function StandardDetailPage({
           </ul>
         </section>
       )}
+
+      {/* Related Content */}
+      {(() => {
+        const relatedPlaybook = doc.relatedPlaybookIds
+          ? playbookItems.filter((p) => doc.relatedPlaybookIds!.includes(p.id))
+          : [];
+        const relatedKnowledge = doc.relatedKnowledgeTitles
+          ? knowledgeArticles.filter((a) => doc.relatedKnowledgeTitles!.includes(a.title))
+          : [];
+
+        if (relatedPlaybook.length === 0 && relatedKnowledge.length === 0) return null;
+
+        return (
+          <section className="space-y-4">
+            <h2 className="text-base font-semibold text-ui-charcoal">Related Content</h2>
+            <div className="grid gap-4 md:grid-cols-2">
+              {relatedPlaybook.length > 0 && (
+                <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+                  <div className="flex items-center gap-2">
+                    <span className="rounded-full bg-ui-charcoal px-2.5 py-0.5 text-xs font-medium text-white">
+                      Playbook
+                    </span>
+                    <Link
+                      href="/playbook"
+                      className="text-xs text-ui-gold-dark hover:underline"
+                    >
+                      View all &rarr;
+                    </Link>
+                  </div>
+                  <ul className="mt-3 space-y-2">
+                    {relatedPlaybook.map((item) => (
+                      <li key={item.id} className="flex items-start gap-2 text-sm text-gray-600">
+                        <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-ui-gold" />
+                        <span>
+                          <span className="font-medium text-ui-charcoal">{item.title}</span>
+                          <span className="ml-1 text-xs text-gray-400">({item.category})</span>
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {relatedKnowledge.length > 0 && (
+                <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+                  <div className="flex items-center gap-2">
+                    <span className="rounded-full bg-ui-charcoal px-2.5 py-0.5 text-xs font-medium text-white">
+                      Knowledge Base
+                    </span>
+                    <Link
+                      href="/knowledge"
+                      className="text-xs text-ui-gold-dark hover:underline"
+                    >
+                      View all &rarr;
+                    </Link>
+                  </div>
+                  <ul className="mt-3 space-y-2">
+                    {relatedKnowledge.map((article) => (
+                      <li key={article.title} className="flex items-start gap-2 text-sm text-gray-600">
+                        <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-ui-gold" />
+                        <span className="font-medium text-ui-charcoal">{article.title}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </section>
+        );
+      })()}
 
       {/* References */}
       {doc.references.length > 0 && (

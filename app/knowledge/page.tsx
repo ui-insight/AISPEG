@@ -1,7 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { knowledgeArticles } from "@/lib/data";
+import Link from "next/link";
+import { knowledgeArticles, standardDocuments } from "@/lib/data";
+
+function getStandardsForArticle(title: string) {
+  return standardDocuments.filter(
+    (doc) => doc.relatedKnowledgeTitles?.includes(title)
+  );
+}
 
 export default function KnowledgePage() {
   const [query, setQuery] = useState("");
@@ -79,34 +86,59 @@ export default function KnowledgePage() {
 
       {/* Articles */}
       <div className="space-y-4">
-        {filtered.map((article, i) => (
-          <div
-            key={i}
-            className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm"
-          >
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <span className="inline-block rounded-full bg-ui-mid/10 px-2.5 py-0.5 text-xs font-medium text-ui-mid">
-                  {article.category}
-                </span>
-                <h3 className="mt-2 text-base font-semibold text-ui-charcoal">
-                  {article.title}
-                </h3>
-                <p className="mt-1 text-sm text-gray-600">{article.summary}</p>
+        {filtered.map((article, i) => {
+          const relatedStandards = getStandardsForArticle(article.title);
+          return (
+            <div
+              key={i}
+              className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <span className="inline-block rounded-full bg-ui-mid/10 px-2.5 py-0.5 text-xs font-medium text-ui-mid">
+                    {article.category}
+                  </span>
+                  <h3 className="mt-2 text-base font-semibold text-ui-charcoal">
+                    {article.title}
+                  </h3>
+                  <p className="mt-1 text-sm text-gray-600">{article.summary}</p>
+                </div>
+              </div>
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {article.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-500"
+                  >
+                    {tag}
+                  </span>
+                ))}
+                {relatedStandards.map((std) => (
+                  <Link
+                    key={std.id}
+                    href={`/standards/${std.id}`}
+                    className="inline-flex items-center gap-1 rounded-full border border-ui-gold/30 bg-ui-gold/10 px-2.5 py-0.5 text-xs font-medium text-ui-gold-dark hover:bg-ui-gold/20"
+                  >
+                    <svg
+                      className="h-3 w-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                      />
+                    </svg>
+                    {std.title}
+                  </Link>
+                ))}
               </div>
             </div>
-            <div className="mt-3 flex flex-wrap gap-1.5">
-              {article.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-500"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </div>
-        ))}
+          );
+        })}
         {filtered.length === 0 && (
           <p className="py-8 text-center text-sm text-gray-400">
             No articles found matching &ldquo;{query}&rdquo;

@@ -1194,6 +1194,20 @@ export const standardDocuments = [
         href: "https://github.com/ui-insight/OpenERA",
       },
     ],
+    relatedPlaybookIds: [
+      "preferred-stacks",
+      "coding-standards",
+      "project-structure-conventions",
+      "guidelines-for-agents",
+      "ci-enforcement",
+      "architecture-decision-records",
+      "agent-attribution-review",
+    ],
+    relatedKnowledgeTitles: [
+      "TEMPLATE-app: Institutional Standards Template",
+      "Approved Tech Stack for University Applications",
+      "Coding Standards & Conventions",
+    ],
   },
   {
     id: "cybersecurity",
@@ -1290,6 +1304,12 @@ export const standardDocuments = [
         href: "https://github.com/ui-insight/TEMPLATE-app",
       },
     ],
+    relatedPlaybookIds: ["security-patterns", "data-governance-framework"],
+    relatedKnowledgeTitles: [
+      "Data Governance Framework",
+      "Security Standards & Production Checklist",
+      "CI/CD Pipeline Standards",
+    ],
   },
   {
     id: "documentation",
@@ -1367,6 +1387,11 @@ export const standardDocuments = [
         label: "TEMPLATE-app Documentation Structure",
         href: "https://github.com/ui-insight/TEMPLATE-app",
       },
+    ],
+    relatedPlaybookIds: ["documentation-standards", "architecture-decision-records"],
+    relatedKnowledgeTitles: [
+      "TEMPLATE-app: Institutional Standards Template",
+      "Multi-Agent Coordination Recommendations",
     ],
   },
 ];
