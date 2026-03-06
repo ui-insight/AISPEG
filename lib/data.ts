@@ -1028,22 +1028,25 @@ export const institutionalStandards = [
     name: "QA / Testing",
     description:
       "Testing standards for agent-generated code, including unit tests, integration tests, and quality gates.",
-    currentStatus: "Moderate" as const,
+    currentStatus: "Strong" as const,
     existsToday: [
       "Vitest for frontend, pytest for backend in TEMPLATE-app",
       "CI enforces test passage before merge",
       "ESLint zero-warnings policy",
+      "Formal QA/Testing Standard published (v1.0) with 8 requirement sections",
+      "80% minimum code coverage threshold defined with ratchet rule",
+      "Agent-specific testing requirements formalized",
+      "Integration, E2E, and performance testing standards documented",
+      "Test data management policy established",
     ],
     gapsToFill: [
-      "Minimum code coverage thresholds",
-      "Integration and end-to-end testing standards",
-      "Agent-specific testing requirements (validation of AI-generated output)",
-      "Performance and load testing standards",
-      "Test data management policy",
+      "Coverage tooling integration into CI for all active projects",
+      "Playwright E2E test suite in TEMPLATE-app as reference implementation",
+      "Quarterly quality audit process operationalized",
     ],
     owner: "RCDS / Project Leads",
     enforcement: "CI coverage gates, PR review checklist, quarterly quality audits",
-    phase: "Phase 2" as const,
+    phase: "Phase 1" as const,
   },
   {
     id: "accessibility",
@@ -1122,10 +1125,10 @@ export const standardsPhases = [
     window: "Q1–Q2 2026",
     status: "in-progress" as const,
     goal: "Document, publish, and enforce standards that already exist in practice through TEMPLATE-app and the playbook.",
-    standards: ["Code Development", "Cybersecurity", "Documentation"],
+    standards: ["Code Development", "Cybersecurity", "Documentation", "QA / Testing"],
     deliverables: [
       "Published standards documents for each area with clear ownership",
-      "All three standards enforced via CI/CD across active projects",
+      "All four standards enforced via CI/CD across active projects",
       "Compliance dashboard tracking adoption across repositories",
       "Training materials for onboarding new projects to standards",
     ],
@@ -1134,13 +1137,13 @@ export const standardsPhases = [
     name: "Phase 2: Fill Critical Gaps",
     window: "Q2–Q3 2026",
     status: "next" as const,
-    goal: "Address high-risk gaps in testing and accessibility that could create liability or quality issues at scale.",
-    standards: ["QA / Testing", "Accessibility"],
+    goal: "Address high-risk gaps in accessibility that could create liability or quality issues at scale.",
+    standards: ["Accessibility"],
     deliverables: [
-      "Code coverage thresholds enforced in CI for all projects",
-      "WCAG 2.1 AA compliance checklist integrated into PR process",
-      "Automated accessibility testing added to CI pipelines",
-      "End-to-end testing framework selected and documented",
+      "WCAG 2.1 AA compliance standard published and enforced",
+      "Runtime accessibility testing (axe-core) added to CI pipelines",
+      "Accessibility review checklist integrated into PR process",
+      "Screen reader and keyboard navigation testing protocol documented",
     ],
   },
   {
@@ -1451,6 +1454,128 @@ export const standardDocuments = [
     relatedKnowledgeTitles: [
       "TEMPLATE-app: Institutional Standards Template",
       "Multi-Agent Coordination Recommendations",
+    ],
+  },
+  {
+    id: "qa-testing",
+    title: "QA / Testing Standard",
+    version: "1.0",
+    effectiveDate: "March 2026",
+    lastReviewed: "March 6, 2026",
+    owner: "RCDS / Project Leads",
+    scope:
+      "All software projects at the University of Idaho that use AI-assisted or agentic development workflows. Applies to frontend, backend, and full-stack applications. Covers unit, integration, and end-to-end testing as well as agent-specific validation requirements.",
+    sections: [
+      {
+        heading: "Testing Frameworks & Tooling",
+        content: [
+          "Frontend testing: Vitest is the required test runner for all React/TypeScript projects (as defined in TEMPLATE-app)",
+          "Backend testing: pytest with pytest-asyncio is the required framework for all Python/FastAPI projects",
+          "End-to-end testing: Playwright is the recommended framework for E2E tests on projects with user-facing workflows",
+          "Test tooling must be declared in the project's package.json or pyproject.toml — ad hoc test scripts are not acceptable",
+          "All test dependencies must be pinned in lock files (package-lock.json, requirements.txt) to ensure reproducible CI runs",
+        ],
+      },
+      {
+        heading: "Code Coverage Requirements",
+        content: [
+          "All new code must maintain a minimum of 80% line coverage as measured by the project's coverage tool (coverage.py for backend, vitest --coverage for frontend)",
+          "Coverage reports must be generated in CI and attached to pull requests",
+          "Existing projects adopted before this standard have a 6-month grace period to reach the 80% threshold, with incremental targets agreed upon with the project lead",
+          "Coverage must not decrease on any PR — the ratchet rule: coverage can only go up or stay the same",
+          "Critical paths (authentication, authorization, data validation, financial calculations) must have 100% branch coverage regardless of overall project coverage",
+        ],
+      },
+      {
+        heading: "Test Structure & Organization",
+        content: [
+          "Test files must mirror the source directory structure (e.g., backend/app/api/v1/proposals.py → backend/tests/api/v1/test_proposals.py)",
+          "Test names must clearly describe the behavior being tested using the pattern: test_{action}_{condition}_{expected_result}",
+          "Each test must be independent — no shared mutable state, no reliance on test execution order",
+          "Test fixtures and factories must be used for data setup instead of hardcoded values or production database snapshots",
+          "Frontend component tests must cover: rendering, user interaction, state changes, and error states",
+        ],
+      },
+      {
+        heading: "CI/CD Test Enforcement",
+        content: [
+          "All tests must pass before a PR can be merged — no exceptions, no manual overrides",
+          "Backend CI workflow (backend-test.yml): Ruff lint → Ruff format check → pytest with coverage report",
+          "Frontend CI workflow (frontend-test.yml): ESLint → TypeScript type check (tsc -b) → production build → Vitest with coverage report",
+          "Test failures block deployment pipelines — broken builds cannot be deployed to any environment",
+          "Flaky tests must be fixed or quarantined within 48 hours of detection; quarantined tests must have a tracking issue",
+        ],
+      },
+      {
+        heading: "Agent-Specific Testing Requirements",
+        content: [
+          "All AI-generated code must pass the same test suite as human-written code — there is no separate quality bar",
+          "Agents must run the full test suite before claiming work is complete (CLAUDE.md Rule 11: 'ALWAYS run tests before claiming work is complete')",
+          "PRs containing AI-generated code must include tests for the new functionality — agents cannot submit untested code",
+          "AI-generated test cases must be reviewed by a human for logical correctness — passing tests do not guarantee correct assertions",
+          "When an agent modifies existing code, all existing tests must continue to pass; new edge cases identified during agent work must be added as tests",
+          "Agent output validation: for AI systems that produce user-facing content (summaries, recommendations, classifications), projects must define acceptance criteria and automated spot-checks where feasible",
+        ],
+      },
+      {
+        heading: "Integration & End-to-End Testing",
+        content: [
+          "Projects with API endpoints must include integration tests that exercise the full request/response cycle (router → service → database → response)",
+          "Integration tests must use a dedicated test database — never run against development or production data",
+          "End-to-end tests are required for all user-facing workflows that involve multi-step processes (e.g., login → form submission → confirmation)",
+          "E2E tests must cover the happy path and at least one error/edge case per workflow",
+          "API contract tests are required when two or more services communicate — changes to API schemas must be validated against consumer expectations",
+        ],
+      },
+      {
+        heading: "Test Data Management",
+        content: [
+          "Test data must be generated using factories or fixtures — never copy production data into test environments",
+          "Sensitive data (PII, credentials, API keys) must never appear in test fixtures, even in encrypted form",
+          "Database state must be reset between test runs to ensure isolation — use transactions with rollback or fresh database provisioning",
+          "Seed data scripts must be maintained alongside the application and documented in the project README",
+          "Large test datasets (>10MB) must be stored outside the repository and fetched during CI setup",
+        ],
+      },
+      {
+        heading: "Performance & Load Testing",
+        content: [
+          "Projects serving more than 50 concurrent users must include baseline performance tests for critical endpoints",
+          "Performance test results must be recorded and compared against baselines — regressions greater than 20% must be investigated before merge",
+          "Load testing is required before any production launch and after significant architectural changes",
+          "Performance testing tooling is at project discretion (k6, Locust, Artillery) but results must be reproducible and documented",
+        ],
+      },
+    ],
+    enforcement:
+      "CI pipelines enforce test passage and coverage thresholds on every push and PR. PRs with failing tests or coverage regression cannot be merged. Quarterly quality audits review coverage trends, flaky test rates, and agent-generated code test adequacy. Non-compliant projects are flagged in the AISPEG standards dashboard.",
+    references: [
+      {
+        label: "TEMPLATE-app Repository",
+        href: "https://github.com/ui-insight/TEMPLATE-app",
+      },
+      {
+        label: "OpenERA Reference Implementation (363 pytest tests)",
+        href: "https://github.com/ui-insight/OpenERA",
+      },
+      {
+        label: "Vitest Documentation",
+        href: "https://vitest.dev",
+      },
+      {
+        label: "Playwright Documentation",
+        href: "https://playwright.dev",
+      },
+    ],
+    relatedPlaybookIds: [
+      "ci-enforcement",
+      "coding-standards",
+      "guidelines-for-agents",
+    ],
+    relatedKnowledgeTitles: [
+      "TEMPLATE-app: Institutional Standards Template",
+      "CI/CD Pipeline Architecture",
+      "Coding Standards & Conventions",
     ],
   },
 ];
