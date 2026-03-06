@@ -865,6 +865,65 @@ export const knowledgeArticles = [
     tags: ["recommendations", "strategy", "institutional", "infrastructure"],
     category: "Strategy",
   },
+  {
+    title: "Infrastructure & Architecture Priorities (OIT March 2026)",
+    summary:
+      "From the VP of OIT's AI Next Steps directive: AI capability requires sustained, coordinated planning and investment. Key priorities: (1) Continue development of a single enterprise architecture — multiple groups developing multiple architectures will not succeed. (2) Coordinated development of enterprise on-prem and appropriate cloud AI infrastructure. (3) Continued development and use of an institutional data lake. (4) Prepare for next-generation GPU architectures (Blackwell; Vera Rubin horizon). (5) Maintain focus on compute, storage, network, and IRON backbone maintenance. Security risk is escalating — particularly AI-driven cyber threats in a volatile geopolitical environment. Security must be foundational, not reactive, and is more robust when working at an enterprise level rather than with distributed architecture and tools.",
+    tags: [
+      "infrastructure",
+      "architecture",
+      "gpu",
+      "security",
+      "oit",
+      "data-lake",
+      "enterprise",
+    ],
+    category: "Infrastructure",
+  },
+  {
+    title: "Enterprise Tooling & Controlled Development (OIT March 2026)",
+    summary:
+      "From the VP of OIT's AI Next Steps directive: To reduce risk and increase consistency, the university should (1) establish enterprise licensing (e.g., Anthropic Claude suite) to ensure cybersecurity controls, management visibility, and contractual protections (FERPA/HIPAA/BAA where required) — require use of license for all non-research development activities. (2) Consolidate all development work through established tools (project management, ADO, databases, etc.) and standards into institutional GitHub repositories. (3) Develop and enforce standards and train models for consistent code development, cybersecurity, documentation, QA/testing, integration, user experience, and accessibility. AI enables anyone to generate code — but institutional systems must not be built independently or without oversight.",
+    tags: [
+      "enterprise",
+      "licensing",
+      "tooling",
+      "github",
+      "oit",
+      "governance",
+      "anthropic",
+    ],
+    category: "Governance",
+  },
+  {
+    title: "Organizational & Cultural Shift (OIT March 2026)",
+    summary:
+      "From the VP of OIT's AI Next Steps directive: AI development should become a primary institutional focus. Required shifts: (1) Include the full AI Strategic Plan Execution Group (AISPEG) in coordinated decision-making. (2) Prioritize AI-enabled transformation over incremental system tweaks. (3) Limit decentralized code/system development except for learning purposes. (4) Build true cross-functional AI product teams — developers, data experts, QA, business analysts, infrastructure professionals working together in structured product teams. The framework for these teams is already built. It takes people — properly structured and institutionally focused — to do this well. Subject matter experts and technologists must work together to deliver fully tested systems that are secure, compliant, and proven to meet business needs.",
+    tags: [
+      "organizational",
+      "culture",
+      "product-teams",
+      "oit",
+      "transformation",
+      "aispeg",
+    ],
+    category: "Strategy",
+  },
+  {
+    title: "Software Contracts & Vendor Strategy (OIT March 2026)",
+    summary:
+      "From the VP of OIT's AI Next Steps directive: AI changes the economics of software. Key actions: (1) Explore internal AI-enabled development first, then vendor solutions as needed — not the reverse. (2) Identify high-priority legacy contracts for replacement, focusing on quicker timelines and high business impact. (3) Ensure data repatriation clauses in new contracts. (4) Limit renewals to one year unless strategically justified. (5) Pause non-priority new system purchases to focus on modernization. This represents a fundamental shift from buy-first to build-first thinking, enabled by the productivity gains of agentic AI development.",
+    tags: [
+      "vendor",
+      "contracts",
+      "saas",
+      "oit",
+      "modernization",
+      "data-repatriation",
+      "strategy",
+    ],
+    category: "Strategy",
+  },
 ];
 
 // ============================================================
