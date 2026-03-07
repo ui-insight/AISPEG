@@ -13,6 +13,8 @@ import {
 } from "@/lib/action-plan";
 import { fetchIssues, getPriorityLabel, type GitHubIssue } from "@/lib/github";
 
+export const dynamic = "force-dynamic";
+
 function resolveIssue(
   ref: ActionPlanIssueRef,
   issueMap: Map<number, GitHubIssue>
