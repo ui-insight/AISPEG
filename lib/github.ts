@@ -14,6 +14,9 @@ export interface GitHubIssue {
   labels: GitHubLabel[];
   html_url: string;
   created_at: string;
+  milestone?: {
+    title: string;
+  } | null;
 }
 
 const REPO = "ui-insight/AISPEG";

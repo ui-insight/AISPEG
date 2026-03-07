@@ -1,5 +1,6 @@
 import Link from "next/link";
 import IssueCard from "@/components/IssueCard";
+import { actionPlanWorkstreams } from "@/lib/action-plan";
 import {
   fetchIssues,
   getStrategicIssues,
@@ -22,6 +23,12 @@ import {
 /* Navigation cards data                                       */
 /* ---------------------------------------------------------- */
 const navCards = [
+  {
+    href: "/action-plan",
+    label: "Action Plan",
+    count: `${actionPlanWorkstreams.length} workstreams`,
+    icon: "🎯",
+  },
   {
     href: "/principles",
     label: "Strategic Principles",
