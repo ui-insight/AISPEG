@@ -684,6 +684,13 @@ export const playbookItems = [
     category: "Standards",
   },
   {
+    id: "data-flow-diagrams",
+    title: "Data Flow Diagrams (DFDs)",
+    description:
+      "University of Idaho guidance now expects projects to maintain clear, auditor-friendly data flow diagrams that show what data is processed, where it moves, how it moves, and which trust boundaries it crosses. At minimum, diagrams should identify data types and classifications, systems that store or process data, flow protocols and protection controls, and environment boundaries such as internet-facing, DMZ, internal, cloud, or container boundaries. High-risk systems should call out the regulated elements involved, and CUI environments should include FIPS 199 categorization.",
+    category: "Standards",
+  },
+  {
     id: "documentation-standards",
     title: "Documentation Standards",
     description:
@@ -808,6 +815,13 @@ export const knowledgeArticles = [
       "TEMPLATE-app defines four data classification levels: Public (no restrictions), Internal (requires authentication), Confidential (RBAC, encryption at rest recommended), and Restricted (PII/FERPA/HIPAA, encryption required, audit logging mandatory). Core principles: classify before storing, minimize collection, document lineage, and secure by default. Handling rules specify authentication, authorization, encryption, audit logging, retention, and disposal requirements for each classification level. Never store SSNs, dates of birth, or banking information unless absolutely required.",
     tags: ["governance", "data", "security", "compliance", "template-app"],
     category: "Governance",
+  },
+  {
+    title: "Data Flow Diagram Requirements",
+    summary:
+      "University of Idaho security guidance expects a data flow diagram for systems undergoing architecture, compliance, or security review. The diagram should clearly show the data classifications involved, the systems or containers processing and storing that data, the protocols and protection controls used on each flow, and the trust boundaries or environments crossed. The diagram should be simple enough to explain to an auditor while still identifying entry and exit points, storage protections, and any regulated or high-risk data elements.",
+    tags: ["dfd", "architecture", "security", "compliance", "documentation"],
+    category: "Security",
   },
   {
     title: "Security Standards & Production Checklist",
@@ -991,8 +1005,11 @@ export const institutionalStandards = [
       "Security scan CI workflow (pip-audit, npm audit)",
       "10-item production checklist",
       "SECURITY.md and institutional review checklist",
+      "University KB guidance for data flow diagrams defining required elements for architecture and compliance review",
     ],
     gapsToFill: [
+      "Template data flow diagram artifact bundled into TEMPLATE-app",
+      "DFD review checkpoint added to deployment readiness and annual review",
       "Penetration testing cadence for deployed applications",
       "Incident response playbook for AI-generated vulnerabilities",
       "Secret rotation automation",
@@ -1013,8 +1030,10 @@ export const institutionalStandards = [
       "ADR framework at docs/architecture/adr.md",
       "MkDocs Material documentation site structure",
       "Data governance docs at docs/governance/",
+      "System architecture diagrams are already expected in project documentation",
     ],
     gapsToFill: [
+      "Standard location and template for data flow diagrams in docs/architecture/ or docs/security/",
       "Documentation completeness scoring / audit tool",
       "Living documentation update cadence policy",
       "Cross-project documentation index",
@@ -1316,6 +1335,17 @@ export const standardDocuments = [
         ],
       },
       {
+        heading: "Data Flow Diagram Requirement",
+        content: [
+          "Applications handling institutional data must maintain a current data flow diagram (DFD) as part of security and architecture documentation",
+          "The DFD must show: data types and classification levels, systems or containers that process or store the data, the protocols or transfer methods used on each flow, and the environment boundaries crossed",
+          "Where data is stored, note relevant protections such as encryption at rest",
+          "For high-risk systems, identify the regulated or sensitive data elements that drive the classification; for CUI environments, include FIPS 199 categorization",
+          "The diagram must be spatial and architectural and simple enough to explain quickly during audit, compliance, or troubleshooting review",
+          "Acceptable formats include draw.io, HTML diagrams, or exported images, provided the artifact is versioned with the repository and remains readable",
+        ],
+      },
+      {
         heading: "Input Validation & API Security",
         content: [
           "Pydantic validation is required on all API inputs — no unvalidated data enters the system",
@@ -1354,23 +1384,33 @@ export const standardDocuments = [
         content: [
           "An institutional security review checklist in docs/security/ covers 10 categories:",
           "System classification, data protection scope, network architecture, authentication mechanisms, authorization model, encryption standards, audit logging, incident response contacts, compliance requirements, and deployment security",
+          "Current data flow diagrams should be included in the review package so security teams can quickly understand control points, trust boundaries, and data movement",
           "This review must be completed before production deployment and updated annually",
         ],
       },
     ],
     enforcement:
-      "security-scan.yml CI workflow runs automated dependency audits on every push and PR. The production checklist is verified before deployment. Institutional security review is required for all production applications.",
+      "security-scan.yml CI workflow runs automated dependency audits on every push and PR. The production checklist is verified before deployment. Institutional security review is required for all production applications, and review packages must include current architecture and data flow documentation.",
     references: [
       {
         label: "TEMPLATE-app Security Patterns",
         href: "https://github.com/ui-insight/TEMPLATE-app",
       },
+      {
+        label: "University of Idaho KB: Data Flow Diagrams",
+        href: "https://support.uidaho.edu/TDClient/40/Portal/KB/PrintArticle?ID=3904",
+      },
     ],
-    relatedPlaybookIds: ["security-patterns", "data-governance-framework"],
+    relatedPlaybookIds: [
+      "security-patterns",
+      "data-governance-framework",
+      "data-flow-diagrams",
+    ],
     relatedKnowledgeTitles: [
       "Data Governance Framework",
       "Security Standards & Production Checklist",
       "CI/CD Pipeline Standards",
+      "Data Flow Diagram Requirements",
     ],
   },
   {
@@ -1399,6 +1439,7 @@ export const standardDocuments = [
         content: [
           "All projects must maintain architecture documentation in docs/architecture/:",
           "System architecture overview with component diagrams",
+          "Data flow diagrams for any workflow that handles institutional or regulated data, showing systems, data classifications, protocols, and environment boundaries",
           "Architecture Decision Records (ADRs) using the standard template: Title, Status, Context, Decision, Consequences",
           "ADRs must be created for all significant technical decisions — they are the institutional memory of why choices were made",
           "Two seed ADRs are required: stack selection rationale and styling approach rationale",
@@ -1418,6 +1459,7 @@ export const standardDocuments = [
         content: [
           "All projects must maintain security documentation in docs/security/:",
           "Detailed security architecture and authentication flow",
+          "Current data flow diagrams for systems moving data across trust boundaries or into third-party services",
           "Institutional security review checklist (10 categories)",
           "Incident response contacts and procedures",
         ],
@@ -1449,11 +1491,20 @@ export const standardDocuments = [
         label: "TEMPLATE-app Documentation Structure",
         href: "https://github.com/ui-insight/TEMPLATE-app",
       },
+      {
+        label: "University of Idaho KB: Data Flow Diagrams",
+        href: "https://support.uidaho.edu/TDClient/40/Portal/KB/PrintArticle?ID=3904",
+      },
     ],
-    relatedPlaybookIds: ["documentation-standards", "architecture-decision-records"],
+    relatedPlaybookIds: [
+      "documentation-standards",
+      "architecture-decision-records",
+      "data-flow-diagrams",
+    ],
     relatedKnowledgeTitles: [
       "TEMPLATE-app: Institutional Standards Template",
       "Multi-Agent Coordination Recommendations",
+      "Data Flow Diagram Requirements",
     ],
   },
   {
