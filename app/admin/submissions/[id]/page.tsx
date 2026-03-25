@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 const tierLabels: Record<number, { label: string; color: string }> = {
   1: { label: "Tier 1: Simple Static App", color: "bg-green-100 text-green-700 border-green-200" },
@@ -42,6 +42,26 @@ interface Note {
   created_at: string;
 }
 
+interface SimilarityMatch {
+  application_id: string;
+  application_name: string;
+  application_status: string;
+  application_department: string | null;
+  github_repo: string | null;
+  application_url: string | null;
+  score: number;
+  overlap_details: {
+    sensitivity: string[];
+    integrations: string[];
+    data_sources: string[];
+    university_systems: string[];
+    output_types: string[];
+    complexity_match: boolean;
+    userbase_match: boolean;
+    auth_match: boolean;
+  };
+}
+
 function DetailRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-1 sm:flex-row sm:gap-4">
@@ -68,23 +88,28 @@ function TagList({ items }: { items: string[] | null }) {
 
 export default function AdminSubmissionDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const id = params.id as string;
 
   const [submission, setSubmission] = useState<Submission | null>(null);
   const [notes, setNotes] = useState<Note[]>([]);
+  const [similarApps, setSimilarApps] = useState<SimilarityMatch[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [statusUpdating, setStatusUpdating] = useState(false);
   const [noteAuthor, setNoteAuthor] = useState("");
   const [noteContent, setNoteContent] = useState("");
   const [noteSubmitting, setNoteSubmitting] = useState(false);
+  const [promoting, setPromoting] = useState(false);
+  const [checkingSimilarity, setCheckingSimilarity] = useState(false);
 
   useEffect(() => {
     async function load() {
       try {
-        const [subRes, notesRes] = await Promise.all([
+        const [subRes, notesRes, simRes] = await Promise.all([
           fetch(`/api/submissions/${id}`),
           fetch(`/api/submissions/${id}/notes`),
+          fetch(`/api/submissions/${id}/similarity`),
         ]);
 
         if (!subRes.ok) {
@@ -93,9 +118,8 @@ export default function AdminSubmissionDetailPage() {
         }
 
         setSubmission(await subRes.json());
-        if (notesRes.ok) {
-          setNotes(await notesRes.json());
-        }
+        if (notesRes.ok) setNotes(await notesRes.json());
+        if (simRes.ok) setSimilarApps(await simRes.json());
       } catch {
         setError("Failed to load submission");
       } finally {
@@ -104,6 +128,32 @@ export default function AdminSubmissionDetailPage() {
     }
     load();
   }, [id]);
+
+  const handleCheckSimilarity = async () => {
+    setCheckingSimilarity(true);
+    try {
+      const res = await fetch(`/api/submissions/${id}/similarity`, { method: "POST" });
+      if (res.ok) setSimilarApps(await res.json());
+    } finally {
+      setCheckingSimilarity(false);
+    }
+  };
+
+  const handlePromote = async () => {
+    setPromoting(true);
+    try {
+      const res = await fetch(`/api/submissions/${id}/promote`, { method: "POST" });
+      if (res.ok) {
+        const data = await res.json();
+        router.push(`/admin/registry/${data.application_id}`);
+      } else if (res.status === 409) {
+        const data = await res.json();
+        router.push(`/admin/registry/${data.application_id}`);
+      }
+    } finally {
+      setPromoting(false);
+    }
+  };
 
   const handleStatusChange = async (newStatus: string) => {
     setStatusUpdating(true);
@@ -179,6 +229,16 @@ export default function AdminSubmissionDetailPage() {
           <span className={`rounded-full border px-3 py-1 text-sm font-semibold ${t.color}`}>
             {t.label}
           </span>
+          <button
+            onClick={handlePromote}
+            disabled={promoting}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:bg-gray-300 transition-colors"
+          >
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            {promoting ? "Promoting..." : "Promote to Registry"}
+          </button>
         </div>
       </div>
 
@@ -242,6 +302,78 @@ export default function AdminSubmissionDetailPage() {
           {JSON.stringify(submission.answers, null, 2)}
         </pre>
       </details>
+
+      {/* Similar Applications */}
+      <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500">
+            Similar Applications ({similarApps.length})
+          </h2>
+          <button
+            onClick={handleCheckSimilarity}
+            disabled={checkingSimilarity}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50 disabled:text-gray-300 transition-colors"
+          >
+            {checkingSimilarity ? (
+              <div className="h-3 w-3 animate-spin rounded-full border border-gray-300 border-t-gray-600" />
+            ) : (
+              <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            )}
+            {checkingSimilarity ? "Checking..." : "Check Now"}
+          </button>
+        </div>
+
+        {similarApps.length > 0 ? (
+          <div className="space-y-3">
+            {similarApps.map((match) => (
+              <div key={match.application_id} className="rounded-lg border border-gray-100 bg-gray-50 p-4">
+                <div className="flex items-center justify-between">
+                  <Link
+                    href={`/admin/registry/${match.application_id}`}
+                    className="text-sm font-medium text-ui-charcoal hover:text-ui-gold-dark"
+                  >
+                    {match.application_name}
+                  </Link>
+                  <div className="flex items-center gap-2">
+                    <span className="rounded-full bg-gray-200 px-2 py-0.5 text-xs text-gray-600">
+                      {match.application_status}
+                    </span>
+                    <span className={`rounded-full px-2 py-0.5 text-xs font-bold ${
+                      match.score >= 0.6
+                        ? "bg-red-100 text-red-700"
+                        : match.score >= 0.4
+                        ? "bg-orange-100 text-orange-700"
+                        : "bg-yellow-100 text-yellow-700"
+                    }`}>
+                      {Math.round(match.score * 100)}% match
+                    </span>
+                  </div>
+                </div>
+                {match.application_department && (
+                  <p className="mt-1 text-xs text-gray-500">{match.application_department}</p>
+                )}
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {match.overlap_details.data_sources.map((ds) => (
+                    <span key={ds} className="rounded bg-blue-50 px-1.5 py-0.5 text-xs text-blue-600">{ds}</span>
+                  ))}
+                  {match.overlap_details.university_systems.map((us) => (
+                    <span key={us} className="rounded bg-purple-50 px-1.5 py-0.5 text-xs text-purple-600">{us}</span>
+                  ))}
+                  {match.overlap_details.sensitivity.map((s) => (
+                    <span key={s} className="rounded bg-red-50 px-1.5 py-0.5 text-xs text-red-600">{s}</span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-gray-400">
+            No similar applications found. Click &ldquo;Check Now&rdquo; to scan the registry.
+          </p>
+        )}
+      </div>
 
       {/* Notes */}
       <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm space-y-4">
