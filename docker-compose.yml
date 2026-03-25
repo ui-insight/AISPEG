@@ -43,6 +43,9 @@ services:
     environment:
       GITHUB_TOKEN: ${GITHUB_TOKEN:-}
       DATABASE_URL: postgresql://${POSTGRES_USER:-aispeg}:${POSTGRES_PASSWORD:-aispeg_secret}@10.10.9.10:5432/${POSTGRES_DB:-aispeg}
+      MINDROUTER_API_KEY: ${MINDROUTER_API_KEY:-}
+      MINDROUTER_BASE_URL: ${MINDROUTER_BASE_URL:-https://mindrouter.uidaho.edu}
+      MINDROUTER_MODEL: ${MINDROUTER_MODEL:-llama3.2}
     ports:
       - "9260:3000"
     networks:
@@ -84,6 +87,9 @@ services:
     environment:
       GITHUB_TOKEN: ${GITHUB_TOKEN:-}
       DATABASE_URL: postgresql://${POSTGRES_USER:-aispeg}:${POSTGRES_PASSWORD:-aispeg_secret}@10.10.9.11:5432/${POSTGRES_DB:-aispeg_dev}
+      MINDROUTER_API_KEY: ${MINDROUTER_API_KEY:-}
+      MINDROUTER_BASE_URL: ${MINDROUTER_BASE_URL:-https://mindrouter.uidaho.edu}
+      MINDROUTER_MODEL: ${MINDROUTER_MODEL:-llama3.2}
     ports:
       - "9270:3000"
     networks:

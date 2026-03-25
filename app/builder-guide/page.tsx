@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import {
   quizSteps,
@@ -11,6 +11,30 @@ import {
   type QuizStep,
   type TierRecommendation,
 } from "@/lib/builder-guide-data";
+
+// ============================================
+// Types
+// ============================================
+
+interface IdeaAnalysis {
+  summary: string;
+  suggested_sensitivity: string[];
+  suggested_complexity: string;
+  suggested_userbase: string;
+  suggested_auth: string;
+  suggested_integrations: string[];
+  suggested_data_sources: string[];
+  suggested_university_systems: string[];
+  suggested_output_types: string[];
+  clarifying_questions: string[];
+  similar_existing_tools: string[];
+  risks_and_considerations: string[];
+}
+
+interface ChatMsg {
+  role: "user" | "assistant";
+  content: string;
+}
 
 // ============================================
 // Sub-components
@@ -163,28 +187,6 @@ function MultiChoiceStep({
   );
 }
 
-function ReviewStep({ answers }: { answers: Answers }) {
-  return (
-    <div className="space-y-4">
-      {quizSteps.map((step) => {
-        const answer = answers[step.id];
-        const display = Array.isArray(answer)
-          ? answer.join(", ")
-          : answer || "(not answered)";
-
-        return (
-          <div key={step.id} className="rounded-lg border border-gray-200 bg-white p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
-              {step.title}
-            </p>
-            <p className="mt-1 text-sm text-ui-charcoal">{display}</p>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
 function TierBadge({ tier }: { tier: TierRecommendation }) {
   const colors: Record<string, string> = {
     green: "bg-green-100 text-green-700 border-green-200",
@@ -244,6 +246,341 @@ function ScoreBreakdown({ answers }: { answers: Answers }) {
     </div>
   );
 }
+
+// ── AI Analysis Panel ────────────────────────────────────────
+
+function AiAnalysisPanel({
+  analysis,
+  analyzing,
+  error,
+  onAnalyze,
+  onApplySuggestions,
+}: {
+  analysis: IdeaAnalysis | null;
+  analyzing: boolean;
+  error: string | null;
+  onAnalyze: () => void;
+  onApplySuggestions: () => void;
+}) {
+  if (!analysis && !analyzing && !error) {
+    return (
+      <div className="mt-4 rounded-xl border border-dashed border-purple-200 bg-purple-50/50 p-4">
+        <div className="flex items-center gap-3">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-100">
+            <svg className="h-4 w-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+          <div className="flex-1">
+            <p className="text-sm font-medium text-purple-700">AI-Powered Analysis</p>
+            <p className="text-xs text-purple-500">
+              Let our on-campus LLM analyze your idea and pre-fill the quiz
+            </p>
+          </div>
+          <button
+            onClick={onAnalyze}
+            className="rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 transition-colors"
+          >
+            Analyze
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (analyzing) {
+    return (
+      <div className="mt-4 rounded-xl border border-purple-200 bg-purple-50/50 p-5">
+        <div className="flex items-center gap-3">
+          <div className="h-5 w-5 animate-spin rounded-full border-2 border-purple-300 border-t-purple-600" />
+          <p className="text-sm text-purple-600">
+            Analyzing your idea with MindRouter (on-prem LLM)...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="mt-4 rounded-xl border border-orange-200 bg-orange-50 p-4">
+        <p className="text-sm text-orange-700">{error}</p>
+        <button
+          onClick={onAnalyze}
+          className="mt-2 text-xs font-medium text-orange-600 hover:text-orange-800"
+        >
+          Try again
+        </button>
+      </div>
+    );
+  }
+
+  if (!analysis) return null;
+
+  return (
+    <div className="mt-4 rounded-xl border border-purple-200 bg-purple-50/50 p-5 space-y-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="flex h-6 w-6 items-center justify-center rounded-md bg-purple-100">
+            <svg className="h-3.5 w-3.5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+          <h4 className="text-sm font-semibold text-purple-700">AI Analysis</h4>
+        </div>
+        <span className="rounded-full bg-purple-100 px-2 py-0.5 text-xs text-purple-600">
+          via MindRouter
+        </span>
+      </div>
+
+      {/* Summary */}
+      <div className="rounded-lg bg-white p-3 border border-purple-100">
+        <p className="text-xs font-medium uppercase tracking-wide text-gray-500">Summary</p>
+        <p className="mt-1 text-sm text-ui-charcoal">{analysis.summary}</p>
+      </div>
+
+      {/* Clarifying Questions */}
+      {analysis.clarifying_questions.length > 0 && (
+        <div>
+          <p className="text-xs font-medium uppercase tracking-wide text-purple-600">
+            Questions to Consider
+          </p>
+          <ul className="mt-2 space-y-1.5">
+            {analysis.clarifying_questions.map((q, i) => (
+              <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-400" />
+                {q}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Similar Tools */}
+      {analysis.similar_existing_tools.length > 0 && (
+        <div>
+          <p className="text-xs font-medium uppercase tracking-wide text-purple-600">
+            Similar Existing Tools
+          </p>
+          <ul className="mt-2 space-y-1.5">
+            {analysis.similar_existing_tools.map((t, i) => (
+              <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-400" />
+                {t}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Risks */}
+      {analysis.risks_and_considerations.length > 0 && (
+        <div>
+          <p className="text-xs font-medium uppercase tracking-wide text-orange-600">
+            Risks & Considerations
+          </p>
+          <ul className="mt-2 space-y-1.5">
+            {analysis.risks_and_considerations.map((r, i) => (
+              <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-orange-400" />
+                {r}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Apply Button */}
+      <button
+        onClick={onApplySuggestions}
+        className="w-full rounded-lg bg-purple-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-purple-700 transition-colors"
+      >
+        Apply AI Suggestions to Quiz
+      </button>
+      <p className="text-center text-xs text-purple-500">
+        You can review and modify every answer before submitting
+      </p>
+    </div>
+  );
+}
+
+// ── AI Chat Panel ────────────────────────────────────────────
+
+function AiChatPanel() {
+  const [open, setOpen] = useState(false);
+  const [messages, setMessages] = useState<ChatMsg[]>([]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [unavailable, setUnavailable] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages]);
+
+  const sendMessage = async () => {
+    const text = input.trim();
+    if (!text || loading) return;
+
+    const newMessages: ChatMsg[] = [...messages, { role: "user", content: text }];
+    setMessages(newMessages);
+    setInput("");
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/ai/refine", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: newMessages }),
+      });
+
+      if (res.status === 503) {
+        setUnavailable(true);
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            content:
+              "AI chat is not yet configured. The MindRouter API key needs to be set up by an administrator.",
+          },
+        ]);
+      } else if (res.ok) {
+        const data = await res.json();
+        setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
+      } else {
+        setMessages((prev) => [
+          ...prev,
+          { role: "assistant", content: "Sorry, I encountered an error. Please try again." },
+        ]);
+      }
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: "Connection error. Please try again." },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!open) {
+    return (
+      <button
+        onClick={() => setOpen(true)}
+        className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-full bg-purple-600 px-5 py-3 text-sm font-medium text-white shadow-lg hover:bg-purple-700 transition-colors"
+      >
+        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+          />
+        </svg>
+        AI Assistant
+      </button>
+    );
+  }
+
+  return (
+    <div className="fixed bottom-6 right-6 z-50 flex h-[480px] w-96 flex-col rounded-2xl border border-gray-200 bg-white shadow-2xl">
+      {/* Header */}
+      <div className="flex items-center justify-between rounded-t-2xl bg-purple-600 px-4 py-3">
+        <div className="flex items-center gap-2">
+          <svg className="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+          <div>
+            <p className="text-sm font-semibold text-white">AI Assistant</p>
+            <p className="text-xs text-purple-200">Powered by MindRouter</p>
+          </div>
+        </div>
+        <button onClick={() => setOpen(false)} className="text-white/70 hover:text-white">
+          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      {/* Messages */}
+      <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3">
+        {messages.length === 0 && (
+          <div className="text-center py-8">
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-purple-100">
+              <svg className="h-6 w-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <p className="text-sm font-medium text-gray-700">How can I help?</p>
+            <p className="mt-1 text-xs text-gray-500">
+              Ask about data sensitivity, tech stacks, university systems, or anything about your app idea.
+            </p>
+          </div>
+        )}
+        {messages.map((msg, i) => (
+          <div
+            key={i}
+            className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+          >
+            <div
+              className={`max-w-[85%] rounded-xl px-3.5 py-2.5 text-sm ${
+                msg.role === "user"
+                  ? "bg-purple-600 text-white"
+                  : "bg-gray-100 text-gray-700"
+              }`}
+            >
+              <p className="whitespace-pre-wrap">{msg.content}</p>
+            </div>
+          </div>
+        ))}
+        {loading && (
+          <div className="flex justify-start">
+            <div className="rounded-xl bg-gray-100 px-4 py-3">
+              <div className="flex gap-1.5">
+                <div className="h-2 w-2 animate-bounce rounded-full bg-gray-400" style={{ animationDelay: "0ms" }} />
+                <div className="h-2 w-2 animate-bounce rounded-full bg-gray-400" style={{ animationDelay: "150ms" }} />
+                <div className="h-2 w-2 animate-bounce rounded-full bg-gray-400" style={{ animationDelay: "300ms" }} />
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Input */}
+      <div className="border-t border-gray-200 p-3">
+        <div className="flex items-center gap-2">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+            placeholder={unavailable ? "AI not configured..." : "Ask a question..."}
+            disabled={unavailable}
+            className="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-purple-400 focus:outline-none focus:ring-1 focus:ring-purple-400 disabled:bg-gray-50 disabled:text-gray-400"
+          />
+          <button
+            onClick={sendMessage}
+            disabled={loading || !input.trim() || unavailable}
+            className="rounded-lg bg-purple-600 p-2 text-white hover:bg-purple-700 disabled:bg-gray-200 disabled:text-gray-400 transition-colors"
+          >
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Results View ─────────────────────────────────────────────
 
 function ResultsView({
   answers,
@@ -394,14 +731,31 @@ function ResultsView({
 // Main Wizard Component
 // ============================================
 
-const TOTAL_STEPS = quizSteps.length; // 6 quiz steps
-const REVIEW_STEP = TOTAL_STEPS; // index 6 = review
+const TOTAL_STEPS = quizSteps.length;
+const REVIEW_STEP = TOTAL_STEPS;
+
+// Maps AI analysis fields → quiz step IDs
+const AI_FIELD_MAP: Record<string, string> = {
+  suggested_sensitivity: "sensitivity",
+  suggested_complexity: "complexity",
+  suggested_userbase: "userbase",
+  suggested_auth: "auth",
+  suggested_integrations: "integrations",
+  suggested_data_sources: "dataSources",
+  suggested_university_systems: "universitySystems",
+  suggested_output_types: "outputTypes",
+};
 
 export default function BuilderGuidePage() {
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Answers>({});
   const [showResults, setShowResults] = useState(false);
   const submittedRef = useRef(false);
+
+  // AI state
+  const [analysis, setAnalysis] = useState<IdeaAnalysis | null>(null);
+  const [analyzing, setAnalyzing] = useState(false);
+  const [analysisError, setAnalysisError] = useState<string | null>(null);
 
   const step = quizSteps[currentStep];
 
@@ -410,13 +764,89 @@ export default function BuilderGuidePage() {
   };
 
   const canProceed = () => {
-    if (!step) return true; // review step
+    if (!step) return true;
     const answer = answers[step.id];
-    if (step.type === "text") return true; // text is optional
+    if (step.type === "text") return true;
     if (step.type === "single") return !!answer;
     if (step.type === "multi") return Array.isArray(answer) && answer.length > 0;
     return false;
   };
+
+  // ── AI analysis ──────────────────────────
+
+  const handleAnalyze = async () => {
+    const idea = (answers.idea as string) || "";
+    if (idea.trim().length < 10) {
+      setAnalysisError("Please describe your idea in more detail before analyzing.");
+      return;
+    }
+
+    setAnalyzing(true);
+    setAnalysisError(null);
+    setAnalysis(null);
+
+    try {
+      const res = await fetch("/api/ai/analyze-idea", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ idea: idea.trim() }),
+      });
+
+      if (res.status === 503) {
+        setAnalysisError(
+          "AI analysis is not yet configured. An administrator needs to set up the MindRouter API key."
+        );
+        return;
+      }
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setAnalysisError(data.error || "Analysis failed. Please try again.");
+        return;
+      }
+
+      const data = await res.json();
+      setAnalysis(data);
+    } catch {
+      setAnalysisError("Connection error. Please try again.");
+    } finally {
+      setAnalyzing(false);
+    }
+  };
+
+  const handleApplySuggestions = () => {
+    if (!analysis) return;
+
+    const newAnswers = { ...answers };
+
+    for (const [aiField, stepId] of Object.entries(AI_FIELD_MAP)) {
+      const value = (analysis as unknown as Record<string, unknown>)[aiField];
+      if (!value) continue;
+
+      // Find the corresponding quiz step to validate options
+      const quizStep = quizSteps.find((s) => s.id === stepId);
+      if (!quizStep || !quizStep.options) continue;
+
+      const validLabels = quizStep.options.map((o) => o.label);
+
+      if (Array.isArray(value)) {
+        // Multi-select: filter to valid options
+        const filtered = (value as string[]).filter((v) => validLabels.includes(v));
+        if (filtered.length > 0) {
+          newAnswers[stepId] = filtered;
+        }
+      } else if (typeof value === "string") {
+        // Single-select: check if valid
+        if (validLabels.includes(value)) {
+          newAnswers[stepId] = value;
+        }
+      }
+    }
+
+    setAnswers(newAnswers);
+  };
+
+  // ── Submission ───────────────────────────
 
   const submitToDatabase = async () => {
     if (submittedRef.current) return;
@@ -435,7 +865,6 @@ export default function BuilderGuidePage() {
         }),
       });
     } catch (err) {
-      // Non-blocking: log but don't interrupt the user experience
       console.error("Failed to save submission:", err);
     }
   };
@@ -459,6 +888,8 @@ export default function BuilderGuidePage() {
     setCurrentStep(0);
     setAnswers({});
     setShowResults(false);
+    setAnalysis(null);
+    setAnalysisError(null);
     submittedRef.current = false;
   };
 
@@ -481,6 +912,7 @@ export default function BuilderGuidePage() {
   }
 
   const isReview = currentStep === REVIEW_STEP;
+  const isIdeaStep = step?.id === "idea";
 
   return (
     <div className="space-y-10">
@@ -562,6 +994,17 @@ export default function BuilderGuidePage() {
                 />
               )}
             </div>
+
+            {/* AI Analysis Panel — only on the idea step */}
+            {isIdeaStep && (
+              <AiAnalysisPanel
+                analysis={analysis}
+                analyzing={analyzing}
+                error={analysisError}
+                onAnalyze={handleAnalyze}
+                onApplySuggestions={handleApplySuggestions}
+              />
+            )}
           </div>
         )}
 
@@ -598,6 +1041,9 @@ export default function BuilderGuidePage() {
           </button>
         </div>
       </div>
+
+      {/* Floating AI Chat */}
+      <AiChatPanel />
     </div>
   );
 }
