@@ -15,6 +15,7 @@ const navItems = [
   { href: "/knowledge", label: "Knowledge Base", icon: "search" },
   { href: "/roadmap", label: "Planning & Roadmap", icon: "map" },
   { href: "/standards", label: "Standards Roadmap", icon: "shield" },
+  { href: "/builder-guide", label: "App Builder Guide", icon: "compass" },
 ];
 
 function NavIcon({ icon, className }: { icon: string; className?: string }) {
@@ -83,6 +84,19 @@ function NavIcon({ icon, className }: { icon: string; className?: string }) {
             strokeWidth={2}
             d="M12 3v3m0 12v3m9-9h-3M6 12H3m15.364-6.364l-2.121 2.121M7.757 16.243l-2.121 2.121m0-12.728l2.121 2.121m8.486 8.486l2.121 2.121M12 15a3 3 0 100-6 3 3 0 000 6zm0 4a7 7 0 100-14 7 7 0 000 14z"
           />
+        </svg>
+      );
+    case "compass":
+      return (
+        <svg className={c} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" strokeWidth={2} />
+          <polygon
+            points="16.24,7.76 14.12,14.12 7.76,16.24 9.88,9.88"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+          />
+          <circle cx="12" cy="12" r="1" fill="currentColor" strokeWidth={0} />
         </svg>
       );
     default:
