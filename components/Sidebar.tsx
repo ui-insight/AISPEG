@@ -16,6 +16,7 @@ const navItems = [
   { href: "/roadmap", label: "Planning & Roadmap", icon: "map" },
   { href: "/standards", label: "Standards Roadmap", icon: "shield" },
   { href: "/builder-guide", label: "App Builder Guide", icon: "compass" },
+  { href: "/docs", label: "Documentation", icon: "book" },
 ];
 
 const adminItems = [
