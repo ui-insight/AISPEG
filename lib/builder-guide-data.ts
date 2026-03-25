@@ -209,6 +209,158 @@ export const quizSteps: QuizStep[] = [
       },
     ],
   },
+  {
+    id: "dataSources",
+    title: "Data Sources",
+    subtitle:
+      "What types of data sources will your application need to access? Select all that apply.",
+    type: "multi",
+    options: [
+      {
+        label: "None / generates its own data",
+        description: "No external data sources needed",
+        points: 0,
+      },
+      {
+        label: "Banner / SIS",
+        description: "Student Information System (enrollment, grades, transcripts)",
+        points: 2,
+      },
+      {
+        label: "Canvas LMS",
+        description: "Course content, assignments, gradebooks",
+        points: 1,
+      },
+      {
+        label: "LDAP / Active Directory",
+        description: "User directories and group memberships",
+        points: 1,
+      },
+      {
+        label: "Slate CRM",
+        description: "Admissions and recruitment data",
+        points: 2,
+      },
+      {
+        label: "Research databases",
+        description: "Lab data, publications, grant records",
+        points: 1,
+      },
+      {
+        label: "Google Workspace",
+        description: "Google Drive, Sheets, Calendar, etc.",
+        points: 1,
+      },
+      {
+        label: "Flat files / spreadsheets",
+        description: "CSV, Excel, or other file-based data",
+        points: 0,
+      },
+      {
+        label: "Custom / internal APIs",
+        description: "APIs built and maintained by your unit",
+        points: 1,
+      },
+    ],
+  },
+  {
+    id: "universitySystems",
+    title: "Specific University Systems",
+    subtitle:
+      "Which specific university systems will your application interact with? Select all that apply.",
+    type: "multi",
+    options: [
+      {
+        label: "None",
+        description: "No direct university system integration",
+        points: 0,
+      },
+      {
+        label: "VandalWeb",
+        description: "Student and employee self-service portal",
+        points: 1,
+      },
+      {
+        label: "Banner Student",
+        description: "Student records, registration, academic history",
+        points: 2,
+      },
+      {
+        label: "Banner Finance",
+        description: "Financial records, budgets, purchasing",
+        points: 2,
+      },
+      {
+        label: "Banner HR",
+        description: "Employee records, payroll, positions",
+        points: 2,
+      },
+      {
+        label: "Canvas",
+        description: "Learning management system",
+        points: 1,
+      },
+      {
+        label: "Slate",
+        description: "Admissions CRM and event management",
+        points: 2,
+      },
+      {
+        label: "DUO / MFA",
+        description: "Multi-factor authentication service",
+        points: 1,
+      },
+      {
+        label: "CAS / SSO",
+        description: "Central Authentication Service",
+        points: 1,
+      },
+      {
+        label: "Perceptive Content",
+        description: "Document imaging and management",
+        points: 1,
+      },
+    ],
+  },
+  {
+    id: "outputTypes",
+    title: "Output & Actions",
+    subtitle:
+      "What will your application do with data? Select all that apply.",
+    type: "multi",
+    options: [
+      {
+        label: "Read-only reporting",
+        description: "Dashboards, visualizations, or search interfaces",
+        points: 0,
+      },
+      {
+        label: "Creates / modifies records",
+        description: "Writes data back to databases or systems",
+        points: 2,
+      },
+      {
+        label: "Sends notifications",
+        description: "Emails, alerts, or messages to users",
+        points: 1,
+      },
+      {
+        label: "Generates documents",
+        description: "PDFs, reports, letters, or other files",
+        points: 1,
+      },
+      {
+        label: "Triggers workflows",
+        description: "Kicks off approval processes or automated tasks",
+        points: 2,
+      },
+      {
+        label: "Exposes an API",
+        description: "Provides data or services to other applications",
+        points: 2,
+      },
+    ],
+  },
 ];
 
 // ============================================

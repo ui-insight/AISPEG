@@ -18,6 +18,10 @@ const navItems = [
   { href: "/builder-guide", label: "App Builder Guide", icon: "compass" },
 ];
 
+const adminItems = [
+  { href: "/admin/submissions", label: "Submissions", icon: "inbox" },
+];
+
 function NavIcon({ icon, className }: { icon: string; className?: string }) {
   const c = className || "w-5 h-5";
   switch (icon) {
@@ -99,6 +103,17 @@ function NavIcon({ icon, className }: { icon: string; className?: string }) {
           <circle cx="12" cy="12" r="1" fill="currentColor" strokeWidth={0} />
         </svg>
       );
+    case "inbox":
+      return (
+        <svg className={c} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+          />
+        </svg>
+      );
     default:
       return null;
   }
@@ -167,6 +182,31 @@ export default function Sidebar() {
               </Link>
             );
           })}
+
+          {/* Admin Section */}
+          <div className="mt-4 border-t border-white/10 pt-4">
+            <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-white/30">
+              Admin
+            </p>
+            {adminItems.map((item) => {
+              const active = pathname.startsWith(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setMobileOpen(false)}
+                  className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                    active
+                      ? "bg-ui-gold/20 text-ui-gold"
+                      : "text-white/70 hover:bg-white/5 hover:text-white"
+                  }`}
+                >
+                  <NavIcon icon={item.icon} />
+                  {item.label}
+                </Link>
+              );
+            })}
+          </div>
         </nav>
 
         <div className="border-t border-white/10 px-6 py-4">

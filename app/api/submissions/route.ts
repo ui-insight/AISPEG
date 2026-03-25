@@ -36,19 +36,22 @@ export async function POST(request: NextRequest) {
     }
 
     // Insert denormalized details for querying
-    const sensitivity = Array.isArray(answers.sensitivity) ? answers.sensitivity : [];
-    const integrations = Array.isArray(answers.integrations) ? answers.integrations : [];
+    const toArray = (val: unknown) => (Array.isArray(val) ? val : []);
 
     await query(
-      `INSERT INTO submission_details (submission_id, sensitivity, complexity, userbase, auth_level, integrations)
-       VALUES ($1, $2, $3, $4, $5, $6)`,
+      `INSERT INTO submission_details
+         (submission_id, sensitivity, complexity, userbase, auth_level, integrations, data_sources, university_systems, output_types)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
       [
         submission.id,
-        sensitivity,
+        toArray(answers.sensitivity),
         answers.complexity || null,
         answers.userbase || null,
         answers.auth || null,
-        integrations,
+        toArray(answers.integrations),
+        toArray(answers.dataSources),
+        toArray(answers.universitySystems),
+        toArray(answers.outputTypes),
       ]
     );
 
@@ -85,7 +88,8 @@ export async function GET(request: NextRequest) {
 
     const rows = await query(
       `SELECT s.id, s.idea_text, s.score, s.tier, s.submitter_name, s.department, s.status, s.created_at,
-              d.sensitivity, d.complexity, d.userbase, d.auth_level, d.integrations
+              d.sensitivity, d.complexity, d.userbase, d.auth_level, d.integrations,
+              d.data_sources, d.university_systems, d.output_types
        FROM submissions s
        LEFT JOIN submission_details d ON d.submission_id = s.id
        ${where}
