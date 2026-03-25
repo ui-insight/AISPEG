@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import {
   quizSteps,
@@ -401,6 +401,7 @@ export default function BuilderGuidePage() {
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Answers>({});
   const [showResults, setShowResults] = useState(false);
+  const submittedRef = useRef(false);
 
   const step = quizSteps[currentStep];
 
@@ -417,10 +418,33 @@ export default function BuilderGuidePage() {
     return false;
   };
 
+  const submitToDatabase = async () => {
+    if (submittedRef.current) return;
+    submittedRef.current = true;
+    try {
+      const score = calculateScore(answers);
+      const tier = getTierForScore(score);
+      await fetch("/api/submissions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          idea_text: (answers.idea as string) || "",
+          answers,
+          score,
+          tier: tier.tier,
+        }),
+      });
+    } catch (err) {
+      // Non-blocking: log but don't interrupt the user experience
+      console.error("Failed to save submission:", err);
+    }
+  };
+
   const handleNext = () => {
     if (currentStep < TOTAL_STEPS) {
       setCurrentStep((s) => s + 1);
     } else {
+      submitToDatabase();
       setShowResults(true);
     }
   };
@@ -435,6 +459,7 @@ export default function BuilderGuidePage() {
     setCurrentStep(0);
     setAnswers({});
     setShowResults(false);
+    submittedRef.current = false;
   };
 
   const handleJumpToStep = (stepIndex: number) => {

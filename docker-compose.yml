@@ -5,29 +5,89 @@ networks:
       config:
         - subnet: 10.10.9.0/24
 
+volumes:
+  aispeg-pg-prod-data:
+  aispeg-pg-dev-data:
+
 services:
+  # ── Production ──────────────────────────────────────
+  postgres-prod:
+    image: postgres:16-alpine
+    container_name: aispeg-postgres-prod
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-aispeg}
+      POSTGRES_USER: ${POSTGRES_USER:-aispeg}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-aispeg_secret}
+    volumes:
+      - aispeg-pg-prod-data:/var/lib/postgresql/data
+      - ./db/migrations:/docker-entrypoint-initdb.d:ro
+    networks:
+      aispeg-net:
+        ipv4_address: 10.10.9.10
+    profiles:
+      - prod
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-aispeg}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   aispeg-prod:
     build: .
     container_name: aispeg-prod
     restart: unless-stopped
+    depends_on:
+      postgres-prod:
+        condition: service_healthy
     environment:
       GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-aispeg}:${POSTGRES_PASSWORD:-aispeg_secret}@10.10.9.10:5432/${POSTGRES_DB:-aispeg}
     ports:
       - "9260:3000"
     networks:
-      - aispeg-net
+      aispeg-net:
+        ipv4_address: 10.10.9.20
     profiles:
       - prod
+
+  # ── Development ─────────────────────────────────────
+  postgres-dev:
+    image: postgres:16-alpine
+    container_name: aispeg-postgres-dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-aispeg_dev}
+      POSTGRES_USER: ${POSTGRES_USER:-aispeg}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-aispeg_secret}
+    volumes:
+      - aispeg-pg-dev-data:/var/lib/postgresql/data
+      - ./db/migrations:/docker-entrypoint-initdb.d:ro
+    networks:
+      aispeg-net:
+        ipv4_address: 10.10.9.11
+    profiles:
+      - dev
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-aispeg}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   aispeg-dev:
     build: .
     container_name: aispeg-dev
     restart: unless-stopped
+    depends_on:
+      postgres-dev:
+        condition: service_healthy
     environment:
       GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-aispeg}:${POSTGRES_PASSWORD:-aispeg_secret}@10.10.9.11:5432/${POSTGRES_DB:-aispeg_dev}
     ports:
       - "9270:3000"
     networks:
-      - aispeg-net
+      aispeg-net:
+        ipv4_address: 10.10.9.21
     profiles:
       - dev
