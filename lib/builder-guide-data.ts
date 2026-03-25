@@ -530,6 +530,54 @@ export function getTierForScore(score: number): TierRecommendation {
 // Clipboard Summary Generator
 // ============================================
 
+// ============================================
+// Departments (University of Idaho)
+// ============================================
+
+export const DEPARTMENTS = [
+  // Colleges
+  "College of Agricultural & Life Sciences",
+  "College of Art & Architecture",
+  "College of Business & Economics",
+  "College of Education, Health & Human Sciences",
+  "College of Engineering",
+  "College of Graduate Studies",
+  "College of Law",
+  "College of Letters, Arts & Social Sciences",
+  "College of Natural Resources",
+  "College of Science",
+  // Administrative & Support Units
+  "Division of Finance & Administration",
+  "Division of Student Affairs",
+  "Extension & Outreach",
+  "Information Technology Services (ITS)",
+  "Institutional Research & Assessment",
+  "Library",
+  "Office of Research & Economic Development",
+  "Office of the President",
+  "Office of the Provost",
+  "University Advancement",
+  "University Communications & Marketing",
+  // Other
+  "Other",
+] as const;
+
+export type Department = (typeof DEPARTMENTS)[number];
+
+// ============================================
+// Contact Info
+// ============================================
+
+export interface ContactInfo {
+  name: string;
+  email: string;
+  department: string;
+}
+
+// ============================================
+// Clipboard Summary Generator
+// ============================================
+
 export function generateSummary(answers: Answers, score: number, tier: TierRecommendation): string {
   const lines: string[] = [
     "=== AISPEG App Builder Guide — Assessment Summary ===",

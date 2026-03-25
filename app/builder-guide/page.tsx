@@ -7,9 +7,11 @@ import {
   calculateScore,
   getTierForScore,
   generateSummary,
+  DEPARTMENTS,
   type Answers,
   type QuizStep,
   type TierRecommendation,
+  type ContactInfo,
 } from "@/lib/builder-guide-data";
 
 // ============================================
@@ -580,6 +582,81 @@ function AiChatPanel() {
   );
 }
 
+// ── Contact Info Step ────────────────────────────────────────
+
+function ContactInfoStep({
+  contact,
+  onChange,
+  errors,
+}: {
+  contact: ContactInfo;
+  onChange: (contact: ContactInfo) => void;
+  errors: Partial<Record<keyof ContactInfo, string>>;
+}) {
+  return (
+    <div className="space-y-5">
+      {/* Name */}
+      <div>
+        <label htmlFor="contact-name" className="block text-sm font-medium text-gray-700 mb-1">
+          Full Name <span className="text-red-500">*</span>
+        </label>
+        <input
+          id="contact-name"
+          type="text"
+          value={contact.name}
+          onChange={(e) => onChange({ ...contact, name: e.target.value })}
+          placeholder="e.g., Jane Smith"
+          className={`w-full rounded-xl border ${
+            errors.name ? "border-red-300 focus:border-red-400 focus:ring-red-400" : "border-gray-200 focus:border-ui-gold focus:ring-ui-gold"
+          } bg-white p-3 text-sm shadow-sm focus:outline-none focus:ring-1`}
+        />
+        {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name}</p>}
+      </div>
+
+      {/* Email */}
+      <div>
+        <label htmlFor="contact-email" className="block text-sm font-medium text-gray-700 mb-1">
+          Email Address <span className="text-red-500">*</span>
+        </label>
+        <input
+          id="contact-email"
+          type="email"
+          value={contact.email}
+          onChange={(e) => onChange({ ...contact, email: e.target.value })}
+          placeholder="e.g., jsmith@uidaho.edu"
+          className={`w-full rounded-xl border ${
+            errors.email ? "border-red-300 focus:border-red-400 focus:ring-red-400" : "border-gray-200 focus:border-ui-gold focus:ring-ui-gold"
+          } bg-white p-3 text-sm shadow-sm focus:outline-none focus:ring-1`}
+        />
+        {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
+      </div>
+
+      {/* Department */}
+      <div>
+        <label htmlFor="contact-dept" className="block text-sm font-medium text-gray-700 mb-1">
+          Department / College <span className="text-red-500">*</span>
+        </label>
+        <select
+          id="contact-dept"
+          value={contact.department}
+          onChange={(e) => onChange({ ...contact, department: e.target.value })}
+          className={`w-full rounded-xl border ${
+            errors.department ? "border-red-300 focus:border-red-400 focus:ring-red-400" : "border-gray-200 focus:border-ui-gold focus:ring-ui-gold"
+          } bg-white p-3 text-sm shadow-sm focus:outline-none focus:ring-1`}
+        >
+          <option value="">Select your department...</option>
+          {DEPARTMENTS.map((dept) => (
+            <option key={dept} value={dept}>
+              {dept}
+            </option>
+          ))}
+        </select>
+        {errors.department && <p className="mt-1 text-xs text-red-500">{errors.department}</p>}
+      </div>
+    </div>
+  );
+}
+
 // ── Results View ─────────────────────────────────────────────
 
 function ResultsView({
@@ -733,6 +810,7 @@ function ResultsView({
 
 const TOTAL_STEPS = quizSteps.length;
 const REVIEW_STEP = TOTAL_STEPS;
+const CONTACT_STEP = TOTAL_STEPS + 1;
 
 // Maps AI analysis fields → quiz step IDs
 const AI_FIELD_MAP: Record<string, string> = {
@@ -751,6 +829,10 @@ export default function BuilderGuidePage() {
   const [answers, setAnswers] = useState<Answers>({});
   const [showResults, setShowResults] = useState(false);
   const submittedRef = useRef(false);
+
+  // Contact info state
+  const [contact, setContact] = useState<ContactInfo>({ name: "", email: "", department: "" });
+  const [contactErrors, setContactErrors] = useState<Partial<Record<keyof ContactInfo, string>>>({});
 
   // AI state
   const [analysis, setAnalysis] = useState<IdeaAnalysis | null>(null);
@@ -848,6 +930,19 @@ export default function BuilderGuidePage() {
 
   // ── Submission ───────────────────────────
 
+  const validateContact = (): boolean => {
+    const errors: Partial<Record<keyof ContactInfo, string>> = {};
+    if (!contact.name.trim()) errors.name = "Name is required";
+    if (!contact.email.trim()) {
+      errors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.email.trim())) {
+      errors.email = "Please enter a valid email address";
+    }
+    if (!contact.department) errors.department = "Please select a department";
+    setContactErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const submitToDatabase = async () => {
     if (submittedRef.current) return;
     submittedRef.current = true;
@@ -862,6 +957,9 @@ export default function BuilderGuidePage() {
           answers,
           score,
           tier: tier.tier,
+          submitter_name: contact.name.trim(),
+          submitter_email: contact.email.trim(),
+          department: contact.department,
         }),
       });
     } catch (err) {
@@ -871,8 +969,14 @@ export default function BuilderGuidePage() {
 
   const handleNext = () => {
     if (currentStep < TOTAL_STEPS) {
+      // Quiz steps or moving to review
       setCurrentStep((s) => s + 1);
-    } else {
+    } else if (currentStep === REVIEW_STEP) {
+      // Review → Contact Info
+      setCurrentStep(CONTACT_STEP);
+    } else if (currentStep === CONTACT_STEP) {
+      // Contact Info → Submit + Show Results
+      if (!validateContact()) return;
       submitToDatabase();
       setShowResults(true);
     }
@@ -887,6 +991,8 @@ export default function BuilderGuidePage() {
   const handleStartOver = () => {
     setCurrentStep(0);
     setAnswers({});
+    setContact({ name: "", email: "", department: "" });
+    setContactErrors({});
     setShowResults(false);
     setAnalysis(null);
     setAnalysisError(null);
@@ -912,6 +1018,7 @@ export default function BuilderGuidePage() {
   }
 
   const isReview = currentStep === REVIEW_STEP;
+  const isContact = currentStep === CONTACT_STEP;
   const isIdeaStep = step?.id === "idea";
 
   return (
@@ -926,13 +1033,29 @@ export default function BuilderGuidePage() {
       </div>
 
       {/* Progress */}
-      {!isReview && (
+      {!isReview && !isContact && (
         <ProgressBar current={currentStep} total={TOTAL_STEPS} />
       )}
 
       {/* Step Content */}
       <div className="mx-auto max-w-2xl">
-        {isReview ? (
+        {isContact ? (
+          <div className="space-y-6">
+            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+              <h2 className="text-xl font-semibold text-ui-charcoal">Contact Information</h2>
+              <p className="mt-1 text-sm text-gray-500">
+                Before we generate your results, tell us who you are so we can follow up.
+              </p>
+              <div className="mt-6">
+                <ContactInfoStep
+                  contact={contact}
+                  onChange={(c) => { setContact(c); setContactErrors({}); }}
+                  errors={contactErrors}
+                />
+              </div>
+            </div>
+          </div>
+        ) : isReview ? (
           <div className="space-y-6">
             <div className="text-center">
               <h2 className="text-xl font-semibold text-ui-charcoal">Review Your Answers</h2>
@@ -1027,14 +1150,14 @@ export default function BuilderGuidePage() {
 
           <button
             onClick={handleNext}
-            disabled={!isReview && !canProceed()}
+            disabled={!isReview && !isContact && !canProceed()}
             className={`inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium transition-colors ${
-              !isReview && !canProceed()
+              !isReview && !isContact && !canProceed()
                 ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                 : "bg-ui-gold text-ui-black hover:bg-ui-gold-light shadow-sm"
             }`}
           >
-            {isReview ? "See Results" : "Next"}
+            {isContact ? "See Results" : isReview ? "Continue" : "Next"}
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>

@@ -62,13 +62,17 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// GET /api/submissions — list submissions with optional filters
+// GET /api/submissions — list submissions with optional filters, search, sort, pagination
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get("status");
     const tier = searchParams.get("tier");
-    const limit = Math.min(parseInt(searchParams.get("limit") || "50", 10), 200);
+    const department = searchParams.get("department");
+    const search = searchParams.get("search");
+    const sort = searchParams.get("sort") || "created_at";
+    const order = searchParams.get("order") === "asc" ? "ASC" : "DESC";
+    const limit = Math.min(parseInt(searchParams.get("limit") || "20", 10), 200);
     const offset = parseInt(searchParams.get("offset") || "0", 10);
 
     const conditions: string[] = [];
@@ -83,22 +87,51 @@ export async function GET(request: NextRequest) {
       conditions.push(`s.tier = $${paramIndex++}`);
       params.push(parseInt(tier, 10));
     }
+    if (department) {
+      conditions.push(`s.department = $${paramIndex++}`);
+      params.push(department);
+    }
+    if (search) {
+      conditions.push(
+        `(s.idea_text ILIKE $${paramIndex} OR s.submitter_name ILIKE $${paramIndex} OR s.submitter_email ILIKE $${paramIndex} OR s.department ILIKE $${paramIndex})`
+      );
+      params.push(`%${search}%`);
+      paramIndex++;
+    }
 
     const where = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
 
+    // Validate sort column to prevent SQL injection
+    const allowedSorts: Record<string, string> = {
+      created_at: "s.created_at",
+      score: "s.score",
+      tier: "s.tier",
+      submitter_name: "s.submitter_name",
+      department: "s.department",
+      status: "s.status",
+    };
+    const sortColumn = allowedSorts[sort] || "s.created_at";
+
+    // Get total count for pagination
+    const countResult = await queryOne<{ count: string }>(
+      `SELECT COUNT(*) as count FROM submissions s ${where}`,
+      params
+    );
+    const total = parseInt(countResult?.count || "0", 10);
+
     const rows = await query(
-      `SELECT s.id, s.idea_text, s.score, s.tier, s.submitter_name, s.department, s.status, s.created_at,
+      `SELECT s.id, s.idea_text, s.score, s.tier, s.submitter_name, s.submitter_email, s.department, s.status, s.created_at,
               d.sensitivity, d.complexity, d.userbase, d.auth_level, d.integrations,
               d.data_sources, d.university_systems, d.output_types
        FROM submissions s
        LEFT JOIN submission_details d ON d.submission_id = s.id
        ${where}
-       ORDER BY s.created_at DESC
+       ORDER BY ${sortColumn} ${order} NULLS LAST
        LIMIT $${paramIndex++} OFFSET $${paramIndex}`,
       [...params, limit, offset]
     );
 
-    return NextResponse.json(rows);
+    return NextResponse.json({ rows, total, limit, offset });
   } catch (error) {
     console.error("GET /api/submissions error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
