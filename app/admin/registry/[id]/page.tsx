@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 const STATUS_OPTIONS = ["idea", "approved", "in-development", "staging", "production", "retired"];
 
@@ -63,11 +63,14 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 
 export default function RegistryDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const id = params.id as string;
 
   const [app, setApp] = useState<Application | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState("");
 
@@ -127,6 +130,24 @@ export default function RegistryDetailPage() {
       }
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    setDeleting(true);
+    try {
+      const res = await fetch(`/api/registry/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        router.push("/admin/registry");
+      } else {
+        setError("Failed to delete application");
+        setShowDeleteConfirm(false);
+      }
+    } catch {
+      setError("Failed to delete application");
+      setShowDeleteConfirm(false);
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -193,11 +214,16 @@ export default function RegistryDetailPage() {
           <textarea rows={3} value={form.description} onChange={(e) => setForm({...form, description: e.target.value})} className={inputCls + " resize-none"} />
         </Field>
 
-        <div className="flex items-center gap-3">
-          <button onClick={handleSave} disabled={saving} className="rounded-lg bg-ui-gold px-5 py-2 text-sm font-medium text-ui-black hover:bg-ui-gold-light disabled:bg-gray-200 transition-colors">
-            {saving ? "Saving..." : "Save Changes"}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <button onClick={handleSave} disabled={saving} className="rounded-lg bg-ui-gold px-5 py-2 text-sm font-medium text-ui-black hover:bg-ui-gold-light disabled:bg-gray-200 transition-colors">
+              {saving ? "Saving..." : "Save Changes"}
+            </button>
+            {successMsg && <span className="text-sm text-green-600">{successMsg}</span>}
+          </div>
+          <button onClick={() => setShowDeleteConfirm(true)} className="rounded-lg border border-red-200 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors">
+            Delete Application
           </button>
-          {successMsg && <span className="text-sm text-green-600">{successMsg}</span>}
         </div>
       </div>
 
@@ -262,6 +288,26 @@ export default function RegistryDetailPage() {
         <span>Created: {new Date(app.created_at).toLocaleString()}</span>
         <span>Updated: {new Date(app.updated_at).toLocaleString()}</span>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl space-y-4">
+            <h3 className="text-lg font-semibold text-gray-900">Delete Application</h3>
+            <p className="text-sm text-gray-600">
+              Are you sure you want to delete <strong>{app.name}</strong>? This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button onClick={() => setShowDeleteConfirm(false)} disabled={deleting} className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors">
+                Cancel
+              </button>
+              <button onClick={handleDelete} disabled={deleting} className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:bg-red-300 transition-colors">
+                {deleting ? "Deleting..." : "Yes, Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
