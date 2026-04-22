@@ -87,12 +87,29 @@ export default async function ActionPlanPage() {
   };
 
   return (
-    <ActionPlanDashboard
-      trackerIssue={trackerIssue}
-      trackedIssues={trackedIssues}
-      milestones={milestones}
-      workstreams={workstreams}
-      synthesis={synthesis}
-    />
+    <div className="space-y-6">
+      <div
+        role="status"
+        className="rounded-xl border border-amber-300 bg-amber-50 px-6 py-5"
+      >
+        <p className="text-xs font-semibold uppercase tracking-wider text-amber-800">
+          Under construction
+        </p>
+        <p className="mt-1 text-sm leading-relaxed text-amber-900">
+          This action plan is <strong>highly provisional</strong>. Milestones,
+          workstreams, and tracked issues here are drafts &mdash; they will be
+          revised substantially as AISPEG works through institutional
+          priorities and stakeholder input. Do not treat anything on this
+          page as a committed plan.
+        </p>
+      </div>
+      <ActionPlanDashboard
+        trackerIssue={trackerIssue}
+        trackedIssues={trackedIssues}
+        milestones={milestones}
+        workstreams={workstreams}
+        synthesis={synthesis}
+      />
+    </div>
   );
 }

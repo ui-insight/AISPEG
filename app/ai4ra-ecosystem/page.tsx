@@ -18,7 +18,7 @@ const referenceProjects: AI4RAReference[] = [
   {
     name: "AI4RA Unified Data Model (UDM)",
     description:
-      "Universal data model specification for research administration. 40 tables across 11 domains, 8 pre-built views, complete ontology, and interactive dashboard. The institutional data-modeling standard that UI apps like OpenERA adopt.",
+      "Universal data model specification for research administration. 40 tables across 11 domains, 8 pre-built views, complete ontology, and interactive dashboard. The institutional data-modeling standard that UI research-administration apps adopt.",
     repoUrl: "https://github.com/ui-insight/AI4RA-UDM",
     docsUrl: "https://ui-insight.github.io/AI4RA-UDM",
     isPrivate: false,
@@ -98,6 +98,16 @@ export default function AI4RAEcosystemPage() {
           community assets that UI&apos;s own interventions may adopt, extend,
           or contribute back to.
         </p>
+        <div className="mt-4">
+          <a
+            href="https://ai4ra.uidaho.edu"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-lg bg-brand-black px-4 py-2 text-sm font-semibold text-white hover:bg-brand-black/85 unstyled"
+          >
+            Visit ai4ra.uidaho.edu &rarr;
+          </a>
+        </div>
       </div>
 
       {/* Context card */}

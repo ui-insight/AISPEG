@@ -165,12 +165,15 @@ export const interventions: Intervention[] = [
   // Office of Sponsored Programs (ORED)
   // ============================================================
   {
-    slug: "openera",
-    name: "OpenERA",
-    tagline:
-      "Modern pre-award proposal workflow replacing legacy ERA (UI deployment embargoed).",
+    // Embargoed on the public site. Internal identity (project name,
+    // scope, artifacts) deliberately omitted here — the card, owner,
+    // status, and AI4RA Core relationship are shown; everything else
+    // is placeholder until public release.
+    slug: "embargoed-osp",
+    name: "Embargoed project",
+    tagline: "Details embargoed pending public release.",
     description:
-      "Open-source electronic research administration prototype in active development. Will migrate to the AI4RA GitHub organization while the UI implementation remains under ui-insight. UI deployment status is embargoed.",
+      "This intervention is in active development. Its identity, scope, and deployment details are embargoed on the public site until authorized release. The project is an AI4RA Core dual-destiny effort with a named UI operational owner and institutional build participants shown below. Contact the operational owner for authorized access.",
     homeUnits: ["Office of Sponsored Programs (ORED)"],
     operationalOwners: [{ name: "Sarah Martonick" }],
     buildParticipants: ["IIDS"],
@@ -178,14 +181,8 @@ export const interventions: Intervention[] = [
     visibility: "Partial",
     ai4raRelationship: "Core",
     dualDestinyPlanned: true,
-    repoUrl: "https://github.com/ui-insight/OpenERA",
-    docsUrl: "https://ui-insight.github.io/OpenERA",
-    operationalFunction:
-      "Pre-award: opportunity intake → proposal prep → institutional review → submission. Compliance protocol lifecycles (IACUC, IRB, IBC). NSF-format budget, F&A Sankey, multi-step approval workflow, personnel compliance matrix.",
-    operationalExcellenceOutcome:
-      "Modern structured pre-award workflow. Faster proposal cycle time. Stronger compliance visibility. Reduces errors through structured review gates.",
-    tech: ["React 19", "FastAPI", "SQLAlchemy 2.0", "PostgreSQL 16"],
-    relatedSlugs: ["vandalizer", "processmapping", "template-app"],
+    operationalFunction: "Embargoed.",
+    operationalExcellenceOutcome: "Embargoed.",
   },
   {
     slug: "vandalizer",
@@ -212,7 +209,7 @@ export const interventions: Intervention[] = [
     operationalExcellenceOutcome:
       "Staff time savings on document extraction. Higher extraction accuracy. Reusable extraction workflows. Citation-backed Q&A over RA document collections.",
     tech: ["React 19", "Python 3.11+", "FastAPI", "Docker"],
-    relatedSlugs: ["openera", "mindrouter", "dgx-stack", "processmapping"],
+    relatedSlugs: ["embargoed-osp", "mindrouter", "dgx-stack", "processmapping"],
   },
   {
     slug: "processmapping",
@@ -233,7 +230,7 @@ export const interventions: Intervention[] = [
     operationalExcellenceOutcome:
       "Shared vocabulary and visibility for RA processes. Identifies process/tool coverage gaps. Requirements source for automation. Onboarding and training asset.",
     tech: ["React 19", "TypeScript", "Vite", "FastAPI", "Python 3.11+"],
-    relatedSlugs: ["openera", "vandalizer"],
+    relatedSlugs: ["embargoed-osp", "vandalizer"],
   },
 
   // ============================================================
@@ -383,7 +380,7 @@ export const interventions: Intervention[] = [
       "sem-experiential",
       "audit-dashboard",
       "stratplan",
-      "openera",
+      "embargoed-osp",
     ],
   },
 

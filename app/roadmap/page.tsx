@@ -178,10 +178,25 @@ export default function RoadmapPage() {
   return (
     <div className="space-y-10">
       <div>
-        <h1 className="text-3xl font-bold text-ui-charcoal">Planning & Roadmap</h1>
+        <h1 className="text-3xl font-bold text-ui-charcoal">Planning &amp; Roadmap</h1>
         <p className="mt-2 max-w-3xl text-gray-600">
           2026 roadmap synthesized from external strategy inputs on intent engineering and
           difficulty-axis workflow design.
+        </p>
+      </div>
+
+      <div
+        role="status"
+        className="rounded-xl border border-amber-300 bg-amber-50 px-6 py-5"
+      >
+        <p className="text-xs font-semibold uppercase tracking-wider text-amber-800">
+          Under construction
+        </p>
+        <p className="mt-1 text-sm leading-relaxed text-amber-900">
+          This roadmap is <strong>highly provisional</strong>. Phases, workstreams,
+          and deliverables here are drafts &mdash; they will be revised substantially
+          as AISPEG works through institutional priorities and stakeholder input.
+          Do not treat anything on this page as a committed plan.
         </p>
       </div>
 

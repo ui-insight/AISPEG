@@ -19,7 +19,7 @@ export default function OperationalExcellenceDeck() {
   const byOwner = (slug: string) => interventions.find((i) => i.slug === slug);
 
   const stratplan = byOwner("stratplan");
-  const openera = byOwner("openera");
+  const embargoed = byOwner("embargoed-osp");
   const vandalizer = byOwner("vandalizer");
   const audit = byOwner("audit-dashboard");
   const rfd = byOwner("rfd-career");
@@ -184,7 +184,7 @@ export default function OperationalExcellenceDeck() {
               </div>
               <div className="deck-unit">
                 <div className="deck-unit-name">Office of Sponsored Programs, ORED</div>
-                <div className="deck-unit-items">OpenERA &middot; Vandalizer &middot; ProcessMapping</div>
+                <div className="deck-unit-items">Vandalizer &middot; ProcessMapping &middot; Embargoed project</div>
               </div>
               <div className="deck-unit">
                 <div className="deck-unit-name">Division of Financial Affairs</div>
@@ -241,7 +241,7 @@ export default function OperationalExcellenceDeck() {
           )}
 
           {/* 8. Anchor — OSP (two interventions, one owner) */}
-          {vandalizer && openera && (
+          {vandalizer && embargoed && (
             <section>
               <div className="deck-eyebrow">Anchor &middot; OSP, ORED</div>
               <h2>Modernizing research administration.</h2>
@@ -249,18 +249,20 @@ export default function OperationalExcellenceDeck() {
                 <div>
                   <div className="deck-anchor-label">{vandalizer.name}</div>
                   <p>{vandalizer.tagline}</p>
-                  <p style={{ fontSize: "0.78em", color: "rgba(239,236,227,0.6)", marginTop: "0.8em" }}>
+                  <p style={{ fontSize: "0.78em", color: "rgba(247,245,240,0.6)", marginTop: "0.8em" }}>
                     Owner: <span className="deck-owner">Sarah Martonick</span>{" "}
                     &middot; Lead dev: <span className="deck-owner">John Brunsfeld</span>{" "}
                     &middot; Also at Southern Utah University &middot; {vandalizer.funding}
                   </p>
                 </div>
                 <div>
-                  <div className="deck-anchor-label">{openera.name}</div>
-                  <p>Open-source pre-award ERA prototype. UI deployment details embargoed.</p>
-                  <p style={{ fontSize: "0.78em", color: "rgba(239,236,227,0.6)", marginTop: "0.8em" }}>
+                  <div className="deck-anchor-label">Embargoed project</div>
+                  <p>
+                    A second AI4RA Core dual-destiny effort under the same owner &mdash; identity and deployment details embargoed pending public release.
+                  </p>
+                  <p style={{ fontSize: "0.78em", color: "rgba(247,245,240,0.6)", marginTop: "0.8em" }}>
                     Owner: <span className="deck-owner">Sarah Martonick</span>{" "}
-                    &middot; Dual-destiny (AI4RA + UI)
+                    &middot; Dual-destiny (AI4RA + UI) &middot; Prototype
                   </p>
                 </div>
               </div>
@@ -422,7 +424,7 @@ export default function OperationalExcellenceDeck() {
               <div className="deck-def">
                 <div className="deck-def-term">Dual destiny</div>
                 <div className="deck-def-body">
-                  UI separately maintains deployment-specific implementations (OpenERA, Vandalizer, MindRouter, ProcessMapping) alongside the community artifacts.
+                  UI separately maintains deployment-specific implementations (Vandalizer, MindRouter, ProcessMapping, and an embargoed project) alongside the community artifacts.
                 </div>
               </div>
             </div>

@@ -193,6 +193,35 @@ export default async function Home() {
         )}
       </div>
 
+      {/* Submit a project — dedicated invitation */}
+      <div className="rounded-xl border border-ui-gold bg-ui-gold/10 p-6 md:p-8">
+        <div className="md:flex md:items-center md:justify-between md:gap-8">
+          <div className="max-w-2xl">
+            <p className="text-xs font-semibold uppercase tracking-wider text-ui-gold-dark">
+              Contribute to the inventory
+            </p>
+            <h2 className="mt-1 text-2xl font-black text-ui-charcoal">
+              Got an AI project or an idea for one?
+            </h2>
+            <p className="mt-2 text-sm leading-relaxed text-gray-700">
+              The portfolio is institutional, not AISPEG-owned. If your unit
+              is building, piloting, procuring, or planning anything AI-related
+              &mdash; or has an idea you want help scoping &mdash; submit it
+              so AISPEG can track, support, or connect you to related work.
+              Even early-stage ideas welcome.
+            </p>
+          </div>
+          <div className="mt-4 md:mt-0">
+            <Link
+              href="/builder-guide"
+              className="unstyled inline-flex items-center gap-2 rounded-lg bg-ui-charcoal px-5 py-3 text-sm font-semibold text-white hover:bg-ui-charcoal/85"
+            >
+              Submit a Project &rarr;
+            </Link>
+          </div>
+        </div>
+      </div>
+
       {/* Current Phase Summary */}
       <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
         <div className="flex flex-wrap items-center gap-3">
