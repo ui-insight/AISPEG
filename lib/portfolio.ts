@@ -249,7 +249,7 @@ export const interventions: Intervention[] = [
     operationalOwners: [{ name: "Sarah Martonick" }],
     buildParticipants: ["IIDS"],
     status: "Prototype",
-    visibility: "Internal-only",
+    visibility: "Partial",
     ai4raRelationship: "None",
     repoUrl: "https://github.com/ui-insight/ExecOrd",
     isPrivateRepo: true,
@@ -275,7 +275,7 @@ export const interventions: Intervention[] = [
     ],
     buildParticipants: ["IIDS", "SEM"],
     status: "Prototype",
-    visibility: "Internal-only",
+    visibility: "Public",
     ai4raRelationship: "None",
     repoUrl: "https://github.com/ui-insight/SEM-experiential",
     operationalFunction:
