@@ -19,46 +19,55 @@ export default function PresentationsPage() {
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        {decks.map((deck) => (
-          <Link
-            key={deck.slug}
-            href={`/presentations/${deck.slug}`}
-            className="group flex flex-col rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-all hover:border-ui-gold/40 hover:shadow-md"
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="text-xs font-medium uppercase tracking-wider text-ui-gold-dark">
-                  {deck.audience}
-                </p>
-                <h2 className="mt-2 text-lg font-semibold text-ui-charcoal group-hover:text-ui-gold-dark">
-                  {deck.title}
-                </h2>
-                {deck.subtitle && (
-                  <p className="mt-1 text-sm text-gray-500">{deck.subtitle}</p>
+      {decks.length === 0 ? (
+        <div className="rounded-xl border border-dashed border-gray-300 bg-white/50 p-8 text-center">
+          <p className="text-sm text-gray-500">
+            No decks are currently published. A new presentation is in
+            development &mdash; check back soon.
+          </p>
+        </div>
+      ) : (
+        <div className="grid gap-4 md:grid-cols-2">
+          {decks.map((deck) => (
+            <Link
+              key={deck.slug}
+              href={`/presentations/${deck.slug}`}
+              className="group flex flex-col rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-all hover:border-ui-gold/40 hover:shadow-md"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-xs font-medium uppercase tracking-wider text-ui-gold-dark">
+                    {deck.audience}
+                  </p>
+                  <h2 className="mt-2 text-lg font-semibold text-ui-charcoal group-hover:text-ui-gold-dark">
+                    {deck.title}
+                  </h2>
+                  {deck.subtitle && (
+                    <p className="mt-1 text-sm text-gray-500">{deck.subtitle}</p>
+                  )}
+                </div>
+                <StatusBadge status={deck.status} />
+              </div>
+
+              <p className="mt-4 text-sm leading-relaxed text-gray-600">
+                {deck.abstract}
+              </p>
+
+              <div className="mt-auto flex items-center gap-4 pt-4 text-xs text-gray-500">
+                <span>{deck.author}</span>
+                <span>&middot;</span>
+                <span>{deck.date}</span>
+                {deck.duration && (
+                  <>
+                    <span>&middot;</span>
+                    <span>{deck.duration}</span>
+                  </>
                 )}
               </div>
-              <StatusBadge status={deck.status} />
-            </div>
-
-            <p className="mt-4 text-sm leading-relaxed text-gray-600">
-              {deck.abstract}
-            </p>
-
-            <div className="mt-auto flex items-center gap-4 pt-4 text-xs text-gray-500">
-              <span>{deck.author}</span>
-              <span>&middot;</span>
-              <span>{deck.date}</span>
-              {deck.duration && (
-                <>
-                  <span>&middot;</span>
-                  <span>{deck.duration}</span>
-                </>
-              )}
-            </div>
-          </Link>
-        ))}
-      </div>
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
