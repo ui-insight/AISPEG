@@ -130,7 +130,7 @@ export default async function StandardDetailPage({
                       Playbook
                     </span>
                     <Link
-                      href="/playbook"
+                      href="/approach#playbook"
                       className="text-xs text-ui-gold-dark hover:underline"
                     >
                       View all &rarr;

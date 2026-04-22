@@ -18,46 +18,30 @@ import {
   projects,
   presentations,
 } from "@/lib/data";
+import { portfolioProjects } from "@/lib/portfolio";
+import { decks } from "@/lib/decks";
 
 /* ---------------------------------------------------------- */
 /* Navigation cards data                                       */
 /* ---------------------------------------------------------- */
 const navCards = [
   {
-    href: "/action-plan",
-    label: "Action Plan",
-    count: `${actionPlanWorkstreams.length} workstreams`,
-    icon: "🎯",
+    href: "/portfolio",
+    label: "Portfolio",
+    count: "Active projects",
+    icon: "🗂️",
   },
   {
-    href: "/principles",
-    label: "Strategic Principles",
-    count: `${principles.length} principles`,
+    href: "/presentations",
+    label: "Presentations",
+    count: "Interactive decks",
+    icon: "🖥️",
+  },
+  {
+    href: "/approach",
+    label: "Our Approach",
+    count: `${principles.length} principles · ${playbookItems.length} playbook · ${lessons.length} lessons`,
     icon: "💡",
-  },
-  {
-    href: "/lessons",
-    label: "Lessons Learned",
-    count: `${lessons.length} lessons`,
-    icon: "📖",
-  },
-  {
-    href: "/playbook",
-    label: "Agent Playbook",
-    count: `${playbookItems.length} entries`,
-    icon: "📋",
-  },
-  {
-    href: "/projects",
-    label: "Projects & Metrics",
-    count: `${projects.length} repositories`,
-    icon: "📊",
-  },
-  {
-    href: "/reports",
-    label: "Reports & Briefs",
-    count: `${presentations.length} documents`,
-    icon: "📄",
   },
   {
     href: "/knowledge",
@@ -67,9 +51,27 @@ const navCards = [
   },
   {
     href: "/roadmap",
-    label: "Planning & Roadmap",
+    label: "Roadmap",
     count: "4 phases",
     icon: "🗺️",
+  },
+  {
+    href: "/reports",
+    label: "Reports & Briefs",
+    count: `${presentations.length} documents`,
+    icon: "📄",
+  },
+  {
+    href: "/reports/feb-2026",
+    label: "Feb 2026 Activity Report",
+    count: `${projects.length} repositories`,
+    icon: "📊",
+  },
+  {
+    href: "/action-plan",
+    label: "Action Plan",
+    count: `${actionPlanWorkstreams.length} workstreams`,
+    icon: "🎯",
   },
 ];
 
@@ -91,9 +93,25 @@ export default async function Home() {
           AI Strategic Planning &amp; Evaluation Group
         </h1>
         <p className="mt-2 max-w-2xl text-gray-600">
-          A collaborative hub for planning, lessons learned, and knowledge
-          sharing around agentic AI at the University of Idaho.
+          How the University of Idaho is approaching AI interventions for
+          operational excellence &mdash; the portfolio of projects,
+          principles that guide us, and lessons learned from agentic
+          development at institutional scale.
         </p>
+        <div className="mt-4 flex flex-wrap gap-3">
+          <Link
+            href="/portfolio"
+            className="inline-flex items-center gap-2 rounded-lg bg-ui-charcoal px-4 py-2 text-sm font-medium text-white hover:bg-ui-charcoal/90"
+          >
+            View the Portfolio &rarr;
+          </Link>
+          <Link
+            href="/presentations"
+            className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-ui-charcoal hover:border-ui-gold/40"
+          >
+            Presentations &rarr;
+          </Link>
+        </div>
       </div>
 
       {/* Institutional Question */}
@@ -107,6 +125,47 @@ export default async function Home() {
         <p className="mt-1 text-lg font-semibold text-ui-charcoal">
           &ldquo;{institutionalQuestion.right}&rdquo;
         </p>
+      </div>
+
+      {/* Portfolio + Featured Deck — stakeholder hooks */}
+      <div className="grid gap-4 md:grid-cols-2">
+        <Link
+          href="/portfolio"
+          className="group rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-all hover:border-ui-gold/40 hover:shadow-md"
+        >
+          <p className="text-xs font-medium uppercase tracking-wider text-ui-gold-dark">
+            Active portfolio
+          </p>
+          <h2 className="mt-2 text-xl font-semibold text-ui-charcoal group-hover:text-ui-gold-dark">
+            {portfolioProjects.length} projects across AI4RA &amp; ui-insight
+          </h2>
+          <p className="mt-2 text-sm text-gray-600">
+            Flagship platforms, institutional apps, governance, LLM
+            infrastructure, and outreach &mdash; organized by role and
+            connected by a shared data standard.
+          </p>
+          <p className="mt-3 text-sm font-medium text-ui-gold-dark group-hover:underline">
+            Explore the portfolio &rarr;
+          </p>
+        </Link>
+
+        {decks[0] && (
+          <Link
+            href={`/presentations/${decks[0].slug}`}
+            className="group rounded-xl border border-gray-200 bg-gradient-to-br from-ui-charcoal to-ui-charcoal/90 p-6 text-white shadow-sm transition-all hover:border-ui-gold/40 hover:shadow-md"
+          >
+            <p className="text-xs font-medium uppercase tracking-wider text-ui-gold">
+              Featured presentation
+            </p>
+            <h2 className="mt-2 text-xl font-semibold group-hover:text-ui-gold">
+              {decks[0].title}
+            </h2>
+            <p className="mt-2 text-sm text-white/70">{decks[0].abstract}</p>
+            <p className="mt-3 text-sm font-medium text-ui-gold group-hover:underline">
+              Open the deck &rarr;
+            </p>
+          </Link>
+        )}
       </div>
 
       {/* Current Phase Summary */}

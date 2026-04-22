@@ -1,3 +1,4 @@
+import Link from "next/link";
 import MetricCard from "@/components/MetricCard";
 import ProjectTable from "@/components/ProjectTable";
 import ProjectDetail from "@/components/ProjectDetail";
@@ -9,16 +10,33 @@ import {
   methodologyNote,
 } from "@/lib/data";
 
-export default function ProjectsPage() {
+export default function FebReportPage() {
   return (
     <div className="space-y-10">
+      {/* Breadcrumb */}
+      <nav className="text-sm text-gray-500">
+        <Link href="/reports" className="hover:text-ui-gold-dark">
+          Reports &amp; Briefs
+        </Link>
+        <span className="mx-2">/</span>
+        <span className="text-ui-charcoal">Feb 2026 Activity Report</span>
+      </nav>
+
       <div>
-        <h1 className="text-3xl font-bold text-ui-charcoal">
-          Projects & Metrics
+        <p className="text-sm font-medium uppercase tracking-wider text-ui-gold-dark">
+          Origin story
+        </p>
+        <h1 className="mt-1 text-3xl font-bold text-ui-charcoal">
+          Development Activity Report &mdash; February 1&ndash;26, 2026
         </h1>
-        <p className="mt-2 text-gray-600">
-          Development activity report &mdash; February 1&ndash;26, 2026.
-          Agentic development with Claude Code across 11 repositories.
+        <p className="mt-2 max-w-3xl text-gray-600">
+          A snapshot of the 26-day sprint that proved agentic development could
+          work at institutional scale. These metrics are a point-in-time proof
+          of concept &mdash; for the current portfolio of active projects, see{" "}
+          <Link href="/portfolio" className="text-ui-gold-dark hover:underline">
+            Portfolio
+          </Link>
+          .
         </p>
         <p className="mt-1 text-sm text-gray-400">
           Prepared by Barrie Robison &middot; University of Idaho
@@ -29,14 +47,14 @@ export default function ProjectsPage() {
       <div className="rounded-xl border-l-4 border-ui-gold bg-white p-6 shadow-sm">
         <p className="text-sm font-medium text-gray-500">Executive Summary</p>
         <p className="mt-2 text-sm leading-relaxed text-gray-700">
-          Analysis of software development activity across 11 GitHub repositories
-          during 26 days. The repositories span electronic research
-          administration, data lakehouse ETL, strategic planning analytics,
-          GPU-aware microservice orchestration, AI-powered proposal generation,
-          document intelligence, water rights processing, wildlife video
-          analysis, agricultural pest classification, and more. Each project
-          represents production-grade software with modern architecture, testing,
-          and documentation.
+          Analysis of software development activity across 11 GitHub
+          repositories during 26 days. The repositories span electronic
+          research administration, data lakehouse ETL, strategic planning
+          analytics, GPU-aware microservice orchestration, AI-powered proposal
+          generation, document intelligence, water rights processing, wildlife
+          video analysis, agricultural pest classification, and more. Each
+          project represents production-grade software with modern
+          architecture, testing, and documentation.
         </p>
       </div>
 
@@ -171,7 +189,7 @@ export default function ProjectsPage() {
       {/* Methodology */}
       <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
         <h2 className="text-base font-semibold text-ui-charcoal">
-          Methodology & Notes
+          Methodology &amp; Notes
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-gray-600">
           {methodologyNote}

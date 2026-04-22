@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   presentations,
   oredProjects,
@@ -12,13 +13,34 @@ export default function ReportsPage() {
     <div className="space-y-10">
       <div>
         <h1 className="text-3xl font-bold text-ui-charcoal">
-          Presentations & Reports
+          Reports &amp; Briefs
         </h1>
         <p className="mt-2 text-gray-600">
-          Key briefings, reports, and presentations produced by AISPEG and ORED
-          leadership.
+          Written briefings, activity reports, and documents produced by
+          AISPEG and ORED leadership.
         </p>
       </div>
+
+      {/* Feb 2026 activity report — featured origin-story */}
+      <Link
+        href="/reports/feb-2026"
+        className="group block rounded-xl border border-gray-200 bg-gradient-to-br from-ui-charcoal to-ui-charcoal/90 p-6 text-white shadow-sm transition-all hover:border-ui-gold/40 hover:shadow-md"
+      >
+        <p className="text-xs font-medium uppercase tracking-wider text-ui-gold">
+          Origin story
+        </p>
+        <h2 className="mt-1 text-xl font-semibold">
+          Development Activity Report &mdash; February 1&ndash;26, 2026
+        </h2>
+        <p className="mt-2 text-sm text-white/70">
+          The 26-day sprint that proved agentic development could work at
+          institutional scale. 830 commits, 237,900 net new lines, 11 active
+          repos, 10&ndash;16x productivity multiplier.
+        </p>
+        <p className="mt-3 text-sm font-medium text-ui-gold group-hover:underline">
+          Read the full report &rarr;
+        </p>
+      </Link>
 
       {/* Presentations list */}
       <div className="space-y-6">
