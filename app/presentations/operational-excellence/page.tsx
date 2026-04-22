@@ -30,7 +30,6 @@ export default function OperationalExcellenceDeck() {
 
   return (
     <div className="space-y-6">
-      {/* Breadcrumb & header (outside the deck) */}
       <nav className="text-sm text-gray-500">
         <Link href="/presentations" className="hover:text-ui-gold-dark">
           Presentations
@@ -58,12 +57,12 @@ export default function OperationalExcellenceDeck() {
         <RevealDeck>
           {/* 1. Title */}
           <section className="title-slide">
-            <p className="deck-eyebrow">AISPEG · Spring 2026</p>
+            <div className="deck-eyebrow">AISPEG &middot; Spring 2026</div>
             <h1>
-              AI Interventions for <br />
-              <span className="deck-accent">Operational Excellence</span>
+              AI interventions <br />
+              for <span className="deck-accent">operational excellence</span>
             </h1>
-            <p style={{ fontSize: "1.1em", marginTop: "1em" }}>
+            <p className="subhead">
               How the University of Idaho coordinates, builds, and tracks AI
               at institutional scale.
             </p>
@@ -72,204 +71,247 @@ export default function OperationalExcellenceDeck() {
             </p>
           </section>
 
-          {/* 2. What AISPEG is */}
+          {/* 2. Who we are */}
           <section>
-            <p className="deck-eyebrow">Who we are</p>
-            <h2>AISPEG &mdash; <span className="deck-accent">AI Strategic Plan Execution Group</span></h2>
-            <ul style={{ marginTop: "0.8em" }}>
-              <li><strong>Presidential charter.</strong> A cross-cutting initiative to support execution of the University&rsquo;s Strategic Plan.</li>
-              <li><strong>Chaired by Ben Hunter</strong>, Dean of the Libraries.</li>
-              <li><strong>Members:</strong> Barrie Robison, Luke Sheneman, Dan Ewart, Bert Baumgaertner.</li>
-              <li>Our verbs: <strong>inventory</strong>, <strong>coordinate</strong>, <strong>track</strong>, and <em>often</em> <strong>build</strong>.</li>
-            </ul>
+            <div className="deck-eyebrow">Who we are</div>
+            <h2>
+              AISPEG is the <span className="deck-accent">execution</span> group.
+            </h2>
+            <div className="deck-defs" style={{ marginTop: "1.8em" }}>
+              <div className="deck-def">
+                <div className="deck-def-term">Charter</div>
+                <div className="deck-def-body">
+                  Presidentially chartered cross-cutting initiative supporting execution of the University&rsquo;s Strategic Plan.
+                </div>
+              </div>
+              <div className="deck-def">
+                <div className="deck-def-term">Chair</div>
+                <div className="deck-def-body">
+                  <span className="deck-owner">Ben Hunter</span>, Dean of the Libraries.
+                </div>
+              </div>
+              <div className="deck-def">
+                <div className="deck-def-term">Members</div>
+                <div className="deck-def-body">
+                  <span className="deck-owner">Barrie Robison</span>,{" "}
+                  <span className="deck-owner">Luke Sheneman</span>,{" "}
+                  <span className="deck-owner">Dan Ewart</span>,{" "}
+                  <span className="deck-owner">Bert Baumgaertner</span>.
+                </div>
+              </div>
+              <div className="deck-def">
+                <div className="deck-def-term">Our verbs</div>
+                <div className="deck-def-body">
+                  Inventory. Coordinate. Track. Often, build.
+                </div>
+              </div>
+            </div>
             <p className="deck-meta">
               We are not the institution&rsquo;s engineering team. We are the strategic layer that keeps institutional AI work visible, coherent, and aligned.
             </p>
           </section>
 
-          {/* 3. The thesis */}
+          {/* 3. Thesis */}
           <section>
-            <p className="deck-eyebrow">The thesis</p>
-            <h2>Operational excellence is a <span className="deck-accent">data problem</span>.</h2>
-            <p style={{ marginTop: "0.8em" }}>
+            <div className="deck-eyebrow">The thesis</div>
+            <h2>
+              Operational excellence is a <br /><span className="deck-accent">data problem</span>.
+            </h2>
+            <p style={{ marginTop: "1.4em", fontSize: "1.05em", maxWidth: "32ch", lineHeight: 1.5 }}>
               You can&rsquo;t improve what you can&rsquo;t measure. You can&rsquo;t measure what you can&rsquo;t model. And you can&rsquo;t model what you can&rsquo;t name consistently.
             </p>
-            <p style={{ marginTop: "0.6em" }}>
-              <strong>AI accelerates every step &mdash; only if the underlying data is trustworthy.</strong>
+            <p style={{ marginTop: "1em", fontSize: "1em", maxWidth: "34ch", color: "#f7f3e8" }}>
+              AI accelerates every step &mdash; <em>only</em> if the underlying data is trustworthy.
             </p>
             <p className="deck-meta">
               That&rsquo;s why our portfolio starts with data standards and named operational owners, not chatbots.
             </p>
           </section>
 
-          {/* 4. How this talk works */}
+          {/* 4. What we'll cover */}
           <section>
-            <p className="deck-eyebrow">What we&rsquo;ll cover</p>
-            <h2>This is an <span className="deck-accent">inventory talk</span></h2>
-            <ol>
-              <li><strong>Our model</strong> &mdash; how AISPEG organizes UI AI work</li>
-              <li><strong>The portfolio</strong> &mdash; {visible.length} AI interventions, grouped by UI home unit</li>
-              <li><strong>The anchors</strong> &mdash; a few interventions highlighted by named owner</li>
-              <li><strong>Capability diffusion</strong> &mdash; the SEM co-build pattern</li>
-              <li><strong>Tracking, not just building</strong> &mdash; the OIT/Huron stub pattern</li>
-              <li><strong>What we need</strong> from this working group</li>
+            <div className="deck-eyebrow">What we&rsquo;ll cover</div>
+            <h2>An inventory talk.</h2>
+            <ol style={{ marginTop: "1.4em", maxWidth: "40ch" }}>
+              <li>Our model &mdash; how AISPEG organizes UI AI work</li>
+              <li>The portfolio &mdash; {visible.length} interventions, grouped by home unit</li>
+              <li>Four anchors &mdash; interventions by named owner</li>
+              <li>Capability diffusion &mdash; the SEM co-build pattern</li>
+              <li>Tracking, not just building &mdash; the OIT/Huron stub</li>
+              <li>What we need from this working group</li>
             </ol>
           </section>
 
           {/* 5. The primitive */}
           <section>
-            <p className="deck-eyebrow">The model</p>
-            <h2>One primitive: the <span className="deck-accent">intervention</span></h2>
-            <p style={{ marginTop: "0.6em" }}>
-              Every AI effort on the UI inventory is defined by:
+            <div className="deck-eyebrow">The model</div>
+            <h2>
+              One primitive: the <span className="deck-accent">intervention</span>.
+            </h2>
+            <p style={{ marginTop: "1em", maxWidth: "40ch" }}>
+              Every AI effort in the inventory is defined by four facts &mdash; not by a GitHub repo.
             </p>
-            <div className="deck-grid deck-grid-2" style={{ marginTop: "0.6em" }}>
-              <div className="deck-card">
-                <strong>UI home unit</strong>
-                Where the intervention lives operationally (OSP, DFA, SEM, UCM, etc.)
+            <div className="deck-defs" style={{ marginTop: "1.4em" }}>
+              <div className="deck-def">
+                <div className="deck-def-term">Home unit</div>
+                <div className="deck-def-body">Where it lives operationally &mdash; OSP, DFA, SEM, UCM, and so on.</div>
               </div>
-              <div className="deck-card">
-                <strong>Operational owner</strong>
-                The named person whose job depends on this working
+              <div className="deck-def">
+                <div className="deck-def-term">Owner</div>
+                <div className="deck-def-body">The named person whose job depends on this working.</div>
               </div>
-              <div className="deck-card">
-                <strong>Status at UI</strong>
-                Prototype · Piloting · Production · Tracked
+              <div className="deck-def">
+                <div className="deck-def-term">Status</div>
+                <div className="deck-def-body">Prototype &middot; Piloting &middot; Production &middot; Tracked.</div>
               </div>
-              <div className="deck-card">
-                <strong>Visibility</strong>
-                Public · Partial (embargoed details) · Internal-only
+              <div className="deck-def">
+                <div className="deck-def-term">Visibility</div>
+                <div className="deck-def-body">Public &middot; Partial (embargoed) &middot; Internal-only.</div>
               </div>
             </div>
-            <p className="deck-meta">
-              A GitHub repo is an artifact. An intervention is a UI deployment with a named human accountable for the outcome.
-            </p>
           </section>
 
-          {/* 6. Portfolio overview */}
+          {/* 6. Portfolio by unit */}
           <section>
-            <p className="deck-eyebrow">The inventory</p>
-            <h2>{visible.length} AI interventions across UI units</h2>
-            <div className="deck-grid deck-grid-2" style={{ marginTop: "0.6em" }}>
-              <div className="deck-card">
-                <strong>Office of the President</strong>
-                Strategic Plan Dashboard
+            <div className="deck-eyebrow">The inventory</div>
+            <h2>
+              {visible.length} interventions &mdash; <span className="deck-accent">grouped by home unit</span>.
+            </h2>
+            <div className="deck-unit-list">
+              <div className="deck-unit">
+                <div className="deck-unit-name">Office of the President</div>
+                <div className="deck-unit-items">Strategic Plan Dashboard</div>
               </div>
-              <div className="deck-card">
-                <strong>Office of Sponsored Programs (ORED)</strong>
-                OpenERA · Vandalizer · ProcessMapping
+              <div className="deck-unit">
+                <div className="deck-unit-name">Office of Sponsored Programs, ORED</div>
+                <div className="deck-unit-items">OpenERA &middot; Vandalizer &middot; ProcessMapping</div>
               </div>
-              <div className="deck-card">
-                <strong>Division of Financial Affairs</strong>
-                Audit Dashboard
+              <div className="deck-unit">
+                <div className="deck-unit-name">Division of Financial Affairs</div>
+                <div className="deck-unit-items">Audit Dashboard</div>
               </div>
-              <div className="deck-card">
-                <strong>University Comms &amp; Marketing</strong>
-                UCM Daily Register
+              <div className="deck-unit">
+                <div className="deck-unit-name">University Comms &amp; Marketing</div>
+                <div className="deck-unit-items">UCM Daily Register</div>
               </div>
-              <div className="deck-card">
-                <strong>Strategic Enrollment Mgmt</strong>
-                SEM Experiential Learning
+              <div className="deck-unit">
+                <div className="deck-unit-name">Strategic Enrollment Management</div>
+                <div className="deck-unit-items">SEM Experiential Learning</div>
               </div>
-              <div className="deck-card">
-                <strong>Research Faculty Development</strong>
-                RFD CAREER Dashboard
+              <div className="deck-unit">
+                <div className="deck-unit-name">Research Faculty Development</div>
+                <div className="deck-unit-items">RFD CAREER Dashboard</div>
               </div>
-              <div className="deck-card">
-                <strong>IIDS &mdash; shared infrastructure</strong>
-                MindRouter · DGX Stack · TEMPLATE-app
+              <div className="deck-unit">
+                <div className="deck-unit-name">IIDS &mdash; shared infrastructure</div>
+                <div className="deck-unit-items">MindRouter &middot; DGX Stack &middot; TEMPLATE-app</div>
               </div>
-              <div className="deck-card">
-                <strong>Office of Information Technology</strong>
-                OIT data modernization (tracked)
+              <div className="deck-unit">
+                <div className="deck-unit-name">Office of Information Technology</div>
+                <div className="deck-unit-items">OIT data modernization (tracked)</div>
               </div>
             </div>
             <p className="deck-meta">
-              Plus two embargoed interventions in OGC/ORED compliance space. Full inventory at aispeg.insight.uidaho.edu.
+              Two additional embargoed interventions in ORED/OGC compliance space. Full inventory at aispeg.insight.uidaho.edu.
             </p>
           </section>
 
-          {/* 7. Anchor: StratPlan */}
+          {/* 7. Anchor — StratPlan */}
           {stratplan && (
             <section>
-              <p className="deck-eyebrow">Anchor &middot; Office of the President</p>
-              <h2>{stratplan.name}</h2>
-              <p style={{ marginTop: "0.6em" }}>{stratplan.description}</p>
-              <div className="deck-grid deck-grid-2" style={{ marginTop: "0.8em" }}>
-                <div className="deck-card">
-                  <strong>Operational owner</strong>
-                  {stratplan.operationalOwners[0]?.name}
+              <div className="deck-eyebrow">Anchor &middot; Office of the President</div>
+              <div className="deck-split deck-split-60-40">
+                <div>
+                  <h2>{stratplan.name}</h2>
+                  <p style={{ marginTop: "1em" }}>{stratplan.description}</p>
                 </div>
-                <div className="deck-card">
-                  <strong>Status</strong>
-                  {stratplan.status} &middot; public dashboard
+                <div style={{ paddingTop: "1.2em" }}>
+                  <div className="deck-anchor-label">Owner</div>
+                  <p style={{ fontSize: "1.2em" }}>
+                    <span className="deck-owner">{stratplan.operationalOwners[0]?.name}</span>
+                  </p>
+                  <div className="deck-anchor-label" style={{ marginTop: "1.4em" }}>Status</div>
+                  <p>{stratplan.status} &middot; public dashboard</p>
                 </div>
               </div>
               <p className="deck-meta">
-                The strategic plan itself: 25 units, 337 tactics, 5 pillars. Visibility for executive review.
+                25 units &middot; 337 tactics &middot; 5 pillars. Executive visibility of strategic-plan execution.
               </p>
             </section>
           )}
 
-          {/* 8. Anchor: Vandalizer + OpenERA (OSP) */}
+          {/* 8. Anchor — OSP (two interventions, one owner) */}
           {vandalizer && openera && (
             <section>
-              <p className="deck-eyebrow">Anchor &middot; OSP (ORED)</p>
-              <h2>Modernizing research administration</h2>
-              <div className="deck-grid deck-grid-2" style={{ marginTop: "0.6em" }}>
-                <div className="deck-card">
-                  <strong>{vandalizer.name}</strong>
-                  {vandalizer.tagline}
-                  <br /><em style={{ fontSize: "0.85em", color: "rgba(248,249,250,0.6)" }}>Owner: Sarah Martonick · Lead dev: John Brunsfeld · Also at Southern Utah University · {vandalizer.funding}</em>
+              <div className="deck-eyebrow">Anchor &middot; OSP, ORED</div>
+              <h2>Modernizing research administration.</h2>
+              <div className="deck-split deck-split-50-50" style={{ marginTop: "1.4em" }}>
+                <div>
+                  <div className="deck-anchor-label">{vandalizer.name}</div>
+                  <p>{vandalizer.tagline}</p>
+                  <p style={{ fontSize: "0.78em", color: "rgba(239,236,227,0.6)", marginTop: "0.8em" }}>
+                    Owner: <span className="deck-owner">Sarah Martonick</span>{" "}
+                    &middot; Lead dev: <span className="deck-owner">John Brunsfeld</span>{" "}
+                    &middot; Also at Southern Utah University &middot; {vandalizer.funding}
+                  </p>
                 </div>
-                <div className="deck-card">
-                  <strong>{openera.name}</strong>
-                  Open-source pre-award ERA prototype. UI deployment details embargoed.
-                  <br /><em style={{ fontSize: "0.85em", color: "rgba(248,249,250,0.6)" }}>Owner: Sarah Martonick · Dual-destiny (AI4RA + UI)</em>
+                <div>
+                  <div className="deck-anchor-label">{openera.name}</div>
+                  <p>Open-source pre-award ERA prototype. UI deployment details embargoed.</p>
+                  <p style={{ fontSize: "0.78em", color: "rgba(239,236,227,0.6)", marginTop: "0.8em" }}>
+                    Owner: <span className="deck-owner">Sarah Martonick</span>{" "}
+                    &middot; Dual-destiny (AI4RA + UI)
+                  </p>
                 </div>
               </div>
               <p className="deck-meta">
-                Two interventions, one owner. The same OSP leader is accountable whether the artifact is open-source community tooling or a UI-embargoed deployment.
+                Two interventions, one owner. Accountability travels with the person &mdash; whether the artifact is open-source community tooling or a UI-embargoed deployment.
               </p>
             </section>
           )}
 
-          {/* 9. Anchor: Audit Dashboard */}
+          {/* 9. Anchor — Audit Dashboard */}
           {audit && (
             <section>
-              <p className="deck-eyebrow">Anchor &middot; Division of Financial Affairs</p>
-              <h2>{audit.name}</h2>
-              <p style={{ marginTop: "0.6em" }}>{audit.description}</p>
-              <div className="deck-grid deck-grid-2" style={{ marginTop: "0.8em" }}>
-                <div className="deck-card">
-                  <strong>Operational owner</strong>
-                  {audit.operationalOwners[0]?.name}
+              <div className="deck-eyebrow">Anchor &middot; Division of Financial Affairs</div>
+              <div className="deck-split deck-split-60-40">
+                <div>
+                  <h2>{audit.name}</h2>
+                  <p style={{ marginTop: "1em" }}>{audit.description}</p>
                 </div>
-                <div className="deck-card">
-                  <strong>Compliance outcome</strong>
-                  Closes the audit follow-through loop; overdue observations surfaced automatically.
+                <div style={{ paddingTop: "1.2em" }}>
+                  <div className="deck-anchor-label">Owner</div>
+                  <p style={{ fontSize: "1.2em" }}>
+                    <span className="deck-owner">{audit.operationalOwners[0]?.name}</span>
+                  </p>
+                  <div className="deck-anchor-label" style={{ marginTop: "1.4em" }}>
+                    Human-in-the-loop
+                  </div>
+                  <p>OCR + LLM extraction &rarr; human review &rarr; structured persistence.</p>
                 </div>
               </div>
               <p className="deck-meta">
-                AI-assisted compliance tracking: OCR + LLM extraction → human review → structured persistence. Human-in-the-loop by design.
+                Closes the audit follow-through loop. Overdue observations surfaced automatically.
               </p>
             </section>
           )}
 
-          {/* 10. Anchor: RFD CAREER */}
+          {/* 10. Anchor — RFD */}
           {rfd && (
             <section>
-              <p className="deck-eyebrow">Anchor &middot; Research Faculty Development</p>
-              <h2>{rfd.name}</h2>
-              <p style={{ marginTop: "0.6em" }}>{rfd.description}</p>
-              <div className="deck-grid deck-grid-2" style={{ marginTop: "0.8em" }}>
-                <div className="deck-card">
-                  <strong>Operational owner</strong>
-                  {rfd.operationalOwners[0]?.name}
+              <div className="deck-eyebrow">Anchor &middot; Research Faculty Development</div>
+              <div className="deck-split deck-split-60-40">
+                <div>
+                  <h2>{rfd.name}</h2>
+                  <p style={{ marginTop: "1em" }}>{rfd.description}</p>
                 </div>
-                <div className="deck-card">
-                  <strong>Status</strong>
-                  {rfd.status} &mdash; live cohort using it now
+                <div style={{ paddingTop: "1.2em" }}>
+                  <div className="deck-anchor-label">Owner</div>
+                  <p style={{ fontSize: "1.2em" }}>
+                    <span className="deck-owner">{rfd.operationalOwners[0]?.name}</span>
+                  </p>
+                  <div className="deck-anchor-label" style={{ marginTop: "1.4em" }}>Status</div>
+                  <p>{rfd.status} &mdash; live cohort using it now.</p>
                 </div>
               </div>
               <p className="deck-meta">
@@ -281,16 +323,23 @@ export default function OperationalExcellenceDeck() {
           {/* 11. Capability diffusion */}
           {sem && template && (
             <section>
-              <p className="deck-eyebrow">The diffusion story</p>
-              <h2>Agentic capability <span className="deck-accent">leaving IIDS</span></h2>
-              <div className="deck-grid deck-grid-2" style={{ marginTop: "0.6em" }}>
-                <div className="deck-card">
-                  <strong>{template.name}</strong>
-                  Production-ready scaffold: React 19 + FastAPI + data governance + security + CI + CLAUDE.md. Every new UI app starts aligned to institutional standards.
+              <div className="deck-eyebrow">The diffusion story</div>
+              <h2>
+                Agentic capability, <br /><span className="deck-accent">leaving IIDS</span>.
+              </h2>
+              <div className="deck-split deck-split-50-50" style={{ marginTop: "1.4em" }}>
+                <div>
+                  <div className="deck-anchor-label">{template.name}</div>
+                  <p>
+                    Production-ready scaffold: React 19 + FastAPI + data governance + security + CI + CLAUDE.md. Every new UI app starts aligned to institutional standards.
+                  </p>
                 </div>
-                <div className="deck-card">
-                  <strong>{sem.name}</strong>
-                  <em>Co-built</em> by IIDS + Strategic Enrollment Management. Owner: Dean Kahler (Vice Provost of SEM). SEM is learning agentic development alongside us &mdash; not just consuming.
+                <div>
+                  <div className="deck-anchor-label">{sem.name}</div>
+                  <p>
+                    <em>Co-built</em> by IIDS and Strategic Enrollment Management. Owner:{" "}
+                    <span className="deck-owner">Dean Kahler</span>, Vice Provost of SEM. A UI unit learning agentic development alongside us &mdash; not just consuming.
+                  </p>
                 </div>
               </div>
               <p className="deck-meta">
@@ -302,16 +351,28 @@ export default function OperationalExcellenceDeck() {
           {/* 12. Shared infrastructure */}
           {mindrouter && dgx && (
             <section>
-              <p className="deck-eyebrow">Shared infrastructure</p>
-              <h2>The substrate: <span className="deck-accent">IIDS-operated, on-prem</span></h2>
-              <div className="deck-grid deck-grid-2" style={{ marginTop: "0.6em" }}>
-                <div className="deck-card">
-                  <strong>{mindrouter.name}</strong>
-                  Production LLM load balancer &middot; unified API &middot; fair-share scheduling &middot; full audit logging. Open-sourced at <code>mindrouter.ai</code>.
+              <div className="deck-eyebrow">Shared infrastructure</div>
+              <h2>
+                The substrate: <span className="deck-accent">on-prem, IIDS-operated</span>.
+              </h2>
+              <div className="deck-defs" style={{ marginTop: "1.2em" }}>
+                <div className="deck-def">
+                  <div className="deck-def-term">{mindrouter.name}</div>
+                  <div className="deck-def-body">
+                    Production LLM load balancer &middot; unified API &middot; fair-share scheduling &middot; full audit logging. Open-source at <code>mindrouter.ai</code>.
+                  </div>
                 </div>
-                <div className="deck-card">
-                  <strong>{dgx.name}</strong>
-                  NVIDIA DGX Spark &middot; on-prem LLM + OCR appliance &middot; backend for MindRouter &middot; also deployed at SUU.
+                <div className="deck-def">
+                  <div className="deck-def-term">{dgx.name}</div>
+                  <div className="deck-def-body">
+                    NVIDIA DGX Spark &middot; on-prem LLM + OCR appliance &middot; backend for MindRouter &middot; also deployed at Southern Utah University.
+                  </div>
+                </div>
+                <div className="deck-def">
+                  <div className="deck-def-term">Owner (both)</div>
+                  <div className="deck-def-body">
+                    <span className="deck-owner">Luke Sheneman</span>, IIDS.
+                  </div>
                 </div>
               </div>
               <p className="deck-meta">
@@ -320,37 +381,49 @@ export default function OperationalExcellenceDeck() {
             </section>
           )}
 
-          {/* 13. Tracking, not just building */}
+          {/* 13. Tracking, not building */}
           <section>
-            <p className="deck-eyebrow">Inventory &gt; engineering</p>
-            <h2>We <span className="deck-accent">track</span> what we don&rsquo;t build</h2>
-            <p style={{ marginTop: "0.6em" }}>
+            <div className="deck-eyebrow">Inventory &gt; engineering</div>
+            <h2>
+              We <span className="deck-accent">track</span> what we don&rsquo;t build.
+            </h2>
+            <p style={{ marginTop: "1em", maxWidth: "40ch" }}>
               The inventory is institutional, not AISPEG-owned. When other units lead AI work, we record it &mdash; even when we have no involvement.
             </p>
-            <div className="deck-card" style={{ marginTop: "0.8em" }}>
-              <strong>Example: OIT Data Modernization (Huron)</strong>
-              OIT is leading institutional data modernization with Huron as consultant. AISPEG is tracking this work. Detailed information will be added as OIT shares scope and timelines.
+            <div className="deck-defs" style={{ marginTop: "1em" }}>
+              <div className="deck-def">
+                <div className="deck-def-term">Example</div>
+                <div className="deck-def-body">
+                  <strong>OIT Data Modernization with Huron.</strong> OIT is leading institutional data modernization in partnership with Huron Consulting. AISPEG is tracking this work; details will be added as OIT shares scope and timelines.
+                </div>
+              </div>
             </div>
             <p className="deck-meta">
-              <strong>Submit a project:</strong> any UI unit running AI work should appear here. <code>aispeg.insight.uidaho.edu/builder-guide</code>
+              Submit a project: any UI unit running AI work should appear in the inventory. <code>aispeg.insight.uidaho.edu/builder-guide</code>
             </p>
           </section>
 
           {/* 14. AI4RA */}
           <section>
-            <p className="deck-eyebrow">The consortium</p>
-            <h2>AI4RA: <span className="deck-accent">UI + SUU, NSF-funded</span></h2>
-            <p style={{ marginTop: "0.6em" }}>
+            <div className="deck-eyebrow">The consortium</div>
+            <h2>
+              AI4RA: <span className="deck-accent">UI + SUU, NSF-funded</span>.
+            </h2>
+            <p style={{ marginTop: "1em", maxWidth: "42ch" }}>
               AI4RA is a two-institution NSF GRANTED partnership (Award #2427549) producing open-source reference tools for research administration.
             </p>
-            <div className="deck-grid deck-grid-2" style={{ marginTop: "0.8em" }}>
-              <div className="deck-card">
-                <strong>AI4RA reference material</strong>
-                UDM spec · prompt-library · evaluation-harness · eCFR MCP · etc. Consumed by peer institutions.
+            <div className="deck-defs" style={{ marginTop: "1em" }}>
+              <div className="deck-def">
+                <div className="deck-def-term">Reference</div>
+                <div className="deck-def-body">
+                  UDM spec &middot; prompt library &middot; evaluation harness &middot; eCFR MCP. Consumed by peer institutions.
+                </div>
               </div>
-              <div className="deck-card">
-                <strong>Dual-destiny</strong>
-                UI maintains <em>deployment-specific</em> implementations of the reference tools (OpenERA, Vandalizer, MindRouter, ProcessMapping) alongside the community artifacts.
+              <div className="deck-def">
+                <div className="deck-def-term">Dual destiny</div>
+                <div className="deck-def-body">
+                  UI separately maintains deployment-specific implementations (OpenERA, Vandalizer, MindRouter, ProcessMapping) alongside the community artifacts.
+                </div>
               </div>
             </div>
             <p className="deck-meta">
@@ -360,32 +433,34 @@ export default function OperationalExcellenceDeck() {
 
           {/* 15. The ask */}
           <section>
-            <p className="deck-eyebrow">The ask</p>
-            <h2>What we need from this working group</h2>
-            <ol style={{ marginTop: "0.5em" }}>
+            <div className="deck-eyebrow">The ask</div>
+            <h2>What we need from this group.</h2>
+            <ol style={{ marginTop: "1.4em", maxWidth: "42ch" }}>
               <li>
-                <strong>Legitimize the institutional inventory.</strong> Endorse aispeg.insight.uidaho.edu as the authoritative record of UI AI interventions. Point your units there.
+                <strong>Legitimize the inventory.</strong> Endorse aispeg.insight.uidaho.edu as the authoritative record of UI AI work. Point units there.
               </li>
               <li>
-                <strong>Help us surface what we&rsquo;re missing.</strong> Every AI effort anywhere in the institution should appear in the inventory &mdash; even when AISPEG isn&rsquo;t building it.
+                <strong>Help us surface what we&rsquo;re missing.</strong> Every AI effort at UI should appear in the inventory &mdash; even when AISPEG isn&rsquo;t building it.
               </li>
               <li>
-                <strong>Protect the shared infrastructure.</strong> MindRouter and DGX Stack are the on-prem LLM substrate. They need institutional funding certainty.
+                <strong>Protect the shared infrastructure.</strong> MindRouter and DGX Stack need institutional funding certainty.
               </li>
               <li>
                 <strong>Back the diffusion pattern.</strong> SEM is co-building. More units should. TEMPLATE-app is the vehicle; AISPEG is the coach.
               </li>
               <li>
-                <strong>Keep the humans in the loop.</strong> Every intervention names an operational owner for a reason. AI proposes, humans approve. Don&rsquo;t let anyone short-circuit that.
+                <strong>Keep humans in the loop.</strong> Every intervention names an operational owner for a reason.
               </li>
             </ol>
           </section>
 
           {/* 16. Closing */}
-          <section className="title-slide">
-            <p className="deck-eyebrow">Thank you</p>
-            <h1>Questions?</h1>
-            <p style={{ fontSize: "1em", marginTop: "1.2em", color: "rgba(248,249,250,0.7)" }}>
+          <section className="closing-slide">
+            <div className="deck-eyebrow">Thank you</div>
+            <h1>
+              <span className="deck-accent">Questions?</span>
+            </h1>
+            <p style={{ marginTop: "1.6em", fontSize: "1em", color: "rgba(239,236,227,0.7)" }}>
               aispeg.insight.uidaho.edu
             </p>
             <p className="deck-meta">

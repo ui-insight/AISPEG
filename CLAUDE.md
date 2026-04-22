@@ -3,6 +3,22 @@
 ## Project Overview
 Interactive website for the AI Strategic Plan Execution Group (AISPEG) at the University of Idaho. AISPEG is a Presidentially-chartered cross-cutting initiative chaired by Ben Hunter (Dean of the Libraries), with members Barrie Robison, Luke Sheneman, Dan Ewart, and Bert Baumgaertner. The site is a growing inventory of AI interventions for operational excellence across UI units — some built by IIDS (Institute for Interdisciplinary Data Sciences, which runs MindRouter and DGX Stack), others tracked from partner units (OIT, OGC, etc.). AI4RA is the UI+SUU NSF GRANTED partnership producing reference open-source tools that UI also deploys institutionally (OpenERA, Vandalizer, MindRouter, ProcessMapping). Built with Next.js (App Router), Tailwind CSS v4, and TypeScript.
 
+## Design Context
+
+Design direction for this project is defined in [`.impeccable.md`](./.impeccable.md)
+at the project root. Read it before any visual/design work. Key principles at a glance:
+
+1. **Every claim names a human** — owner-names and home-units are load-bearing UI.
+2. **Restraint over decoration** — no gold stripe on every card, no gradient text, no
+   glassmorphism, no bouncy motion. Gold is reserved for emphasis.
+3. **Density with hierarchy** — stakeholders scan, practitioners read detail. Serve
+   both with a steep type hierarchy (≥1.25× ratio between steps).
+4. **Light surfaces, charcoal ink, gold sparingly** — surface dominance is near-white
+   with neutrals tinted subtly toward gold. The deck (reveal.js) is the exception — dark,
+   stage-optimized.
+5. **The site demonstrates what it argues** — evidence-forward, owner-named; no
+   decorative "trust us" flourishes.
+
 ## Tech Stack
 - **Framework**: Next.js 16 (App Router)
 - **Styling**: Tailwind CSS v4 (using `@import "tailwindcss"` and `@theme` for custom colors)
