@@ -36,11 +36,11 @@ export default function RevealDeck({
         keyboard: true,
         touch: true,
         history: false,
-        center: false,
+        center: true,
         transition: "slide",
         width: 1280,
         height: 720,
-        margin: 0.06,
+        margin: 0.03,
         minScale: 0.2,
         maxScale: 2.0,
       });

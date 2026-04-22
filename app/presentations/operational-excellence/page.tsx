@@ -46,7 +46,7 @@ export default function OperationalExcellenceDeck() {
         </p>
       </div>
 
-      <div className="h-[720px] w-full overflow-hidden rounded-xl border border-gray-200 shadow-md">
+      <div className="aspect-[16/9] w-full overflow-hidden rounded-xl border border-gray-200 shadow-md">
         <RevealDeck>
           {/* 1. TITLE */}
           <section className="title-slide">
