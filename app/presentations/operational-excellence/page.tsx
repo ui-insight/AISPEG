@@ -1,6 +1,6 @@
 import Link from "next/link";
 import RevealDeck from "@/components/RevealDeck";
-import { interventions, getPubliclyVisible } from "@/lib/portfolio";
+import { interventions } from "@/lib/portfolio";
 import { getDeckBySlug } from "@/lib/decks";
 
 const SLUG = "operational-excellence";
@@ -15,32 +15,25 @@ export function generateMetadata() {
 
 export default function OperationalExcellenceDeck() {
   const deck = getDeckBySlug(SLUG)!;
-  const visible = getPubliclyVisible();
   const byOwner = (slug: string) => interventions.find((i) => i.slug === slug);
 
-  const stratplan = byOwner("stratplan");
-  const embargoed = byOwner("embargoed-osp");
-  const vandalizer = byOwner("vandalizer");
   const audit = byOwner("audit-dashboard");
-  const rfd = byOwner("rfd-career");
-  const sem = byOwner("sem-experiential");
-  const mindrouter = byOwner("mindrouter");
-  const dgx = byOwner("dgx-stack");
-  const template = byOwner("template-app");
+  const nexus = byOwner("nexus");
+  const embargoed = byOwner("embargoed-osp");
 
   return (
     <div className="space-y-6">
       <nav className="text-sm text-gray-500">
-        <Link href="/presentations" className="hover:text-ui-gold-dark">
+        <Link href="/presentations" className="hover:text-brand-gold-dark">
           Presentations
         </Link>
         <span className="mx-2">/</span>
-        <span className="text-ui-charcoal">{deck.title}</span>
+        <span className="text-brand-black">{deck.title}</span>
       </nav>
 
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <div>
-          <h1 className="text-2xl font-bold text-ui-charcoal">{deck.title}</h1>
+          <h1 className="text-2xl font-black text-brand-black">{deck.title}</h1>
           <p className="mt-0.5 text-sm text-gray-500">
             {deck.audience} &middot; {deck.date} &middot; {deck.author}
           </p>
@@ -53,129 +46,260 @@ export default function OperationalExcellenceDeck() {
         </p>
       </div>
 
-      <div className="h-[720px] w-full overflow-hidden rounded-xl border border-gray-200 bg-ui-charcoal shadow-md">
+      <div className="h-[720px] w-full overflow-hidden rounded-xl border border-gray-200 shadow-md">
         <RevealDeck>
-          {/* 1. Title */}
+          {/* 1. TITLE */}
           <section className="title-slide">
-            <div className="deck-eyebrow">AISPEG &middot; Spring 2026</div>
+            <div className="deck-eyebrow">Today &middot; April 22, 2026</div>
             <h1>
-              AI interventions <br />
-              for <span className="deck-accent">operational excellence</span>
+              AI interventions for <span className="hl">operational excellence</span>.
             </h1>
             <p className="subhead">
-              How the University of Idaho coordinates, builds, and tracks AI
-              at institutional scale.
+              A tour of where we&rsquo;ve been, what we&rsquo;re running now,
+              and where we need this working group&rsquo;s help to go next.
             </p>
             <p className="deck-meta">
-              Barrie Robison &middot; AI Strategic Plan Execution Group
+              Barrie Robison &middot; Lead, University of Idaho AI Initiative
             </p>
           </section>
 
-          {/* 2. Who we are */}
+          {/* 2. AI4RA ORIGIN — July 1, 2025 */}
           <section>
-            <div className="deck-eyebrow">Who we are</div>
+            <div className="deck-eyebrow">Origin &middot; July 1, 2025</div>
             <h2>
-              AISPEG is the <span className="deck-accent">execution</span> group.
+              It started with <span className="hl">AI4RA</span>.
             </h2>
-            <div className="deck-defs" style={{ marginTop: "1.8em" }}>
-              <div className="deck-def">
-                <div className="deck-def-term">Charter</div>
-                <div className="deck-def-body">
-                  Presidentially chartered cross-cutting initiative supporting execution of the University&rsquo;s Strategic Plan.
-                </div>
+            <div className="deck-split deck-split-60-40" style={{ marginTop: "1.4em" }}>
+              <div>
+                <p style={{ maxWidth: "48ch" }}>
+                  NSF GRANTED Award{" "}
+                  <span className="deck-owner">#2427549</span> &mdash; a
+                  University of Idaho + Southern Utah University partnership
+                  &mdash; put us in the research-administration trenches with a
+                  clear remit: make AI-assisted workflows safer, more
+                  reviewable, and more useful.
+                </p>
+                <p style={{ marginTop: "1em", maxWidth: "48ch" }}>
+                  Within months we had a working playbook. The question
+                  became: <em>why would we stop at one domain?</em>
+                </p>
               </div>
-              <div className="deck-def">
-                <div className="deck-def-term">Chair</div>
-                <div className="deck-def-body">
-                  <span className="deck-owner">Ben Hunter</span>, Dean of the Libraries.
-                </div>
-              </div>
-              <div className="deck-def">
-                <div className="deck-def-term">Members</div>
-                <div className="deck-def-body">
-                  <span className="deck-owner">Barrie Robison</span>,{" "}
-                  <span className="deck-owner">Luke Sheneman</span>,{" "}
-                  <span className="deck-owner">Dan Ewart</span>,{" "}
-                  <span className="deck-owner">Bert Baumgaertner</span>.
-                </div>
-              </div>
-              <div className="deck-def">
-                <div className="deck-def-term">Our verbs</div>
-                <div className="deck-def-body">
-                  Inventory. Coordinate. Track. Often, build.
-                </div>
+              <div>
+                <div className="deck-anchor-label">AI4RA taught us</div>
+                <ul>
+                  <li>Data model before UI</li>
+                  <li>Human-in-the-loop, always</li>
+                  <li>Reproducibility over demos</li>
+                  <li>Shared infrastructure pays off fast</li>
+                </ul>
               </div>
             </div>
             <p className="deck-meta">
-              We are not the institution&rsquo;s engineering team. We are the strategic layer that keeps institutional AI work visible, coherent, and aligned.
+              From July 2025 onward, the same playbook expanded to the rest of
+              campus &mdash; finance, communications, enrollment, faculty
+              development, compliance.
             </p>
           </section>
 
-          {/* 3. Thesis */}
+          {/* 3. DFA — First expansion */}
           <section>
-            <div className="deck-eyebrow">The thesis</div>
+            <div className="deck-eyebrow">Act I &middot; First expansion</div>
             <h2>
-              Operational excellence is a <br /><span className="deck-accent">data problem</span>.
+              Division of Financial Affairs.
             </h2>
-            <p style={{ marginTop: "1.4em", fontSize: "1.05em", maxWidth: "32ch", lineHeight: 1.5 }}>
-              You can&rsquo;t improve what you can&rsquo;t measure. You can&rsquo;t measure what you can&rsquo;t model. And you can&rsquo;t model what you can&rsquo;t name consistently.
-            </p>
-            <p style={{ marginTop: "1em", fontSize: "1em", maxWidth: "34ch", color: "#f7f3e8" }}>
-              AI accelerates every step &mdash; <em>only</em> if the underlying data is trustworthy.
-            </p>
+            <div className="deck-split deck-split-60-40" style={{ marginTop: "1.2em" }}>
+              <div>
+                <p>
+                  The first domain-transfer test for AI4RA: an{" "}
+                  <span className="hl">AI-assisted audit</span> observation
+                  lifecycle for Internal Audit. PDFs in, structured review out,
+                  humans accountable at every gate.
+                </p>
+                {audit && (
+                  <p style={{ marginTop: "1em" }}>{audit.description}</p>
+                )}
+              </div>
+              <div style={{ paddingTop: "0.8em" }}>
+                <div className="deck-anchor-label">Owner</div>
+                <p style={{ fontSize: "1.2em", marginBottom: "1em" }}>
+                  <span className="deck-owner">Kim Salisbury</span>
+                </p>
+                <div className="deck-anchor-label">Status</div>
+                <p>Prototype in active use by DFA.</p>
+              </div>
+            </div>
             <p className="deck-meta">
-              That&rsquo;s why our portfolio starts with data standards and named operational owners, not chatbots.
+              Proof point: the AI4RA pattern transferred cleanly to a
+              non-research-admin domain. The playbook works beyond its origin.
             </p>
           </section>
 
-          {/* 4. What we'll cover */}
+          {/* 4. INFRASTRUCTURE & CAPACITY */}
           <section>
-            <div className="deck-eyebrow">What we&rsquo;ll cover</div>
-            <h2>An inventory talk.</h2>
-            <ol style={{ marginTop: "1.4em", maxWidth: "40ch" }}>
-              <li>Our model &mdash; how AISPEG organizes UI AI work</li>
-              <li>The portfolio &mdash; {visible.length} interventions, grouped by home unit</li>
-              <li>Four anchors &mdash; interventions by named owner</li>
-              <li>Capability diffusion &mdash; the SEM co-build pattern</li>
-              <li>Tracking, not just building &mdash; the OIT/Huron stub</li>
-              <li>What we need from this working group</li>
-            </ol>
-          </section>
-
-          {/* 5. The primitive */}
-          <section>
-            <div className="deck-eyebrow">The model</div>
+            <div className="deck-eyebrow">Substrate &middot; Infrastructure &amp; capacity</div>
             <h2>
-              One primitive: the <span className="deck-accent">intervention</span>.
+              Infrastructure matters <span className="hl">more than apps</span>.
             </h2>
-            <p style={{ marginTop: "1em", maxWidth: "40ch" }}>
-              Every AI effort in the inventory is defined by four facts &mdash; not by a GitHub repo.
+            <p style={{ marginTop: "0.8em", maxWidth: "46ch" }}>
+              None of the interventions on the site would exist without a
+              shared, secure, institution-owned compute layer. Two pieces:
             </p>
             <div className="deck-defs" style={{ marginTop: "1.4em" }}>
               <div className="deck-def">
-                <div className="deck-def-term">Home unit</div>
-                <div className="deck-def-body">Where it lives operationally &mdash; OSP, DFA, SEM, UCM, and so on.</div>
+                <div className="deck-def-term">MindRouter</div>
+                <div className="deck-def-body">
+                  Production LLM load balancer with fair-share scheduling,
+                  quotas, tool-calling, and full audit trails. Every AI app at
+                  UI routes through it. Open-sourced at{" "}
+                  <strong>mindrouter.ai</strong>. Owner:{" "}
+                  <span className="deck-owner">Luke Sheneman</span>.
+                </div>
               </div>
               <div className="deck-def">
-                <div className="deck-def-term">Owner</div>
-                <div className="deck-def-body">The named person whose job depends on this working.</div>
+                <div className="deck-def-term">Mother cluster</div>
+                <div className="deck-def-body">
+                  <strong>20 × NVIDIA H200 GPUs</strong> hosted at{" "}
+                  <strong>Idaho National Laboratory</strong>. On-prem compute
+                  for institutional workloads — no cloud recurring cost,
+                  compliance-sensitive data stays in-state.
+                </div>
               </div>
               <div className="deck-def">
-                <div className="deck-def-term">Status</div>
-                <div className="deck-def-body">Prototype &middot; Piloting &middot; Production &middot; Tracked.</div>
-              </div>
-              <div className="deck-def">
-                <div className="deck-def-term">Visibility</div>
-                <div className="deck-def-body">Public &middot; Partial (embargoed) &middot; Internal-only.</div>
+                <div className="deck-def-term">Collaboration</div>
+                <div className="deck-def-body">
+                  Jointly operated with <strong>OIT</strong>. Network,
+                  identity, and security integration co-owned; architecture and
+                  build carried by IIDS.
+                </div>
               </div>
             </div>
           </section>
 
-          {/* 6. Portfolio by unit */}
+          {/* 5. NOTABLE EARLY PROJECTS */}
           <section>
-            <div className="deck-eyebrow">The inventory</div>
+            <div className="deck-eyebrow">Act II &middot; Notable early projects</div>
+            <h2>Momentum across domains.</h2>
+            <div className="deck-split deck-split-50-50" style={{ marginTop: "1.2em" }}>
+              <div className="deck-panel">
+                <strong>Vandalizer</strong>
+                AI-powered document intelligence for research administration.
+                NSF-funded, open-source, deployed at UI and Southern Utah
+                University.
+                <p style={{ fontSize: "0.82em", color: "#595959", marginTop: "0.6em" }}>
+                  Owner: <span className="deck-owner">Sarah Martonick</span>
+                </p>
+              </div>
+              <div className="deck-panel">
+                <strong>SBOE response</strong>
+                Rapid AI-assisted preparation of institutional responses to
+                State Board of Education inquiries &mdash; a dry-run that
+                showed what a 48-hour turnaround looks like when the data
+                model is already in place.
+              </div>
+              <div className="deck-panel">
+                <strong>Water Law database</strong>
+                Document-OCR and metadata extraction for Idaho water rights
+                filings &mdash; a distinct domain from research admin, same
+                institutional playbook.
+              </div>
+              <div className="deck-panel">
+                <strong>Feb 2026 sprint evidence</strong>
+                Across all early projects: 830 commits, 237,900 net new lines
+                of production code in 26 calendar days, 10&ndash;16&times;
+                traditional-baseline productivity.
+              </div>
+            </div>
+          </section>
+
+          {/* 6. NEXUS */}
+          <section>
+            <div className="deck-eyebrow">Act III &middot; Where apps land</div>
             <h2>
-              {visible.length} interventions &mdash; <span className="deck-accent">grouped by home unit</span>.
+              <span className="hl">Nexus</span>.
+            </h2>
+            {nexus && (
+              <p style={{ marginTop: "0.8em", maxWidth: "50ch" }}>
+                {nexus.description}
+              </p>
+            )}
+            <div className="deck-defs" style={{ marginTop: "1.2em" }}>
+              <div className="deck-def">
+                <div className="deck-def-term">Owners</div>
+                <div className="deck-def-body">
+                  <span className="deck-owner">Kali Armitage</span>{" "}
+                  and <span className="deck-owner">Colin Addington</span>.
+                </div>
+              </div>
+              <div className="deck-def">
+                <div className="deck-def-term">Collaboration</div>
+                <div className="deck-def-body">
+                  OIT + IIDS. React + FastAPI on OIT-managed secure
+                  infrastructure.
+                </div>
+              </div>
+              <div className="deck-def">
+                <div className="deck-def-term">Role</div>
+                <div className="deck-def-body">
+                  Institutional landing zone: the template where UI application
+                  modules are deployed. Complements TEMPLATE-app (the
+                  development scaffold) with a production runtime.
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* 7. FEB 2026 INFLECTION */}
+          <section>
+            <div className="deck-eyebrow">Inflection &middot; February 2026</div>
+            <h2>
+              The models <span className="hl">changed</span>.
+            </h2>
+            <div className="deck-split deck-split-50-50" style={{ marginTop: "1.2em" }}>
+              <div>
+                <p>
+                  In February 2026, two drops shifted the ground beneath us:
+                </p>
+                <ul style={{ marginTop: "0.6em" }}>
+                  <li><strong>Codex 5.4</strong> &mdash; agentic coding at production quality</li>
+                  <li><strong>Claude Opus 4.6</strong> &mdash; long-horizon reasoning + code</li>
+                </ul>
+                <p style={{ marginTop: "1em" }}>
+                  Agentic development stopped being an experiment and became{" "}
+                  <em>the default pace</em>.
+                </p>
+              </div>
+              <div>
+                <div className="deck-stats" style={{ gridTemplateColumns: "1fr 1fr", gap: "1.2em 2em", marginTop: 0 }}>
+                  <div>
+                    <div className="deck-stat-number">830</div>
+                    <div className="deck-stat-label">Commits · 26 days</div>
+                  </div>
+                  <div>
+                    <div className="deck-stat-number">237k</div>
+                    <div className="deck-stat-label">Net new lines</div>
+                  </div>
+                  <div>
+                    <div className="deck-stat-number">11</div>
+                    <div className="deck-stat-label">Active repos</div>
+                  </div>
+                  <div>
+                    <div className="deck-stat-number">10&ndash;16×</div>
+                    <div className="deck-stat-label">Productivity multiplier</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p className="deck-meta">
+              The institutional question flipped: not &ldquo;can we build this?&rdquo; but
+              &ldquo;how fast can governance, review, and inventory keep up?&rdquo;
+            </p>
+          </section>
+
+          {/* 8. NEW PROJECTS — tour */}
+          <section>
+            <div className="deck-eyebrow">Act IV &middot; The inventory</div>
+            <h2>
+              The <span className="hl">portfolio</span> &mdash; grouped by home unit.
             </h2>
             <div className="deck-unit-list">
               <div className="deck-unit">
@@ -191,7 +315,7 @@ export default function OperationalExcellenceDeck() {
                 <div className="deck-unit-items">Audit Dashboard</div>
               </div>
               <div className="deck-unit">
-                <div className="deck-unit-name">University Comms &amp; Marketing</div>
+                <div className="deck-unit-name">University Communications &amp; Marketing</div>
                 <div className="deck-unit-items">UCM Daily Register</div>
               </div>
               <div className="deck-unit">
@@ -208,293 +332,159 @@ export default function OperationalExcellenceDeck() {
               </div>
               <div className="deck-unit">
                 <div className="deck-unit-name">Office of Information Technology</div>
-                <div className="deck-unit-items">OIT data modernization (tracked)</div>
+                <div className="deck-unit-items">Nexus &middot; Data Modernization (tracked)</div>
               </div>
             </div>
             <p className="deck-meta">
-              Two additional embargoed interventions in ORED/OGC compliance space. Full inventory at aispeg.insight.uidaho.edu.
+              Full live inventory: <strong>aispeg.insight.uidaho.edu/portfolio</strong> &mdash; I&rsquo;ll demo it in a moment.
             </p>
           </section>
 
-          {/* 7. Anchor — StratPlan */}
-          {stratplan && (
-            <section>
-              <div className="deck-eyebrow">Anchor &middot; Office of the President</div>
-              <div className="deck-split deck-split-60-40">
-                <div>
-                  <h2>{stratplan.name}</h2>
-                  <p style={{ marginTop: "1em" }}>{stratplan.description}</p>
-                </div>
-                <div style={{ paddingTop: "1.2em" }}>
-                  <div className="deck-anchor-label">Owner</div>
-                  <p style={{ fontSize: "1.2em" }}>
-                    <span className="deck-owner">{stratplan.operationalOwners[0]?.name}</span>
-                  </p>
-                  <div className="deck-anchor-label" style={{ marginTop: "1.4em" }}>Status</div>
-                  <p>{stratplan.status} &middot; public dashboard</p>
-                </div>
-              </div>
-              <p className="deck-meta">
-                25 units &middot; 337 tactics &middot; 5 pillars. Executive visibility of strategic-plan execution.
-              </p>
-            </section>
-          )}
-
-          {/* 8. Anchor — OSP (two interventions, one owner) */}
-          {vandalizer && embargoed && (
-            <section>
-              <div className="deck-eyebrow">Anchor &middot; OSP, ORED</div>
-              <h2>Modernizing research administration.</h2>
-              <div className="deck-split deck-split-50-50" style={{ marginTop: "1.4em" }}>
-                <div>
-                  <div className="deck-anchor-label">{vandalizer.name}</div>
-                  <p>{vandalizer.tagline}</p>
-                  <p style={{ fontSize: "0.78em", color: "rgba(247,245,240,0.6)", marginTop: "0.8em" }}>
-                    Owner: <span className="deck-owner">Sarah Martonick</span>{" "}
-                    &middot; Lead dev: <span className="deck-owner">John Brunsfeld</span>{" "}
-                    &middot; Also at Southern Utah University &middot; {vandalizer.funding}
-                  </p>
-                </div>
-                <div>
-                  <div className="deck-anchor-label">Embargoed project</div>
-                  <p>
-                    A second AI4RA Core dual-destiny effort under the same owner &mdash; identity and deployment details embargoed pending public release.
-                  </p>
-                  <p style={{ fontSize: "0.78em", color: "rgba(247,245,240,0.6)", marginTop: "0.8em" }}>
-                    Owner: <span className="deck-owner">Sarah Martonick</span>{" "}
-                    &middot; Dual-destiny (AI4RA + UI) &middot; Prototype
-                  </p>
-                </div>
-              </div>
-              <p className="deck-meta">
-                Two interventions, one owner. Accountability travels with the person &mdash; whether the artifact is open-source community tooling or a UI-embargoed deployment.
-              </p>
-            </section>
-          )}
-
-          {/* 9. Anchor — Audit Dashboard */}
-          {audit && (
-            <section>
-              <div className="deck-eyebrow">Anchor &middot; Division of Financial Affairs</div>
-              <div className="deck-split deck-split-60-40">
-                <div>
-                  <h2>{audit.name}</h2>
-                  <p style={{ marginTop: "1em" }}>{audit.description}</p>
-                </div>
-                <div style={{ paddingTop: "1.2em" }}>
-                  <div className="deck-anchor-label">Owner</div>
-                  <p style={{ fontSize: "1.2em" }}>
-                    <span className="deck-owner">{audit.operationalOwners[0]?.name}</span>
-                  </p>
-                  <div className="deck-anchor-label" style={{ marginTop: "1.4em" }}>
-                    Human-in-the-loop
-                  </div>
-                  <p>OCR + LLM extraction &rarr; human review &rarr; structured persistence.</p>
-                </div>
-              </div>
-              <p className="deck-meta">
-                Closes the audit follow-through loop. Overdue observations surfaced automatically.
-              </p>
-            </section>
-          )}
-
-          {/* 10. Anchor — RFD */}
-          {rfd && (
-            <section>
-              <div className="deck-eyebrow">Anchor &middot; Research Faculty Development</div>
-              <div className="deck-split deck-split-60-40">
-                <div>
-                  <h2>{rfd.name}</h2>
-                  <p style={{ marginTop: "1em" }}>{rfd.description}</p>
-                </div>
-                <div style={{ paddingTop: "1.2em" }}>
-                  <div className="deck-anchor-label">Owner</div>
-                  <p style={{ fontSize: "1.2em" }}>
-                    <span className="deck-owner">{rfd.operationalOwners[0]?.name}</span>
-                  </p>
-                  <div className="deck-anchor-label" style={{ marginTop: "1.4em" }}>Status</div>
-                  <p>{rfd.status} &mdash; live cohort using it now.</p>
-                </div>
-              </div>
-              <p className="deck-meta">
-                Small, focused, in use. Operational excellence is won one cohort at a time.
-              </p>
-            </section>
-          )}
-
-          {/* 11. Capability diffusion */}
-          {sem && template && (
-            <section>
-              <div className="deck-eyebrow">The diffusion story</div>
-              <h2>
-                Agentic capability, <br /><span className="deck-accent">leaving IIDS</span>.
-              </h2>
-              <div className="deck-split deck-split-50-50" style={{ marginTop: "1.4em" }}>
-                <div>
-                  <div className="deck-anchor-label">{template.name}</div>
-                  <p>
-                    Production-ready scaffold: React 19 + FastAPI + data governance + security + CI + CLAUDE.md. Every new UI app starts aligned to institutional standards.
-                  </p>
-                </div>
-                <div>
-                  <div className="deck-anchor-label">{sem.name}</div>
-                  <p>
-                    <em>Co-built</em> by IIDS and Strategic Enrollment Management. Owner:{" "}
-                    <span className="deck-owner">Dean Kahler</span>, Vice Provost of SEM. A UI unit learning agentic development alongside us &mdash; not just consuming.
-                  </p>
-                </div>
-              </div>
-              <p className="deck-meta">
-                This is the path to scale. AISPEG doesn&rsquo;t need to build everything; we need to make it easy for any UI unit to build what they need.
-              </p>
-            </section>
-          )}
-
-          {/* 12. Shared infrastructure */}
-          {mindrouter && dgx && (
-            <section>
-              <div className="deck-eyebrow">Shared infrastructure</div>
-              <h2>
-                The substrate: <span className="deck-accent">on-prem, IIDS-operated</span>.
-              </h2>
-              <div className="deck-defs" style={{ marginTop: "1.2em" }}>
-                <div className="deck-def">
-                  <div className="deck-def-term">{mindrouter.name}</div>
-                  <div className="deck-def-body">
-                    Production LLM load balancer &middot; unified API &middot; fair-share scheduling &middot; full audit logging. Open-source at <code>mindrouter.ai</code>.
-                  </div>
-                </div>
-                <div className="deck-def">
-                  <div className="deck-def-term">{dgx.name}</div>
-                  <div className="deck-def-body">
-                    NVIDIA DGX Spark &middot; on-prem LLM + OCR appliance &middot; backend for MindRouter &middot; also deployed at Southern Utah University.
-                  </div>
-                </div>
-                <div className="deck-def">
-                  <div className="deck-def-term">Owner (both)</div>
-                  <div className="deck-def-body">
-                    <span className="deck-owner">Luke Sheneman</span>, IIDS.
-                  </div>
-                </div>
-              </div>
-              <p className="deck-meta">
-                Every AI app at UI routes through MindRouter. Data stays on-prem. No per-seat vendor lock-in. Fair access across research and operations.
-              </p>
-            </section>
-          )}
-
-          {/* 13. Tracking, not building */}
+          {/* 9. META — the site itself */}
           <section>
-            <div className="deck-eyebrow">Inventory &gt; engineering</div>
+            <div className="deck-eyebrow">Meta &middot; This website</div>
             <h2>
-              We <span className="deck-accent">track</span> what we don&rsquo;t build.
+              We built <span className="hl">this site</span> the same way.
             </h2>
-            <p style={{ marginTop: "1em", maxWidth: "40ch" }}>
-              The inventory is institutional, not AISPEG-owned. When other units lead AI work, we record it &mdash; even when we have no involvement.
+            <p style={{ marginTop: "0.8em", maxWidth: "48ch" }}>
+              The site you&rsquo;ll see in a moment is itself an AI
+              intervention &mdash; scaffolded from the same TEMPLATE-app,
+              headed to the same production home on Nexus, routed through
+              MindRouter for any AI surfaces it needs.
             </p>
             <div className="deck-defs" style={{ marginTop: "1em" }}>
               <div className="deck-def">
-                <div className="deck-def-term">Example</div>
+                <div className="deck-def-term">Purpose</div>
                 <div className="deck-def-body">
-                  <strong>OIT Data Modernization with Huron.</strong> OIT is leading institutional data modernization in partnership with Huron Consulting. AISPEG is tracking this work; details will be added as OIT shares scope and timelines.
-                </div>
-              </div>
-            </div>
-            <p className="deck-meta">
-              Submit a project: any UI unit running AI work should appear in the inventory. <code>aispeg.insight.uidaho.edu/builder-guide</code>
-            </p>
-          </section>
-
-          {/* 14. AI4RA */}
-          <section>
-            <div className="deck-eyebrow">The consortium</div>
-            <h2>
-              AI4RA: <span className="deck-accent">UI + SUU, NSF-funded</span>.
-            </h2>
-            <p style={{ marginTop: "1em", maxWidth: "42ch" }}>
-              AI4RA is a two-institution NSF GRANTED partnership (Award #2427549) producing open-source reference tools for research administration.
-            </p>
-            <div className="deck-defs" style={{ marginTop: "1em" }}>
-              <div className="deck-def">
-                <div className="deck-def-term">Reference</div>
-                <div className="deck-def-body">
-                  UDM spec &middot; prompt library &middot; evaluation harness &middot; eCFR MCP. Consumed by peer institutions.
+                  The institutional inventory of AI interventions, a
+                  submission portal for new work, and a stakeholder
+                  communication surface.
                 </div>
               </div>
               <div className="deck-def">
-                <div className="deck-def-term">Dual destiny</div>
+                <div className="deck-def-term">Demonstrates</div>
                 <div className="deck-def-body">
-                  UI separately maintains deployment-specific implementations (Vandalizer, MindRouter, ProcessMapping, and an embargoed project) alongside the community artifacts.
+                  The principles at play &mdash; evidence-forward,
+                  owner-named, visibility-tiered, inspectable.
                 </div>
               </div>
             </div>
+          </section>
+
+          {/* 10. SUBMISSION TOOL */}
+          <section>
+            <div className="deck-eyebrow">Contribute &middot; The portal</div>
+            <h2>
+              Got an AI idea? <span className="hl">Submit it</span>.
+            </h2>
+            <p style={{ marginTop: "0.8em", maxWidth: "46ch" }}>
+              Every UI unit can submit a project or idea through the builder
+              guide wizard. AISPEG tracks it, helps scope it, and connects it
+              to related work across campus. The inventory is institutional
+              &mdash; the goal is{" "}
+              <em>no shadow AI work</em>, by any unit, anywhere.
+            </p>
+            <ul style={{ marginTop: "1em" }}>
+              <li>Early ideas welcome &mdash; you don&rsquo;t need a spec.</li>
+              <li>We track non-AISPEG-built work too (e.g., OIT Data Modernization with Huron).</li>
+              <li>Submissions feed the registry, similarity check against existing projects, then promotion to the public portfolio.</li>
+            </ul>
             <p className="deck-meta">
-              AI4RA community tools are not UI interventions. UI&rsquo;s deployments of them are.
+              <code>aispeg.insight.uidaho.edu/builder-guide</code>
             </p>
           </section>
 
-          {/* 15. Cautionary tale */}
+          {/* 11. OPENERA EXAMPLE (embargoed reveal during demo) */}
           <section>
-            <div className="deck-eyebrow">A cautionary tale &middot; April 21, 2026</div>
+            <div className="deck-eyebrow">Demo &middot; Embargoed project</div>
             <h2>
-              Vibe coding without <span className="deck-accent">institutional guardrails</span>.
+              Let&rsquo;s look at one together.
             </h2>
-            <div className="deck-stats" style={{ marginTop: "1.4em", gridTemplateColumns: "repeat(3, 1fr)" }}>
+            <div className="deck-split deck-split-50-50" style={{ marginTop: "1.2em" }}>
               <div>
-                <div className="deck-stat-number">48 days</div>
-                <div className="deck-stat-label">Projects exposed after a bug report was closed without escalation</div>
+                <p>
+                  Over on the site, there&rsquo;s an{" "}
+                  <span className="deck-owner">Embargoed project</span>{" "}
+                  card under OSP / ORED. You&rsquo;ll see:
+                </p>
+                <ul>
+                  <li>The card, with owner and status</li>
+                  <li>An AI4RA Core chip</li>
+                  <li>&ldquo;Embargoed&rdquo; visibility indicator</li>
+                </ul>
+                <p style={{ marginTop: "0.6em" }}>
+                  What you <em>won&rsquo;t</em> see: name, description, repo,
+                  docs. That&rsquo;s the Partial visibility tier at work.
+                </p>
               </div>
               <div>
-                <div className="deck-stat-number">91.5%</div>
-                <div className="deck-stat-label">Vibe-coded apps with an AI hallucination-related flaw (Q1 2026)</div>
-              </div>
-              <div>
-                <div className="deck-stat-number">$6.6B</div>
-                <div className="deck-stat-label">Valuation of the platform at the time of disclosure</div>
+                {embargoed && (
+                  <div className="deck-panel">
+                    <strong>Embargoed project</strong>
+                    <p style={{ fontSize: "0.82em", color: "#595959", marginTop: "0.4em" }}>
+                      Owner: <span className="deck-owner">Sarah Martonick</span>
+                    </p>
+                    <p style={{ fontSize: "0.82em", color: "#595959", marginTop: "0.2em" }}>
+                      Prototype &middot; AI4RA Core &middot; Partial visibility
+                    </p>
+                    <p style={{ fontSize: "0.78em", color: "#7a7a7a", marginTop: "0.6em", fontStyle: "italic" }}>
+                      Full details and live demo reveal off-slide during the
+                      session.
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
-            <p style={{ marginTop: "1.6em", fontSize: "1em", fontStyle: "italic", maxWidth: "46ch", color: "#F1B300", fontWeight: 700, lineHeight: 1.4 }}>
-              &ldquo;The real risk of vibe coding isn&rsquo;t AI writing insecure code. It&rsquo;s humans shipping code they never had a chance to secure.&rdquo;
-            </p>
             <p className="deck-meta">
-              Lovable platform breach &middot; <em>The Next Web</em>, Apr 21, 2026. This is what institutional AI development looks like <em>without</em> named owners, review gates, audit trails, or standards. AISPEG exists to prevent this.
+              Three visibility tiers:{" "}
+              <strong>Public</strong> (everything shown) &middot;{" "}
+              <strong>Partial</strong> (card + ownership, embargoed details)
+              &middot; <strong>Internal-only</strong> (not listed publicly).
             </p>
           </section>
 
-          {/* 16. The ask */}
+          {/* 12. CALL TO ACTION */}
           <section>
-            <div className="deck-eyebrow">The ask</div>
-            <h2>What we need from this group.</h2>
-            <ol style={{ marginTop: "1.4em", maxWidth: "42ch" }}>
+            <div className="deck-eyebrow">Call to action</div>
+            <h2>
+              <span className="hl">Four things</span> from this group.
+            </h2>
+            <ol style={{ marginTop: "1.2em", maxWidth: "46ch" }}>
               <li>
-                <strong>Legitimize the inventory.</strong> Endorse aispeg.insight.uidaho.edu as the authoritative record of UI AI work. Point units there.
+                <strong>Legitimize the inventory</strong> as the authoritative
+                record of UI AI work. Point your units to it.
               </li>
               <li>
-                <strong>Help us surface what we&rsquo;re missing.</strong> Every AI effort at UI should appear in the inventory &mdash; even when AISPEG isn&rsquo;t building it.
+                <strong>Surface what we&rsquo;re missing.</strong> Every AI
+                effort at UI should appear on the site &mdash; including work
+                AISPEG isn&rsquo;t building.
               </li>
               <li>
-                <strong>Protect the shared infrastructure.</strong> MindRouter and DGX Stack need institutional funding certainty.
+                <strong>Protect the shared infrastructure.</strong>{" "}
+                MindRouter and the mother cluster need institutional funding
+                certainty &mdash; they&rsquo;re load-bearing for everything
+                downstream.
               </li>
               <li>
-                <strong>Back the diffusion pattern.</strong> SEM is co-building. More units should. TEMPLATE-app is the vehicle; AISPEG is the coach.
-              </li>
-              <li>
-                <strong>Keep humans in the loop.</strong> Every intervention names an operational owner for a reason.
+                <strong>Back the diffusion pattern.</strong> SEM is
+                co-building; more units should. Nexus + TEMPLATE-app is the
+                runway.
               </li>
             </ol>
           </section>
 
-          {/* 17. Closing */}
+          {/* 13. CLOSING */}
           <section className="closing-slide">
             <div className="deck-eyebrow">Thank you</div>
             <h1>
-              <span className="deck-accent">Questions?</span>
+              <span className="hl">Questions?</span>
             </h1>
-            <p style={{ marginTop: "1.6em", fontSize: "1em", color: "rgba(239,236,227,0.7)" }}>
-              aispeg.insight.uidaho.edu
+            <p style={{ marginTop: "1.6em", fontSize: "1em", color: "#3d3d3d" }}>
+              <strong>aispeg.insight.uidaho.edu</strong>
             </p>
             <p className="deck-meta">
-              Barrie Robison &middot; AISPEG &middot; AI Strategic Plan Execution Group
+              Barrie Robison &middot; Lead, University of Idaho AI Initiative
+              &middot; April 22, 2026
             </p>
           </section>
         </RevealDeck>

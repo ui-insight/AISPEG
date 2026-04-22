@@ -83,13 +83,15 @@ main h4 {
 
 /* ============================================================
    Reveal.js — AISPEG deck theme
-   Dark stage. UI brand palette applied strictly.
-   Single-font Public Sans with weight-contrast hierarchy.
+   LIGHT editorial deck. Warm off-white surface, brand-black ink.
+   Pride Gold used as a highlighter behind one or two key words per
+   slide — not as text color. Clearwater teal for owner names,
+   section markers, and counters.
    ============================================================ */
 
 .aispeg-deck {
-  background-color: #191919;
-  color: #f7f5f0;
+  background-color: #faf8f3;
+  color: #191919;
   font-family: var(--font-sans);
   font-weight: 400;
   letter-spacing: -0.005em;
@@ -99,91 +101,93 @@ main h4 {
   padding: 0;
 }
 
-/* Headings — heavy display weight, tight tracking */
+/* Headings */
 .aispeg-deck h1,
 .aispeg-deck h2,
 .aispeg-deck h3 {
   font-family: var(--font-sans);
   font-weight: 900;
-  color: #ffffff;
+  color: #191919;
   letter-spacing: -0.03em;
   line-height: 1;
   text-transform: none;
   margin-bottom: 0.4em;
 }
-.aispeg-deck h1 {
-  font-size: 4.4em;
-  line-height: 0.95;
-}
-.aispeg-deck h2 {
-  font-size: 2.6em;
-  line-height: 1.05;
-}
+.aispeg-deck h1 { font-size: 4.4em; line-height: 0.95; }
+.aispeg-deck h2 { font-size: 2.6em; line-height: 1.05; }
 .aispeg-deck h3 {
   font-size: 1.4em;
   font-weight: 800;
-  color: #F1B300;
+  color: #008080;
   letter-spacing: -0.02em;
 }
 .aispeg-deck p,
 .aispeg-deck li {
-  color: rgba(247, 245, 240, 0.82);
+  color: #3d3d3d;
   font-size: 0.88em;
-  line-height: 1.5;
+  line-height: 1.55;
   font-weight: 400;
 }
 .aispeg-deck strong {
-  color: #ffffff;
+  color: #191919;
   font-weight: 700;
 }
 .aispeg-deck em {
-  color: rgba(247, 245, 240, 0.95);
+  color: #191919;
   font-style: italic;
-  font-weight: 400;
+  font-weight: 500;
 }
 .aispeg-deck a {
-  color: #F1B300;
+  color: #191919;
   text-decoration: underline;
-  text-decoration-color: rgba(241, 179, 0, 0.45);
-  text-underline-offset: 3px;
+  text-decoration-color: #008080;
+  text-underline-offset: 4px;
   text-decoration-thickness: 1.5px;
 }
 .aispeg-deck a:hover {
-  color: #FFD34D;
-  text-decoration-color: #FFD34D;
+  text-decoration-thickness: 2px;
 }
 .aispeg-deck code {
   font-family: ui-monospace, "SF Mono", "Menlo", monospace;
-  background: transparent;
-  color: #F1B300;
-  border: 1px solid rgba(241, 179, 0, 0.35);
-  padding: 0 0.35em;
+  background: rgba(241, 179, 0, 0.15);
+  color: #191919;
+  padding: 0.05em 0.35em;
   border-radius: 2px;
   font-size: 0.82em;
   font-weight: 500;
 }
 
-/* Lists — no cards, clean rhythm */
+/* HIGHLIGHTER — the primary gold treatment.
+   Use on 1–2 key words per slide, NOT on long phrases. */
+.aispeg-deck .hl {
+  background-color: #F1B300;
+  color: #191919;
+  padding: 0.02em 0.22em 0.08em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  border-radius: 2px;
+  font-weight: inherit;
+}
+
+/* Lists */
 .aispeg-deck ol,
 .aispeg-deck ul {
   margin-left: 0;
   padding-left: 0;
   list-style: none;
 }
-.aispeg-deck ol {
-  counter-reset: deckcounter;
-}
+.aispeg-deck ol { counter-reset: deckcounter; }
 .aispeg-deck ol > li {
   counter-increment: deckcounter;
   position: relative;
   padding-left: 2.4em;
-  margin-bottom: 0.7em;
+  margin-bottom: 0.75em;
 }
 .aispeg-deck ol > li::before {
   content: counter(deckcounter, decimal-leading-zero);
   font-family: var(--font-sans);
   font-weight: 900;
-  color: #F1B300;
+  color: #008080;
   position: absolute;
   left: 0;
   top: 0;
@@ -192,7 +196,7 @@ main h4 {
 }
 .aispeg-deck ul > li {
   position: relative;
-  padding-left: 1.4em;
+  padding-left: 1.5em;
   margin-bottom: 0.55em;
 }
 .aispeg-deck ul > li::before {
@@ -202,50 +206,43 @@ main h4 {
   top: 0.55em;
   width: 0.7em;
   height: 2px;
-  background: #F1B300;
+  background: #008080;
 }
 
-/* Eyebrow — section-break only */
+/* Eyebrow — small, all-caps, teal dash */
 .aispeg-deck .deck-eyebrow {
   font-family: var(--font-sans);
-  font-size: 0.62em;
+  font-size: 0.58em;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.2em;
-  color: #F1B300;
-  margin-bottom: 1.8em;
+  color: #595959;
+  margin-bottom: 1.6em;
   display: flex;
   align-items: baseline;
-  gap: 1em;
+  gap: 0.9em;
 }
 .aispeg-deck .deck-eyebrow::before {
   content: "";
   display: inline-block;
   width: 2em;
   height: 2px;
-  background: #F1B300;
+  background: #008080;
   transform: translateY(-0.25em);
 }
 
 /* Meta */
 .aispeg-deck .deck-meta {
-  color: rgba(247, 245, 240, 0.42);
+  color: #7a7a7a;
   font-size: 0.68em;
   line-height: 1.45;
   margin-top: 2em;
   font-style: italic;
 }
 
-/* Accent */
-.aispeg-deck .deck-accent {
-  color: #F1B300;
-  font-style: normal;
-  font-weight: 900;
-}
-
-/* Owner name — gold, weighted */
+/* Owner name — teal, bold, italic sans (single-family system) */
 .aispeg-deck .deck-owner {
-  color: #F1B300;
+  color: #008080;
   font-weight: 700;
   font-style: italic;
 }
@@ -256,21 +253,15 @@ main h4 {
   gap: 3em;
   align-items: start;
 }
-.aispeg-deck .deck-split-60-40 {
-  grid-template-columns: 3fr 2fr;
-}
-.aispeg-deck .deck-split-50-50 {
-  grid-template-columns: 1fr 1fr;
-}
-.aispeg-deck .deck-split-40-60 {
-  grid-template-columns: 2fr 3fr;
-}
+.aispeg-deck .deck-split-60-40 { grid-template-columns: 3fr 2fr; }
+.aispeg-deck .deck-split-50-50 { grid-template-columns: 1fr 1fr; }
+.aispeg-deck .deck-split-40-60 { grid-template-columns: 2fr 3fr; }
 
-/* Definitions */
+/* Definitions — term | body */
 .aispeg-deck .deck-defs {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1.2em;
+  gap: 1.1em;
   margin-top: 0.8em;
 }
 .aispeg-deck .deck-def {
@@ -278,19 +269,19 @@ main h4 {
   grid-template-columns: 10em 1fr;
   gap: 1.4em;
   align-items: baseline;
-  border-top: 1px solid rgba(247, 245, 240, 0.12);
+  border-top: 1px solid #e5e2d8;
   padding-top: 0.9em;
 }
 .aispeg-deck .deck-def-term {
-  color: #F1B300;
-  font-size: 0.9em;
+  color: #008080;
+  font-size: 0.85em;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
 }
 .aispeg-deck .deck-def-body {
-  font-size: 0.88em;
-  color: rgba(247, 245, 240, 0.84);
+  font-size: 0.9em;
+  color: #3d3d3d;
   line-height: 1.55;
 }
 
@@ -298,27 +289,27 @@ main h4 {
 .aispeg-deck .deck-unit-list {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.4em 3em;
+  gap: 1.3em 3em;
   margin-top: 1em;
 }
 .aispeg-deck .deck-unit {
-  border-top: 1px solid rgba(247, 245, 240, 0.12);
-  padding-top: 0.8em;
+  border-top: 1px solid #e5e2d8;
+  padding-top: 0.75em;
 }
 .aispeg-deck .deck-unit-name {
-  color: #ffffff;
-  font-size: 0.9em;
+  color: #191919;
+  font-size: 0.88em;
   font-weight: 800;
   letter-spacing: -0.01em;
-  margin-bottom: 0.3em;
+  margin-bottom: 0.25em;
 }
 .aispeg-deck .deck-unit-items {
-  color: rgba(247, 245, 240, 0.72);
+  color: #4d4d4d;
   font-size: 0.78em;
   line-height: 1.5;
 }
 
-/* Stats */
+/* Stats — big black numbers, teal labels */
 .aispeg-deck .deck-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -326,14 +317,14 @@ main h4 {
   margin-top: 1.4em;
 }
 .aispeg-deck .deck-stat-number {
-  color: #F1B300;
-  font-size: 4em;
+  color: #191919;
+  font-size: 3.8em;
   font-weight: 900;
   line-height: 1;
   letter-spacing: -0.04em;
 }
 .aispeg-deck .deck-stat-label {
-  color: rgba(247, 245, 240, 0.6);
+  color: #595959;
   font-size: 0.7em;
   font-weight: 600;
   letter-spacing: 0.06em;
@@ -342,14 +333,53 @@ main h4 {
   text-transform: uppercase;
 }
 
-/* Anchor labels */
+/* Anchor labels (small) */
 .aispeg-deck .deck-anchor-label {
-  color: rgba(247, 245, 240, 0.55);
+  color: #008080;
   font-size: 0.72em;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+  margin-bottom: 0.4em;
+}
+
+/* Pull quote — no side-stripe, giant gold open-quote glyph instead */
+.aispeg-deck .deck-pullquote {
+  font-size: 1.35em;
+  line-height: 1.35;
+  font-weight: 500;
+  max-width: 36ch;
+  color: #191919;
+  margin: 1.2em 0;
+  text-indent: -0.3em;
+}
+.aispeg-deck .deck-pullquote::before {
+  content: "\201C";
+  color: #F1B300;
+  font-weight: 900;
+  font-size: 1.3em;
+  line-height: 0;
+  margin-right: 0.05em;
+}
+.aispeg-deck .deck-pullquote-source {
+  color: #7a7a7a;
+  font-size: 0.78em;
+  font-style: italic;
+  margin-top: 0.6em;
+}
+
+/* Card-like panels — subtle off-white fills, no gold borders */
+.aispeg-deck .deck-panel {
+  background: #ffffff;
+  border: 1px solid #e5e2d8;
+  border-radius: 8px;
+  padding: 1em 1.2em;
+}
+.aispeg-deck .deck-panel strong {
+  display: block;
+  color: #191919;
   margin-bottom: 0.3em;
+  font-weight: 800;
 }
 
 /* Title slide */
@@ -357,48 +387,49 @@ main h4 {
   text-align: left;
 }
 .aispeg-deck .title-slide h1 {
-  font-size: 5.6em;
+  font-size: 5.2em;
   font-weight: 900;
-  line-height: 0.9;
+  line-height: 0.92;
   max-width: 14ch;
   letter-spacing: -0.04em;
-  margin-top: 0.2em;
+  margin-top: 0.1em;
 }
 .aispeg-deck .title-slide .subhead {
-  color: rgba(247, 245, 240, 0.8);
+  color: #3d3d3d;
   font-size: 1em;
   font-weight: 400;
   margin-top: 1.2em;
-  max-width: 36ch;
+  max-width: 38ch;
   line-height: 1.4;
 }
 .aispeg-deck .title-slide .deck-meta {
-  margin-top: 3em;
+  margin-top: 2.5em;
 }
 
 /* Closing */
 .aispeg-deck .closing-slide h1 {
-  font-size: 6.6em;
+  font-size: 5.8em;
   font-weight: 900;
-  line-height: 0.9;
+  line-height: 0.92;
   max-width: 10ch;
   letter-spacing: -0.04em;
 }
 
-/* Reveal chrome */
+/* Reveal chrome — tuned for light theme */
 .aispeg-deck .controls {
-  color: #F1B300;
+  color: #008080;
 }
 .aispeg-deck .progress {
   color: #F1B300;
   height: 2px;
+  background: rgba(0, 0, 0, 0.06);
 }
 .aispeg-deck .slide-number {
-  color: rgba(247, 245, 240, 0.3);
+  color: #7a7a7a;
   background: transparent;
   font-family: var(--font-sans);
   font-weight: 600;
-  font-size: 0.82em;
+  font-size: 0.78em;
   right: 1.5em;
   bottom: 1em;
 }
