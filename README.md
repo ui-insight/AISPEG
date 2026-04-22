@@ -1,6 +1,6 @@
-# AISPEG — AI Strategic Planning & Evaluation Group
+# AISPEG — AI Strategic Plan Execution Group
 
-An interactive website for the **AI Strategic Planning & Evaluation Group** at the University of Idaho. AISPEG serves as a collaborative hub for planning, lessons learned, information aggregation, and knowledge sharing around agentic AI at the university.
+An interactive website for the **AI Strategic Plan Execution Group** at the University of Idaho. AISPEG is a Presidentially-chartered cross-cutting initiative (chaired by Ben Hunter, Dean of the Libraries) supporting execution of the University's Strategic Plan. The site maintains a growing inventory of AI interventions for operational excellence across UI units.
 
 This site is designed to be **built and maintained collaboratively using agentic coding tools** (Claude Code, Cursor, GitHub Copilot, etc.). Any team member with an agentic tool can add content, modify pages, and evolve the site.
 

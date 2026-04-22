@@ -1,143 +1,107 @@
+import Link from "next/link";
 import PortfolioCard from "@/components/PortfolioCard";
-import { getProjectsByOrg, portfolioProjects } from "@/lib/portfolio";
+import {
+  getPubliclyVisible,
+  groupByHomeUnit,
+  interventions,
+} from "@/lib/portfolio";
 
 export default function PortfolioPage() {
-  const aiRaProjects = getProjectsByOrg("AI4RA");
-  const uiInsightProjects = getProjectsByOrg("ui-insight");
+  const visible = getPubliclyVisible();
+  const groups = groupByHomeUnit(visible);
+  const internalCount = interventions.length - visible.length;
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-10">
+      {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-ui-charcoal">Portfolio</h1>
+        <h1 className="text-3xl font-bold text-ui-charcoal">
+          AI Interventions for Operational Excellence
+        </h1>
         <p className="mt-2 max-w-3xl text-gray-600">
-          The active AI portfolio for the University of Idaho and the AI4RA
-          community of practice. Organized into two collaborating orgs:{" "}
-          <span className="font-medium text-ui-charcoal">AI4RA</span> is the
-          cross-institution, research-administration community;{" "}
-          <span className="font-medium text-ui-charcoal">ui-insight</span> is
-          the institutional product and infrastructure portfolio.
+          A growing inventory of AI-powered efforts across University of Idaho
+          units — some coordinated or built by AISPEG, others led by partner
+          units that AISPEG tracks. Each entry names a{" "}
+          <span className="font-medium text-ui-charcoal">UI home unit</span>{" "}
+          and{" "}
+          <span className="font-medium text-ui-charcoal">
+            operational owner
+          </span>{" "}
+          whose work depends on the intervention — the people accountable for
+          the outcome, not the code.
         </p>
         <p className="mt-3 text-sm text-gray-500">
-          {portfolioProjects.length} projects tracked &middot; built for
-          stakeholders, not an internal changelog
+          {visible.length} interventions visible
+          {internalCount > 0 ? ` · ${internalCount} internal-only (not listed publicly)` : ""}
+          {" · "}
+          <Link href="/builder-guide" className="text-ui-gold-dark hover:underline">
+            Submit a new AI project &rarr;
+          </Link>
         </p>
       </div>
 
-      {/* Portfolio storyline — key insight */}
+      {/* Context callout — how to read the inventory */}
       <div className="rounded-xl border-l-4 border-ui-gold bg-white p-6 shadow-sm">
+        <p className="text-sm font-medium text-gray-500">How to read this inventory</p>
+        <p className="mt-2 text-sm leading-relaxed text-gray-700">
+          Interventions are grouped by <strong>UI home unit</strong>. Each card
+          shows the operational owner, current status, and tags —{" "}
+          <span className="inline-block rounded-full border border-ui-gold/30 bg-ui-gold/10 px-2 py-0.5 text-xs font-medium text-ui-gold-dark">
+            AI4RA Core
+          </span>{" "}
+          means the work is part of our NSF-funded UI+SUU partnership and has a
+          dual open-source / UI-implementation identity;{" "}
+          <span className="inline-block rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">
+            Capability diffusion
+          </span>{" "}
+          flags interventions where a non-IIDS UI unit is co-building; {" "}
+          <span className="inline-block rounded-full border border-violet-200 bg-violet-50 px-2 py-0.5 text-xs font-medium text-violet-700">
+            Tracked
+          </span>{" "}
+          means AISPEG is aware of the work but not building it.
+        </p>
+      </div>
+
+      {/* Groups by home unit */}
+      {groups.map(({ unit, items }) => (
+        <section key={unit} className="space-y-4">
+          <div className="border-l-4 border-ui-gold pl-4">
+            <div className="flex items-baseline gap-3">
+              <h2 className="text-xl font-bold text-ui-charcoal">{unit}</h2>
+              <span className="text-sm text-gray-500">
+                {items.length} {items.length === 1 ? "intervention" : "interventions"}
+              </span>
+            </div>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {items.map((i) => (
+              <PortfolioCard key={i.slug} intervention={i} />
+            ))}
+          </div>
+        </section>
+      ))}
+
+      {/* AI4RA pointer */}
+      <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
         <p className="text-sm font-medium text-gray-500">
-          How the portfolio fits together
+          About AI4RA
         </p>
         <p className="mt-2 text-sm leading-relaxed text-gray-700">
-          <span className="font-semibold text-ui-charcoal">AI4RA UDM</span>{" "}
-          defines the data standard.{" "}
-          <span className="font-semibold text-ui-charcoal">
-            data-governance
-          </span>{" "}
-          adopts it as the institutional standard. Flagship platforms (
-          <span className="font-semibold text-ui-charcoal">OpenERA</span>,{" "}
-          <span className="font-semibold text-ui-charcoal">Vandalizer</span>,{" "}
-          <span className="font-semibold text-ui-charcoal">MindRouter</span>,{" "}
-          <span className="font-semibold text-ui-charcoal">
-            Strategic Plan Dashboard
-          </span>
-          ) implement it. The{" "}
-          <span className="font-semibold text-ui-charcoal">TEMPLATE-app</span>{" "}
-          propagates the standard to new apps.{" "}
-          <span className="font-semibold text-ui-charcoal">
-            MindRouter + DGX Stack
-          </span>{" "}
-          are the LLM substrate. The{" "}
-          <span className="font-semibold text-ui-charcoal">
-            AI4RA evaluation triad
-          </span>{" "}
-          is the quality layer.
+          <span className="font-semibold text-ui-charcoal">AI4RA</span> is a
+          UI + Southern Utah University NSF GRANTED partnership producing
+          open-source reference tools for research administration. Its
+          projects — the UDM spec, prompt library, evaluation harness — are
+          reference material, not UI interventions.
+        </p>
+        <p className="mt-2 text-sm">
+          <Link
+            href="/ai4ra-ecosystem"
+            className="font-medium text-ui-gold-dark hover:underline"
+          >
+            See the AI4RA ecosystem &rarr;
+          </Link>
         </p>
       </div>
-
-      {/* ui-insight section */}
-      <section className="space-y-6">
-        <div className="border-l-4 border-ui-gold pl-4">
-          <div className="flex items-baseline gap-3">
-            <h2 className="text-2xl font-bold text-ui-charcoal">ui-insight</h2>
-            <span className="text-sm text-gray-500">
-              University of Idaho &middot; {uiInsightProjects.length} projects
-            </span>
-          </div>
-          <p className="mt-1 text-sm text-gray-600">
-            Institutional products and infrastructure for the University of
-            Idaho.
-          </p>
-        </div>
-
-        {/* Grouped by role */}
-        {groupByRole(uiInsightProjects).map(({ role, items }) => (
-          <div key={role}>
-            <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500">
-              {role}
-            </h3>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {items.map((p) => (
-                <PortfolioCard key={p.slug} project={p} />
-              ))}
-            </div>
-          </div>
-        ))}
-      </section>
-
-      {/* AI4RA section */}
-      <section className="space-y-6">
-        <div className="border-l-4 border-ui-gold pl-4">
-          <div className="flex items-baseline gap-3">
-            <h2 className="text-2xl font-bold text-ui-charcoal">AI4RA</h2>
-            <span className="text-sm text-gray-500">
-              Community of practice &middot; {aiRaProjects.length} projects
-            </span>
-          </div>
-          <p className="mt-1 text-sm text-gray-600">
-            Shared infrastructure for AI in research administration across
-            institutions. Funded in part by NSF GRANTED.
-          </p>
-        </div>
-
-        {groupByRole(aiRaProjects).map(({ role, items }) => (
-          <div key={role}>
-            <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500">
-              {role}
-            </h3>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {items.map((p) => (
-                <PortfolioCard key={p.slug} project={p} />
-              ))}
-            </div>
-          </div>
-        ))}
-      </section>
     </div>
   );
-}
-
-// Role ordering for presentation
-const ROLE_ORDER = [
-  "Platform",
-  "Institutional app",
-  "Infrastructure",
-  "Governance",
-  "Evaluation infrastructure",
-  "Research tool",
-  "Outreach",
-  "Community",
-] as const;
-
-function groupByRole<T extends { role: string }>(items: T[]) {
-  const groups = new Map<string, T[]>();
-  for (const item of items) {
-    const existing = groups.get(item.role) || [];
-    existing.push(item);
-    groups.set(item.role, existing);
-  }
-  return ROLE_ORDER.filter((r) => groups.has(r)).map((role) => ({
-    role,
-    items: groups.get(role) || [],
-  }));
 }

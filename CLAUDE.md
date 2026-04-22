@@ -1,7 +1,7 @@
 # AISPEG — Agent Collaboration Guide
 
 ## Project Overview
-Interactive website for the AI Strategic Planning & Evaluation Group (AISPEG) at the University of Idaho. Built with Next.js (App Router), Tailwind CSS v4, and TypeScript.
+Interactive website for the AI Strategic Plan Execution Group (AISPEG) at the University of Idaho. AISPEG is a Presidentially-chartered cross-cutting initiative chaired by Ben Hunter (Dean of the Libraries), with members Barrie Robison, Luke Sheneman, Dan Ewart, and Bert Baumgaertner. The site is a growing inventory of AI interventions for operational excellence across UI units — some built by IIDS (Institute for Interdisciplinary Data Sciences, which runs MindRouter and DGX Stack), others tracked from partner units (OIT, OGC, etc.). AI4RA is the UI+SUU NSF GRANTED partnership producing reference open-source tools that UI also deploys institutionally (OpenERA, Vandalizer, MindRouter, ProcessMapping). Built with Next.js (App Router), Tailwind CSS v4, and TypeScript.
 
 ## Tech Stack
 - **Framework**: Next.js 16 (App Router)

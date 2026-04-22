@@ -4,7 +4,7 @@ export default function AboutPage() {
   return (
     <DocPage
       title="About AISPEG"
-      subtitle="The AI Strategic Planning & Evaluation Group at the University of Idaho."
+      subtitle="The AI Strategic Plan Execution Group at the University of Idaho."
       breadcrumbs={[
         { label: "Docs", href: "/docs" },
         { label: "About AISPEG" },
@@ -12,10 +12,11 @@ export default function AboutPage() {
     >
       <h2>What is AISPEG?</h2>
       <p>
-        AISPEG (AI Strategic Planning & Evaluation Group) is a cross-functional initiative at the
-        University of Idaho focused on guiding the responsible adoption of AI-powered and
-        agent-coded applications across campus. We provide standards, tools, and governance
-        frameworks to help anyone at the university build software the right way.
+        AISPEG (AI Strategic Plan Execution Group) is a Presidentially-chartered
+        cross-cutting initiative at the University of Idaho, led by Ben Hunter
+        (Dean of the Libraries), supporting execution of the University&apos;s
+        Strategic Plan. AISPEG coordinates and, in many cases, directly delivers
+        AI interventions for operational excellence across the institution.
       </p>
 
       <h2>Mission</h2>

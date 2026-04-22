@@ -18,7 +18,7 @@ import {
   projects,
   presentations,
 } from "@/lib/data";
-import { portfolioProjects } from "@/lib/portfolio";
+import { interventions, getPubliclyVisible } from "@/lib/portfolio";
 import { decks } from "@/lib/decks";
 
 /* ---------------------------------------------------------- */
@@ -28,14 +28,32 @@ const navCards = [
   {
     href: "/portfolio",
     label: "Portfolio",
-    count: "Active projects",
+    count: "UI AI interventions",
     icon: "🗂️",
+  },
+  {
+    href: "/builder-guide",
+    label: "Submit a Project",
+    count: "Tracking portal",
+    icon: "✍️",
   },
   {
     href: "/presentations",
     label: "Presentations",
     count: "Interactive decks",
     icon: "🖥️",
+  },
+  {
+    href: "/ai4ra-ecosystem",
+    label: "AI4RA Ecosystem",
+    count: "UI + SUU partnership",
+    icon: "🔗",
+  },
+  {
+    href: "/outreach",
+    label: "Outreach & Events",
+    count: "Workshops + activity tools",
+    icon: "📣",
   },
   {
     href: "/approach",
@@ -90,7 +108,7 @@ export default async function Home() {
       {/* Header + Mission */}
       <div>
         <h1 className="text-3xl font-bold text-ui-charcoal">
-          AI Strategic Planning &amp; Evaluation Group
+          AI Strategic Plan Execution Group
         </h1>
         <p className="mt-2 max-w-2xl text-gray-600">
           How the University of Idaho is approaching AI interventions for
@@ -104,6 +122,12 @@ export default async function Home() {
             className="inline-flex items-center gap-2 rounded-lg bg-ui-charcoal px-4 py-2 text-sm font-medium text-white hover:bg-ui-charcoal/90"
           >
             View the Portfolio &rarr;
+          </Link>
+          <Link
+            href="/builder-guide"
+            className="inline-flex items-center gap-2 rounded-lg bg-ui-gold px-4 py-2 text-sm font-medium text-ui-charcoal hover:bg-ui-gold/90"
+          >
+            Submit a Project &rarr;
           </Link>
           <Link
             href="/presentations"
@@ -134,15 +158,16 @@ export default async function Home() {
           className="group rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-all hover:border-ui-gold/40 hover:shadow-md"
         >
           <p className="text-xs font-medium uppercase tracking-wider text-ui-gold-dark">
-            Active portfolio
+            UI AI Interventions
           </p>
           <h2 className="mt-2 text-xl font-semibold text-ui-charcoal group-hover:text-ui-gold-dark">
-            {portfolioProjects.length} projects across AI4RA &amp; ui-insight
+            {getPubliclyVisible().length} AI interventions across UI units
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            Flagship platforms, institutional apps, governance, LLM
-            infrastructure, and outreach &mdash; organized by role and
-            connected by a shared data standard.
+            The growing inventory of AI-powered work across UI units &mdash;
+            some coordinated or built by AISPEG, others tracked from partner
+            units. Grouped by home unit; each entry names an operational
+            owner accountable for the outcome.
           </p>
           <p className="mt-3 text-sm font-medium text-ui-gold-dark group-hover:underline">
             Explore the portfolio &rarr;

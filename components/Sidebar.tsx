@@ -7,17 +7,22 @@ import { useState } from "react";
 const primaryItems = [
   { href: "/", label: "Home", icon: "squares" },
   { href: "/portfolio", label: "Portfolio", icon: "grid" },
+  { href: "/builder-guide", label: "Submit a Project", icon: "compass" },
   { href: "/presentations", label: "Presentations", icon: "slides" },
-  { href: "/approach", label: "Approach", icon: "lightbulb" },
+  { href: "/ai4ra-ecosystem", label: "AI4RA Ecosystem", icon: "lightbulb" },
+];
+
+const knowMoreItems = [
+  { href: "/approach", label: "Our Approach", icon: "book" },
   { href: "/knowledge", label: "Knowledge Base", icon: "search" },
   { href: "/roadmap", label: "Roadmap", icon: "map" },
+  { href: "/standards", label: "Standards Roadmap", icon: "shield" },
   { href: "/reports", label: "Reports & Briefs", icon: "document" },
+  { href: "/outreach", label: "Outreach & Events", icon: "slides" },
 ];
 
 const resourceItems = [
-  { href: "/standards", label: "Standards Roadmap", icon: "shield" },
   { href: "/action-plan", label: "Action Plan", icon: "target" },
-  { href: "/builder-guide", label: "App Builder Guide", icon: "compass" },
   { href: "/docs", label: "Documentation", icon: "book" },
 ];
 
@@ -212,6 +217,32 @@ export default function Sidebar() {
             );
           })}
 
+          {/* Know More Section */}
+          <div className="mt-4 border-t border-white/10 pt-4">
+            <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-white/30">
+              Know More
+            </p>
+            {knowMoreItems.map((item) => {
+              const active =
+                pathname === item.href || pathname.startsWith(item.href + "/");
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setMobileOpen(false)}
+                  className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                    active
+                      ? "bg-ui-gold/20 text-ui-gold"
+                      : "text-white/70 hover:bg-white/5 hover:text-white"
+                  }`}
+                >
+                  <NavIcon icon={item.icon} />
+                  {item.label}
+                </Link>
+              );
+            })}
+          </div>
+
           {/* Resources Section */}
           <div className="mt-4 border-t border-white/10 pt-4">
             <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-white/30">
@@ -266,7 +297,7 @@ export default function Sidebar() {
 
         <div className="border-t border-white/10 px-6 py-4">
           <p className="text-xs text-white/40">
-            AI Strategic Planning &<br />Evaluation Group
+            AI Strategic Plan<br />Execution Group
           </p>
         </div>
       </aside>

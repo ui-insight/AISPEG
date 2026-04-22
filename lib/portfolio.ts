@@ -1,610 +1,412 @@
 // ============================================================
-// Portfolio — Active AI4RA & ui-insight projects
+// UI AI Intervention Inventory
 // ============================================================
-// This is the stakeholder-facing portfolio. For the historical
-// Feb 2026 productivity snapshot, see `projects` in lib/data.ts.
+// The authoritative list of AI interventions across University of Idaho units
+// that AISPEG coordinates, builds, or tracks. An "intervention" is a UI
+// deployment / UI-owned effort — not a GitHub repo. Repos are artifacts;
+// interventions have home units, operational owners, and status-at-UI.
+//
+// This file replaces the repo-centric "portfolioProjects" that predated the
+// April 2026 interview with Barrie Robison. AI4RA reference projects
+// (prompt-library, evaluation-harness, AI4RA-UDM, mcp-ecfr, etc.) live on
+// /ai4ra-ecosystem, not here.
+// ============================================================
 
-export type PortfolioStatus =
-  | "Production"
-  | "Active development"
-  | "Beta"
-  | "Research"
+export type Visibility =
+  | "Public"       // Everything about this entry can be shown publicly
+  | "Partial"      // Entry acknowledged; UI deployment details embargoed
+  | "Internal-only"; // Not shown on the public site at all
+
+export type InterventionStatus =
+  | "Planned"
+  | "Prototype"    // Built, not yet in use with real users
+  | "Piloting"     // Deployed prototype in use with a limited group
+  | "Production"   // Deployed for regular institutional use
+  | "Tracked"      // Not built by AISPEG/IIDS; tracking-only stub
   | "Archived";
 
-export type PortfolioRole =
-  | "Platform"
-  | "Institutional app"
-  | "Governance"
-  | "Infrastructure"
-  | "Evaluation infrastructure"
-  | "Research tool"
-  | "Outreach"
-  | "Community";
+export type AI4RARelationship =
+  | "Core"         // Dual-destiny: AI4RA OSS project + UI deployment
+  | "Adjacent"     // Related but not AI4RA proper
+  | "Reference"    // UI deployment consumes an AI4RA spec or tool
+  | "UI-parallel"  // UI work running alongside AI4RA work
+  | "None";
 
-export type PortfolioOrg = "AI4RA" | "ui-insight";
+export type InstitutionalReviewStatus =
+  | "OIT-endorsed"
+  | "Under OIT review"
+  | "N/A";
 
-export interface PortfolioProject {
-  slug: string;
+export interface OperationalOwner {
   name: string;
-  org: PortfolioOrg;
-  tagline: string;
-  description: string;
-  status: PortfolioStatus;
-  role: PortfolioRole;
-  tech: string[];
-  features: string[];
-  funding?: string;
-  repoUrl: string;
-  docsUrl?: string;
-  liveUrl?: string;
-  isPrivate: boolean;
-  relatedSlugs?: string[];
-  tags?: string[];
+  title?: string;
 }
 
-export const portfolioProjects: PortfolioProject[] = [
-  // ==================================================
-  // AI4RA — Community of practice
-  // ==================================================
+export interface Intervention {
+  slug: string;
+  name: string;
+  tagline: string;
+  description: string;
+
+  // Ownership
+  homeUnits: string[];
+  operationalOwners: OperationalOwner[];
+  buildParticipants: string[];
+
+  // Status
+  status: InterventionStatus;
+  visibility: Visibility;
+  institutionalReviewStatus?: InstitutionalReviewStatus;
+
+  // AI4RA
+  ai4raRelationship: AI4RARelationship;
+  dualDestinyPlanned?: boolean;
+  externalDeployments?: string[];
+
+  // Artifacts
+  repoUrl?: string;
+  docsUrl?: string;
+  liveUrl?: string;
+  isPrivateRepo?: boolean;
+  funding?: string;
+
+  // Content
+  operationalFunction: string;
+  operationalExcellenceOutcome: string;
+  features?: string[];
+  tech?: string[];
+
+  // Meta
+  tags?: string[];
+  trackingOnly?: boolean;
+  relatedSlugs?: string[];
+}
+
+export const interventions: Intervention[] = [
+  // ============================================================
+  // Office of the President
+  // ============================================================
   {
-    slug: "prompt-library",
-    name: "Prompt Library",
-    org: "AI4RA",
-    tagline: "Versioned storage for prompts, skills, and agents across AI4RA.",
+    slug: "stratplan",
+    name: "Strategic Plan Dashboard",
+    tagline:
+      "Executive visibility into 337 tactics aligned to the UI 2025–2030 Strategic Plan.",
     description:
-      "Canonical, versioned home for prompts, skills, agents, and related LLM components used by AI4RA applications. Feeds downstream eval infrastructure and provides a shared vocabulary for LLM-powered features across the portfolio.",
-    status: "Active development",
-    role: "Evaluation infrastructure",
-    tech: ["Python"],
-    features: [
-      "Versioned prompt assets",
-      "Shared skill and agent definitions",
-      "Triad-aware integration with evaluation-harness",
-      "Feeds evaluation-data-sets fixtures",
-      "Open source",
-    ],
-    repoUrl: "https://github.com/AI4RA/prompt-library",
-    isPrivate: false,
-    relatedSlugs: ["evaluation-harness", "evaluation-data-sets"],
-    tags: ["LLM", "evals", "open-source"],
-  },
-  {
-    slug: "evaluation-harness",
-    name: "Evaluation Harness",
-    org: "AI4RA",
-    tagline: "Triad-aware evaluation harness for AI4RA LLM components.",
-    description:
-      "Runs the prompt-library against evaluation-data-sets fixtures in a triad (prompt × data × model) evaluation pattern. Produces quality signal for LLM-powered features across the AI4RA ecosystem.",
-    status: "Active development",
-    role: "Evaluation infrastructure",
-    tech: ["Python"],
-    features: [
-      "Triad evaluation (prompt × data × model)",
-      "Integrates with prompt-library",
-      "Uses evaluation-data-sets fixtures",
-      "Quality signal for LLM features",
-    ],
-    repoUrl: "https://github.com/AI4RA/evaluation-harness",
-    isPrivate: true,
-    relatedSlugs: ["prompt-library", "evaluation-data-sets"],
-    tags: ["LLM", "evals"],
-  },
-  {
-    slug: "evaluation-data-sets",
-    name: "Evaluation Data Sets",
-    org: "AI4RA",
-    tagline: "Synthetic and real fixtures for AI4RA skill evaluation.",
-    description:
-      "Curated synthetic and real evaluation fixtures supporting the AI4RA skill library and related LLM components. Powers reproducible quality measurement for prompts, skills, and agents.",
-    status: "Active development",
-    role: "Evaluation infrastructure",
-    tech: ["Python"],
-    features: [
-      "Synthetic evaluation fixtures",
-      "Real-world evaluation data",
-      "Shared across prompt/skill/agent evals",
-      "Reproducibility foundation",
-    ],
-    repoUrl: "https://github.com/AI4RA/evaluation-data-sets",
-    isPrivate: true,
-    relatedSlugs: ["prompt-library", "evaluation-harness"],
-    tags: ["LLM", "evals"],
-  },
-  {
-    slug: "mcp-ecfr",
-    name: "eCFR MCP Server",
-    org: "AI4RA",
-    tagline: "Claude connector for the Electronic Code of Federal Regulations.",
-    description:
-      "Model Context Protocol server that exposes the Electronic Code of Federal Regulations to Claude and other MCP-compatible agents. Brings authoritative federal regulation text into AI-assisted research administration workflows.",
-    status: "Active development",
-    role: "Research tool",
-    tech: ["Python", "MCP"],
-    features: [
-      "MCP server for eCFR",
-      "Compatible with Claude Desktop and Claude Code",
-      "Authoritative federal regulation text",
-      "Supports compliance-adjacent AI workflows",
-      "Open source",
-    ],
-    repoUrl: "https://github.com/AI4RA/mcp-ecfr",
-    isPrivate: false,
-    tags: ["MCP", "compliance", "open-source"],
-  },
-  {
-    slug: "herd-survey",
-    name: "Herd Survey",
-    org: "AI4RA",
-    tagline: "Tools for herd-survey result access and report preparation.",
-    description:
-      "Internal tooling that simplifies access to herd-survey results and automates parts of the report preparation workflow for participating institutions.",
-    status: "Active development",
-    role: "Research tool",
-    tech: ["Python"],
-    features: [
-      "Herd-survey result access",
-      "Report preparation helpers",
-    ],
-    repoUrl: "https://github.com/AI4RA/herd-survey",
-    isPrivate: true,
-    tags: ["survey", "reporting"],
-  },
-  {
-    slug: "ai4ra-discussions",
-    name: "AI4RA Discussions",
-    org: "AI4RA",
-    tagline: "Technical discussion hub for AI4RA contributors.",
-    description:
-      "Shared space for technical discussions, contribution workflows, and developer support across AI4RA repositories. Open to external research administration contributors.",
+      "Data-driven dashboard visualizing and analyzing how 25 academic and administrative units align their tactics with the University's 2025–2030 Strategic Plan. Evolving toward an execution and investment portfolio tool. Currently used for executive review; could expand to unit self-service.",
+    homeUnits: ["Office of the President"],
+    operationalOwners: [{ name: "Michele Bartlett" }],
+    buildParticipants: ["IIDS"],
     status: "Production",
-    role: "Community",
-    tech: ["GitHub Discussions"],
-    features: [
-      "Cross-repo technical discussions",
-      "Contribution workflow guidance",
-      "Developer support threads",
-      "Public and open to external contributors",
-    ],
-    repoUrl: "https://github.com/AI4RA/discussions",
-    isPrivate: false,
-    tags: ["community", "open-source"],
+    visibility: "Public",
+    ai4raRelationship: "None",
+    repoUrl: "https://github.com/ui-insight/StratPlanTacticsMB",
+    liveUrl: "https://strategicplan.insight.uidaho.edu",
+    operationalFunction:
+      "Executive tracking of strategic plan execution across 25 units and 337 tactics. Alignment matrix, synergy finder, coverage analysis, investment portfolio analytics, redundancy detection, pillar deep-dive, unit portfolios, tactic explorer.",
+    operationalExcellenceOutcome:
+      "Makes strategic execution visible. Surfaces under-served priorities, cross-unit synergies, and misalignment. Supports investment prioritization conversations.",
+    tech: ["React 19", "TypeScript", "Tailwind v4", "FastAPI", "PostgreSQL"],
   },
 
-  // ==================================================
-  // ui-insight — University of Idaho
-  // ==================================================
+  // ============================================================
+  // Division of Financial Affairs
+  // ============================================================
+  {
+    slug: "audit-dashboard",
+    name: "Audit Dashboard",
+    tagline:
+      "AI-assisted audit observation lifecycle tracking for Internal Audit.",
+    description:
+      "Full-stack dashboard for tracking internal audit observations, corrective action items, and responsible-party assignments. Ingests audit report PDFs via OCR + LLM extraction (MindRouter dots.OCR + Qwen3), with human review before persistence.",
+    homeUnits: ["Division of Financial Affairs"],
+    operationalOwners: [{ name: "Kim Salisbury" }],
+    buildParticipants: ["IIDS"],
+    status: "Prototype",
+    visibility: "Partial",
+    ai4raRelationship: "None",
+    repoUrl: "https://github.com/ui-insight/AuditDashboard",
+    operationalFunction:
+      "Audit observation lifecycle: ingest report PDF → extract observations and action items → assign responsible parties → monitor closure with overdue alerts. Replaces spreadsheet tracking.",
+    operationalExcellenceOutcome:
+      "Closes the audit follow-through loop. Reduces risk of observations lingering past target dates. Gives leadership a living compliance-posture view.",
+    tech: ["React 19", "FastAPI", "PostgreSQL 16", "MindRouter", "Qwen3"],
+    relatedSlugs: ["mindrouter", "dgx-stack", "template-app"],
+  },
 
-  // --- Flagship platforms ---
+  // ============================================================
+  // University Communications and Marketing
+  // ============================================================
+  {
+    slug: "ucm-daily-register",
+    name: "UCM Daily Register",
+    tagline: "AI-assisted newsletter production pipeline for UCM.",
+    description:
+      "Editorial pipeline for The Daily Register and My UI. Submission intake, AI-assisted style editing (Claude or OpenAI via MindRouter, with AP + UI style enforcement), word-level diff review, section-organized auto-assembly, and branded .docx export.",
+    homeUnits: ["University Communications and Marketing"],
+    operationalOwners: [
+      { name: "Joy Bauer" },
+      { name: "Leigh Cooper" },
+      { name: "Jodi Walker" },
+    ],
+    buildParticipants: ["IIDS"],
+    status: "Prototype",
+    visibility: "Public",
+    ai4raRelationship: "None",
+    repoUrl: "https://github.com/ui-insight/UCMDailyRegister",
+    operationalFunction:
+      "Editorial cycle from community submission through style-consistent AI editing, human review, newsletter assembly, and Word export. Data-driven style rules editable via UI.",
+    operationalExcellenceOutcome:
+      "Faster newsletter turnaround. Enforces AP + UI style consistently across issues. Reduces manual editorial burden per issue.",
+    tech: ["React 19", "FastAPI", "SQLAlchemy 2.0", "MindRouter"],
+    relatedSlugs: ["mindrouter"],
+  },
+
+  // ============================================================
+  // Office of Sponsored Programs (ORED)
+  // ============================================================
   {
     slug: "openera",
     name: "OpenERA",
-    org: "ui-insight",
-    tagline: "Open-source electronic research administration platform.",
+    tagline:
+      "Modern pre-award proposal workflow replacing legacy ERA (UI deployment embargoed).",
     description:
-      "Modern pre-award proposal management system that replaces legacy Java/JSP research administration tools. A guided React + FastAPI workspace that walks researchers from RFA intake through institutional approval, covering budget, compliance, personnel, documents, and multi-stage review.",
-    status: "Active development",
-    role: "Platform",
-    tech: [
-      "React 19",
-      "TypeScript",
-      "Tailwind v4",
-      "FastAPI",
-      "SQLAlchemy 2.0",
-      "PostgreSQL 16",
-    ],
-    features: [
-      "9-step proposal wizard (RFA → submit)",
-      "IACUC, IRB, IBC protocol workspaces with full lifecycle management",
-      "RFA upload with OCR + LLM extraction (scalar fields and document requirements)",
-      "NSF-format budget builder with MTDC indirect calc and Excel import/export",
-      "F&A distribution Sankey visualization",
-      "Multi-step approval workflow (Dept Chair → Dean → OSP)",
-      "Structured substantive review ledger with override rationale",
-      "Personnel compliance matrix across NSF, NIH, NASA, DoD, DoE, USDA",
-      "Role-based access, auto-save, AI-ready admin panel",
-    ],
+      "Open-source electronic research administration prototype in active development. Will migrate to the AI4RA GitHub organization while the UI implementation remains under ui-insight. UI deployment status is embargoed.",
+    homeUnits: ["Office of Sponsored Programs (ORED)"],
+    operationalOwners: [{ name: "Sarah Martonick" }],
+    buildParticipants: ["IIDS"],
+    status: "Prototype",
+    visibility: "Partial",
+    ai4raRelationship: "Core",
+    dualDestinyPlanned: true,
     repoUrl: "https://github.com/ui-insight/OpenERA",
     docsUrl: "https://ui-insight.github.io/OpenERA",
-    isPrivate: false,
-    relatedSlugs: ["ai4ra-udm", "data-governance", "template-app", "mindrouter"],
-    tags: ["ERA", "research-admin", "open-source", "flagship"],
+    operationalFunction:
+      "Pre-award: opportunity intake → proposal prep → institutional review → submission. Compliance protocol lifecycles (IACUC, IRB, IBC). NSF-format budget, F&A Sankey, multi-step approval workflow, personnel compliance matrix.",
+    operationalExcellenceOutcome:
+      "Modern structured pre-award workflow. Faster proposal cycle time. Stronger compliance visibility. Reduces errors through structured review gates.",
+    tech: ["React 19", "FastAPI", "SQLAlchemy 2.0", "PostgreSQL 16"],
+    relatedSlugs: ["vandalizer", "processmapping", "template-app"],
   },
   {
     slug: "vandalizer",
     name: "Vandalizer",
-    org: "ui-insight",
     tagline: "AI-powered document intelligence for research administration.",
     description:
-      "Open-source, self-hosted platform for AI-powered document review and data extraction, purpose-built for research administration offices. Processes grant proposals, award documents, and regulatory filings with configurable LLM-powered extraction workflows, chainable pipelines, and citation-backed RAG chat.",
+      "Open-source, self-hosted platform for AI-powered document review and data extraction, purpose-built for research administration. Structured LLM extraction, workflow engine, citation-backed RAG chat, multi-tenant workspaces. Developed under the AI4RA NSF GRANTED partnership and deployed at UI and Southern Utah University.",
+    homeUnits: ["Office of Sponsored Programs (ORED)"],
+    operationalOwners: [
+      { name: "Sarah Martonick", title: "UI implementation owner" },
+      { name: "John Brunsfeld", title: "Lead developer" },
+    ],
+    buildParticipants: ["IIDS"],
     status: "Production",
-    role: "Platform",
-    tech: [
-      "React 19",
-      "Python 3.11+",
-      "FastAPI",
-      "Docker",
-      "Ollama / OpenAI-compatible LLMs",
-    ],
-    features: [
-      "Structured LLM extraction from PDFs (dates, budgets, requirements)",
-      "Workflow engine: chain extraction tasks with dependency resolution",
-      "RAG chat with citation-backed answers",
-      "Multi-tenant team workspaces with role-based access",
-      "Self-hosted; runs on a single 16GB server",
-      "Air-gappable with local LLM/OCR",
-      "One-command setup via ./setup.sh",
-    ],
-    funding: "NSF GRANTED, Award #2427549",
+    visibility: "Public",
+    ai4raRelationship: "Core",
+    dualDestinyPlanned: true,
+    externalDeployments: ["Southern Utah University"],
     repoUrl: "https://github.com/ui-insight/vandalizer",
-    isPrivate: false,
-    relatedSlugs: ["mindrouter", "openera"],
-    tags: ["LLM", "document-intelligence", "open-source", "NSF-funded", "flagship"],
+    liveUrl: "https://vandalizer.uidaho.edu",
+    funding: "NSF GRANTED Award #2427549",
+    operationalFunction:
+      "Document-heavy research administration work: RFA extraction, award/contract review, compliance filings. Structured extraction + workflow engine + citation-backed Q&A against document collections.",
+    operationalExcellenceOutcome:
+      "Staff time savings on document extraction. Higher extraction accuracy. Reusable extraction workflows. Citation-backed Q&A over RA document collections.",
+    tech: ["React 19", "Python 3.11+", "FastAPI", "Docker"],
+    relatedSlugs: ["openera", "mindrouter", "dgx-stack", "processmapping"],
   },
-  {
-    slug: "ai4ra-udm",
-    name: "AI4RA Unified Data Model",
-    org: "ui-insight",
-    tagline: "Universal data model specification for research administration.",
-    description:
-      "Institution-agnostic data model specification for research administration. Defines 40 tables, 8 pre-built views, naming conventions, and design patterns that institutions map their local data to for interoperability and FAIR-principled reporting.",
-    status: "Production",
-    role: "Governance",
-    tech: ["JSON Schema", "MkDocs Material", "PostgreSQL reference implementation"],
-    features: [
-      "40 tables across 11 domains (Pre-Award, Post-Award, Financial, Compliance, etc.)",
-      "8 pre-built reporting views (vw_Active_Awards, vw_Budget_Comparison, etc.)",
-      "Complete ontology with naming conventions",
-      "Flexible AllowedValues pattern + fixed CHECK constraints",
-      "Interactive dashboard published on GitHub Pages",
-      "Single source of truth in udm_schema.json",
-      "Institutional standard across the ui-insight portfolio",
-    ],
-    repoUrl: "https://github.com/ui-insight/AI4RA-UDM",
-    docsUrl: "https://ui-insight.github.io/AI4RA-UDM",
-    isPrivate: false,
-    relatedSlugs: ["data-governance", "openera"],
-    tags: ["data-model", "governance", "standards", "open-source", "flagship"],
-  },
-  {
-    slug: "mindrouter",
-    name: "MindRouter",
-    org: "ui-insight",
-    tagline: "Production LLM load balancer with unified API surface.",
-    description:
-      "LLM inference load balancer fronting a heterogeneous cluster of Ollama and vLLM nodes. Provides unified OpenAI-, Ollama-, and Anthropic-compatible endpoints with fair-share scheduling, quota management, telemetry, and audit logging across the University of Idaho's on-prem AI infrastructure.",
-    status: "Production",
-    role: "Infrastructure",
-    tech: [
-      "Python 3.11+",
-      "Docker",
-      "Ollama",
-      "vLLM",
-      "Azure AD SSO",
-    ],
-    features: [
-      "Unified API: OpenAI /v1/*, Ollama /api/*, Anthropic /anthropic/v1/*",
-      "API dialect translation between Ollama and vLLM",
-      "Weighted Deficit Round Robin fair-share scheduling with burst credits",
-      "Per-user token quotas with role-based weights",
-      "Real-time GPU/memory telemetry per node and backend",
-      "Drain mode for graceful backend offlining",
-      "Tool calling with cross-engine translation",
-      "Voice API (TTS/STT) with quota tracking",
-      "Azure AD SSO with JIT provisioning",
-      "Full audit logging of prompts, responses, artifacts",
-    ],
-    repoUrl: "https://github.com/ui-insight/MindRouter",
-    isPrivate: false,
-    relatedSlugs: ["dgx-stack", "vandalizer", "auditdashboard"],
-    tags: ["LLM", "infrastructure", "GPU", "production", "flagship"],
-  },
-  {
-    slug: "stratplan-tactics",
-    name: "Strategic Plan Dashboard",
-    org: "ui-insight",
-    tagline: "Alignment and investment portfolio for the UI 2025-2030 strategic plan.",
-    description:
-      "Data-driven dashboard for visualizing and analyzing how 25 academic and administrative units align their tactics with the University's 2025-2030 strategic plan. Evolving from alignment visualization into a strategic execution and investment portfolio tool.",
-    status: "Production",
-    role: "Institutional app",
-    tech: ["React 19", "TypeScript", "Tailwind v4", "FastAPI", "PostgreSQL"],
-    features: [
-      "Executive overview with strategic KPIs",
-      "Interactive unit-by-priority alignment matrix",
-      "Synergy finder for cross-unit collaboration",
-      "Coverage analysis: well-served vs. under-served priorities",
-      "Investment portfolio analytics and spend concentration",
-      "Redundancy detection across unit tactics",
-      "Pillar deep-dive with tactic detail",
-      "SPIGP tracking layer with award registry",
-      "Investment metadata per tactic (funding, ROI, timeline)",
-      "Execution maturity and health rollups",
-    ],
-    repoUrl: "https://github.com/ui-insight/StratPlanTacticsMB",
-    isPrivate: false,
-    relatedSlugs: ["template-app", "data-governance"],
-    tags: ["strategic-planning", "analytics", "institutional"],
-  },
-
-  // --- Institutional apps ---
   {
     slug: "processmapping",
     name: "ProcessMapping",
-    org: "ui-insight",
     tagline: "Process intelligence platform for Research Administration.",
     description:
-      "Full-stack application plus data repository for Research Administration process intelligence. Combines canonical process-map JSON with Vandalizer-powered transcript ingest, workflow comparison, and schema-validated projection into insight-db.",
-    status: "Production",
-    role: "Institutional app",
-    tech: ["React 19", "TypeScript", "Vite", "FastAPI", "Python 3.11+"],
-    features: [
-      "Interactive process map browser",
-      "Step-by-step actor/system/input/output detail",
-      "Workflow pipeline and task-file browsing",
-      "Process-step-vs-workflow coverage analysis",
-      "UTF-8 transcript ingest into starter skeletons",
-      "JSON schema validation enforced",
-      "Optional PostgreSQL projection via insight-db",
-      "MkDocs Material governance docs",
-    ],
+      "Full-stack app plus data repository for Research Administration process intelligence. Canonical process-map JSON, Vandalizer-powered transcript ingest, workflow comparison, schema-validated projection into insight-db. AI4RA dual-destiny project.",
+    homeUnits: ["Office of Sponsored Programs (ORED)"],
+    operationalOwners: [{ name: "Barrie Robison" }],
+    buildParticipants: ["IIDS"],
+    status: "Prototype",
+    visibility: "Public",
+    ai4raRelationship: "Core",
+    dualDestinyPlanned: true,
     repoUrl: "https://github.com/ui-insight/ProcessMapping",
-    isPrivate: false,
-    relatedSlugs: ["vandalizer", "data-governance"],
-    tags: ["process-intelligence", "research-admin"],
+    operationalFunction:
+      "Documents and analyzes RA processes: who does what, with which systems, using which inputs and outputs. Feeds requirements for OpenERA and similar tools. Surfaces coverage gaps between processes and current tooling.",
+    operationalExcellenceOutcome:
+      "Shared vocabulary and visibility for RA processes. Identifies process/tool coverage gaps. Requirements source for automation. Onboarding and training asset.",
+    tech: ["React 19", "TypeScript", "Vite", "FastAPI", "Python 3.11+"],
+    relatedSlugs: ["openera", "vandalizer"],
   },
-  {
-    slug: "ucm-daily-register",
-    name: "UCM Daily Register",
-    org: "ui-insight",
-    tagline: "AI-assisted newsletter production pipeline for UCM.",
-    description:
-      "Editorial pipeline for the University of Idaho's University Communications and Marketing team. Submission intake, AI-assisted editing with AP and U of I style enforcement, editorial review, and Word export.",
-    status: "Production",
-    role: "Institutional app",
-    tech: ["React 19", "TypeScript", "FastAPI", "SQLAlchemy 2.0", "Claude/OpenAI"],
-    features: [
-      "Community submission intake web form",
-      "AI-assisted style editing (Claude or OpenAI, switchable)",
-      "Word-level diff viewer with accept/reject/modify",
-      "Newsletter auto-assembly by section",
-      "Recurring message library with cadence rules",
-      "Branded .docx export",
-      "Data-driven style rules engine editable via UI",
-    ],
-    repoUrl: "https://github.com/ui-insight/UCMDailyRegister",
-    isPrivate: false,
-    relatedSlugs: ["data-governance", "mindrouter"],
-    tags: ["editorial", "LLM", "institutional"],
-  },
-  {
-    slug: "auditdashboard",
-    name: "Audit Dashboard",
-    org: "ui-insight",
-    tagline: "AI-assisted audit observation tracker for Internal Audit.",
-    description:
-      "Full-stack dashboard for tracking internal audit observations, corrective action items, and responsible-party assignments. Ingests audit report PDFs via an OCR + LLM pipeline, with human review before persistence.",
-    status: "Production",
-    role: "Institutional app",
-    tech: ["React 19", "TypeScript", "Tailwind v4", "FastAPI", "PostgreSQL 16"],
-    features: [
-      "PDF audit report upload → OCR (MindRouter dots.OCR) → Qwen3 extraction",
-      "Human-in-the-loop review before persistence",
-      "Observation tracking with severity, status, policy references",
-      "Action item management with overdue highlighting",
-      "Status journal with transition history",
-      "Summary dashboard with severity/status breakdowns",
-      "CSV export of filtered action items",
-    ],
-    repoUrl: "https://github.com/ui-insight/AuditDashboard",
-    isPrivate: false,
-    relatedSlugs: ["mindrouter", "data-governance", "template-app"],
-    tags: ["audit", "LLM", "institutional"],
-  },
+
+  // ============================================================
+  // ORED + Office of General Counsel (dual home)
+  // ============================================================
   {
     slug: "execord",
     name: "ExecOrd",
-    org: "ui-insight",
-    tagline: "Executive Order compliance tracker.",
+    tagline:
+      "Executive Order compliance tracker (UI deployment embargoed).",
     description:
-      "Executive Order compliance tracking tool with VM deployment configuration. Private institutional tooling for monitoring federal EO impacts and compliance posture.",
-    status: "Active development",
-    role: "Institutional app",
-    tech: ["Python"],
-    features: [
-      "EO compliance tracking",
-      "VM deployment configuration",
-      "Institutional compliance posture monitoring",
-    ],
+      "Compliance tracking prototype for federal Executive Order impacts on the institution. UI deployment details are embargoed.",
+    homeUnits: ["Office of Research and Economic Development", "Office of General Counsel"],
+    operationalOwners: [{ name: "Sarah Martonick" }],
+    buildParticipants: ["IIDS"],
+    status: "Prototype",
+    visibility: "Internal-only",
+    ai4raRelationship: "None",
     repoUrl: "https://github.com/ui-insight/ExecOrd",
-    isPrivate: true,
-    tags: ["compliance", "institutional"],
+    isPrivateRepo: true,
+    operationalFunction:
+      "Tracks federal Executive Orders, applicability to UI, required actions, deadlines, responsible parties, and current posture.",
+    operationalExcellenceOutcome:
+      "Systematic EO response posture. Reduces scramble when new EOs drop. Living view of EO-driven obligations for leadership.",
   },
+
+  // ============================================================
+  // Strategic Enrollment Management
+  // ============================================================
   {
     slug: "sem-experiential",
     name: "SEM Experiential Learning",
-    org: "ui-insight",
-    tagline: "Experiential learning and engagement records platform.",
+    tagline:
+      "Co-built with SEM — experiential learning and student engagement records.",
     description:
-      "Platform for managing experiential learning and student engagement records. Supports a shared system where students, faculty, staff, and administrators track participation, manage operational workflows, and eventually produce trusted experience records. Scaffolded from TEMPLATE-app and following OpenERA patterns.",
-    status: "Active development",
-    role: "Institutional app",
-    tech: ["React 19", "TypeScript", "FastAPI", "SQLAlchemy 2.0", "PostgreSQL"],
-    features: [
-      "Backend-backed MVP: organizations, events, attendance, dashboard",
-      "Admin user and role management",
-      "FastAPI with persisted auth, signed bearer tokens, password hashing",
-      "Role checks and Alembic migrations",
-      "Prototype UI for internships, transcripts, reports, notifications",
-      "Roadmap, governance, security, deployment docs",
+      "Platform for managing experiential learning and student engagement records. MVP covers organizations, events, attendance, dashboard metrics, and admin user lifecycle. Scaffolded from TEMPLATE-app following OpenERA patterns. This is an early example of AISPEG diffusing agentic-coding capability out of IIDS: SEM is co-building alongside IIDS, not just consuming.",
+    homeUnits: ["Strategic Enrollment Management"],
+    operationalOwners: [
+      { name: "Dean Kahler", title: "Vice Provost of SEM" },
     ],
+    buildParticipants: ["IIDS", "SEM"],
+    status: "Prototype",
+    visibility: "Internal-only",
+    ai4raRelationship: "None",
     repoUrl: "https://github.com/ui-insight/SEM-experiential",
-    isPrivate: false,
-    relatedSlugs: ["template-app", "openera", "data-governance"],
-    tags: ["student-success", "institutional"],
+    operationalFunction:
+      "Single record of student engagement: events, attendance, organizations. Foundation for verified experience transcripts.",
+    operationalExcellenceOutcome:
+      "Consolidates fragmented student engagement tracking. Supports recruitment/retention reporting. Demonstrates unit-led co-build pattern — a repeatable path for other UI units to develop their own AI-assisted tooling.",
+    tags: ["diffusion"],
+    relatedSlugs: ["template-app"],
   },
+
+  // ============================================================
+  // Research Faculty Development (ORED)
+  // ============================================================
   {
     slug: "rfd-career",
     name: "RFD CAREER Dashboard",
-    org: "ui-insight",
-    tagline: "Cohort progress dashboard for CAREER Club participants.",
+    tagline: "Cohort progress dashboard for the CAREER Club program.",
     description:
-      "Interactive cohort dashboard for tracking participant progress through CAREER Club workbook data. Ingests rubric entry forms and visualizes cohort and individual progress.",
-    status: "Active development",
-    role: "Institutional app",
-    tech: ["React", "TypeScript", "Vite", "FastAPI"],
-    features: [
-      "Cohort progress visualization",
-      "Rubric Entry Form ingest (.xlsx)",
-      "Participant-level progress tracking",
-      "Faculty development program support",
-    ],
+      "Interactive cohort dashboard tracking participant progress through CAREER Club workbook data. Supports faculty development program leaders in identifying stuck participants and evaluating program effectiveness.",
+    homeUnits: ["Research Faculty Development (ORED)"],
+    operationalOwners: [{ name: "Eric Torok" }],
+    buildParticipants: ["IIDS"],
+    status: "Piloting",
+    visibility: "Public",
+    ai4raRelationship: "Adjacent",
     repoUrl: "https://github.com/ui-insight/RFD-career",
-    isPrivate: false,
-    relatedSlugs: ["template-app"],
-    tags: ["faculty-development", "institutional"],
+    operationalFunction:
+      "Visualizes CAREER Club cohort and individual-participant progress against workbook rubric milestones.",
+    operationalExcellenceOutcome:
+      "Cohort visibility for program leaders. Data-driven program improvement. Stronger NSF CAREER-grant pipeline.",
+    tech: ["React", "TypeScript", "Vite", "FastAPI"],
   },
 
-  // --- Governance & standards ---
+  // ============================================================
+  // IIDS — Infrastructure
+  // ============================================================
   {
-    slug: "data-governance",
-    name: "UI Insight Data Governance",
-    org: "ui-insight",
-    tagline: "Institutional data governance across the UI Insight portfolio.",
+    slug: "mindrouter",
+    name: "MindRouter",
+    tagline:
+      "Production LLM load balancer and unified API fronting UI's on-prem AI compute.",
     description:
-      "Central governance documentation for the University of Idaho's UI Insight application portfolio. Adopts the AI4RA UDM's naming conventions, design patterns, and controlled-vocabulary approach as the institutional standard across all domains.",
+      "LLM inference load balancer fronting a heterogeneous Ollama + vLLM cluster. Provides unified OpenAI-, Ollama-, and Anthropic-compatible endpoints with fair-share scheduling, quotas, telemetry, Azure AD SSO, and full audit logging. Open-sourced at mindrouter.ai and deployed at UI.",
+    homeUnits: ["IIDS"],
+    operationalOwners: [{ name: "Luke Sheneman" }],
+    buildParticipants: ["IIDS"],
     status: "Production",
-    role: "Governance",
-    tech: ["MkDocs Material", "Python"],
-    features: [
-      "Adopts AI4RA UDM as institutional standard",
-      "Catalogs domain-specific data models for governed applications",
-      "Unified vocabulary registry",
-      "Governance drift validation script",
-      "Portfolio: OpenERA (32 tables), UCM Daily Register (10), Audit Dashboard (13), StratPlan, ProcessMapping",
-    ],
-    repoUrl: "https://github.com/ui-insight/data-governance",
-    isPrivate: false,
-    relatedSlugs: [
-      "ai4ra-udm",
-      "openera",
-      "ucm-daily-register",
-      "auditdashboard",
-      "stratplan-tactics",
-      "processmapping",
-    ],
-    tags: ["governance", "standards", "data-model"],
-  },
-
-  // --- Platform infrastructure ---
-  {
-    slug: "template-app",
-    name: "TEMPLATE-app",
-    org: "ui-insight",
-    tagline: "Production-ready starter for AI-assisted UI business applications.",
-    description:
-      "Opinionated starting point for building University business applications with agentic AI development. Bakes in tech stack, documentation standards, data governance, security standards, CI/CD, and agent guidance from day one.",
-    status: "Production",
-    role: "Infrastructure",
-    tech: [
-      "React 19",
-      "TypeScript",
-      "Tailwind v4",
-      "FastAPI",
-      "SQLAlchemy",
-      "PostgreSQL",
-    ],
-    features: [
-      "React 19 + FastAPI + PostgreSQL stack",
-      "MkDocs Material site scaffold",
-      "Data governance: classification framework + handling rules",
-      "Security: JWT, RBAC, dependency scanning, review checklist",
-      "GitHub Actions CI/CD with test, lint, security scan",
-      "CLAUDE.md for agentic development context",
-      "Playwright e2e smoke-test scaffold",
-      "CycloneDX SBOM generation",
-    ],
-    repoUrl: "https://github.com/ui-insight/TEMPLATE-app",
-    isPrivate: false,
-    relatedSlugs: [
-      "openera",
-      "sem-experiential",
-      "rfd-career",
-      "auditdashboard",
-      "stratplan-tactics",
-    ],
-    tags: ["scaffold", "infrastructure", "agentic-dev"],
+    visibility: "Public",
+    ai4raRelationship: "Core",
+    dualDestinyPlanned: true,
+    repoUrl: "https://github.com/ui-insight/MindRouter",
+    liveUrl: "https://mindrouter.ai",
+    operationalFunction:
+      "Shared institutional LLM inference substrate. Every AI app at UI routes through it. Fair-share scheduling, quotas, audit trail, on-prem compute, cost control.",
+    operationalExcellenceOutcome:
+      "Enables every downstream AI app at UI. Keeps data on-prem for compliance. Avoids per-seat vendor lock-in. Institutional audit trail. Fair access across research and operations workloads.",
+    tech: ["Python 3.11+", "Docker", "Ollama", "vLLM", "Azure AD SSO"],
+    relatedSlugs: ["dgx-stack", "audit-dashboard", "vandalizer", "ucm-daily-register"],
   },
   {
     slug: "dgx-stack",
     name: "DGX Stack",
-    org: "ui-insight",
-    tagline: "Two-container vLLM + OCR stack for NVIDIA DGX Spark.",
+    tagline:
+      "On-prem vLLM + OCR appliance on NVIDIA DGX Spark (Grace-Blackwell).",
     description:
-      "Ultra-convenient DGX Spark deployment stack that runs a multimodal LLM on Grace-Blackwell hardware. One container serves the model via vLLM, the other provides document OCR using the same model's vision capabilities.",
+      "Two-container stack for NVIDIA DGX Spark that serves a multimodal LLM via vLLM alongside a document-OCR container. Supports Gemma 4 26B and Qwen 3.5 35B FP8. Deployed at UI as a MindRouter backend; also deployed at Southern Utah University (AI4RA partner) for Vandalizer.",
+    homeUnits: ["IIDS"],
+    operationalOwners: [{ name: "Luke Sheneman" }],
+    buildParticipants: ["IIDS"],
     status: "Production",
-    role: "Infrastructure",
-    tech: ["Docker", "vLLM", "NVIDIA Container Toolkit", "CUDA 13"],
-    features: [
-      "Gemma 4 26B MoE support (HF token + license)",
-      "Qwen 3.5 35B FP8 MoE support (open access, OCR-strong)",
-      "Multimodal: LLM + vision-based OCR from same model",
-      "One-command ./setup.sh deployment",
-      "Tuned for 128GB unified memory",
-      "Interactive model/port/memory configuration",
-    ],
+    visibility: "Public",
+    ai4raRelationship: "Adjacent",
+    externalDeployments: ["Southern Utah University"],
     repoUrl: "https://github.com/ui-insight/dgx-stack",
-    isPrivate: false,
-    relatedSlugs: ["mindrouter", "auditdashboard"],
-    tags: ["GPU", "LLM", "infrastructure"],
+    operationalFunction:
+      "On-prem LLM + OCR appliance. Serves as a backend node to MindRouter. Provides the OCR used by Audit Dashboard, Vandalizer, OpenERA. Supports air-gapped workloads.",
+    operationalExcellenceOutcome:
+      "On-prem AI compute without cloud recurring costs. Supports compliance-sensitive and air-gapped workloads. Backbone for institutional OCR and LLM serving.",
+    tech: ["Docker", "vLLM", "NVIDIA Container Toolkit", "CUDA 13"],
+    relatedSlugs: ["mindrouter", "audit-dashboard", "vandalizer"],
+  },
+  {
+    slug: "template-app",
+    name: "TEMPLATE-app",
+    tagline:
+      "Production-ready scaffold for new UI business applications (under OIT review).",
+    description:
+      "Opinionated starting point for building University business applications with agentic AI development. Bakes in UI's tech stack, documentation standards, data governance classification, security standards (JWT, RBAC, dependency scanning), CI/CD, and agent guidance from day one. Available for use by any UI unit; currently under OIT review for institutional-standards endorsement.",
+    homeUnits: ["IIDS"],
+    operationalOwners: [{ name: "Barrie Robison" }],
+    buildParticipants: ["IIDS"],
+    status: "Production",
+    visibility: "Public",
+    institutionalReviewStatus: "Under OIT review",
+    ai4raRelationship: "Adjacent",
+    repoUrl: "https://github.com/ui-insight/TEMPLATE-app",
+    operationalFunction:
+      "Standardizes how new UI business apps start. Enforces data governance, security, documentation, CI/CD, and agentic-development norms from day one. Consumed by SEM-experiential, Audit Dashboard, StratPlanTactics.",
+    operationalExcellenceOutcome:
+      "Consistent app patterns across UI units. Faster new-app delivery. Propagates institutional standards by construction. Lowers the barrier for unit-led co-builds (the SEM pattern).",
+    tech: ["React 19", "TypeScript", "Tailwind v4", "FastAPI", "PostgreSQL"],
+    tags: ["diffusion"],
+    relatedSlugs: [
+      "sem-experiential",
+      "audit-dashboard",
+      "stratplan",
+      "openera",
+    ],
   },
 
-  // --- Outreach & pedagogy ---
+  // ============================================================
+  // Tracked — not built by AISPEG / IIDS
+  // ============================================================
   {
-    slug: "reach-workshop-2026",
-    name: "REACH 2026 AI4RA Workshop",
-    org: "ui-insight",
-    tagline: "AI4RA workshop site for REACH 2026.",
+    slug: "oit-data-modernization",
+    name: "OIT Data Modernization (Huron)",
+    tagline: "Enterprise data modernization led by OIT with Huron consulting.",
     description:
-      "GitHub Pages site for the REACH 2026 AI4RA workshop — 'The Intersection Between AI and Data.' Three-hour hands-on workshop for research administration professionals on building safer, more relevant, more inspectable AI-assisted workflows.",
-    status: "Production",
-    role: "Outreach",
-    tech: ["GitHub Pages", "HTML/CSS"],
-    features: [
-      "Three workshop modules (AI+data science, data lakehouse, reproducibility)",
-      "Presenters from University of Idaho and Southern Utah University",
-      "Learning objectives: prompt structure, AI readiness, governance",
-      "Hands-on activity: data-crawler-carl",
-      "Lessons from the AI4RA NSF GRANTED project",
-    ],
-    repoUrl: "https://github.com/ui-insight/REACHWorkshop2026",
-    liveUrl: "https://ui-insight.github.io/REACHWorkshop2026/",
-    isPrivate: false,
-    relatedSlugs: ["data-crawler-carl", "vandalizer"],
-    tags: ["outreach", "workshop", "pedagogy"],
-  },
-  {
-    slug: "data-crawler-carl",
-    name: "Data Crawler Carl",
-    org: "ui-insight",
-    tagline: "In-browser AI CSV explorer with natural-language SQL.",
-    description:
-      "AI-powered CSV data explorer that runs entirely in the browser. Upload any CSV, query with natural language and SQL, and visualize with auto-generated Plotly charts. Only the schema sample leaves the browser — data stays local.",
-    status: "Production",
-    role: "Outreach",
-    tech: ["sql.js (WebAssembly)", "PapaParse", "Plotly.js", "Google Gemini"],
-    features: [
-      "In-browser SQLite via sql.js WebAssembly",
-      "Natural-language queries via Google Gemini",
-      "Auto-executed SQL with inline results",
-      "Safe chart rendering (Plotly, no code execution)",
-      "Schema-only context sent to Gemini; data stays local",
-      "Hands-on activity for the REACH 2026 workshop",
-    ],
-    repoUrl: "https://github.com/ui-insight/data-crawler-carl",
-    liveUrl: "https://ui-insight.github.io/data-crawler-carl/",
-    isPrivate: false,
-    relatedSlugs: ["reach-workshop-2026"],
-    tags: ["outreach", "workshop", "LLM", "data-exploration"],
+      "OIT is leading an institutional data modernization effort in partnership with Huron Consulting. AISPEG is tracking this work as part of the AI interventions inventory; detailed information will be added as OIT shares scope, timelines, and integration points with existing AISPEG-coordinated work.",
+    homeUnits: ["Office of Information Technology"],
+    operationalOwners: [],
+    buildParticipants: ["OIT", "Huron Consulting"],
+    status: "Tracked",
+    visibility: "Public",
+    ai4raRelationship: "None",
+    operationalFunction:
+      "Enterprise data modernization scope to be confirmed.",
+    operationalExcellenceOutcome:
+      "Foundation for institutional reporting, analytics, and interoperability across enterprise systems.",
+    trackingOnly: true,
   },
 ];
 
@@ -612,17 +414,54 @@ export const portfolioProjects: PortfolioProject[] = [
 // Helpers
 // ============================================================
 
-export function getProjectsByOrg(org: PortfolioOrg): PortfolioProject[] {
-  return portfolioProjects.filter((p) => p.org === org);
+export function getInterventionBySlug(slug: string): Intervention | undefined {
+  return interventions.find((i) => i.slug === slug);
 }
 
-export function getProjectBySlug(slug: string): PortfolioProject | undefined {
-  return portfolioProjects.find((p) => p.slug === slug);
+export function getRelatedInterventions(i: Intervention): Intervention[] {
+  if (!i.relatedSlugs) return [];
+  return i.relatedSlugs
+    .map((slug) => getInterventionBySlug(slug))
+    .filter((x): x is Intervention => x !== undefined);
 }
 
-export function getRelatedProjects(project: PortfolioProject): PortfolioProject[] {
-  if (!project.relatedSlugs) return [];
-  return project.relatedSlugs
-    .map((slug) => getProjectBySlug(slug))
-    .filter((p): p is PortfolioProject => p !== undefined);
+export function getPubliclyVisible(): Intervention[] {
+  return interventions.filter((i) => i.visibility !== "Internal-only");
+}
+
+// Group ordering for display — home-unit groups appear in this order.
+export const HOME_UNIT_GROUP_ORDER = [
+  "Office of the President",
+  "Office of Sponsored Programs (ORED)",
+  "Office of Research and Economic Development",
+  "Research Faculty Development (ORED)",
+  "Division of Financial Affairs",
+  "Strategic Enrollment Management",
+  "University Communications and Marketing",
+  "Office of General Counsel",
+  "Office of Information Technology",
+  "IIDS",
+];
+
+export function groupByHomeUnit(
+  items: Intervention[]
+): { unit: string; items: Intervention[] }[] {
+  // An intervention is listed under its FIRST home unit for grouping.
+  const groups = new Map<string, Intervention[]>();
+  for (const i of items) {
+    const primary = i.homeUnits[0] || "Unclassified";
+    const existing = groups.get(primary) || [];
+    existing.push(i);
+    groups.set(primary, existing);
+  }
+  const ordered = HOME_UNIT_GROUP_ORDER.filter((u) => groups.has(u)).map(
+    (unit) => ({ unit, items: groups.get(unit) || [] })
+  );
+  // Any unexpected home units get appended at the end
+  for (const [unit, items] of groups.entries()) {
+    if (!HOME_UNIT_GROUP_ORDER.includes(unit)) {
+      ordered.push({ unit, items });
+    }
+  }
+  return ordered;
 }

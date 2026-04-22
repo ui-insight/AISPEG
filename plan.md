@@ -1,7 +1,7 @@
 # AISPEG Interactive Website — Implementation Plan
 
 ## Overview
-A Next.js interactive website for the AI Strategic Planning & Evaluation Group (AISPEG) at UI. The site serves as a collaborative hub for planning, lessons learned, information aggregation, and knowledge sharing around agentic AI at the university. Designed so team members using agentic tools (Claude Code, etc.) can easily create content, modify pages, and evolve the site over time.
+A Next.js interactive website for the AI Strategic Plan Execution Group (AISPEG) at UI. The site is a growing inventory of AI interventions for operational excellence across UI units, plus a collaborative hub for lessons learned and knowledge sharing. Designed so team members using agentic tools (Claude Code, etc.) can easily create content, modify pages, and evolve the site over time.
 
 ---
 

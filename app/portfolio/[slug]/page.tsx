@@ -1,40 +1,45 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import {
-  portfolioProjects,
-  getProjectBySlug,
-  getRelatedProjects,
+  interventions,
+  getInterventionBySlug,
+  getRelatedInterventions,
+  type InterventionStatus,
 } from "@/lib/portfolio";
 
 export function generateStaticParams() {
-  return portfolioProjects.map((p) => ({ slug: p.slug }));
+  // Only generate pages for entries that are not internal-only
+  return interventions
+    .filter((i) => i.visibility !== "Internal-only")
+    .map((i) => ({ slug: i.slug }));
 }
 
-export function generateMetadata({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  return params.then(({ slug }) => {
-    const project = getProjectBySlug(slug);
-    if (!project) return { title: "Not found" };
-    return {
-      title: `${project.name} · AISPEG Portfolio`,
-      description: project.tagline,
-    };
-  });
-}
-
-export default async function PortfolioDetailPage({
+export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const project = getProjectBySlug(slug);
-  if (!project) notFound();
+  const i = getInterventionBySlug(slug);
+  if (!i) return { title: "Not found" };
+  return {
+    title: `${i.name} · AISPEG Portfolio`,
+    description: i.tagline,
+  };
+}
 
-  const related = getRelatedProjects(project);
+export default async function InterventionDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const intervention = getInterventionBySlug(slug);
+  if (!intervention) notFound();
+  if (intervention.visibility === "Internal-only") notFound();
+
+  const related = getRelatedInterventions(intervention);
+  const isPartial = intervention.visibility === "Partial";
 
   return (
     <div className="space-y-10">
@@ -44,135 +49,221 @@ export default async function PortfolioDetailPage({
           Portfolio
         </Link>
         <span className="mx-2">/</span>
-        <span className="text-gray-400">{project.org}</span>
+        <span className="text-gray-400">{intervention.homeUnits[0]}</span>
         <span className="mx-2">/</span>
-        <span className="text-ui-charcoal">{project.name}</span>
+        <span className="text-ui-charcoal">{intervention.name}</span>
       </nav>
 
       {/* Header */}
       <div>
         <div className="flex flex-wrap items-center gap-2">
-          <span className="rounded-full bg-ui-gold/15 px-2.5 py-0.5 text-xs font-medium text-ui-gold-dark">
-            {project.org}
-          </span>
-          <span className="rounded-full bg-ui-charcoal/5 px-2.5 py-0.5 text-xs font-medium text-ui-charcoal">
-            {project.role}
-          </span>
-          <StatusBadge status={project.status} />
-          {project.isPrivate ? (
-            <span className="rounded-full border border-gray-200 px-2.5 py-0.5 text-xs text-gray-600">
-              Private
+          <StatusBadge status={intervention.status} />
+          {intervention.ai4raRelationship !== "None" && (
+            <span className="rounded-full border border-ui-gold/30 bg-ui-gold/10 px-2.5 py-0.5 text-xs font-medium text-ui-gold-dark">
+              AI4RA {intervention.ai4raRelationship}
             </span>
-          ) : (
+          )}
+          {intervention.dualDestinyPlanned && (
             <span className="rounded-full border border-gray-200 px-2.5 py-0.5 text-xs text-gray-600">
-              Open source
+              Dual destiny (OSS + UI)
+            </span>
+          )}
+          {intervention.tags?.includes("diffusion") && (
+            <span className="rounded-full border border-blue-200 bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700">
+              Capability diffusion
+            </span>
+          )}
+          {intervention.institutionalReviewStatus === "Under OIT review" && (
+            <span className="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-xs text-amber-800">
+              Under OIT review
+            </span>
+          )}
+          {intervention.trackingOnly && (
+            <span className="rounded-full border border-violet-200 bg-violet-50 px-2.5 py-0.5 text-xs font-medium text-violet-700">
+              Tracked — not built by AISPEG
             </span>
           )}
         </div>
         <h1 className="mt-3 text-3xl font-bold text-ui-charcoal">
-          {project.name}
+          {intervention.name}
         </h1>
-        <p className="mt-2 text-lg text-gray-600">{project.tagline}</p>
-        {project.funding && (
+        <p className="mt-2 text-lg text-gray-600">{intervention.tagline}</p>
+        {intervention.funding && (
           <p className="mt-2 text-sm font-medium text-ui-gold-dark">
-            {project.funding}
+            {intervention.funding}
           </p>
         )}
       </div>
 
-      {/* Links */}
-      <div className="flex flex-wrap gap-3">
-        <a
-          href={project.repoUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 rounded-lg bg-ui-charcoal px-4 py-2 text-sm font-medium text-white hover:bg-ui-charcoal/90"
-        >
-          <GitHubIcon />
-          Repository
-        </a>
-        {project.docsUrl && (
-          <a
-            href={project.docsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-ui-charcoal hover:border-ui-gold/40"
-          >
-            Documentation &rarr;
-          </a>
-        )}
-        {project.liveUrl && (
-          <a
-            href={project.liveUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-ui-charcoal hover:border-ui-gold/40"
-          >
-            Live site &rarr;
-          </a>
-        )}
+      {/* Embargo notice for Partial visibility */}
+      {isPartial && (
+        <div className="rounded-xl border border-amber-200 bg-amber-50 p-5">
+          <p className="text-sm font-semibold text-amber-900">
+            UI deployment details embargoed
+          </p>
+          <p className="mt-1 text-sm text-amber-800">
+            This intervention exists in the AISPEG inventory, but specific
+            details about UI&apos;s operational deployment (pilot scope,
+            timelines, or configuration) are held back from the public site.
+            Contact the operational owner for authorized access.
+          </p>
+        </div>
+      )}
+
+      {/* Ownership */}
+      <div className="grid gap-4 md:grid-cols-3">
+        <OwnershipBlock label="Home unit(s)" values={intervention.homeUnits} />
+        <OwnershipBlock
+          label={intervention.operationalOwners.length === 1 ? "Operational owner" : "Operational owners"}
+          values={intervention.operationalOwners.map((o) =>
+            o.title ? `${o.name} (${o.title})` : o.name
+          )}
+          emptyText={intervention.trackingOnly ? "Awaiting contact with unit" : undefined}
+        />
+        <OwnershipBlock
+          label="Build participants"
+          values={intervention.buildParticipants}
+        />
       </div>
 
-      {/* Overview */}
+      {/* Links */}
+      {(intervention.repoUrl || intervention.docsUrl || intervention.liveUrl) && (
+        <div className="flex flex-wrap gap-3">
+          {intervention.repoUrl && (
+            <a
+              href={intervention.repoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-lg bg-ui-charcoal px-4 py-2 text-sm font-medium text-white hover:bg-ui-charcoal/90"
+            >
+              <GitHubIcon />
+              Repository
+              {intervention.isPrivateRepo && (
+                <span className="rounded bg-white/10 px-1.5 py-0.5 text-xs">Private</span>
+              )}
+            </a>
+          )}
+          {intervention.liveUrl && (
+            <a
+              href={intervention.liveUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-ui-charcoal hover:border-ui-gold/40"
+            >
+              Live site &rarr;
+            </a>
+          )}
+          {intervention.docsUrl && (
+            <a
+              href={intervention.docsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-ui-charcoal hover:border-ui-gold/40"
+            >
+              Documentation &rarr;
+            </a>
+          )}
+        </div>
+      )}
+
+      {/* Description */}
       <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
         <h2 className="text-base font-semibold text-ui-charcoal">Overview</h2>
         <p className="mt-3 text-sm leading-relaxed text-gray-700">
-          {project.description}
+          {intervention.description}
         </p>
       </div>
 
-      {/* Features */}
-      <div>
-        <h2 className="mb-3 text-lg font-semibold text-ui-charcoal">
-          Key features
-        </h2>
-        <ul className="grid gap-2 sm:grid-cols-2">
-          {project.features.map((f, i) => (
-            <li
-              key={i}
-              className="flex items-start gap-2 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700"
-            >
-              <svg
-                className="mt-0.5 h-4 w-4 shrink-0 text-ui-gold"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
-              <span>{f}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {/* Tech stack */}
-      <div>
-        <h2 className="mb-3 text-lg font-semibold text-ui-charcoal">
-          Tech stack
-        </h2>
-        <div className="flex flex-wrap gap-2">
-          {project.tech.map((t) => (
-            <span
-              key={t}
-              className="rounded-md border border-gray-200 bg-white px-3 py-1 text-sm text-gray-700"
-            >
-              {t}
-            </span>
-          ))}
+      {/* Operational function + outcome */}
+      <div className="grid gap-4 md:grid-cols-2">
+        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 className="text-base font-semibold text-ui-charcoal">
+            Operational function at UI
+          </h2>
+          <p className="mt-3 text-sm leading-relaxed text-gray-700">
+            {intervention.operationalFunction}
+          </p>
+        </div>
+        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 className="text-base font-semibold text-ui-charcoal">
+            Operational excellence outcome
+          </h2>
+          <p className="mt-3 text-sm leading-relaxed text-gray-700">
+            {intervention.operationalExcellenceOutcome}
+          </p>
         </div>
       </div>
 
-      {/* Related projects */}
+      {/* External deployments */}
+      {intervention.externalDeployments?.length ? (
+        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 className="text-base font-semibold text-ui-charcoal">
+            Also deployed at
+          </h2>
+          <ul className="mt-3 space-y-1 text-sm text-gray-700">
+            {intervention.externalDeployments.map((d) => (
+              <li key={d}>&bull; {d}</li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
+      {/* Features */}
+      {intervention.features?.length ? (
+        <div>
+          <h2 className="mb-3 text-lg font-semibold text-ui-charcoal">
+            Key features
+          </h2>
+          <ul className="grid gap-2 sm:grid-cols-2">
+            {intervention.features.map((f, i) => (
+              <li
+                key={i}
+                className="flex items-start gap-2 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700"
+              >
+                <svg
+                  className="mt-0.5 h-4 w-4 shrink-0 text-ui-gold"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+                <span>{f}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
+      {/* Tech stack */}
+      {intervention.tech?.length ? (
+        <div>
+          <h2 className="mb-3 text-lg font-semibold text-ui-charcoal">
+            Tech stack
+          </h2>
+          <div className="flex flex-wrap gap-2">
+            {intervention.tech.map((t) => (
+              <span
+                key={t}
+                className="rounded-md border border-gray-200 bg-white px-3 py-1 text-sm text-gray-700"
+              >
+                {t}
+              </span>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      {/* Related */}
       {related.length > 0 && (
         <div>
           <h2 className="mb-3 text-lg font-semibold text-ui-charcoal">
-            Related projects
+            Related interventions
           </h2>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((r) => (
@@ -194,17 +285,47 @@ export default async function PortfolioDetailPage({
   );
 }
 
-function StatusBadge({ status }: { status: string }) {
-  const styles: Record<string, string> = {
+function OwnershipBlock({
+  label,
+  values,
+  emptyText,
+}: {
+  label: string;
+  values: string[];
+  emptyText?: string;
+}) {
+  return (
+    <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+      <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
+        {label}
+      </p>
+      {values.length > 0 ? (
+        <ul className="mt-2 space-y-1 text-sm text-ui-charcoal">
+          {values.map((v) => (
+            <li key={v}>{v}</li>
+          ))}
+        </ul>
+      ) : (
+        <p className="mt-2 text-sm italic text-gray-400">
+          {emptyText || "—"}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function StatusBadge({ status }: { status: InterventionStatus }) {
+  const styles: Record<InterventionStatus, string> = {
     Production: "bg-green-100 text-green-800",
-    "Active development": "bg-blue-100 text-blue-800",
-    Beta: "bg-amber-100 text-amber-800",
-    Research: "bg-purple-100 text-purple-800",
-    Archived: "bg-gray-100 text-gray-600",
+    Piloting: "bg-blue-100 text-blue-800",
+    Prototype: "bg-amber-100 text-amber-800",
+    Planned: "bg-gray-100 text-gray-700",
+    Tracked: "bg-violet-100 text-violet-800",
+    Archived: "bg-gray-100 text-gray-500",
   };
   return (
     <span
-      className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${styles[status] || "bg-gray-100 text-gray-600"}`}
+      className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${styles[status]}`}
     >
       {status}
     </span>

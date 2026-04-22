@@ -3,9 +3,9 @@ import "./globals.css";
 import Sidebar from "@/components/Sidebar";
 
 export const metadata: Metadata = {
-  title: "AISPEG - AI Strategic Planning & Evaluation Group",
+  title: "AISPEG - AI Strategic Plan Execution Group",
   description:
-    "Collaborative hub for planning, lessons learned, and knowledge sharing around agentic AI at the University of Idaho.",
+    "A growing inventory of AI interventions for operational excellence at the University of Idaho, coordinated by AISPEG.",
 };
 
 export default function RootLayout({
