@@ -414,10 +414,13 @@ export const interventions: Intervention[] = [
     tagline:
       "OIT-managed application platform where UI application modules are deployed.",
     description:
-      "React + FastAPI application platform running on OIT-managed secure infrastructure. Nexus is the institutional template where University of Idaho application modules are deployed, providing a shared, audited, and security-hardened runtime for AI-enabled and traditional unit-level apps. Complements TEMPLATE-app: where TEMPLATE-app is the development scaffold, Nexus is the production landing zone.",
+      "React + FastAPI application platform running on OIT-managed secure infrastructure, built collaboratively by OIT and IIDS. Nexus is the institutional template where University of Idaho application modules are deployed, providing a shared, audited, and security-hardened runtime for AI-enabled and traditional unit-level apps. Complements TEMPLATE-app: where TEMPLATE-app is the development scaffold, Nexus is the production landing zone.",
     homeUnits: ["Office of Information Technology"],
-    operationalOwners: [],
-    buildParticipants: ["OIT"],
+    operationalOwners: [
+      { name: "Kali Armitage" },
+      { name: "Colin Addington" },
+    ],
+    buildParticipants: ["OIT", "IIDS"],
     status: "Production",
     visibility: "Public",
     ai4raRelationship: "None",
