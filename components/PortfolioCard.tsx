@@ -41,15 +41,24 @@ export default function PortfolioCard({
       ? ` +${intervention.operationalOwners.length - 2}`
       : "";
 
+  const liveHost = intervention.liveUrl
+    ? hostnameOf(intervention.liveUrl)
+    : null;
+
   return (
-    <Link
-      href={`/portfolio/${intervention.slug}`}
-      className="group flex h-full flex-col rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:border-ui-gold/40 hover:shadow-md"
-    >
+    // Stretched-link pattern: whole card is clickable via the title's
+    // ::before overlay; the live-site anchor uses z-10 to stay clickable
+    // on top of the overlay without nesting anchors.
+    <article className="group relative flex h-full flex-col rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:border-brand-gold hover:shadow-md">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <h3 className="text-base font-semibold text-ui-charcoal group-hover:text-ui-gold-dark transition-colors">
-            {intervention.name}
+          <h3 className="text-base font-semibold text-brand-black group-hover:text-brand-gold-dark transition-colors">
+            <Link
+              href={`/portfolio/${intervention.slug}`}
+              className="unstyled before:absolute before:inset-0"
+            >
+              {intervention.name}
+            </Link>
           </h3>
           {owners && (
             <p className="mt-0.5 text-xs text-gray-500">
@@ -65,13 +74,13 @@ export default function PortfolioCard({
         </span>
       </div>
 
-      <p className="mt-3 text-sm leading-relaxed text-gray-600">
+      <p className="mt-3 text-sm leading-relaxed text-gray-700">
         {intervention.tagline}
       </p>
 
       <div className="mt-4 flex flex-wrap gap-1.5">
         {ai4raChip[intervention.ai4raRelationship] && (
-          <span className="rounded-full border border-ui-gold/30 bg-ui-gold/10 px-2 py-0.5 text-xs font-medium text-ui-gold-dark">
+          <span className="rounded-full border border-brand-gold bg-brand-gold/15 px-2 py-0.5 text-xs font-semibold text-brand-gold-dark">
             {ai4raChip[intervention.ai4raRelationship]}
           </span>
         )}
@@ -81,7 +90,7 @@ export default function PortfolioCard({
           </span>
         )}
         {intervention.tags?.includes("diffusion") && (
-          <span className="rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">
+          <span className="rounded-full border border-brand-clearwater/40 bg-brand-clearwater/10 px-2 py-0.5 text-xs font-medium text-brand-clearwater">
             Capability diffusion
           </span>
         )}
@@ -91,13 +100,13 @@ export default function PortfolioCard({
           </span>
         ) : null}
         {intervention.trackingOnly && (
-          <span className="rounded-full border border-violet-200 bg-violet-50 px-2 py-0.5 text-xs font-medium text-violet-700">
+          <span className="rounded-full border border-brand-huckleberry/30 bg-brand-huckleberry/10 px-2 py-0.5 text-xs font-medium text-brand-huckleberry">
             Tracked (not built by AISPEG)
           </span>
         )}
       </div>
 
-      <div className="mt-auto flex items-center gap-2 pt-4 text-xs text-gray-400">
+      <div className="mt-auto flex items-center gap-2 pt-4 text-xs text-gray-500">
         {visibilityNote[intervention.visibility] && (
           <span className="inline-flex items-center gap-1 rounded border border-gray-200 px-1.5 py-0.5">
             <svg
@@ -117,15 +126,63 @@ export default function PortfolioCard({
           </span>
         )}
         {intervention.institutionalReviewStatus === "Under OIT review" && (
-          <span className="text-amber-700">Under OIT review</span>
+          <span className="font-medium text-amber-700">Under OIT review</span>
         )}
         {intervention.institutionalReviewStatus === "OIT-endorsed" && (
-          <span className="text-green-700">OIT-endorsed</span>
+          <span className="font-medium text-green-700">OIT-endorsed</span>
         )}
         {intervention.funding && (
-          <span className="truncate text-ui-gold-dark">{intervention.funding}</span>
+          <span className="truncate font-medium text-brand-gold-dark">
+            {intervention.funding}
+          </span>
         )}
       </div>
-    </Link>
+
+      {intervention.liveUrl && liveHost && (
+        <div className="mt-3 border-t border-gray-100 pt-3">
+          <a
+            href={intervention.liveUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Visit the live site for ${intervention.name} at ${liveHost}`}
+            className="unstyled relative z-10 inline-flex items-center gap-1.5 text-xs font-semibold text-brand-clearwater hover:text-brand-black"
+          >
+            <LiveDot />
+            Live · {liveHost}
+            <svg
+              className="h-3 w-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4m-4-10h6m0 0v6m0-6L10 14"
+              />
+            </svg>
+          </a>
+        </div>
+      )}
+    </article>
+  );
+}
+
+function hostnameOf(url: string): string | null {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return null;
+  }
+}
+
+function LiveDot() {
+  return (
+    <span
+      aria-hidden="true"
+      className="inline-flex h-1.5 w-1.5 shrink-0 rounded-full bg-brand-clearwater"
+    />
   );
 }

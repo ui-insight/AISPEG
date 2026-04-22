@@ -153,6 +153,7 @@ export const interventions: Intervention[] = [
     visibility: "Public",
     ai4raRelationship: "None",
     repoUrl: "https://github.com/ui-insight/UCMDailyRegister",
+    liveUrl: "https://ucmnews.insight.uidaho.edu",
     operationalFunction:
       "Editorial cycle from community submission through style-consistent AI editing, human review, newsletter assembly, and Word export. Data-driven style rules editable via UI.",
     operationalExcellenceOutcome:
@@ -225,6 +226,7 @@ export const interventions: Intervention[] = [
     ai4raRelationship: "Core",
     dualDestinyPlanned: true,
     repoUrl: "https://github.com/ui-insight/ProcessMapping",
+    liveUrl: "https://processmapping.insight.uidaho.edu",
     operationalFunction:
       "Documents and analyzes RA processes: who does what, with which systems, using which inputs and outputs. Feeds requirements for OpenERA and similar tools. Surfaces coverage gaps between processes and current tooling.",
     operationalExcellenceOutcome:
@@ -381,6 +383,7 @@ export const interventions: Intervention[] = [
       "audit-dashboard",
       "stratplan",
       "embargoed-osp",
+      "nexus",
     ],
   },
 
@@ -404,6 +407,26 @@ export const interventions: Intervention[] = [
     operationalExcellenceOutcome:
       "Foundation for institutional reporting, analytics, and interoperability across enterprise systems.",
     trackingOnly: true,
+  },
+  {
+    slug: "nexus",
+    name: "Nexus",
+    tagline:
+      "OIT-managed application platform where UI application modules are deployed.",
+    description:
+      "React + FastAPI application platform running on OIT-managed secure infrastructure. Nexus is the institutional template where University of Idaho application modules are deployed, providing a shared, audited, and security-hardened runtime for AI-enabled and traditional unit-level apps. Complements TEMPLATE-app: where TEMPLATE-app is the development scaffold, Nexus is the production landing zone.",
+    homeUnits: ["Office of Information Technology"],
+    operationalOwners: [],
+    buildParticipants: ["OIT"],
+    status: "Production",
+    visibility: "Public",
+    ai4raRelationship: "None",
+    tech: ["React", "FastAPI", "OIT managed infrastructure"],
+    operationalFunction:
+      "Hosts UI application modules on OIT-managed secure infrastructure with a consistent runtime, identity, and security baseline. Target deployment surface for new UI apps that need institutional hosting.",
+    operationalExcellenceOutcome:
+      "Standardizes where institutional application modules live. Shared security posture, audit trail, and operational footprint across UI units. Reduces per-app hosting overhead and fragmentation.",
+    relatedSlugs: ["template-app"],
   },
 ];
 
