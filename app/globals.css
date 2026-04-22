@@ -1,46 +1,96 @@
 @import "tailwindcss";
 
-@theme {
-  --color-ui-gold: #B5A36A;
-  --color-ui-gold-light: #D4C68A;
-  --color-ui-gold-dark: #8A7D50;
-  --color-ui-black: #000000;
-  --color-ui-charcoal: #1a1a2e;
-  --color-ui-dark: #16213e;
-  --color-ui-mid: #0f3460;
-  --color-ui-accent: #B5A36A;
-  --color-surface: #f8f9fa;
-  --color-surface-dark: #1a1a2e;
-  --color-card: #ffffff;
-  --color-card-dark: #16213e;
+/* ============================================================
+   University of Idaho brand tokens
+   Source: uidaho.edu live CSS + official brand guide.
+   Do not substitute. These are the authoritative values.
+   ============================================================ */
 
-  /* Font tokens wired from next/font in layout.tsx */
-  --font-display: "Literata", Georgia, "Times New Roman", serif;
-  --font-body: "Manrope", system-ui, -apple-system, sans-serif;
+@theme {
+  /* Primary brand */
+  --color-brand-gold: #F1B300;        /* Pride Gold */
+  --color-brand-gold-light: #FFD34D;  /* lighter tint for hover/accents */
+  --color-brand-gold-dark: #C58F00;   /* darker for pressed/contrast */
+  --color-brand-black: #191919;
+  --color-brand-white: #FFFFFF;
+  --color-brand-silver: #808080;
+
+  /* Secondary brand */
+  --color-brand-huckleberry: #261882; /* deep purple */
+  --color-brand-lupine: #5E48FF;      /* vivid violet */
+  --color-brand-clearwater: #008080;  /* teal, used for link underlines */
+
+  /* Surface system */
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #FAFAF8;       /* very slight warm off-white */
+  --color-surface-dark: #191919;
+  --color-ink: #191919;
+  --color-ink-muted: #595959;         /* body text secondary */
+  --color-ink-subtle: #8a8a8a;        /* meta / captions */
+  --color-hairline: #E5E5E2;          /* hairline separators */
+
+  /* Legacy aliases (kept for gradual migration — avoid in new code) */
+  --color-ui-gold: #F1B300;
+  --color-ui-gold-light: #FFD34D;
+  --color-ui-gold-dark: #C58F00;
+  --color-ui-black: #191919;
+  --color-ui-charcoal: #191919;
+  --color-ui-dark: #191919;
+  --color-ui-mid: #261882;
+  --color-ui-accent: #F1B300;
+  --color-card: #FFFFFF;
+  --color-card-dark: #191919;
+
+  /* Font token wired from next/font in layout.tsx */
+  --font-sans: "Public Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-body: var(--font-sans);
+  --font-display: var(--font-sans);
 }
 
 body {
-  font-family: var(--font-body);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Dark mode support */
+/* Link treatment matching uidaho.edu */
+main a[href]:not([class*="bg-"]):not([class*="rounded"]):not(.unstyled) {
+  text-decoration: underline;
+  text-decoration-color: rgba(0, 128, 128, 0.55);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 4px;
+  transition: text-decoration-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+main a[href]:not([class*="bg-"]):not([class*="rounded"]):not(.unstyled):hover {
+  text-decoration-color: #008080;
+}
+
+/* Body prose — matches uidaho.edu weighting */
+main h1,
+main h2,
+main h3,
+main h4 {
+  font-weight: 900;
+  letter-spacing: -0.015em;
+  color: var(--color-brand-black);
+}
+
+/* Dark mode support (reserved — not active by default) */
 .dark {
   color-scheme: dark;
 }
 
 /* ============================================================
    Reveal.js — AISPEG deck theme
-   Dark stage-optimized. Scoped to .aispeg-deck to avoid leaking.
-   Design principles:
-   - Every claim names a human. Owner names live in gold serif italic.
-   - Restraint > decoration. Gold is rare; no ornament bars on every slide.
-   - Steep type hierarchy. ~1.33x to 2x ratio between steps.
+   Dark stage. UI brand palette applied strictly.
+   Single-font Public Sans with weight-contrast hierarchy.
    ============================================================ */
 
 .aispeg-deck {
-  background-color: #151524;
-  color: #efece3;
-  font-family: var(--font-body);
+  background-color: #191919;
+  color: #f7f5f0;
+  font-family: var(--font-sans);
   font-weight: 400;
   letter-spacing: -0.005em;
 }
@@ -49,68 +99,71 @@ body {
   padding: 0;
 }
 
-/* Typography */
+/* Headings — heavy display weight, tight tracking */
 .aispeg-deck h1,
 .aispeg-deck h2,
 .aispeg-deck h3 {
-  font-family: var(--font-display);
-  font-weight: 500;
-  color: #f7f3e8;
-  letter-spacing: -0.02em;
-  line-height: 1.05;
+  font-family: var(--font-sans);
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: -0.03em;
+  line-height: 1;
   text-transform: none;
   margin-bottom: 0.4em;
 }
 .aispeg-deck h1 {
   font-size: 4.4em;
-  line-height: 1;
+  line-height: 0.95;
 }
 .aispeg-deck h2 {
   font-size: 2.6em;
-  line-height: 1.08;
-  font-weight: 500;
+  line-height: 1.05;
 }
 .aispeg-deck h3 {
   font-size: 1.4em;
-  font-style: italic;
-  color: #d4c68a;
-  font-weight: 400;
+  font-weight: 800;
+  color: #F1B300;
+  letter-spacing: -0.02em;
 }
 .aispeg-deck p,
 .aispeg-deck li {
-  color: rgba(239, 236, 227, 0.82);
+  color: rgba(247, 245, 240, 0.82);
   font-size: 0.88em;
-  line-height: 1.55;
+  line-height: 1.5;
+  font-weight: 400;
 }
 .aispeg-deck strong {
-  color: #f7f3e8;
-  font-weight: 600;
+  color: #ffffff;
+  font-weight: 700;
 }
 .aispeg-deck em {
-  color: rgba(239, 236, 227, 0.95);
+  color: rgba(247, 245, 240, 0.95);
   font-style: italic;
+  font-weight: 400;
 }
 .aispeg-deck a {
-  color: #d4c68a;
+  color: #F1B300;
   text-decoration: underline;
-  text-decoration-color: rgba(212, 198, 138, 0.35);
+  text-decoration-color: rgba(241, 179, 0, 0.45);
   text-underline-offset: 3px;
+  text-decoration-thickness: 1.5px;
 }
 .aispeg-deck a:hover {
-  color: #f7f3e8;
-  text-decoration-color: rgba(247, 243, 232, 0.8);
+  color: #FFD34D;
+  text-decoration-color: #FFD34D;
 }
 .aispeg-deck code {
   font-family: ui-monospace, "SF Mono", "Menlo", monospace;
   background: transparent;
-  color: #d4c68a;
-  border: 1px solid rgba(181, 163, 106, 0.3);
+  color: #F1B300;
+  border: 1px solid rgba(241, 179, 0, 0.35);
   padding: 0 0.35em;
   border-radius: 2px;
   font-size: 0.82em;
+  font-weight: 500;
 }
 
-/* Lists — clean vertical rhythm, no cards */
+/* Lists — no cards, clean rhythm */
 .aispeg-deck ol,
 .aispeg-deck ul {
   margin-left: 0;
@@ -128,14 +181,14 @@ body {
 }
 .aispeg-deck ol > li::before {
   content: counter(deckcounter, decimal-leading-zero);
-  font-family: var(--font-display);
-  font-style: italic;
-  color: #b5a36a;
+  font-family: var(--font-sans);
+  font-weight: 900;
+  color: #F1B300;
   position: absolute;
   left: 0;
   top: 0;
-  font-size: 0.9em;
-  font-weight: 500;
+  font-size: 0.88em;
+  letter-spacing: -0.02em;
 }
 .aispeg-deck ul > li {
   position: relative;
@@ -143,22 +196,23 @@ body {
   margin-bottom: 0.55em;
 }
 .aispeg-deck ul > li::before {
-  content: "—";
-  color: #b5a36a;
+  content: "";
   position: absolute;
   left: 0;
-  top: 0;
-  font-weight: 500;
+  top: 0.55em;
+  width: 0.7em;
+  height: 2px;
+  background: #F1B300;
 }
 
-/* Eyebrow — small, rare, section-break only */
+/* Eyebrow — section-break only */
 .aispeg-deck .deck-eyebrow {
-  font-family: var(--font-body);
-  font-size: 0.6em;
-  font-weight: 500;
+  font-family: var(--font-sans);
+  font-size: 0.62em;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.2em;
-  color: rgba(181, 163, 106, 0.85);
+  color: #F1B300;
   margin-bottom: 1.8em;
   display: flex;
   align-items: baseline;
@@ -168,35 +222,35 @@ body {
   content: "";
   display: inline-block;
   width: 2em;
-  height: 1px;
-  background: rgba(181, 163, 106, 0.6);
+  height: 2px;
+  background: #F1B300;
   transform: translateY(-0.25em);
 }
 
-/* Meta line */
+/* Meta */
 .aispeg-deck .deck-meta {
-  color: rgba(239, 236, 227, 0.42);
+  color: rgba(247, 245, 240, 0.42);
   font-size: 0.68em;
-  line-height: 1.4;
+  line-height: 1.45;
   margin-top: 2em;
   font-style: italic;
 }
 
-/* Accent — single word/phrase */
+/* Accent */
 .aispeg-deck .deck-accent {
-  color: #d4c68a;
-  font-style: italic;
+  color: #F1B300;
+  font-style: normal;
+  font-weight: 900;
 }
 
-/* Owner name — load-bearing UI per Design Principle 1 */
+/* Owner name — gold, weighted */
 .aispeg-deck .deck-owner {
-  font-family: var(--font-display);
+  color: #F1B300;
+  font-weight: 700;
   font-style: italic;
-  color: #d4c68a;
-  font-weight: 500;
 }
 
-/* Split layouts */
+/* Splits */
 .aispeg-deck .deck-split {
   display: grid;
   gap: 3em;
@@ -212,11 +266,11 @@ body {
   grid-template-columns: 2fr 3fr;
 }
 
-/* Definitions — term/body pairs, no card chrome */
+/* Definitions */
 .aispeg-deck .deck-defs {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1.4em;
+  gap: 1.2em;
   margin-top: 0.8em;
 }
 .aispeg-deck .deck-def {
@@ -224,23 +278,23 @@ body {
   grid-template-columns: 10em 1fr;
   gap: 1.4em;
   align-items: baseline;
-  border-top: 1px solid rgba(239, 236, 227, 0.1);
+  border-top: 1px solid rgba(247, 245, 240, 0.12);
   padding-top: 0.9em;
 }
 .aispeg-deck .deck-def-term {
-  font-family: var(--font-display);
-  font-style: italic;
-  color: #d4c68a;
-  font-size: 1em;
-  font-weight: 500;
+  color: #F1B300;
+  font-size: 0.9em;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 .aispeg-deck .deck-def-body {
-  font-size: 0.86em;
-  color: rgba(239, 236, 227, 0.82);
+  font-size: 0.88em;
+  color: rgba(247, 245, 240, 0.84);
   line-height: 1.55;
 }
 
-/* Unit list — portfolio overview, no containers */
+/* Unit list */
 .aispeg-deck .deck-unit-list {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -248,24 +302,23 @@ body {
   margin-top: 1em;
 }
 .aispeg-deck .deck-unit {
-  border-top: 1px solid rgba(239, 236, 227, 0.12);
+  border-top: 1px solid rgba(247, 245, 240, 0.12);
   padding-top: 0.8em;
 }
 .aispeg-deck .deck-unit-name {
-  font-family: var(--font-display);
-  font-style: italic;
-  color: #efece3;
-  font-size: 0.88em;
-  font-weight: 500;
+  color: #ffffff;
+  font-size: 0.9em;
+  font-weight: 800;
+  letter-spacing: -0.01em;
   margin-bottom: 0.3em;
 }
 .aispeg-deck .deck-unit-items {
-  color: rgba(239, 236, 227, 0.72);
+  color: rgba(247, 245, 240, 0.72);
   font-size: 0.78em;
   line-height: 1.5;
 }
 
-/* Stats — big numbers, no card */
+/* Stats */
 .aispeg-deck .deck-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -273,79 +326,79 @@ body {
   margin-top: 1.4em;
 }
 .aispeg-deck .deck-stat-number {
-  font-family: var(--font-display);
-  color: #d4c68a;
-  font-size: 3.6em;
-  font-weight: 500;
+  color: #F1B300;
+  font-size: 4em;
+  font-weight: 900;
   line-height: 1;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.04em;
 }
 .aispeg-deck .deck-stat-label {
-  color: rgba(239, 236, 227, 0.55);
+  color: rgba(247, 245, 240, 0.6);
   font-size: 0.7em;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.06em;
   margin-top: 0.5em;
   line-height: 1.3;
   text-transform: uppercase;
 }
 
-/* Anchor slide utilities */
+/* Anchor labels */
 .aispeg-deck .deck-anchor-label {
-  font-family: var(--font-display);
-  font-style: italic;
-  color: rgba(239, 236, 227, 0.55);
-  font-size: 0.85em;
-  font-weight: 500;
-  margin-bottom: 0.2em;
+  color: rgba(247, 245, 240, 0.55);
+  font-size: 0.72em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.3em;
 }
 
-/* Title slide — asymmetric, breathing */
+/* Title slide */
 .aispeg-deck section.title-slide {
   text-align: left;
 }
 .aispeg-deck .title-slide h1 {
-  font-size: 5.2em;
-  font-weight: 500;
-  line-height: 0.98;
+  font-size: 5.6em;
+  font-weight: 900;
+  line-height: 0.9;
   max-width: 14ch;
+  letter-spacing: -0.04em;
   margin-top: 0.2em;
 }
 .aispeg-deck .title-slide .subhead {
-  font-family: var(--font-display);
-  font-style: italic;
-  color: rgba(239, 236, 227, 0.75);
+  color: rgba(247, 245, 240, 0.8);
   font-size: 1em;
+  font-weight: 400;
   margin-top: 1.2em;
-  max-width: 34ch;
-  line-height: 1.35;
+  max-width: 36ch;
+  line-height: 1.4;
 }
 .aispeg-deck .title-slide .deck-meta {
   margin-top: 3em;
 }
 
-/* Closing slide */
+/* Closing */
 .aispeg-deck .closing-slide h1 {
-  font-size: 6.2em;
-  font-weight: 500;
-  line-height: 0.95;
+  font-size: 6.6em;
+  font-weight: 900;
+  line-height: 0.9;
   max-width: 10ch;
+  letter-spacing: -0.04em;
 }
 
 /* Reveal chrome */
 .aispeg-deck .controls {
-  color: rgba(181, 163, 106, 0.65);
+  color: #F1B300;
 }
 .aispeg-deck .progress {
-  color: #b5a36a;
+  color: #F1B300;
   height: 2px;
 }
 .aispeg-deck .slide-number {
-  color: rgba(239, 236, 227, 0.3);
+  color: rgba(247, 245, 240, 0.3);
   background: transparent;
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: 0.85em;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.82em;
   right: 1.5em;
   bottom: 1em;
 }

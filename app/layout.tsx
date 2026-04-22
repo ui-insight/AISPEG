@@ -1,21 +1,14 @@
 import type { Metadata } from "next";
-import { Literata, Manrope } from "next/font/google";
+import { Public_Sans } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
 
-const literata = Literata({
+const publicSans = Public_Sans({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-display",
-  weight: ["400", "500", "600", "700"],
+  variable: "--font-sans",
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
   style: ["normal", "italic"],
-});
-
-const manrope = Manrope({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-body",
-  weight: ["300", "400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -30,8 +23,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${literata.variable} ${manrope.variable}`}>
-      <body className="bg-surface text-gray-900">
+    <html lang="en" className={publicSans.variable}>
+      <body className="bg-surface text-brand-black antialiased">
         <Sidebar />
         <main className="min-h-screen lg:ml-64">
           <div className="mx-auto max-w-6xl px-6 py-8 pt-16 lg:pt-8">
