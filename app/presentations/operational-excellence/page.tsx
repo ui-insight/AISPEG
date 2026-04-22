@@ -433,7 +433,35 @@ export default function OperationalExcellenceDeck() {
             </p>
           </section>
 
-          {/* 15. The ask */}
+          {/* 15. Cautionary tale */}
+          <section>
+            <div className="deck-eyebrow">A cautionary tale &middot; April 21, 2026</div>
+            <h2>
+              Vibe coding without <span className="deck-accent">institutional guardrails</span>.
+            </h2>
+            <div className="deck-stats" style={{ marginTop: "1.4em", gridTemplateColumns: "repeat(3, 1fr)" }}>
+              <div>
+                <div className="deck-stat-number">48 days</div>
+                <div className="deck-stat-label">Projects exposed after a bug report was closed without escalation</div>
+              </div>
+              <div>
+                <div className="deck-stat-number">91.5%</div>
+                <div className="deck-stat-label">Vibe-coded apps with an AI hallucination-related flaw (Q1 2026)</div>
+              </div>
+              <div>
+                <div className="deck-stat-number">$6.6B</div>
+                <div className="deck-stat-label">Valuation of the platform at the time of disclosure</div>
+              </div>
+            </div>
+            <p style={{ marginTop: "1.6em", fontSize: "1em", fontStyle: "italic", maxWidth: "46ch", color: "#F1B300", fontWeight: 700, lineHeight: 1.4 }}>
+              &ldquo;The real risk of vibe coding isn&rsquo;t AI writing insecure code. It&rsquo;s humans shipping code they never had a chance to secure.&rdquo;
+            </p>
+            <p className="deck-meta">
+              Lovable platform breach &middot; <em>The Next Web</em>, Apr 21, 2026. This is what institutional AI development looks like <em>without</em> named owners, review gates, audit trails, or standards. AISPEG exists to prevent this.
+            </p>
+          </section>
+
+          {/* 16. The ask */}
           <section>
             <div className="deck-eyebrow">The ask</div>
             <h2>What we need from this group.</h2>
@@ -456,7 +484,7 @@ export default function OperationalExcellenceDeck() {
             </ol>
           </section>
 
-          {/* 16. Closing */}
+          {/* 17. Closing */}
           <section className="closing-slide">
             <div className="deck-eyebrow">Thank you</div>
             <h1>

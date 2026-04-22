@@ -15,6 +15,7 @@ const primaryItems = [
 const knowMoreItems = [
   { href: "/approach", label: "Our Approach", icon: "book" },
   { href: "/knowledge", label: "Knowledge Base", icon: "search" },
+  { href: "/cautionary-tales", label: "Cautionary Tales", icon: "warning" },
   { href: "/roadmap", label: "Roadmap", icon: "map" },
   { href: "/standards", label: "Standards Roadmap", icon: "shield" },
   { href: "/reports", label: "Reports & Briefs", icon: "document" },
@@ -142,6 +143,17 @@ function NavIcon({ icon, className }: { icon: string; className?: string }) {
             strokeLinejoin="round"
             strokeWidth={2}
             d="M7 4h10a2 2 0 012 2v10a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2zm3 18h4M12 18v4"
+          />
+        </svg>
+      );
+    case "warning":
+      return (
+        <svg className={c} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"
           />
         </svg>
       );
