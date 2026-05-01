@@ -233,17 +233,25 @@ don't share files.
 **Output:** the site already feels different. Standards Watch is live. Public
 register has shifted. No backend changes required.
 
-### Sprint 2 — The Work rebuild
+### Sprint 2 — The Work rebuild *(complete, May 2026)*
 
-- Migration 005: friction-ledger fields + `blockers` table on Postgres.
-- Migrate `lib/portfolio.ts` entries into `applications` table (one-time script).
-  After migration, `lib/portfolio.ts` deletes.
-- Reconcile `applications.status` with the lifecycle states agreed with Colin.
-- New `/work` route reading from `applications` + `blockers`. Rendering:
-  per-project card with owner, status, active blockers, last-updated date.
-  Filter/sort by home unit, blocker category, status.
-- Auth-gated `/internal/work` view of same data with `internal_text` blocker
-  detail and embargoed-project records visible.
+- ✅ Migration 005: friction-ledger fields on `applications` + `blockers` table
+  + `schema_migrations` tracking table.
+- ✅ Migration runner (`npm run migrate`) and one-shot data seed
+  (`npm run seed:portfolio`) port `lib/portfolio.ts` → `applications` +
+  auto-derive blockers from existing visibility/review-status flags.
+- ✅ `lib/portfolio.ts` retained as the seed source until Sprint 3 ClickUp
+  wiring lands; runtime reads now go through `lib/work.ts`.
+- ✅ `/portfolio` and `/portfolio/[slug]` rebuilt to read from Postgres via
+  `lib/work.ts`. Per-card friction-ledger chips show category, named party,
+  and a day counter from blocker.since.
+- ✅ Auth-gated `/internal`, `/internal/portfolio`, and
+  `/internal/portfolio/[slug]` render the same data with `internal_text`
+  blocker detail, embargoed records visible, and a visibility-tier chip on
+  the detail view. Basic auth via `BASIC_AUTH_USER` / `BASIC_AUTH_PASS`.
+- ℹ️  `/work` URL not introduced — sidebar label is "The Work" but the route
+  stays `/portfolio` to avoid breaking existing inbound links from decks,
+  emails, and the prior portfolio detail pages.
 
 **Output:** The Work is live. Friction ledger is visible to public and internal
 audiences with appropriate detail levels.
