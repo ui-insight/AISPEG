@@ -17,7 +17,7 @@ The site shows what's being built, what's stalled, and where to engage.
 | **The Work** | `/portfolio` | Portfolio of AI interventions across UI units. Each entry names a home unit and operational owner. |
 | **Submit a Project** | `/builder-guide` | A 9-step assessment that scopes an AI idea, classifies it into one of four tiers, and connects the submitter to a named owner at IIDS. |
 | **Reports** | `/reports` | Activity reports, decks, and time-stamped public artifacts. |
-| **Standards** | `/standards` | Public ledger of the institutional software-development and user-experience standards IIDS has formally requested from OIT. |
+| **Standards** | `/standards` | Public ledger of the institutional software-development and user-experience standards IIDS has formally requested from OIT. The `/standards/data-model` sub-section is an interactive explorer for the AI4RA Unified Data Model and the per-project extensions across the IIDS portfolio. |
 
 Plus `/docs` (technical and user documentation) and `/admin/*` (registry +
 submissions admin during the ClickUp transition). The May 2026 refactor
@@ -28,7 +28,7 @@ they are not part of the active site.
 ## Quick start
 
 ```bash
-git clone https://github.com/ui-insight/AISPEG.git
+git clone --recurse-submodules https://github.com/ui-insight/AISPEG.git
 cd AISPEG
 cp .env.example .env.local   # then fill in DATABASE_URL and optional GITHUB_TOKEN
 npm install
@@ -36,6 +36,18 @@ npm run dev
 ```
 
 Open <http://localhost:3000>.
+
+If you forget `--recurse-submodules` or want to refresh the vendored
+governance catalog, run:
+
+```bash
+git submodule update --init --recursive
+npm run build:governance   # regenerates lib/governance/{catalog,vocabularies}.ts
+```
+
+The `vendor/data-governance/` submodule pins to
+[`ui-insight/data-governance`](https://github.com/ui-insight/data-governance) and
+feeds the `/standards/data-model` explorer.
 
 For full local-database setup, see [`/docs/deployment`](./app/docs/deployment/page.tsx).
 

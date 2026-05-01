@@ -1,0 +1,298 @@
+import { notFound } from "next/navigation";
+import Link from "next/link";
+import {
+  getProject,
+  getTablesForProject,
+  projects,
+} from "@/lib/governance/catalog";
+import type { Table, TableKind } from "@/lib/governance/types";
+
+export function generateStaticParams() {
+  return projects.map((p) => ({ slug: p.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const project = getProject(slug);
+  return {
+    title: project
+      ? `${project.application} — Data Model`
+      : "Project — Data Model",
+    description: project
+      ? `Tables, columns, and UDM-extension surface for ${project.application}.`
+      : undefined,
+  };
+}
+
+const KIND_LABEL: Record<TableKind, string> = {
+  table: "Table",
+  entity: "Entity",
+  projection_table: "Projection table",
+};
+
+function ClassificationBadge({
+  classification,
+}: {
+  classification: Table["classification"];
+}) {
+  const label =
+    classification === "canonical-udm" ? "Canonical UDM" : "Project extension";
+  const styles =
+    classification === "canonical-udm"
+      ? "bg-brand-clearwater/10 text-brand-clearwater"
+      : "bg-gray-100 text-gray-700";
+  return (
+    <span
+      className={`rounded px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${styles}`}
+    >
+      {label}
+    </span>
+  );
+}
+
+function ColumnRow({
+  column,
+}: {
+  column: Table["columns"][number];
+}) {
+  return (
+    <tr className="border-t border-gray-100 align-top">
+      <td className="py-2 pr-4 font-mono text-xs text-ui-charcoal">
+        {column.name}
+        {column.primaryKey && (
+          <span className="ml-2 rounded bg-ui-gold/20 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-ui-gold-dark">
+            PK
+          </span>
+        )}
+      </td>
+      <td className="py-2 pr-4 font-mono text-xs text-gray-600">
+        {column.type}
+      </td>
+      <td className="py-2 pr-4 text-xs text-gray-600">
+        {column.nullable === true
+          ? "nullable"
+          : column.nullable === false
+            ? "required"
+            : ""}
+      </td>
+      <td className="py-2 pr-4 font-mono text-xs text-gray-600">
+        {column.foreignKey ?? ""}
+      </td>
+    </tr>
+  );
+}
+
+function TableCard({ table }: { table: Table }) {
+  return (
+    <article className="rounded-lg border border-gray-200 bg-white p-5">
+      <header className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <h3 className="font-mono text-base font-bold tracking-tight text-ui-charcoal">
+              {table.name}
+            </h3>
+            <ClassificationBadge classification={table.classification} />
+            <span className="text-[10px] font-medium uppercase tracking-wider text-gray-400">
+              {KIND_LABEL[table.kind]}
+            </span>
+          </div>
+          {table.description && (
+            <p className="mt-2 text-sm leading-relaxed text-gray-700">
+              {table.description}
+            </p>
+          )}
+        </div>
+        <div className="text-right text-xs text-gray-500">
+          <p>
+            <span className="font-bold text-ui-charcoal">
+              {table.columns.length}
+            </span>{" "}
+            columns
+          </p>
+          {table.relationships.length > 0 && (
+            <p className="mt-0.5">
+              <span className="font-bold text-ui-charcoal">
+                {table.relationships.length}
+              </span>{" "}
+              relationships
+            </p>
+          )}
+        </div>
+      </header>
+
+      <details className="mt-4 group">
+        <summary className="cursor-pointer text-xs font-medium text-gray-500 hover:text-ui-charcoal">
+          Show columns
+        </summary>
+        <div className="mt-3 overflow-x-auto">
+          <table className="w-full min-w-full text-left">
+            <thead>
+              <tr className="text-[10px] font-semibold uppercase tracking-wider text-gray-500">
+                <th className="pb-2 pr-4">Name</th>
+                <th className="pb-2 pr-4">Type</th>
+                <th className="pb-2 pr-4">Nullability</th>
+                <th className="pb-2 pr-4">Foreign key</th>
+              </tr>
+            </thead>
+            <tbody>
+              {table.columns.map((c) => (
+                <ColumnRow key={c.name} column={c} />
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </details>
+    </article>
+  );
+}
+
+export default async function ProjectDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const project = getProject(slug);
+  if (!project) notFound();
+
+  const allTables = getTablesForProject(project.slug);
+  const canonical = allTables.filter(
+    (t) => t.classification === "canonical-udm",
+  );
+  const extension = allTables.filter(
+    (t) => t.classification === "project-extension",
+  );
+
+  return (
+    <div className="space-y-10">
+      <header>
+        <p className="text-xs">
+          <Link href="/standards/data-model">← Data Model</Link>
+        </p>
+        <p className="mt-3 text-[11px] font-semibold uppercase tracking-wider text-ui-gold-dark">
+          {project.domain}
+        </p>
+        <h1 className="mt-1 text-3xl font-black tracking-tight text-ui-charcoal">
+          {project.application}
+        </h1>
+        <dl className="mt-6 grid grid-cols-2 gap-x-8 gap-y-3 text-sm md:grid-cols-4">
+          <div>
+            <dt className="text-[11px] font-medium uppercase tracking-wider text-gray-500">
+              Tables
+            </dt>
+            <dd className="mt-1 font-bold text-ui-charcoal">
+              {project.tableCount}
+            </dd>
+          </div>
+          <div>
+            <dt className="text-[11px] font-medium uppercase tracking-wider text-gray-500">
+              Canonical UDM
+            </dt>
+            <dd className="mt-1 font-bold text-ui-charcoal">
+              {project.canonicalUdmCount}
+            </dd>
+          </div>
+          <div>
+            <dt className="text-[11px] font-medium uppercase tracking-wider text-gray-500">
+              Project extensions
+            </dt>
+            <dd className="mt-1 font-bold text-ui-charcoal">
+              {project.projectExtensionCount}
+            </dd>
+          </div>
+          <div>
+            <dt className="text-[11px] font-medium uppercase tracking-wider text-gray-500">
+              Repository
+            </dt>
+            <dd className="mt-1">
+              <a
+                href={project.repository}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs"
+              >
+                {project.repository.replace("https://github.com/", "")}
+              </a>
+            </dd>
+          </div>
+        </dl>
+        {(project.techStack.backend ||
+          project.techStack.frontend ||
+          project.techStack.database) && (
+          <p className="mt-4 max-w-2xl text-xs text-gray-600">
+            <span className="font-semibold text-ui-charcoal">Stack:</span>{" "}
+            {[
+              project.techStack.backend,
+              project.techStack.frontend,
+              project.techStack.database,
+            ]
+              .filter(Boolean)
+              .join(" · ")}
+          </p>
+        )}
+        {project.runtimeModes && project.runtimeModes.length > 0 && (
+          <p className="mt-1 max-w-2xl text-xs text-gray-600">
+            <span className="font-semibold text-ui-charcoal">Runtime:</span>{" "}
+            {project.runtimeModes.join(" / ")}
+          </p>
+        )}
+      </header>
+
+      {canonical.length > 0 && (
+        <section className="space-y-4">
+          <div>
+            <h2 className="text-xl font-bold text-ui-charcoal">
+              Canonical UDM tables
+            </h2>
+            <p className="mt-1 text-sm text-gray-600">
+              Adopted from the AI4RA Unified Data Model. Naming and shape
+              follow the institutional standard.
+            </p>
+          </div>
+          <div className="space-y-3">
+            {canonical.map((t) => (
+              <TableCard key={`${t.kind}-${t.name}`} table={t} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {extension.length > 0 && (
+        <section className="space-y-4">
+          <div>
+            <h2 className="text-xl font-bold text-ui-charcoal">
+              Project extensions
+            </h2>
+            <p className="mt-1 text-sm text-gray-600">
+              Tables specific to this project — workflow, tooling, or
+              domain-specific entities not part of the canonical UDM.
+            </p>
+          </div>
+          <div className="space-y-3">
+            {extension.map((t) => (
+              <TableCard key={`${t.kind}-${t.name}`} table={t} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      <footer className="rounded-md border border-gray-200 bg-gray-50 px-4 py-3 text-xs text-gray-600">
+        Canonical / extension tagging is a v1 heuristic against a
+        hand-curated list of research-admin UDM tables; PII and
+        classification metadata are not yet captured upstream. See{" "}
+        <a
+          href="https://github.com/ui-insight/AISPEG/issues/53"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          #53
+        </a>{" "}
+        for the full epic and follow-up tracking.
+      </footer>
+    </div>
+  );
+}

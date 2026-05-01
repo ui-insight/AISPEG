@@ -101,7 +101,8 @@ app/                       # Next.js App Router
   portfolio/               # The Work
   builder-guide/           # Submit a Project (assessment quiz)
   reports/                 # Reports surface
-  standards/               # Standards ledger
+  standards/               # Standards (sub-nav: ledger + data-model explorer)
+  standards/data-model/    # Data Governance Explorer (UDM catalog + extensions)
   ai4ra-ecosystem/         # AI4RA partnership reference (Sprint 4 salvage)
   presentations/           # Reveal.js decks
   admin/                   # Registry + submissions admin
@@ -125,8 +126,19 @@ lib/                       # Domain logic
   mindrouter.ts            # MindRouter LLM client
   db.ts                    # Postgres connection pool
   data.ts                  # Legacy strategic data (slated for Sprint 4 cleanup)
+  governance/              # Data Governance Explorer typed modules
+    types.ts               # Shared interfaces (Project, Table, Column, Vocabulary*)
+    canonical-udm-tables.ts # Hand-curated canonical-vs-extension tagging (v1)
+    catalog.ts             # AUTO-GENERATED — projects + tables (do not edit)
+    vocabularies.ts        # AUTO-GENERATED — controlled vocabularies (do not edit)
 
 db/migrations/             # SQL migrations (001 → 004; 005 lands in Sprint 2)
+
+scripts/                   # Node scripts run via tsx
+  build-governance-catalog.ts # Reads vendor/data-governance/ → emits lib/governance/{catalog,vocabularies}.ts
+
+vendor/                    # Vendored dependencies
+  data-governance/         # Git submodule → ui-insight/data-governance
 
 _archive/                  # Routes/files archived in May 2026 refactor
                            # Pending Sprint 4 salvage; deletion candidate
@@ -158,6 +170,7 @@ _archive/                  # Routes/files archived in May 2026 refactor
 | An intervention | `lib/portfolio.ts` | Use existing entries as templates. Set `visibility` honestly. |
 | A standards ledger entry | `lib/standards-watch.ts` | Each is commit-worthy; the git log is the audit trail. |
 | A sub-section under `/standards` | `app/standards/<sub>/page.tsx` + add a row to `subNavItems` in `components/StandardsSubNav.tsx` | The shared eyebrow + sub-nav lives in `app/standards/layout.tsx`. Each sub-page owns its own H1. Sidebar stays at one "Standards" entry — never edit `Sidebar.tsx` for sub-sections. |
+| A canonical UDM table tag | `lib/governance/canonical-udm-tables.ts` | Hand-curated v1 list. The data-governance catalog JSONs do not yet carry canonical/extension classification — once they do, this module retires. |
 | A presentation/deck | `lib/artifacts.ts` (entry with `kind: "deck"`) plus `content/presentations/<slug>.md` if rendered via reveal.js | The artifact appears in the /reports timeline; the markdown drives the deck itself. |
 | A report | `app/reports/page.tsx` and (if needed) a route under `app/reports/<slug>` | Time-stamped, reverse-chron. |
 
@@ -167,12 +180,33 @@ and update `lib/db.ts` only if the connection pool needs new behavior.
 ## Development commands
 
 ```bash
-npm run dev      # Dev server on :3000
-npm run build    # Production build (TypeScript check + bundle)
-npm run lint     # ESLint
+npm run dev                # Dev server on :3000 (auto-runs build:governance first)
+npm run build              # Production build (auto-runs build:governance first)
+npm run build:governance   # Regenerate lib/governance/{catalog,vocabularies}.ts
+                           # from vendor/data-governance/ submodule
+npm run lint               # ESLint
 ```
 
 `npm run build` is the primary verification step. Run it before committing.
+
+### Governance submodule
+
+`vendor/data-governance/` is a git submodule pointing at
+[`ui-insight/data-governance`](https://github.com/ui-insight/data-governance) — the
+canonical AI4RA Unified Data Model catalog and controlled-vocabulary
+registry. The `prebuild` and `predev` hooks regenerate
+`lib/governance/catalog.ts` and `lib/governance/vocabularies.ts` from
+this submodule, so the typed catalog modules stay in sync.
+
+When the upstream catalog changes, refresh the submodule:
+
+```bash
+git submodule update --remote vendor/data-governance
+git add vendor/data-governance && git commit -m "Bump data-governance"
+```
+
+Then commit the regenerated `lib/governance/*.ts` files alongside the
+submodule-pointer bump.
 
 ## Deployment
 
