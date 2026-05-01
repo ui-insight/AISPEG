@@ -66,14 +66,18 @@ main a[href]:not([class*="bg-"]):not([class*="rounded"]):not(.unstyled):hover {
   text-decoration-color: #008080;
 }
 
-/* Body prose — matches uidaho.edu weighting */
-main h1,
-main h2,
-main h3,
-main h4 {
-  font-weight: 900;
-  letter-spacing: -0.015em;
-  color: var(--color-brand-black);
+/* Body prose — matches uidaho.edu weighting.
+ * Wrapped in @layer base so Tailwind utilities (text-white, text-ui-gold,
+ * etc.) win in the cascade without needing the `!` important modifier. */
+@layer base {
+  main h1,
+  main h2,
+  main h3,
+  main h4 {
+    font-weight: 900;
+    letter-spacing: -0.015em;
+    color: var(--color-brand-black);
+  }
 }
 
 /* Dark mode support (reserved — not active by default) */
