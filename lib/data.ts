@@ -344,7 +344,7 @@ export const adoptionPhases = [
 export const shadowApplications = [
   { name: "Dissertation reformatting", owner: "Jerry McMurtry" },
   { name: "Strategic Plan Dashboard", owner: "Michele Bartlett" },
-  { name: "Agentic AI coordination site", owner: "AISPEG" },
+  { name: "Institutional AI Initiative coordination site", owner: "IIDS" },
   { name: "RFD Career Dashboard", owner: "Carly Cummings" },
   { name: "Out of State Tax tool", owner: "Cretia Bunney" },
   { name: "SEM Experiential Learning Dashboard", owner: "Dean Kahler, SEM Vibe Coder in Chief" },
@@ -422,7 +422,7 @@ export const presentations = [
     date: "February 26, 2026",
     author: "Barrie Robison",
     type: "Activity Report",
-    audience: "AISPEG / ORED Leadership",
+    audience: "IIDS / ORED Leadership",
     description: "Comprehensive analysis of software development activity across 11 GitHub repositories during Feb 1-26, 2026. Demonstrates extraordinary productivity levels achieved through agentic development tools. Includes repository-by-repository analysis, adoption timeline, productivity metrics, and methodology.",
     sections: [
       "Executive Summary",

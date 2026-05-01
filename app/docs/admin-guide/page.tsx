@@ -123,9 +123,9 @@ export default function AdminGuideDocsPage() {
 
       <h3>Manual Registration</h3>
       <p>
-        To register an application that didn&apos;t come through the Builder Guide, click
-        <strong> &ldquo;Register App&rdquo;</strong> on the registry page. This is useful for
-        existing applications that predate AISPEG.
+        To register an application that didn&apos;t come through the Submit-a-Project
+        assessment, click <strong> &ldquo;Register App&rdquo;</strong> on the registry page.
+        This is useful for existing applications that predate the platform.
       </p>
 
       <h2>Notes System</h2>

@@ -105,8 +105,8 @@ export default function BuilderGuideDocsPage() {
 
       <h2>What Happens After Submission</h2>
       <p>
-        Your submission is stored in the AISPEG database and appears on the admin dashboard.
-        An AISPEG reviewer can:
+        Your submission is stored in the platform database and appears on the admin dashboard.
+        An IIDS reviewer can:
       </p>
       <ul>
         <li>Add notes and change the status of your submission</li>
@@ -116,8 +116,8 @@ export default function BuilderGuideDocsPage() {
       </ul>
 
       <InfoBox type="info" title="Your submission is not a commitment">
-        Submitting an idea through the Builder Guide doesn&apos;t commit you to anything. It&apos;s a
-        way to get guidance and start a conversation with the AISPEG team about your needs.
+        Submitting an idea through the assessment doesn&apos;t commit you to anything. It&apos;s a
+        way to get guidance and start a conversation with the IIDS team about your needs.
       </InfoBox>
     </DocPage>
   );

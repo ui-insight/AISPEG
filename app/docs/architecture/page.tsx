@@ -12,7 +12,7 @@ export default function ArchitectureDocsPage() {
     >
       <h2>System Overview</h2>
       <p>
-        AISPEG is a Next.js 16 application with a PostgreSQL backend, deployed as Docker
+        The site is a Next.js 16 application with a PostgreSQL backend, deployed as Docker
         containers on University of Idaho Insight infrastructure. It integrates with MindRouter,
         the university&apos;s on-prem LLM inference cluster, for AI-powered features.
       </p>
@@ -196,8 +196,13 @@ auth_level             5%     Exact match
       <pre className="not-prose rounded-lg bg-gray-900 p-4 text-sm text-green-400 overflow-x-auto">{`
 app/
   layout.tsx              # Root layout with Sidebar
-  page.tsx                # Home dashboard
-  builder-guide/          # Interactive wizard
+  page.tsx                # Landing — four-card steering page
+  portfolio/              # The Work — interventions inventory
+  builder-guide/          # Submit-a-Project assessment
+  reports/                # Reports surface
+  standards/              # Standards ledger
+  ai4ra-ecosystem/        # AI4RA partnership reference
+  presentations/          # Reveal.js decks
   admin/
     submissions/          # Submission list + detail
     registry/             # App registry list + detail + new
@@ -208,15 +213,22 @@ app/
   docs/                   # Documentation pages (you are here)
 components/
   Sidebar.tsx             # Navigation sidebar
+  PortfolioCard.tsx       # Intervention card
+  IssueCard.tsx           # GitHub issue card
+  RevealDeck.tsx          # Reveal.js wrapper
   DocPage.tsx             # Documentation layout components
 lib/
-  data.ts                 # Strategic content data
+  portfolio.ts            # Interventions inventory (typed)
+  standards-watch.ts      # Standards ledger entries
   builder-guide-data.ts   # Quiz steps, scoring, tiers
-  db.ts                   # PostgreSQL connection pool
-  mindrouter.ts           # MindRouter LLM client
   similarity.ts           # Similarity detection engine
+  github.ts               # GitHub Issues API
+  mindrouter.ts           # MindRouter LLM client
+  db.ts                   # PostgreSQL connection pool
+  data.ts                 # Legacy strategic data (slated for cleanup)
 db/
-  migrations/             # SQL migration files (001-003)
+  migrations/             # SQL migrations (001-004; 005 in Sprint 2)
+_archive/                 # Routes/files archived in May 2026 refactor
       `}</pre>
     </DocPage>
   );

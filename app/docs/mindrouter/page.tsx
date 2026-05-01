@@ -4,7 +4,7 @@ export default function MindRouterDocsPage() {
   return (
     <DocPage
       title="MindRouter Integration"
-      subtitle="How AISPEG uses the University of Idaho's on-prem LLM inference cluster for AI-powered features."
+      subtitle="How this site uses the University of Idaho's on-prem LLM inference cluster for AI-powered features."
       breadcrumbs={[
         { label: "Docs", href: "/docs" },
         { label: "MindRouter" },
@@ -18,13 +18,13 @@ export default function MindRouterDocsPage() {
         infrastructure with full data sovereignty.
       </p>
       <p>
-        AISPEG uses MindRouter for two features: <strong>AI-powered idea analysis</strong> and
-        the <strong>AI Assistant chat panel</strong> in the Builder Guide wizard.
+        This site uses MindRouter for two features: <strong>AI-powered idea analysis</strong> and
+        the <strong>AI Assistant chat panel</strong> in the Submit-a-Project assessment.
       </p>
 
       <h2>Architecture</h2>
       <pre className="not-prose rounded-lg bg-gray-900 p-4 text-sm text-green-400 overflow-x-auto">{`
-Browser (Client)                  AISPEG (Server)                MindRouter
+Browser (Client)                  This site (Server)             MindRouter
 ─────────────────                 ─────────────────              ────────────
 "Analyze" click  ──POST──►  /api/ai/analyze-idea  ──POST──►  /v1/chat/completions
                                   (JSON mode)                 (gpt-oss-120b)

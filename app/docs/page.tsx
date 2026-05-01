@@ -6,8 +6,9 @@ export default function DocsIndexPage() {
       <div>
         <h1 className="text-3xl font-bold text-ui-charcoal">Documentation</h1>
         <p className="mt-2 text-gray-600 max-w-3xl">
-          Everything you need to know about AISPEG — from getting started with the App Builder
-          Guide to understanding the platform architecture and APIs.
+          User and technical documentation for the Institutional AI
+          Initiative site — from the Submit-a-Project assessment to the
+          platform architecture and APIs.
         </p>
       </div>
 
@@ -18,14 +19,14 @@ export default function DocsIndexPage() {
         </h2>
         <div className="grid gap-4 md:grid-cols-2">
           <DocCard
-            title="About AISPEG"
-            description="What AISPEG is, who it serves, and how it fits into U of I's AI strategy."
+            title="About this site"
+            description="What this site does, who it serves, and how it fits into the University of Idaho's institutional AI work."
             href="/docs/about"
             icon="🏛️"
           />
           <DocCard
-            title="App Builder Guide"
-            description="How to use the interactive wizard to scope your application idea."
+            title="Submit-a-Project Assessment"
+            description="How to use the interactive assessment to scope an AI project idea."
             href="/docs/builder-guide"
             icon="🧭"
           />
