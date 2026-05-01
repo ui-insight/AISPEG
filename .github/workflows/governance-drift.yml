@@ -1,0 +1,68 @@
+name: Governance Drift
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "vendor/data-governance/**"
+      - "lib/governance/**"
+      - "app/standards/data-model/**"
+      - "scripts/build-governance-catalog.*"
+      - ".github/workflows/governance-drift.yml"
+
+jobs:
+  drift:
+    name: Validate governance registry
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository (with submodules)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # The drift script (vendor/data-governance/scripts/check_governance_drift.py)
+      # is pure stdlib — no requirements.txt and no third-party imports — so there
+      # is nothing to `pip install`. Confirmed by reading its imports: base64,
+      # json, os, subprocess, sys, urllib.error, urllib.request, pathlib, typing.
+      # The remote-check path uses GITHUB_TOKEN (already exported below) for
+      # api.github.com calls, with a fallback to the `gh` CLI which is preinstalled
+      # on ubuntu-latest runners.
+
+      - name: Run governance drift check
+        id: drift
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -o pipefail
+          script="vendor/data-governance/scripts/check_governance_drift.py"
+          if [ ! -f "$script" ]; then
+            echo "::error::Drift script not found at $script — submodule may not have been checked out."
+            exit 2
+          fi
+
+          # Tee to a file so we can post the output to the step summary regardless of exit status.
+          set +e
+          python "$script" 2>&1 | tee drift-output.txt
+          status=${PIPESTATUS[0]}
+          set -e
+
+          {
+            echo "## Governance drift check"
+            echo
+            if [ "$status" -eq 0 ]; then
+              echo "Result: **PASS** — registry, vocabularies, and remote portfolio state are consistent."
+            else
+              echo "Result: **FAIL** — drift detected. Review the output below and update the registry, vendored submodule, or remote source as appropriate."
+            fi
+            echo
+            echo '```'
+            cat drift-output.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          exit "$status"

@@ -312,6 +312,21 @@ similarity-aware review. Status updates flow from manual edits to
 **Output:** old AISPEG-collaborator-era content is fully retired or salvaged.
 Codebase reflects the new architecture without legacy cruft.
 
+### Sprint 5 — Data governance integration
+
+- Vendored `ui-insight/data-governance` as a git submodule at
+  `vendor/data-governance/` and added a `prebuild`/`predev` step
+  (`scripts/build-governance-catalog.ts`) that emits typed
+  `lib/governance/{catalog,vocabularies}.ts` modules so the Data Model
+  explorer page stays in sync with the upstream Unified Data Model.
+- Added a `Governance Drift` GitHub Actions workflow
+  (`.github/workflows/governance-drift.yml`) that runs the upstream
+  `check_governance_drift.py` validator on PRs touching
+  `vendor/data-governance/**`, `lib/governance/**`,
+  `app/standards/data-model/**`, or `scripts/build-governance-catalog.*`.
+  Drift output streams into the Actions Step Summary panel; the job fails
+  on non-zero exit so registry drift cannot land silently.
+
 ## v1 cut
 
 **v1 = Sprints 1 + 2 + 3.** v1.5 = Sprint 4. Sprint 1 alone is independently
