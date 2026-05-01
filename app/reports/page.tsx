@@ -119,7 +119,7 @@ function FeaturedHero({ artifact }: { artifact: Artifact }) {
         </span>
         <span className="text-xs text-white/60">{artifact.dateLabel}</span>
       </div>
-      <h2 className="mt-3 text-xl font-semibold leading-snug !text-white group-hover:!text-ui-gold">
+      <h2 className="mt-3 text-xl font-semibold leading-snug text-white group-hover:text-ui-gold">
         {artifact.title}
         {isExternal && (
           <span className="ml-1 inline-flex translate-y-px text-white/60">
