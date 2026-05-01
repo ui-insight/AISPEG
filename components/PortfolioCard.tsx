@@ -101,7 +101,7 @@ export default function PortfolioCard({
         ) : null}
         {intervention.trackingOnly && (
           <span className="rounded-full border border-brand-huckleberry/30 bg-brand-huckleberry/10 px-2 py-0.5 text-xs font-medium text-brand-huckleberry">
-            Tracked (not built by AISPEG)
+            Tracked (not built by IIDS)
           </span>
         )}
       </div>

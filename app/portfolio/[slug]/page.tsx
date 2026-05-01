@@ -23,7 +23,7 @@ export async function generateMetadata({
   const i = getInterventionBySlug(slug);
   if (!i) return { title: "Not found" };
   return {
-    title: `${i.name} · AISPEG Portfolio`,
+    title: `${i.name} · UI AI Portfolio`,
     description: i.tagline,
   };
 }
@@ -80,7 +80,7 @@ export default async function InterventionDetailPage({
           )}
           {intervention.trackingOnly && (
             <span className="rounded-full border border-violet-200 bg-violet-50 px-2.5 py-0.5 text-xs font-medium text-violet-700">
-              Tracked — not built by AISPEG
+              Tracked — not built by IIDS
             </span>
           )}
         </div>
@@ -102,10 +102,10 @@ export default async function InterventionDetailPage({
             UI deployment details embargoed
           </p>
           <p className="mt-1 text-sm text-amber-800">
-            This intervention exists in the AISPEG inventory, but specific
-            details about UI&apos;s operational deployment (pilot scope,
-            timelines, or configuration) are held back from the public site.
-            Contact the operational owner for authorized access.
+            This intervention exists in the inventory, but specific details
+            about UI&apos;s operational deployment (pilot scope, timelines, or
+            configuration) are held back from the public site. Contact the
+            operational owner for authorized access.
           </p>
         </div>
       )}

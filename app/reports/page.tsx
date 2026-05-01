@@ -16,8 +16,8 @@ export default function ReportsPage() {
           Reports &amp; Briefs
         </h1>
         <p className="mt-2 text-gray-600">
-          Written briefings, activity reports, and documents produced by
-          AISPEG and ORED leadership.
+          Written briefings, activity reports, and documents produced by IIDS
+          and partner leadership.
         </p>
       </div>
 

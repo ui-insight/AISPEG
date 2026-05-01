@@ -20,8 +20,8 @@ export default function PortfolioPage() {
         </h1>
         <p className="mt-2 max-w-3xl text-gray-600">
           A growing inventory of AI-powered efforts across University of Idaho
-          units — some coordinated or built by AISPEG, others led by partner
-          units that AISPEG tracks. Each entry names a{" "}
+          units — some built by IIDS, others led by partner units. Each entry
+          names a{" "}
           <span className="font-medium text-ui-charcoal">UI home unit</span>{" "}
           and{" "}
           <span className="font-medium text-ui-charcoal">
@@ -58,7 +58,7 @@ export default function PortfolioPage() {
           <span className="inline-block rounded-full border border-violet-200 bg-violet-50 px-2 py-0.5 text-xs font-medium text-violet-700">
             Tracked
           </span>{" "}
-          means AISPEG is aware of the work but not building it.
+          means the work is in the inventory but is not built by IIDS.
         </p>
       </div>
 
