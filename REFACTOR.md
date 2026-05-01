@@ -256,21 +256,47 @@ register has shifted. No backend changes required.
 **Output:** The Work is live. Friction ledger is visible to public and internal
 audiences with appropriate detail levels.
 
-### Sprint 3 — ClickUp wiring + Submit-a-Project improvements
+### Sprint 3 — Submit-a-Project delivery + ClickUp wiring
 
-*Colin sits in the room for this one.*
+Split into two halves so the customer-facing delivery work can ship while
+ClickUp wiring waits on Colin.
+
+#### Sprint 3a — Submit-a-Project delivery *(complete, May 2026)*
+
+ClickUp-independent. Reads from Postgres directly; ClickUp later replaces
+*who* updates status, not the surfaces.
+
+- ✅ `lib/intake-config.ts` — single source of truth for the named human
+  (Colin Armitage), the SLA wording, and the status-state labels.
+- ✅ `POST /api/similarity/preview` — stateless similarity endpoint that
+  takes a partial assessment profile and returns matches against the
+  registry. Threshold lower than the post-submit endpoint (0.2 vs 0.3) —
+  over-notify rather than miss.
+- ✅ `/intake/[token]` — public status page (token = submission UUID).
+  Shows submission state, named human, SLA, "what happens next."
+- ✅ Builder-guide updates: capture submission ID from POST, fetch
+  similarity preview on entering the review step, surface matches with
+  overlap counts both in review (with a "consider talking to..." nudge)
+  and on the results page.
+- ✅ Results page: new "What happens next" callout with named human, SLA,
+  and the bookmarkable status URL.
+- ✅ Seed enrichment — the portfolio entries seeded by
+  `npm run seed:portfolio` now carry wizard-shape classification fields
+  (sensitivity, data_sources, university_systems, etc.) so the similarity
+  engine actually finds matches. Heuristic mapping per slug; refine in
+  the seed script or via the admin registry.
+
+#### Sprint 3b — ClickUp wiring *(deferred to Colin)*
 
 - ClickUp custom fields setup (in person with Colin).
-- ClickUp API integration: read-side first (sync blocker/status data Postgres
+- ClickUp API integration: read-side (sync blocker/status data Postgres
   ← ClickUp on cron), then write-side (new submissions create CU tasks).
-- Submit-a-Project: named-human acknowledgment email + SLA copy.
-- Submitter status page `/intake/[token]` reading from Postgres + ClickUp.
-- Similarity matches surfaced during the assessment (use existing
-  `lib/similarity.ts`).
 - Once ClickUp wiring is solid, retire `/admin/submissions`.
 
-**Output:** intake portal materially better than TDX in delivery, not just
-intake. Colin's daily ops are in ClickUp; the site is a free projection.
+**Sprint 3a output:** intake portal materially better than TDX in
+delivery — named human, factual SLA, bookmarkable status URL,
+similarity-aware review. Status updates flow from manual edits to
+`submissions.status` for now; ClickUp eventually becomes the source.
 
 ### Sprint 4 — Reports unification + About + cleanup
 

@@ -13,6 +13,27 @@ import {
   type TierRecommendation,
   type ContactInfo,
 } from "@/lib/builder-guide-data";
+import { intakeConfig, statusUrlFor } from "@/lib/intake-config";
+
+// Subset of the similarity engine's SimilarityResult shape — the wizard
+// only renders name + status + overlap counts, not the full overlap detail.
+interface SimilarMatch {
+  application_id: string;
+  application_name: string;
+  application_status: string;
+  application_department: string | null;
+  score: number;
+  overlap_details: {
+    sensitivity: string[];
+    integrations: string[];
+    data_sources: string[];
+    university_systems: string[];
+    output_types: string[];
+    complexity_match: boolean;
+    userbase_match: boolean;
+    auth_match: boolean;
+  };
+}
 
 // ============================================
 // Types
@@ -657,14 +678,95 @@ function ContactInfoStep({
   );
 }
 
+// ── Similar Matches Callout ──────────────────────────────────
+//
+// Renders the live similarity matches from /api/similarity/preview.
+// Shown both on the review step (with a "consider talking to..." nudge)
+// and on the results page (as a "related work" section).
+
+function SimilarMatchesCallout({
+  matches,
+  loading,
+  context,
+}: {
+  matches: SimilarMatch[];
+  loading: boolean;
+  context: "review" | "results";
+}) {
+  if (loading || matches.length === 0) return null;
+
+  const headline =
+    context === "review"
+      ? "Similar projects already in the portfolio"
+      : "Related work in the portfolio";
+  const sub =
+    context === "review"
+      ? "These projects share data sources, integrations, or scope with your idea. Worth a quick conversation before submitting — the portfolio owner may already be solving your problem."
+      : "These projects share dimensions with what you described. Submitter and IIDS reviewer will both see them.";
+
+  return (
+    <div className="rounded-xl border border-blue-200 bg-blue-50/60 p-5">
+      <p className="text-sm font-semibold text-blue-900">{headline}</p>
+      <p className="mt-1 text-xs text-blue-900/80 leading-relaxed">{sub}</p>
+      <ul className="mt-3 space-y-2">
+        {matches.map((m) => {
+          const overlapBits: string[] = [];
+          if (m.overlap_details.data_sources.length > 0)
+            overlapBits.push(
+              `${m.overlap_details.data_sources.length} data source${m.overlap_details.data_sources.length > 1 ? "s" : ""}`
+            );
+          if (m.overlap_details.university_systems.length > 0)
+            overlapBits.push(
+              `${m.overlap_details.university_systems.length} UI system${m.overlap_details.university_systems.length > 1 ? "s" : ""}`
+            );
+          if (m.overlap_details.integrations.length > 0)
+            overlapBits.push(
+              `${m.overlap_details.integrations.length} integration${m.overlap_details.integrations.length > 1 ? "s" : ""}`
+            );
+          if (m.overlap_details.sensitivity.length > 0)
+            overlapBits.push(`shared sensitivity class`);
+          return (
+            <li
+              key={m.application_id}
+              className="rounded-lg border border-blue-100 bg-white px-4 py-3"
+            >
+              <div className="flex items-baseline justify-between gap-2">
+                <p className="text-sm font-semibold text-ui-charcoal">
+                  {m.application_name}
+                </p>
+                <span className="text-xs text-blue-900/70">
+                  {Math.round(m.score * 100)}% match
+                </span>
+              </div>
+              <p className="mt-0.5 text-xs text-gray-600">
+                {m.application_department ?? "Unassigned home unit"} ·{" "}
+                {m.application_status}
+              </p>
+              {overlapBits.length > 0 && (
+                <p className="mt-1 text-xs text-blue-900/80">
+                  Overlap: {overlapBits.join(" · ")}
+                </p>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
 // ── Results View ─────────────────────────────────────────────
 
 function ResultsView({
   answers,
   onStartOver,
+  submissionId,
+  similarMatches,
 }: {
   answers: Answers;
   onStartOver: () => void;
+  submissionId: string | null;
+  similarMatches: SimilarMatch[];
 }) {
   const score = calculateScore(answers);
   const tier = getTierForScore(score);
@@ -677,6 +779,9 @@ function ResultsView({
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const owner = intakeConfig.intakeOwner;
+  const statusUrl = submissionId ? statusUrlFor(submissionId) : null;
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -687,6 +792,47 @@ function ResultsView({
         </div>
         <p className="mt-4 max-w-xl mx-auto text-sm text-gray-600">{tier.description}</p>
       </div>
+
+      {/* What happens next — named human + SLA + status link */}
+      <div className="rounded-xl border-l-4 border-ui-gold bg-ui-gold/5 p-5">
+        <p className="text-xs font-medium uppercase tracking-wider text-ui-gold-dark">
+          What happens next
+        </p>
+        <p className="mt-2 text-sm leading-relaxed text-ui-charcoal">
+          Your submission is in the IIDS intake queue.{" "}
+          <span className="font-semibold">{owner.name}</span> ({owner.title}) will
+          review the assessment and reach out within{" "}
+          <span className="font-semibold">
+            {intakeConfig.sla.businessDaysToFirstResponse} business days
+          </span>
+          .
+        </p>
+        {statusUrl && (
+          <div className="mt-3 rounded-lg border border-ui-gold/30 bg-white p-3 text-xs">
+            <p className="font-medium text-gray-700">
+              Bookmark this URL to track your submission:
+            </p>
+            <Link
+              href={statusUrl}
+              className="mt-1 block break-all font-mono text-ui-gold-dark hover:underline"
+            >
+              {statusUrl}
+            </Link>
+          </div>
+        )}
+        {!statusUrl && (
+          <p className="mt-3 text-xs italic text-gray-500">
+            Status link will appear shortly. Your submission is being recorded.
+          </p>
+        )}
+      </div>
+
+      {/* Related work in the portfolio */}
+      <SimilarMatchesCallout
+        matches={similarMatches}
+        loading={false}
+        context="results"
+      />
 
       {/* Project Idea */}
       {answers.idea && (
@@ -839,7 +985,52 @@ export default function BuilderGuidePage() {
   const [analyzing, setAnalyzing] = useState(false);
   const [analysisError, setAnalysisError] = useState<string | null>(null);
 
+  // Submission ID — captured from POST /api/submissions response so the
+  // ResultsView can hand the submitter their tokenized status URL.
+  const [submissionId, setSubmissionId] = useState<string | null>(null);
+
+  // Live similarity matches — fetched once on entering the review step,
+  // surfaced both there (to give the user a chance to coordinate before
+  // submitting) and in the ResultsView.
+  const [liveMatches, setLiveMatches] = useState<SimilarMatch[]>([]);
+  const [liveMatchesLoading, setLiveMatchesLoading] = useState(false);
+
   const step = quizSteps[currentStep];
+
+  // Fetch similarity preview when the user reaches the review step. Cancels
+  // on unmount or step change so a fast Back doesn't race a stale request.
+  useEffect(() => {
+    if (currentStep !== REVIEW_STEP) return;
+    let cancelled = false;
+    setLiveMatchesLoading(true);
+    fetch("/api/similarity/preview", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        sensitivity: answers.sensitivity ?? [],
+        complexity: answers.complexity ?? null,
+        userbase: answers.userbase ?? null,
+        auth: answers.auth ?? null,
+        integrations: answers.integrations ?? [],
+        dataSources: answers.dataSources ?? [],
+        universitySystems: answers.universitySystems ?? [],
+        outputTypes: answers.outputTypes ?? [],
+      }),
+    })
+      .then((r) => (r.ok ? r.json() : { matches: [] }))
+      .then((data: { matches?: SimilarMatch[] }) => {
+        if (!cancelled) setLiveMatches(data.matches ?? []);
+      })
+      .catch(() => {
+        // Silent: similarity is a hint, not load-bearing.
+      })
+      .finally(() => {
+        if (!cancelled) setLiveMatchesLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [currentStep, answers]);
 
   const updateAnswer = (value: string | string[]) => {
     setAnswers((prev) => ({ ...prev, [step.id]: value }));
@@ -949,7 +1140,7 @@ export default function BuilderGuidePage() {
     try {
       const score = calculateScore(answers);
       const tier = getTierForScore(score);
-      await fetch("/api/submissions", {
+      const res = await fetch("/api/submissions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -962,6 +1153,8 @@ export default function BuilderGuidePage() {
           department: contact.department,
         }),
       });
+      const data = await res.json().catch(() => ({}));
+      if (data?.id) setSubmissionId(data.id as string);
     } catch (err) {
       console.error("Failed to save submission:", err);
     }
@@ -996,6 +1189,8 @@ export default function BuilderGuidePage() {
     setShowResults(false);
     setAnalysis(null);
     setAnalysisError(null);
+    setSubmissionId(null);
+    setLiveMatches([]);
     submittedRef.current = false;
   };
 
@@ -1012,7 +1207,12 @@ export default function BuilderGuidePage() {
             Your personalized assessment and recommendations.
           </p>
         </div>
-        <ResultsView answers={answers} onStartOver={handleStartOver} />
+        <ResultsView
+          answers={answers}
+          onStartOver={handleStartOver}
+          submissionId={submissionId}
+          similarMatches={liveMatches}
+        />
       </div>
     );
   }
@@ -1063,6 +1263,11 @@ export default function BuilderGuidePage() {
                 Click any section to go back and change your answer.
               </p>
             </div>
+            <SimilarMatchesCallout
+              matches={liveMatches}
+              loading={liveMatchesLoading}
+              context="review"
+            />
             <div className="space-y-3">
               {quizSteps.map((s, i) => {
                 const answer = answers[s.id];

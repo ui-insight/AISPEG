@@ -39,6 +39,188 @@ const pool = new Pool({ connectionString: databaseUrl });
 // ClickUp wiring or by editing the rows in the DB directly.
 const PLACEHOLDER_BLOCKER_SINCE = "2026-03-01";
 
+// ────────────────────────────────────────────────────────────────────
+// Wizard-shape enrichment
+// ────────────────────────────────────────────────────────────────────
+//
+// lib/portfolio.ts doesn't carry the wizard's classification dimensions
+// (sensitivity, data_sources, integrations, university_systems,
+// output_types, complexity, userbase, auth_level). The applications
+// table needs them populated for the similarity engine to find matches
+// when a Submit-a-Project assessment runs.
+//
+// This is a best-guess heuristic mapping per slug, using exactly the
+// label vocabulary from lib/builder-guide-data.ts. Refine the mapping
+// here when an entry is misclassified, or hand-edit the row in the DB.
+// Sprint 3+ ClickUp wiring becomes the canonical source.
+
+interface WizardShape {
+  sensitivity: string[];
+  complexity: string | null;
+  userbase: string | null;
+  auth_level: string | null;
+  integrations: string[];
+  data_sources: string[];
+  university_systems: string[];
+  output_types: string[];
+}
+
+const wizardShapeBySlug: Record<string, WizardShape> = {
+  stratplan: {
+    sensitivity: ["No sensitive data"],
+    complexity: "Multiple data sources",
+    userbase: "University-wide",
+    auth_level: "Role-based access",
+    integrations: ["University APIs", "AI / LLM integration"],
+    data_sources: ["Custom / internal APIs", "Flat files / spreadsheets"],
+    university_systems: ["CAS / SSO"],
+    output_types: ["Read-only reporting"],
+  },
+  "audit-dashboard": {
+    sensitivity: ["PII", "Financial data"],
+    complexity: "Multiple data sources",
+    userbase: "My department",
+    auth_level: "Role-based access",
+    integrations: ["AI / LLM integration", "File storage"],
+    data_sources: ["Flat files / spreadsheets", "Custom / internal APIs"],
+    university_systems: ["CAS / SSO"],
+    output_types: ["Creates / modifies records", "Generates documents"],
+  },
+  "ucm-daily-register": {
+    sensitivity: ["No sensitive data"],
+    complexity: "Multiple data sources",
+    userbase: "University-wide",
+    auth_level: "University SSO",
+    integrations: ["External SaaS APIs", "AI / LLM integration", "Email / notifications"],
+    data_sources: ["Custom / internal APIs", "Flat files / spreadsheets"],
+    university_systems: ["CAS / SSO"],
+    output_types: ["Generates documents", "Sends notifications"],
+  },
+  "embargoed-osp": {
+    sensitivity: ["Research / IRB", "PII"],
+    complexity: "Complex pipelines",
+    userbase: "My department",
+    auth_level: "Role-based access",
+    integrations: ["External SaaS APIs", "University APIs"],
+    data_sources: ["Custom / internal APIs"],
+    university_systems: ["CAS / SSO"],
+    output_types: ["Creates / modifies records"],
+  },
+  vandalizer: {
+    sensitivity: ["No sensitive data"],
+    complexity: "Simple CRUD",
+    userbase: "University-wide",
+    auth_level: "University SSO",
+    integrations: ["AI / LLM integration"],
+    data_sources: ["Flat files / spreadsheets"],
+    university_systems: ["CAS / SSO"],
+    output_types: ["Generates documents"],
+  },
+  processmapping: {
+    sensitivity: ["No sensitive data"],
+    complexity: "Multiple data sources",
+    userbase: "University-wide",
+    auth_level: "University SSO",
+    integrations: ["University APIs", "AI / LLM integration"],
+    data_sources: ["Custom / internal APIs"],
+    university_systems: ["CAS / SSO"],
+    output_types: ["Creates / modifies records", "Read-only reporting"],
+  },
+  execord: {
+    sensitivity: ["PII"],
+    complexity: "Multiple data sources",
+    userbase: "My department",
+    auth_level: "Role-based access",
+    integrations: ["AI / LLM integration", "Email / notifications"],
+    data_sources: ["Custom / internal APIs", "Flat files / spreadsheets"],
+    university_systems: ["CAS / SSO"],
+    output_types: ["Creates / modifies records", "Triggers workflows"],
+  },
+  "sem-experiential": {
+    sensitivity: ["FERPA", "PII"],
+    complexity: "Simple CRUD",
+    userbase: "College-wide",
+    auth_level: "Role-based access",
+    integrations: ["University APIs"],
+    data_sources: ["Banner / SIS", "Custom / internal APIs"],
+    university_systems: ["Banner Student", "CAS / SSO"],
+    output_types: ["Creates / modifies records", "Read-only reporting"],
+  },
+  "rfd-career": {
+    sensitivity: ["FERPA", "PII"],
+    complexity: "Multiple data sources",
+    userbase: "My department",
+    auth_level: "Role-based access",
+    integrations: ["University APIs"],
+    data_sources: ["Banner / SIS", "Custom / internal APIs"],
+    university_systems: ["Banner Student", "CAS / SSO"],
+    output_types: ["Read-only reporting", "Generates documents"],
+  },
+  mindrouter: {
+    sensitivity: ["No sensitive data"],
+    complexity: "Real-time / streaming",
+    userbase: "University-wide",
+    auth_level: "Role-based access",
+    integrations: ["AI / LLM integration"],
+    data_sources: ["Custom / internal APIs"],
+    university_systems: ["CAS / SSO"],
+    output_types: ["Exposes an API"],
+  },
+  "dgx-stack": {
+    sensitivity: ["No sensitive data"],
+    complexity: "Real-time / streaming",
+    userbase: "University-wide",
+    auth_level: "Role-based access",
+    integrations: ["AI / LLM integration"],
+    data_sources: ["None / generates its own data"],
+    university_systems: ["CAS / SSO"],
+    output_types: ["Exposes an API"],
+  },
+  "template-app": {
+    sensitivity: ["No sensitive data"],
+    complexity: "Static content",
+    userbase: "Just me / my team",
+    auth_level: "University SSO",
+    integrations: ["None / standalone"],
+    data_sources: ["None / generates its own data"],
+    university_systems: [],
+    output_types: ["Read-only reporting"],
+  },
+  "oit-data-modernization": {
+    sensitivity: ["FERPA", "PII", "Financial data"],
+    complexity: "Complex pipelines",
+    userbase: "University-wide",
+    auth_level: "Role-based access",
+    integrations: ["University APIs"],
+    data_sources: ["Banner / SIS", "Custom / internal APIs"],
+    university_systems: ["Banner Student", "Banner Finance", "Banner HR"],
+    output_types: ["Read-only reporting"],
+  },
+  nexus: {
+    sensitivity: ["FERPA", "PII"],
+    complexity: "Multiple data sources",
+    userbase: "University-wide",
+    auth_level: "Role-based access",
+    integrations: ["University APIs", "AI / LLM integration"],
+    data_sources: ["Banner / SIS", "Custom / internal APIs"],
+    university_systems: ["Banner Student", "VandalWeb", "CAS / SSO"],
+    output_types: ["Read-only reporting", "Creates / modifies records"],
+  },
+};
+
+// Default for slugs not in the map — leaves wizard fields empty so
+// similarity simply returns no match for them.
+const EMPTY_SHAPE: WizardShape = {
+  sensitivity: [],
+  complexity: null,
+  userbase: null,
+  auth_level: null,
+  integrations: [],
+  data_sources: [],
+  university_systems: [],
+  output_types: [],
+};
+
 function visibilityTier(v: Visibility): "public" | "embargoed" | "internal" {
   switch (v) {
     case "Public":
@@ -100,10 +282,10 @@ function deriveBlockers(i: Intervention): BlockerSeed[] {
 
 async function seedIntervention(i: Intervention): Promise<{ id: string; blockers: number }> {
   const tier = inferTier(i);
-  const tierStr = String(tier);
   const visibility_tier = visibilityTier(i.visibility);
   const home_unit_primary = i.homeUnits[0] ?? null;
   const owner_primary = i.operationalOwners[0] ?? null;
+  const wizard = wizardShapeBySlug[i.slug] ?? EMPTY_SHAPE;
 
   const insert = await pool.query<{ id: string }>(
     `INSERT INTO applications (
@@ -117,7 +299,9 @@ async function seedIntervention(i: Intervention): Promise<{ id: string; blockers
        funding,
        operational_function, operational_excellence_outcome,
        features, tech,
-       tracking_only, related_slugs
+       tracking_only, related_slugs,
+       sensitivity, complexity, userbase, auth_level,
+       integrations, data_sources, university_systems, output_types
      )
      VALUES (
        $1, $2, $3, $4,
@@ -130,7 +314,9 @@ async function seedIntervention(i: Intervention): Promise<{ id: string; blockers
        $22,
        $23, $24,
        $25, $26,
-       $27, $28
+       $27, $28,
+       $29, $30, $31, $32,
+       $33, $34, $35, $36
      )
      RETURNING id`,
     [
@@ -162,11 +348,18 @@ async function seedIntervention(i: Intervention): Promise<{ id: string; blockers
       i.tech ?? [],
       i.trackingOnly ?? false,
       i.relatedSlugs ?? [],
+      wizard.sensitivity,
+      wizard.complexity,
+      wizard.userbase,
+      wizard.auth_level,
+      wizard.integrations,
+      wizard.data_sources,
+      wizard.university_systems,
+      wizard.output_types,
     ]
   );
 
   const applicationId = insert.rows[0]!.id;
-  void tierStr;
 
   const blockers = deriveBlockers(i);
   for (const b of blockers) {
