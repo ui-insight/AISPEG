@@ -1,0 +1,74 @@
+name: Governance Drift
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "vendor/data-governance/**"
+      - "lib/governance/**"
+      - "app/standards/data-model/**"
+      - "scripts/build-governance-catalog.*"
+      - ".github/workflows/governance-drift.yml"
+
+jobs:
+  drift:
+    name: Validate governance registry
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository (with submodules)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # The drift script (vendor/data-governance/scripts/check_governance_drift.py)
+      # is pure stdlib — no requirements.txt and no third-party imports — so there
+      # is nothing to `pip install`. Confirmed by reading its imports: base64,
+      # json, os, subprocess, sys, urllib.error, urllib.request, pathlib, typing.
+      #
+      # Token: the script's remote checks read several repos in the ui-insight
+      # org (OpenERA, UCMDailyRegister, AuditDashboard, StratPlanTacticsMB,
+      # ProcessMapping, AISPEG), most of which are private. The workflow-issued
+      # GITHUB_TOKEN is scoped to this repo only, so an org secret named
+      # PORTFOLIO_GH_TOKEN (PAT with `repo` scope on those repos) is preferred
+      # if present; we fall back to GITHUB_TOKEN otherwise. The script reads
+      # PORTFOLIO_GH_TOKEN first (see GitHubClient.__init__).
+
+      - name: Run governance drift check
+        id: drift
+        env:
+          PORTFOLIO_GH_TOKEN: ${{ secrets.PORTFOLIO_GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -o pipefail
+          script="vendor/data-governance/scripts/check_governance_drift.py"
+          if [ ! -f "$script" ]; then
+            echo "::error::Drift script not found at $script — submodule may not have been checked out."
+            exit 2
+          fi
+
+          # Tee to a file so we can post the output to the step summary regardless of exit status.
+          set +e
+          python "$script" 2>&1 | tee drift-output.txt
+          status=${PIPESTATUS[0]}
+          set -e
+
+          {
+            echo "## Governance drift check"
+            echo
+            if [ "$status" -eq 0 ]; then
+              echo "Result: **PASS** — registry, vocabularies, and remote portfolio state are consistent."
+            else
+              echo "Result: **FAIL** — drift detected. Review the output below and update the registry, vendored submodule, or remote source as appropriate."
+            fi
+            echo
+            echo '```'
+            cat drift-output.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          exit "$status"

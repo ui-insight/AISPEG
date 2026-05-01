@@ -189,6 +189,12 @@ npm run lint               # ESLint
 
 `npm run build` is the primary verification step. Run it before committing.
 
+A `Governance Drift` workflow (`.github/workflows/governance-drift.yml`) runs
+on PRs that touch `vendor/data-governance/**`, `lib/governance/**`,
+`app/standards/data-model/**`, or `scripts/build-governance-catalog.*`, and
+fails the build if the upstream drift script reports drift between the
+vendored registry and the live portfolio repos.
+
 ### Governance submodule
 
 `vendor/data-governance/` is a git submodule pointing at
