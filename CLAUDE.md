@@ -157,6 +157,7 @@ _archive/                  # Routes/files archived in May 2026 refactor
 |---|---|---|
 | An intervention | `lib/portfolio.ts` | Use existing entries as templates. Set `visibility` honestly. |
 | A standards ledger entry | `lib/standards-watch.ts` | Each is commit-worthy; the git log is the audit trail. |
+| A sub-section under `/standards` | `app/standards/<sub>/page.tsx` + add a row to `subNavItems` in `components/StandardsSubNav.tsx` | The shared eyebrow + sub-nav lives in `app/standards/layout.tsx`. Each sub-page owns its own H1. Sidebar stays at one "Standards" entry — never edit `Sidebar.tsx` for sub-sections. |
 | A presentation/deck | `lib/artifacts.ts` (entry with `kind: "deck"`) plus `content/presentations/<slug>.md` if rendered via reveal.js | The artifact appears in the /reports timeline; the markdown drives the deck itself. |
 | A report | `app/reports/page.tsx` and (if needed) a route under `app/reports/<slug>` | Time-stamped, reverse-chron. |
 

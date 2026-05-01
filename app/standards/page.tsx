@@ -110,10 +110,7 @@ export default function StandardsWatchPage() {
     <div className="space-y-10">
       {/* Header */}
       <header>
-        <p className="text-xs font-semibold uppercase tracking-wider text-ui-gold-dark">
-          Institutional Standards
-        </p>
-        <h1 className="mt-2 text-3xl font-black tracking-tight text-ui-charcoal">
+        <h1 className="text-3xl font-black tracking-tight text-ui-charcoal">
           Software-development and user-experience standards
         </h1>
         <p className="mt-3 max-w-3xl text-base leading-relaxed text-gray-700">
