@@ -29,13 +29,19 @@ jobs:
       # is pure stdlib — no requirements.txt and no third-party imports — so there
       # is nothing to `pip install`. Confirmed by reading its imports: base64,
       # json, os, subprocess, sys, urllib.error, urllib.request, pathlib, typing.
-      # The remote-check path uses GITHUB_TOKEN (already exported below) for
-      # api.github.com calls, with a fallback to the `gh` CLI which is preinstalled
-      # on ubuntu-latest runners.
+      #
+      # Token: the script's remote checks read several repos in the ui-insight
+      # org (OpenERA, UCMDailyRegister, AuditDashboard, StratPlanTacticsMB,
+      # ProcessMapping, AISPEG), most of which are private. The workflow-issued
+      # GITHUB_TOKEN is scoped to this repo only, so an org secret named
+      # PORTFOLIO_GH_TOKEN (PAT with `repo` scope on those repos) is preferred
+      # if present; we fall back to GITHUB_TOKEN otherwise. The script reads
+      # PORTFOLIO_GH_TOKEN first (see GitHubClient.__init__).
 
       - name: Run governance drift check
         id: drift
         env:
+          PORTFOLIO_GH_TOKEN: ${{ secrets.PORTFOLIO_GH_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -o pipefail
