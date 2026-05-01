@@ -729,6 +729,54 @@ export const vocabularyGroups: VocabularyGroup[] = [
   {
     "domain": "processmapping",
     "application": "ProcessMapping",
+    "group": "DocumentType",
+    "description": "Document classifications for materials referenced in process maps and workflows — award documents, funding announcements, budget forms, proposal narratives, subaward agreements, and sponsor correspondence",
+    "values": [
+      {
+        "code": "AWARD_NOTICE",
+        "label": "Award Notice / Agreement",
+        "description": "Fully executed award agreements, federal notices of award, cooperative agreements, research terms and conditions, and related award-establishing documents"
+      },
+      {
+        "code": "AWARD_MODIFICATION",
+        "label": "Award Modification",
+        "description": "Post-award amendments including modifications, no-cost extensions, PI changes, rebudget approvals, and amendment letters"
+      },
+      {
+        "code": "FUNDING_OPPORTUNITY",
+        "label": "Funding Opportunity (FOA/NOFO/RFA)",
+        "description": "Funding opportunity announcements, notices of funding opportunity, requests for applications, program announcements, and program solicitations"
+      },
+      {
+        "code": "BUDGET_DOCUMENT",
+        "label": "Budget Form / Spreadsheet / Justification",
+        "description": "R&R and SF-424A budget forms, budget spreadsheets, budget justification narratives, and sponsor-specific budget pages (NIH modular, NSF detailed)"
+      },
+      {
+        "code": "PROPOSAL_NARRATIVE",
+        "label": "Proposal Narrative & Personnel Forms",
+        "description": "Proposal documents, project narratives, research plans, biosketches, current and pending support, and VERAS proposal forms with personnel listings"
+      },
+      {
+        "code": "SUBAWARD_DOCUMENT",
+        "label": "Subaward / Subrecipient Agreement",
+        "description": "Subaward agreements, subrecipient agreements, pass-through entity subaward documents, and subaward modifications"
+      },
+      {
+        "code": "COMPLIANCE_RECORD",
+        "label": "Compliance / Personnel Reference Record",
+        "description": "SFI disclosure confirmations, RST completion records, Banner NBAJOBS records, departmental personnel lists, and institutional policy references (APM)"
+      },
+      {
+        "code": "SPONSOR_CORRESPONDENCE",
+        "label": "Sponsor Correspondence & Guidance",
+        "description": "Sponsor correspondence, agency financial reporting guides, and other ad-hoc communications or guidance documents from the funding agency"
+      }
+    ]
+  },
+  {
+    "domain": "processmapping",
+    "application": "ProcessMapping",
     "group": "FileType",
     "description": "Source transcript file formats accepted into governed transcript workflows",
     "values": [
