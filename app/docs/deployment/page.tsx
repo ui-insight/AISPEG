@@ -12,7 +12,7 @@ export default function DeploymentDocsPage() {
     >
       <h2>Infrastructure</h2>
       <p>
-        AISPEG runs on University of Idaho Insight infrastructure:
+        The site runs on University of Idaho Insight infrastructure:
       </p>
       <ul>
         <li><strong>Host</strong>: <code>openera.insight.uidaho.edu</code></li>

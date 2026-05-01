@@ -1,8 +1,17 @@
-# Contributing to AISPEG with Agentic Coding Tools
+# Contributing with Agentic Coding Tools
 
-This guide explains how to collaboratively add content and features to the AISPEG site using agentic coding tools like **Claude Code**, **Cursor**, **GitHub Copilot**, or similar AI-assisted development environments.
+This guide explains how to add content and features to the
+**Institutional AI Initiative** site (an IIDS-coordinated coordination
+nexus for the University of Idaho's institutional AI work) using agentic
+coding tools like **Claude Code**, **Codex**, **Cursor**, **GitHub
+Copilot**, or any LLM-powered coding assistant.
 
-The site was built this way from scratch, and it's designed to keep working this way.
+The site was built collaboratively this way and is designed to keep working
+that way.
+
+> Before you make non-trivial changes: read [`REFACTOR.md`](./REFACTOR.md)
+> for the strategic context and current sprint state, and
+> [`CLAUDE.md`](./CLAUDE.md) for project conventions and the IA.
 
 ---
 
@@ -10,253 +19,304 @@ The site was built this way from scratch, and it's designed to keep working this
 
 - **Node.js** 18+ and **npm**
 - **Git**
-- An **agentic coding tool** (any of the following work):
-  - [Claude Code](https://claude.ai/claude-code) (CLI agent)
-  - [Cursor](https://cursor.sh) (AI-native IDE)
-  - [GitHub Copilot](https://github.com/features/copilot) in VS Code
-  - Any LLM-powered coding assistant that can read/write files
+- **PostgreSQL 16** (local or via Docker) for any work touching submissions,
+  registry, or similarity
+- An **agentic coding tool** of your choice
 
 ---
 
-## Getting Started
+## Getting started
 
 ```bash
 git clone https://github.com/ui-insight/AISPEG.git
 cd AISPEG
+cp .env.example .env.local   # then fill in DATABASE_URL and optional GITHUB_TOKEN
 npm install
 npm run dev
 ```
 
-The site runs at [http://localhost:3000](http://localhost:3000).
+The site runs at <http://localhost:3000>.
 
-> **Tip for agentic tools:** When starting a session, point your agent at the `CLAUDE.md` file in the project root. It contains the project structure, conventions, and rules the agent should follow.
-
----
-
-## How the Site Works
-
-The architecture is intentionally simple and agent-friendly:
-
-### Data-Driven Design
-
-All content lives in a single file: **`lib/data.ts`**
-
-Pages don't contain hardcoded content. Instead, they import data from `lib/data.ts` and render it using reusable components. To add content, you add data to the file — you don't need to write new components or pages.
-
-### Component Library
-
-Reusable components in `components/` handle rendering:
-
-| Component          | Purpose                        | Used On          |
-|--------------------|--------------------------------|------------------|
-| `MetricCard.tsx`   | Displays a single metric       | Dashboard, Projects |
-| `PrincipleCard.tsx`| Expandable principle card      | Principles       |
-| `LessonCard.tsx`   | Lesson with recommendations    | Lessons          |
-| `ProjectTable.tsx` | Sortable project metrics table | Projects         |
-| `Sidebar.tsx`      | Navigation sidebar             | All pages (layout) |
-
-### Server vs Client Components
-
-- Pages are **server components** by default (no `"use client"` directive)
-- Components that need interactivity (expand/collapse, sorting, search) use `"use client"`
-- Only add `"use client"` when a component needs `useState`, `useEffect`, or event handlers
+> **Tip for agentic tools**: at the start of a session, point your agent at
+> [`CLAUDE.md`](./CLAUDE.md) and [`REFACTOR.md`](./REFACTOR.md). Together
+> they cover project structure, conventions, the four-surface IA, the
+> friction-ledger model, and the sprint sequencing.
 
 ---
 
-## Common Tasks
+## How the site works
 
-### Adding a New Lesson Learned
+### Four primary surfaces
 
-Open `lib/data.ts` and add an entry to the `lessons` array:
+| Surface | Route | Source of truth |
+|---|---|---|
+| The Work | `/portfolio` | `lib/portfolio.ts` |
+| Submit a Project | `/builder-guide` | `lib/builder-guide-data.ts` (quiz) + Postgres `submissions` (responses) |
+| Reports | `/reports` | `lib/data.ts` (`presentations`) + per-report routes |
+| Standards | `/standards` | `lib/standards-watch.ts` |
 
-```typescript
-// In the lessons array, add:
+Plus `/ai4ra-ecosystem`, `/docs/*`, `/admin/*`. See
+[`CLAUDE.md`](./CLAUDE.md) for the full route inventory and what's been
+archived.
+
+### Typed data modules over JSON blobs
+
+Most structured data lives in typed TypeScript modules so the build
+catches schema drift:
+
+- `lib/portfolio.ts` — interventions inventory
+- `lib/standards-watch.ts` — standards ledger
+- `lib/builder-guide-data.ts` — quiz, scoring, tiers
+- `lib/decks.ts` — presentation index
+
+`lib/data.ts` carries legacy AISPEG-era data (principles, lessons, action
+plan, cautionary tales, etc.). Most of its exports are referenced only by
+archived/orphan code at this point and are slated for Sprint 4 cleanup.
+**Don't add new content to `lib/data.ts`.** Use one of the typed modules
+above, or open a discussion if a new module is warranted.
+
+### Server vs client components
+
+- Pages are **server components** by default (no `"use client"`).
+- Components needing `useState`, `useEffect`, or event handlers use
+  `"use client"` (`Sidebar.tsx`, `RevealDeck.tsx`, the builder-guide
+  wizard).
+- Don't reach for `"use client"` reflexively — server components keep
+  bundles small and let Next render on the server.
+
+### Data architecture intent (Sprint 2+)
+
+The post-refactor data model:
+
+- **Postgres `applications` table** is canonical for project identity,
+  classification, and provenance.
+- **ClickUp** is canonical for project status, blockers, and daily
+  workflow. Each ClickUp task references an `applications.id`; each
+  `applications` row has a `clickup_task_id`. Sync runs on a cron.
+- **GitHub issues** drive technical work and are surfaced via
+  `lib/github.ts`.
+- **Markdown / typed TS** drives narrative content (decks, About copy,
+  standards ledger).
+
+Sprint 1 has not yet wired ClickUp; Sprint 2's Migration 005 adds the
+friction-ledger fields and a `blockers` table. Until then, status data is
+hand-maintained in `lib/portfolio.ts`.
+
+---
+
+## Common tasks
+
+### Adding an intervention to the portfolio
+
+Open `lib/portfolio.ts` and append a new entry to the `interventions`
+array. The shape is defined in the same file. Required fields include
+`slug`, `name`, `tagline`, `description`, `homeUnits`,
+`operationalOwners`, `buildParticipants`, `status`, `visibility`, and
+`ai4raRelationship`. Use existing entries as templates.
+
+```ts
 {
-  id: "your-lesson-id",
-  title: "Your Lesson Title",
-  context: "Brief context about when this lesson applies",
-  recommendations: [
-    "First recommendation or takeaway",
-    "Second recommendation",
-    "Third recommendation",
+  slug: "my-new-intervention",
+  name: "My New Intervention",
+  tagline: "One-line elevator pitch.",
+  description: "Longer description shown on the detail page.",
+  homeUnits: ["Office of the Provost"],
+  operationalOwners: [
+    { name: "Pat Owner", title: "Director of Something" },
   ],
-  category: "CategoryName",  // e.g., "Coordination", "Governance", "Architecture"
+  buildParticipants: ["IIDS"],
+  status: "Piloting",        // Planned | Prototype | Piloting | Production | Tracked | Archived
+  visibility: "Public",      // Public | Partial | Internal-only
+  ai4raRelationship: "None", // None | Core | Adjacent
+  tags: ["diffusion"],       // optional
+  // ...optional fields: funding, externalDeployments, links, etc.
 },
 ```
 
-The Lessons page (`app/lessons/page.tsx`) automatically renders all entries from this array using the `LessonCard` component.
+The portfolio page automatically picks up the new entry, groups it under
+its home unit, and filters by visibility tier.
 
-### Adding a New Strategic Principle
+### Adding a Standards ledger entry
 
-Add an entry to the `principles` array in `lib/data.ts`:
+Open `lib/standards-watch.ts` and append a new `StandardsWatchItem`. Each
+entry is a commit-worthy event — the git log is the audit trail. Set
+`dateRequested` to the actual date OIT was formally asked for the
+standard, and start with `status: "requested"`.
 
-```typescript
-{
-  id: "your-principle-id",
-  title: "Your Principle Title",
-  summary: "One-line summary shown when collapsed.",
-  details: "Longer explanation shown when the card is expanded.",
-  category: "Foundation",  // or "Workforce", "Strategy", "Implementation"
-},
-```
+When OIT responds, edit the entry's `status` and add `responseUrl` /
+`responseNote` as appropriate. Don't delete entries — published standards
+keep their history visible.
 
-The Principles page groups cards by `category`, so your new principle will appear under the matching heading.
+### Adding a report or presentation
 
-### Adding a Knowledge Base Article
+Decks live as Reveal.js markdown under `content/presentations/<slug>.md`,
+indexed in `lib/decks.ts`. Written reports get a route under
+`app/reports/<slug>/page.tsx` and a card on `/reports`.
 
-The Knowledge Base page (`app/knowledge/page.tsx`) currently stores articles inline. Add to the `articles` array inside that file:
+### Adding a new top-level route
 
-```typescript
-{
-  title: "Your Article Title",
-  summary: "A paragraph summarizing the article content.",
-  tags: ["tag1", "tag2", "tag3"],
-  category: "CategoryName",  // e.g., "Context", "Roles", "Architecture", "Strategy"
-},
-```
+The IA is intentionally narrow (4 primary surfaces). Adding a new top-level
+route should be a deliberate choice — discuss in `REFACTOR.md` first.
 
-Tags are used for filtering and search. The search bar matches against titles, summaries, and tags.
+If approved:
 
-### Adding a New Project to the Metrics Table
+1. Create `app/<route>/page.tsx`.
+2. Add the entry to `primaryItems` (or `footerItems`) in
+   `components/Sidebar.tsx`. Choose an icon from the existing set:
+   `squares`, `grid`, `shield`, `compass`, `document`, `book`.
+3. Verify with `npm run build`.
 
-Add an entry to the `projects` array in `lib/data.ts`:
+### Adding to the documentation surface
 
-```typescript
-{
-  name: "RepoName",
-  daysActive: 5,
-  netNewLines: 12000,
-  lowEstimate: "80 days (3.6 mo)",
-  highEstimate: "120 days (5.5 mo)",
-  multiplier: "16-24x",
-},
-```
-
-Remember to update `projectTotals` if the totals have changed.
-
-### Adding a New Playbook Entry
-
-Add to the `playbookItems` array in `lib/data.ts`:
-
-```typescript
-{
-  id: "your-item-id",
-  title: "Playbook Entry Title",
-  description: "Description of the guideline, convention, or pattern.",
-  category: "Roles",  // or "Standards", "Infrastructure"
-},
-```
-
-### Creating a New Page
-
-1. Create a new directory under `app/`:
-   ```
-   app/your-page/page.tsx
-   ```
-
-2. Add a navigation entry in `components/Sidebar.tsx`:
-   ```typescript
-   // In the navItems array:
-   { href: "/your-page", label: "Your Page", icon: "squares" },
-   ```
-   Choose an icon from the existing set: `squares`, `lightbulb`, `book`, `clipboard`, `chart`, `search`, `map`.
-
-3. Import data and components as needed:
-   ```typescript
-   import MetricCard from "@/components/MetricCard";
-   import { yourData } from "@/lib/data";
-   ```
+Pages under `app/docs/` use the `DocPage` and `DocCard` components from
+`components/DocPage.tsx`. Add a new doc by creating
+`app/docs/<topic>/page.tsx` and (optionally) linking to it from the docs
+index.
 
 ---
 
 ## Workflow
 
-### For Solo Work (Direct to Main)
+### For solo work (direct to main)
 
 ```
-1. Pull latest:         git pull origin main
-2. Make changes:        (edit files with your agentic tool)
-3. Verify build:        npm run build
-4. Commit & push:       git add <files> && git commit -m "description" && git push
+1. Pull latest:    git pull origin main
+2. Make changes:   (edit with your agentic tool)
+3. Verify:         npm run build && npm run lint
+4. Commit & push:  git add <files>
+                   git commit -m "imperative-mood subject"
+                   git push
 ```
 
-### For Collaborative Work (Branch + PR)
+### For collaborative or substantive work (branch + PR)
 
 ```
-1. Create branch:       git checkout -b feature/your-feature
-2. Make changes:        (edit files with your agentic tool)
-3. Verify build:        npm run build
-4. Commit & push:       git add <files> && git commit -m "description" && git push -u origin feature/your-feature
-5. Open PR:             gh pr create --title "Add ..." --body "Description"
+1. Create branch:  git checkout -b feature/your-feature
+2. Make changes
+3. Verify:         npm run build && npm run lint
+4. Commit & push:  git push -u origin feature/your-feature
+5. Open PR:        gh pr create --title "..." --body "..."
 ```
 
-**Always run `npm run build` before committing.** This catches TypeScript errors and ensures the site compiles.
+**Always run `npm run build` before committing.** It's the primary
+TypeScript check and catches drift between data shapes and components.
+
+For the May 2026 refactor itself, work is happening in **per-sprint PRs**
+off `main` (see `REFACTOR.md`). If you're contributing during the
+refactor window, sync with whoever's running the active sprint before
+opening a parallel PR.
 
 ---
 
-## Tips for Agentic Coding Tools
+## Tips for agentic tools
 
-### Starting a Session
+### Starting a session
 
-When you open the project with an agentic tool, give it context:
+Give your agent the strategic context first. A good opening:
 
-> "Read CLAUDE.md to understand the project. This is a Next.js site where all content is data-driven from lib/data.ts. Components in components/ render the data. Run npm run build to verify changes."
+> Read `REFACTOR.md` and `CLAUDE.md` to understand the project. This is a
+> Next.js 16 site that's the coordination nexus for the University of
+> Idaho's institutional AI initiative, operated by IIDS. We're mid-refactor
+> from a legacy AISPEG-collaboration framing. The IA is four surfaces:
+> The Work, Submit a Project, Reports, Standards. Run `npm run build` to
+> verify changes.
 
-### Effective Prompts
-
-Here are example prompts that work well:
+### Effective prompt patterns
 
 **Adding content:**
-> "Add a new lesson learned to lib/data.ts about the importance of clear API contracts in multi-agent systems. Use the existing lesson format."
+> "Add a new intervention to `lib/portfolio.ts`: [name], owned by [unit],
+> built by IIDS. Use the existing entry shape. Visibility: Public."
 
 **Modifying a page:**
-> "Update the roadmap page to add a Phase 5 about external partnerships. Follow the existing pattern in app/roadmap/page.tsx."
+> "Update `app/portfolio/page.tsx` so the home-unit groups are
+> alphabetical. Don't change the data."
 
-**Building a new feature:**
-> "Create a new 'Resources' page at app/resources/page.tsx with a list of links. Add it to the sidebar navigation. Follow the patterns from the existing pages."
+**New feature:**
+> "Add a `/standards/[id]` permalink that opens directly to the relevant
+> entry on the standards page. Read `lib/standards-watch.ts` first."
 
 **Verification:**
-> "Run npm run build and fix any errors."
+> "Run `npm run build` and `npm run lint`, fix any errors."
 
-### What Your Agent Needs to Know
+### What your agent needs to know
 
-- `lib/data.ts` is the single source of truth for content
-- Pages import from `lib/data.ts` and render with components from `components/`
-- Tailwind CSS v4 is used — styles are utility classes, custom colors use `ui-gold`, `ui-charcoal`, etc.
-- `npm run build` is the verification step — it must pass before committing
-- `CLAUDE.md` has the concise project rules for agents
+- `REFACTOR.md` and `CLAUDE.md` are the primary orientation docs.
+- Typed `lib/*.ts` modules are the source of truth for content; avoid
+  putting new data in `lib/data.ts`.
+- Tailwind tokens: `ui-charcoal`, `ui-gold`, `ui-gold-dark`,
+  `brand-huckleberry`, `brand-lupine`. No raw hex in components.
+- `npm run build` must pass before committing.
+- The site is mid-refactor; archived routes live in `_archive/` and should
+  not be reintroduced without checking `REFACTOR.md`.
 
-### Common Pitfalls
+### Common pitfalls
 
-- **Don't hardcode content in pages** — add it to `lib/data.ts` instead
-- **Don't add `"use client"` to pages unnecessarily** — only client components need it
-- **Always verify the build** — TypeScript will catch most mistakes
-- **Use existing component patterns** — look at how current pages use `MetricCard`, `PrincipleCard`, etc. before creating new components
+- **Don't add new content to `lib/data.ts`** — use the typed modules.
+- **Don't reach for `"use client"`** unless a component genuinely needs
+  client-side state or events.
+- **Don't reintroduce archived routes** (`/knowledge`, `/cautionary-tales`,
+  `/roadmap`, `/outreach`, `/action-plan`, `/approach`) — they were cut
+  for cause; check `REFACTOR.md` before touching them.
+- **Don't editorialize on user-facing surfaces** — the design principle is
+  evidence-forward (status fields, day counters, owner names) over
+  forcing-function rhetoric.
+- **Don't add AISPEG branding to new copy.** The repo name is historical;
+  user-facing surfaces are IIDS-coordinated.
 
 ---
 
-## Style Guide
+## Style guide
 
-### Colors
+### Brand colors (canonical)
 
-| Token          | Hex       | Usage                          |
-|----------------|-----------|--------------------------------|
-| `ui-gold`      | `#B5A36A` | Accents, badges, highlights    |
-| `ui-gold-dark` | `#8A7D50` | Text on light backgrounds      |
-| `ui-charcoal`  | `#1a1a2e` | Headings, sidebar, dark blocks |
-| `ui-dark`      | `#16213e` | Card dark variants             |
-| `ui-mid`       | `#0f3460` | Secondary badges               |
+Defined in `app/globals.css` via `@theme {}`. Use the Tailwind tokens, not
+raw hex.
 
-### Component Conventions
+| Token | Hex | Usage |
+|---|---|---|
+| `ui-gold` (Pride Gold) | `#F1B300` | Emphasis, focus outlines, highlight fills |
+| `ui-gold-dark` | (computed) | Text on light backgrounds |
+| `ui-charcoal` (Brand Black) | `#191919` | Headings, sidebar, dark blocks |
+| `brand-huckleberry` | `#261882` | Section accents, status chips |
+| `brand-lupine` | `#5E48FF` | Variety in deck slides |
+| `brand-clearwater` | `#008080` | Link underlines |
 
-- Cards use `rounded-xl border border-gray-200 bg-white p-6 shadow-sm`
-- Badges use `rounded-full px-2.5 py-0.5 text-xs font-medium`
-- Headings: `h1` = `text-3xl font-bold`, `h2` = `text-lg font-semibold`
-- Spacing between page sections: `space-y-10`
+Pride Gold is **rare**. Don't apply it to every card. Reserve for emphasis,
+active focus, and the highlight behind one or two emphasis words on a page.
 
-### File Naming
+### Typography
 
-- Pages: `app/{section}/page.tsx`
+Single family: **Public Sans**, variable weight 100–900 (loaded via
+`next/font/google` in `app/layout.tsx`). Use weight contrast for hierarchy:
+
+- Display headings: weight 900
+- Body: weight 400
+- Emphasis: weight 600–700
+- Italic axis available for owner-name treatments and emphasis
+
+No display serif pairing. The brand is sans-only.
+
+### Component conventions
+
+- Cards: `rounded-xl border border-gray-200 bg-white p-6 shadow-sm`
+- Hover: `transition-all hover:border-ui-gold/40 hover:shadow-md`
+- Status chips: `rounded-full px-2.5 py-0.5 text-xs font-medium`
+- Section spacing on pages: `space-y-10` or `space-y-12`
+- Headings: `h1` = `text-3xl font-black tracking-tight text-ui-charcoal`,
+  `h2` = `text-xl font-bold text-ui-charcoal`
+
+### File naming
+
+- Pages: `app/<route>/page.tsx`
 - Components: `components/PascalCase.tsx`
-- Data/utilities: `lib/camelCase.ts`
+- Library modules: `lib/kebab-case.ts`
 - IDs in data: `kebab-case` strings
+
+---
+
+## Where to ask for help
+
+For project context (why a thing is the way it is): start with
+`REFACTOR.md` and `CLAUDE.md`. For technical specifics: see
+[`/docs`](http://localhost:3000/docs) on the running site. For anything
+else: ping the IIDS team through the usual UI channels.

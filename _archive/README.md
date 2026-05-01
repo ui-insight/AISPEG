@@ -10,6 +10,9 @@ at the project root for context.
 
 ## Contents
 
+- `plan.md` — the original AISPEG-collaborator-era plan from early 2026.
+  Superseded by `REFACTOR.md` at the project root, which captures the May 2026
+  pivot to an IIDS-coordinated institutional AI initiative site.
 - `app-routes/knowledge` — wiki-style knowledge base. Cut: not load-bearing
   for the new outward-accountability purpose.
 - `app-routes/cautionary-tales` — AISPEG-era warning page. Cut as a route;
