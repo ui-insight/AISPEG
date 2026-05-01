@@ -392,50 +392,9 @@ export const recommendations = [
   },
 ];
 
-// ============================================================
-// Presentations & Reports
-// ============================================================
-
-export const presentations = [
-  {
-    id: "presidential-brief-feb-2026",
-    title: "Agentic AI: Evidence of Impact, Current Constraints, and Recommendations",
-    date: "February 7, 2026",
-    author: "Barrie Robison",
-    type: "Presidential Brief",
-    audience: "University of Idaho Executive Leadership",
-    description: "Briefing for executive leadership on the transformative potential and organizational risks of Agentic AI. Covers active ORED projects leveraging agentic AI, force multiplier evidence, institutional constraints, and near-term recommendations.",
-    sections: [
-      "ORED Projects Leveraging Agentic AI",
-      "Evidence of Impact and Risk",
-      "Software Development Force Multiplier",
-      "Documentation, Governance, and Templates",
-      "Shadow Applications",
-      "Current Constraints",
-      "Recommendations",
-    ],
-    sourceFile: "AgenticAIPresidentialBriefFeb26_2026_UITemplate.pdf",
-  },
-  {
-    id: "dev-activity-report-feb-2026",
-    title: "Development Activity Report: Agentic Development with Claude Code",
-    date: "February 26, 2026",
-    author: "Barrie Robison",
-    type: "Activity Report",
-    audience: "IIDS / ORED Leadership",
-    description: "Comprehensive analysis of software development activity across 11 GitHub repositories during Feb 1-26, 2026. Demonstrates extraordinary productivity levels achieved through agentic development tools. Includes repository-by-repository analysis, adoption timeline, productivity metrics, and methodology.",
-    sections: [
-      "Executive Summary",
-      "Key Findings at a Glance",
-      "Key Metrics",
-      "Repository Summary",
-      "Adoption Timeline & Acceleration Analysis",
-      "Detailed Repository Analysis",
-      "Methodology & Notes",
-    ],
-    sourceFile: "AgenticAIPresidentialBriefFeb26_2026_UITemplate.pdf",
-  },
-];
+// Presentations & Reports — moved to lib/artifacts.ts as part of the
+// Sprint 4 reports unification. The `presentations` export is retired;
+// the unified Reports timeline now lives in lib/artifacts.ts.
 
 // ============================================================
 // Principles

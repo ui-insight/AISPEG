@@ -52,7 +52,7 @@ The site runs at <http://localhost:3000>.
 |---|---|---|
 | The Work | `/portfolio` | `lib/portfolio.ts` |
 | Submit a Project | `/builder-guide` | `lib/builder-guide-data.ts` (quiz) + Postgres `submissions` (responses) |
-| Reports | `/reports` | `lib/data.ts` (`presentations`) + per-report routes |
+| Reports | `/reports` | `lib/artifacts.ts` (unified timeline) + per-report routes |
 | Standards | `/standards` | `lib/standards-watch.ts` |
 
 Plus `/ai4ra-ecosystem`, `/docs/*`, `/admin/*`. See
@@ -64,10 +64,11 @@ archived.
 Most structured data lives in typed TypeScript modules so the build
 catches schema drift:
 
-- `lib/portfolio.ts` — interventions inventory
+- `lib/portfolio.ts` — interventions inventory (seed source; runtime via Postgres)
 - `lib/standards-watch.ts` — standards ledger
 - `lib/builder-guide-data.ts` — quiz, scoring, tiers
-- `lib/decks.ts` — presentation index
+- `lib/artifacts.ts` — unified Reports timeline (briefs, activity reports, decks, talks)
+- `lib/intake-config.ts` — Submit-a-Project named human + SLA + status labels
 
 `lib/data.ts` carries legacy AISPEG-era data (principles, lessons, action
 plan, cautionary tales, etc.). Most of its exports are referenced only by
@@ -147,11 +148,20 @@ When OIT responds, edit the entry's `status` and add `responseUrl` /
 `responseNote` as appropriate. Don't delete entries — published standards
 keep their history visible.
 
-### Adding a report or presentation
+### Adding a report, brief, deck, or presentation
 
-Decks live as Reveal.js markdown under `content/presentations/<slug>.md`,
-indexed in `lib/decks.ts`. Written reports get a route under
-`app/reports/<slug>/page.tsx` and a card on `/reports`.
+The Reports surface is a single reverse-chronological timeline. To add an
+artifact:
+
+1. Append an entry to `lib/artifacts.ts` with the appropriate `kind`
+   (`activity-report` | `brief` | `deck` | `presentation`), `dateIso`,
+   `dateLabel`, and `href` (internal route or external URL).
+2. If the artifact has its own page (most reports and briefs do), create
+   `app/reports/<slug>/page.tsx`.
+3. If the artifact is a Reveal.js deck, write the markdown at
+   `content/presentations/<slug>.md` and point `href` at the renderer.
+4. Set `featured: true` to give the artifact the hero spot on /reports
+   (most-recent featured wins).
 
 ### Adding a new top-level route
 
