@@ -2,9 +2,9 @@
 // from OIT, with a per-entry day counter. Each entry is a commit-worthy
 // event; treat this file as the audit trail.
 //
-// TODO: replace the 2026-05-01 placeholder dateRequested values with the
-// actual date(s) the agendas were sent to OIT. Different items may carry
-// different dates if they were requested in separate communications.
+// Current dateRequested values are placeholders set to mid-February 2026,
+// approximating when these items were first surfaced. Replace per-entry
+// with actual request dates as those become canonical.
 
 export type StandardsWatchStatus =
   | "requested"
@@ -23,7 +23,7 @@ export interface StandardsWatchItem {
   responseNote?: string;
 }
 
-const PLACEHOLDER_DATE = "2026-05-01"; // <- edit this when the real date is confirmed
+const PLACEHOLDER_DATE = "2026-02-15"; // mid-February — when these items first surfaced; refine per-entry as needed
 
 export const standardsWatch: StandardsWatchItem[] = [
   // ───── Agenda Item I — Software Development Standards ─────
