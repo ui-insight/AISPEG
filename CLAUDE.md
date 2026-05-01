@@ -45,7 +45,7 @@ Four primary surfaces in the sidebar, plus an About link in the footer:
 |---|---|---|
 | The Work | `/portfolio` | `lib/portfolio.ts` (TS for now; migrating to Postgres `applications` in Sprint 2) |
 | Submit a Project | `/builder-guide` | `lib/builder-guide-data.ts` (quiz definition); Postgres `submissions` (responses) |
-| Reports | `/reports` | `lib/data.ts` (`presentations`); time-stamped artifacts |
+| Reports | `/reports` | `lib/artifacts.ts` — unified timeline of briefs, activity reports, decks, and external presentations |
 | Standards | `/standards` | `lib/standards-watch.ts` (ledger entries; commit-worthy) |
 
 Plus `/ai4ra-ecosystem` (kept active until Sprint 4 salvage), `/docs/*`
@@ -118,6 +118,7 @@ components/                # Reusable components
 lib/                       # Domain logic
   portfolio.ts             # Intervention inventory (typed)
   standards-watch.ts       # Standards ledger
+  artifacts.ts             # Unified Reports timeline — briefs, activity reports, decks, talks
   builder-guide-data.ts    # Assessment quiz + scoring + tiers
   similarity.ts            # Submission ↔ registry overlap engine
   github.ts                # GitHub Issues API
@@ -156,7 +157,7 @@ _archive/                  # Routes/files archived in May 2026 refactor
 |---|---|---|
 | An intervention | `lib/portfolio.ts` | Use existing entries as templates. Set `visibility` honestly. |
 | A standards ledger entry | `lib/standards-watch.ts` | Each is commit-worthy; the git log is the audit trail. |
-| A presentation/deck | `lib/decks.ts` and `content/presentations/<slug>.md` | Reveal.js renders the markdown. |
+| A presentation/deck | `lib/artifacts.ts` (entry with `kind: "deck"`) plus `content/presentations/<slug>.md` if rendered via reveal.js | The artifact appears in the /reports timeline; the markdown drives the deck itself. |
 | A report | `app/reports/page.tsx` and (if needed) a route under `app/reports/<slug>` | Time-stamped, reverse-chron. |
 
 For Sprint 2+ schema changes, write a SQL migration under `db/migrations/`
