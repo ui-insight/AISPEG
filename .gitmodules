@@ -1,0 +1,3 @@
+[submodule "vendor/data-governance"]
+	path = vendor/data-governance
+	url = https://github.com/ui-insight/data-governance.git
