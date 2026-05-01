@@ -69,6 +69,10 @@ services:
     networks:
       aispeg-net:
         ipv4_address: 10.10.9.11
+    ports:
+      # Publish to host port 5433 so local migration / seed scripts can
+      # connect via DATABASE_URL=postgresql://...@localhost:5433/...
+      - "5433:5432"
     profiles:
       - dev
     healthcheck:

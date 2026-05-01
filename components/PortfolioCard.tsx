@@ -1,12 +1,8 @@
 import Link from "next/link";
-import type {
-  Intervention,
-  InterventionStatus,
-  Visibility,
-  AI4RARelationship,
-} from "@/lib/portfolio";
+import type { ApplicationWithBlockers, Blocker } from "@/lib/work";
+import { blockerCategoryLabels, daysSince } from "@/lib/work";
 
-const statusStyles: Record<InterventionStatus, string> = {
+const statusStyles: Record<string, string> = {
   Production: "bg-green-100 text-green-800",
   Piloting: "bg-blue-100 text-blue-800",
   Prototype: "bg-amber-100 text-amber-800",
@@ -15,49 +11,85 @@ const statusStyles: Record<InterventionStatus, string> = {
   Archived: "bg-gray-100 text-gray-500",
 };
 
-const visibilityNote: Record<Visibility, string | null> = {
-  Public: null,
-  Partial: "Embargoed",
-  "Internal-only": "Internal",
+const visibilityNote: Record<"public" | "embargoed" | "internal", string | null> = {
+  public: null,
+  embargoed: "Embargoed",
+  internal: "Internal",
 };
 
-const ai4raChip: Partial<Record<AI4RARelationship, string>> = {
+const ai4raChip: Record<string, string | undefined> = {
   Core: "AI4RA Core",
   Adjacent: "AI4RA Adjacent",
   Reference: "AI4RA Reference",
 };
 
-export default function PortfolioCard({
-  intervention,
+const severityStyles: Record<"low" | "medium" | "high", string> = {
+  low: "border-gray-200 bg-gray-50 text-gray-700",
+  medium: "border-amber-200 bg-amber-50 text-amber-800",
+  high: "border-red-200 bg-red-50 text-red-800",
+};
+
+function BlockerChip({
+  blocker,
+  audience,
 }: {
-  intervention: Intervention;
+  blocker: Blocker;
+  audience: "public" | "internal";
 }) {
-  const owners = intervention.operationalOwners
+  const days = daysSince(blocker.since);
+  const label = blockerCategoryLabels[blocker.category] ?? blocker.category;
+  const partySuffix = blocker.namedParty ? ` · ${blocker.namedParty}` : "";
+  const detail =
+    audience === "internal" && blocker.internalText
+      ? blocker.internalText
+      : blocker.publicText;
+
+  return (
+    <div
+      className={`relative z-10 rounded-md border px-2.5 py-1.5 text-xs ${severityStyles[blocker.severity]}`}
+    >
+      <p className="font-medium">
+        {label}
+        {partySuffix} · day {days}
+      </p>
+      {detail && (
+        <p className="mt-0.5 leading-snug opacity-80">{detail}</p>
+      )}
+    </div>
+  );
+}
+
+export default function PortfolioCard({
+  app,
+  audience = "public",
+  basePath = "/portfolio",
+}: {
+  app: ApplicationWithBlockers;
+  audience?: "public" | "internal";
+  basePath?: string;
+}) {
+  const owners = app.operationalOwners
     .map((o) => o.name)
     .slice(0, 2)
     .join(", ");
   const extraOwners =
-    intervention.operationalOwners.length > 2
-      ? ` +${intervention.operationalOwners.length - 2}`
+    app.operationalOwners.length > 2
+      ? ` +${app.operationalOwners.length - 2}`
       : "";
 
-  const liveHost = intervention.liveUrl
-    ? hostnameOf(intervention.liveUrl)
-    : null;
+  const liveHost = app.liveUrl ? hostnameOf(app.liveUrl) : null;
+  const ai4raLabel = ai4raChip[app.ai4raRelationship];
 
   return (
-    // Stretched-link pattern: whole card is clickable via the title's
-    // ::before overlay; the live-site anchor uses z-10 to stay clickable
-    // on top of the overlay without nesting anchors.
     <article className="group relative flex h-full flex-col rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:border-brand-gold hover:shadow-md">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h3 className="text-base font-semibold text-brand-black group-hover:text-brand-gold-dark transition-colors">
             <Link
-              href={`/portfolio/${intervention.slug}`}
+              href={`${basePath}/${app.slug}`}
               className="unstyled before:absolute before:inset-0"
             >
-              {intervention.name}
+              {app.name}
             </Link>
           </h3>
           {owners && (
@@ -68,38 +100,50 @@ export default function PortfolioCard({
           )}
         </div>
         <span
-          className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${statusStyles[intervention.status]}`}
+          className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${
+            statusStyles[app.status] ?? "bg-gray-100 text-gray-700"
+          }`}
         >
-          {intervention.status}
+          {app.status}
         </span>
       </div>
 
-      <p className="mt-3 text-sm leading-relaxed text-gray-700">
-        {intervention.tagline}
-      </p>
+      {app.tagline && (
+        <p className="mt-3 text-sm leading-relaxed text-gray-700">
+          {app.tagline}
+        </p>
+      )}
+
+      {app.activeBlockers.length > 0 && (
+        <div className="mt-4 space-y-1.5">
+          {app.activeBlockers.map((b) => (
+            <BlockerChip key={b.id} blocker={b} audience={audience} />
+          ))}
+        </div>
+      )}
 
       <div className="mt-4 flex flex-wrap gap-1.5">
-        {ai4raChip[intervention.ai4raRelationship] && (
+        {ai4raLabel && (
           <span className="rounded-full border border-brand-gold bg-brand-gold/15 px-2 py-0.5 text-xs font-semibold text-brand-gold-dark">
-            {ai4raChip[intervention.ai4raRelationship]}
+            {ai4raLabel}
           </span>
         )}
-        {intervention.dualDestinyPlanned && (
+        {app.dualDestinyPlanned && (
           <span className="rounded-full border border-gray-200 px-2 py-0.5 text-xs text-gray-600">
             Dual destiny
           </span>
         )}
-        {intervention.tags?.includes("diffusion") && (
+        {app.tags.includes("diffusion") && (
           <span className="rounded-full border border-brand-clearwater/40 bg-brand-clearwater/10 px-2 py-0.5 text-xs font-medium text-brand-clearwater">
             Capability diffusion
           </span>
         )}
-        {intervention.externalDeployments?.length ? (
+        {app.externalDeployments.length > 0 && (
           <span className="rounded-full border border-gray-200 px-2 py-0.5 text-xs text-gray-600">
-            Also at {intervention.externalDeployments.join(", ")}
+            Also at {app.externalDeployments.join(", ")}
           </span>
-        ) : null}
-        {intervention.trackingOnly && (
+        )}
+        {app.trackingOnly && (
           <span className="rounded-full border border-brand-huckleberry/30 bg-brand-huckleberry/10 px-2 py-0.5 text-xs font-medium text-brand-huckleberry">
             Tracked (not built by IIDS)
           </span>
@@ -107,7 +151,7 @@ export default function PortfolioCard({
       </div>
 
       <div className="mt-auto flex items-center gap-2 pt-4 text-xs text-gray-500">
-        {visibilityNote[intervention.visibility] && (
+        {visibilityNote[app.visibilityTier] && (
           <span className="inline-flex items-center gap-1 rounded border border-gray-200 px-1.5 py-0.5">
             <svg
               className="h-3 w-3"
@@ -122,29 +166,29 @@ export default function PortfolioCard({
                 d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
               />
             </svg>
-            {visibilityNote[intervention.visibility]}
+            {visibilityNote[app.visibilityTier]}
           </span>
         )}
-        {intervention.institutionalReviewStatus === "Under OIT review" && (
+        {app.institutionalReviewStatus === "Under OIT review" && (
           <span className="font-medium text-amber-700">Under OIT review</span>
         )}
-        {intervention.institutionalReviewStatus === "OIT-endorsed" && (
+        {app.institutionalReviewStatus === "OIT-endorsed" && (
           <span className="font-medium text-green-700">OIT-endorsed</span>
         )}
-        {intervention.funding && (
+        {app.funding && (
           <span className="truncate font-medium text-brand-gold-dark">
-            {intervention.funding}
+            {app.funding}
           </span>
         )}
       </div>
 
-      {intervention.liveUrl && liveHost && (
+      {app.liveUrl && liveHost && (
         <div className="mt-3 border-t border-gray-100 pt-3">
           <a
-            href={intervention.liveUrl}
+            href={app.liveUrl}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label={`Visit the live site for ${intervention.name} at ${liveHost}`}
+            aria-label={`Visit the live site for ${app.name} at ${liveHost}`}
             className="unstyled relative z-10 inline-flex items-center gap-1.5 text-xs font-semibold text-brand-clearwater hover:text-brand-black"
           >
             <LiveDot />
