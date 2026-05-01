@@ -1,6 +1,5 @@
 import Link from "next/link";
 import IssueCard from "@/components/IssueCard";
-import { actionPlanWorkstreams } from "@/lib/action-plan";
 import {
   fetchIssues,
   getStrategicIssues,
@@ -8,256 +7,88 @@ import {
   getOpenCount,
   getClosedCount,
 } from "@/lib/github";
-import {
-  institutionalQuestion,
-  strategicTakeaways,
-  principles,
-  lessons,
-  knowledgeArticles,
-  playbookItems,
-  projects,
-  presentations,
-} from "@/lib/data";
-import { interventions, getPubliclyVisible } from "@/lib/portfolio";
-import { decks } from "@/lib/decks";
-
-/* ---------------------------------------------------------- */
-/* Navigation cards data                                       */
-/* ---------------------------------------------------------- */
-const navCards = [
-  {
-    href: "/portfolio",
-    label: "Portfolio",
-    count: "UI AI interventions",
-    icon: "🗂️",
-  },
-  {
-    href: "/builder-guide",
-    label: "Submit a Project",
-    count: "Tracking portal",
-    icon: "✍️",
-  },
-  {
-    href: "/presentations",
-    label: "Presentations",
-    count: "Interactive decks",
-    icon: "🖥️",
-  },
-  {
-    href: "/ai4ra-ecosystem",
-    label: "AI4RA Ecosystem",
-    count: "UI + SUU partnership",
-    icon: "🔗",
-  },
-  {
-    href: "/outreach",
-    label: "Outreach & Events",
-    count: "Workshops + activity tools",
-    icon: "📣",
-  },
-  {
-    href: "/approach",
-    label: "Our Approach",
-    count: `${principles.length} principles · ${playbookItems.length} playbook · ${lessons.length} lessons`,
-    icon: "💡",
-  },
-  {
-    href: "/knowledge",
-    label: "Knowledge Base",
-    count: `${knowledgeArticles.length} articles`,
-    icon: "🔍",
-  },
-  {
-    href: "/roadmap",
-    label: "Roadmap",
-    count: "4 phases",
-    icon: "🗺️",
-  },
-  {
-    href: "/reports",
-    label: "Reports & Briefs",
-    count: `${presentations.length} documents`,
-    icon: "📄",
-  },
-  {
-    href: "/reports/feb-2026",
-    label: "Feb 2026 Activity Report",
-    count: `${projects.length} repositories`,
-    icon: "📊",
-  },
-  {
-    href: "/action-plan",
-    label: "Action Plan",
-    count: `${actionPlanWorkstreams.length} workstreams`,
-    icon: "🎯",
-  },
-];
+import { getPubliclyVisible } from "@/lib/portfolio";
 
 export const dynamic = "force-dynamic";
 
-/* ---------------------------------------------------------- */
-/* Page                                                        */
-/* ---------------------------------------------------------- */
 export default async function Home() {
   const allIssues = await fetchIssues();
   const strategic = getStrategicIssues(allIssues);
   const technical = getTechnicalIssues(allIssues);
+  const visibleCount = getPubliclyVisible().length;
 
   return (
-    <div className="space-y-10">
-      {/* Header + Mission */}
-      <div>
-        <h1 className="text-3xl font-bold text-ui-charcoal">
-          AI Strategic Plan Execution Group
-        </h1>
-        <p className="mt-2 max-w-2xl text-gray-600">
-          How the University of Idaho is approaching AI interventions for
-          operational excellence &mdash; the portfolio of projects,
-          principles that guide us, and lessons learned from agentic
-          development at institutional scale.
+    <div className="space-y-12">
+      {/* Hero */}
+      <section>
+        <p className="text-xs font-semibold uppercase tracking-wider text-ui-gold-dark">
+          Institutional AI Initiative · University of Idaho
         </p>
-        <div className="mt-4 flex flex-wrap gap-3">
+        <h1 className="mt-2 text-4xl font-black leading-tight tracking-tight text-ui-charcoal">
+          What IIDS shipped, what&rsquo;s stalled,
+          <br />
+          and why.
+        </h1>
+        <p className="mt-4 max-w-2xl text-base leading-relaxed text-gray-600">
+          A coordination nexus for the University of Idaho&rsquo;s institutional
+          AI work. Operated by the Institute for Interdisciplinary Data Sciences
+          under sponsorship of the AI Strategic Plan Execution Group. Every
+          project names an operational owner; every blocker names a date.
+        </p>
+        <div className="mt-6 flex flex-wrap gap-3">
           <Link
             href="/portfolio"
             className="inline-flex items-center gap-2 rounded-lg bg-ui-charcoal px-4 py-2 text-sm font-medium text-white hover:bg-ui-charcoal/90"
           >
-            View the Portfolio &rarr;
+            See the work &rarr;
+          </Link>
+          <Link
+            href="/standards"
+            className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-ui-charcoal hover:border-ui-gold/40"
+          >
+            Standards Watch &rarr;
           </Link>
           <Link
             href="/builder-guide"
             className="inline-flex items-center gap-2 rounded-lg bg-ui-gold px-4 py-2 text-sm font-medium text-ui-charcoal hover:bg-ui-gold/90"
           >
-            Submit a Project &rarr;
-          </Link>
-          <Link
-            href="/presentations"
-            className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-ui-charcoal hover:border-ui-gold/40"
-          >
-            Presentations &rarr;
+            Submit a project &rarr;
           </Link>
         </div>
-      </div>
+      </section>
 
-      {/* Institutional Question */}
-      <div className="rounded-xl border-l-4 border-ui-gold bg-white p-6 shadow-sm">
-        <p className="text-sm font-medium text-gray-500">
-          The Institutional Question
-        </p>
-        <p className="mt-2 text-gray-500 line-through">
-          &ldquo;{institutionalQuestion.wrong}&rdquo;
-        </p>
-        <p className="mt-1 text-lg font-semibold text-ui-charcoal">
-          &ldquo;{institutionalQuestion.right}&rdquo;
-        </p>
-      </div>
-
-      {/* Portfolio + Featured Deck — stakeholder hooks */}
-      <div className="grid gap-4 md:grid-cols-2">
+      {/* Portfolio teaser */}
+      <section>
         <Link
           href="/portfolio"
-          className="group rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-all hover:border-ui-gold/40 hover:shadow-md"
+          className="group block rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-all hover:border-ui-gold/40 hover:shadow-md"
         >
           <p className="text-xs font-medium uppercase tracking-wider text-ui-gold-dark">
-            UI AI Interventions
+            The Work
           </p>
           <h2 className="mt-2 text-xl font-semibold text-ui-charcoal group-hover:text-ui-gold-dark">
-            {getPubliclyVisible().length} AI interventions across UI units
+            {visibleCount} AI interventions in the institutional portfolio
           </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            The growing inventory of AI-powered work across UI units &mdash;
-            some coordinated or built by AISPEG, others tracked from partner
-            units. Grouped by home unit; each entry names an operational
-            owner accountable for the outcome.
+          <p className="mt-2 max-w-3xl text-sm text-gray-600">
+            IIDS-led work and AI4RA-built tools the University deploys.
+            Grouped by home unit; each entry names an operational owner
+            accountable for the outcome and surfaces blockers with the date
+            they began.
           </p>
           <p className="mt-3 text-sm font-medium text-ui-gold-dark group-hover:underline">
             Explore the portfolio &rarr;
           </p>
         </Link>
+      </section>
 
-        {decks[0] && (
-          <Link
-            href={`/presentations/${decks[0].slug}`}
-            className="group rounded-xl border border-gray-200 bg-gradient-to-br from-ui-charcoal to-ui-charcoal/90 p-6 text-white shadow-sm transition-all hover:border-ui-gold/40 hover:shadow-md"
-          >
-            <p className="text-xs font-medium uppercase tracking-wider text-ui-gold">
-              Featured presentation
-            </p>
-            <h2 className="mt-2 text-xl font-semibold group-hover:text-ui-gold">
-              {decks[0].title}
-            </h2>
-            <p className="mt-2 text-sm text-white/70">{decks[0].abstract}</p>
-            <p className="mt-3 text-sm font-medium text-ui-gold group-hover:underline">
-              Open the deck &rarr;
-            </p>
-          </Link>
-        )}
-      </div>
-
-      {/* Submit a project — dedicated invitation */}
-      <div className="rounded-xl border border-ui-gold bg-ui-gold/10 p-6 md:p-8">
-        <div className="md:flex md:items-center md:justify-between md:gap-8">
-          <div className="max-w-2xl">
-            <p className="text-xs font-semibold uppercase tracking-wider text-ui-gold-dark">
-              Contribute to the inventory
-            </p>
-            <h2 className="mt-1 text-2xl font-black text-ui-charcoal">
-              Got an AI project or an idea for one?
-            </h2>
-            <p className="mt-2 text-sm leading-relaxed text-gray-700">
-              The portfolio is institutional, not AISPEG-owned. If your unit
-              is building, piloting, procuring, or planning anything AI-related
-              &mdash; or has an idea you want help scoping &mdash; submit it
-              so AISPEG can track, support, or connect you to related work.
-              Even early-stage ideas welcome.
-            </p>
-          </div>
-          <div className="mt-4 md:mt-0">
-            <Link
-              href="/builder-guide"
-              className="unstyled inline-flex items-center gap-2 rounded-lg bg-ui-charcoal px-5 py-3 text-sm font-semibold text-white hover:bg-ui-charcoal/85"
-            >
-              Submit a Project &rarr;
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      {/* Current Phase Summary */}
-      <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-        <div className="flex flex-wrap items-center gap-3">
-          <h2 className="text-lg font-semibold text-ui-charcoal">
-            Phase 1: Foundation
-          </h2>
-          <span className="rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-700">
-            In Progress
-          </span>
-        </div>
-        <p className="mt-2 text-sm leading-relaxed text-gray-600">
-          Connecting agent tools to secure on-prem models, building initial
-          internal AI applications, evaluating repo-scale agent collaboration,
-          and establishing this collaborative hub. The foundation phase proves
-          the model works before scaling across the institution.
-        </p>
-        <Link
-          href="/roadmap"
-          className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-ui-gold-dark hover:text-ui-gold transition-colors"
-        >
-          View full roadmap
-          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
-        </Link>
-      </div>
-
-      {/* GitHub Issues — Strategic Action Items */}
-      <div>
+      {/* GitHub Strategic Action Items */}
+      <section>
         <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-lg font-semibold text-ui-charcoal">
             Strategic Action Items
           </h2>
           <span className="text-sm text-gray-500">
-            {getOpenCount(strategic)} open &middot;{" "}
-            {getClosedCount(strategic)} closed
+            {getOpenCount(strategic)} open · {getClosedCount(strategic)} closed
           </span>
         </div>
         {strategic.length > 0 ? (
@@ -277,10 +108,10 @@ export default async function Home() {
             </p>
           </div>
         )}
-      </div>
+      </section>
 
-      {/* GitHub Issues — Technical Improvements */}
-      <div>
+      {/* GitHub Technical Improvements */}
+      <section>
         <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-lg font-semibold text-ui-charcoal">
             Technical Improvements
@@ -332,51 +163,7 @@ export default async function Home() {
             </p>
           </div>
         )}
-      </div>
-
-      {/* Quick Navigation Cards */}
-      <div>
-        <h2 className="mb-4 text-lg font-semibold text-ui-charcoal">
-          Explore
-        </h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {navCards.map((card) => (
-            <Link
-              key={card.href}
-              href={card.href}
-              className="group flex items-start gap-4 rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:border-ui-gold/40 hover:shadow-md"
-            >
-              <span className="text-2xl">{card.icon}</span>
-              <div>
-                <p className="text-sm font-semibold text-ui-charcoal group-hover:text-ui-gold-dark transition-colors">
-                  {card.label}
-                </p>
-                <p className="mt-0.5 text-xs text-gray-500">{card.count}</p>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      {/* Strategic Takeaways */}
-      <div className="rounded-xl bg-ui-charcoal p-6 text-white">
-        <h2 className="text-lg font-semibold text-ui-gold">
-          Strategic Takeaways
-        </h2>
-        <ul className="mt-4 space-y-2">
-          {strategicTakeaways.map((item, i) => (
-            <li
-              key={i}
-              className="flex items-start gap-3 text-sm text-white/80"
-            >
-              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-ui-gold/20 text-xs font-bold text-ui-gold">
-                {i + 1}
-              </span>
-              {item}
-            </li>
-          ))}
-        </ul>
-      </div>
+      </section>
     </div>
   );
 }

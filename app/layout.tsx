@@ -12,9 +12,9 @@ const publicSans = Public_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "AISPEG - AI Strategic Plan Execution Group",
+  title: "Institutional AI Initiative · University of Idaho",
   description:
-    "A growing inventory of AI interventions for operational excellence at the University of Idaho, coordinated by AISPEG.",
+    "What IIDS shipped, what's stalled, and why. A coordination nexus for the University of Idaho's institutional AI work — operated by IIDS, sponsored by AISPEG.",
 };
 
 export default function RootLayout({
