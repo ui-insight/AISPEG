@@ -111,23 +111,17 @@ export default function StandardsWatchPage() {
       {/* Header */}
       <header>
         <p className="text-xs font-semibold uppercase tracking-wider text-ui-gold-dark">
-          Standards Watch
+          Institutional Standards
         </p>
         <h1 className="mt-2 text-3xl font-black tracking-tight text-ui-charcoal">
-          Outstanding standards asks of OIT
+          Software-development and user-experience standards
         </h1>
         <p className="mt-3 max-w-3xl text-base leading-relaxed text-gray-700">
-          A public ledger of the institutional software-development and
-          user-experience standards IIDS has formally requested from the
+          The institutional standards IIDS has formally requested from the
           Office of Information Technology. Each entry shows the date
-          requested and a counter of elapsed days. The page updates when OIT
-          publishes a standard.
-        </p>
-        <p className="mt-2 max-w-3xl text-sm leading-relaxed text-gray-500">
-          Without these standards in place, every project IIDS builds must
-          either invent its own approach or wait on ad-hoc per-project review.
-          The asks below are the prerequisites for predictable, auditable
-          institutional software delivery.
+          requested and elapsed time since. Entries move to{" "}
+          <span className="font-medium text-green-700">Published</span> as
+          OIT releases them.
         </p>
       </header>
 
@@ -201,18 +195,6 @@ export default function StandardsWatchPage() {
         </div>
       </section>
 
-      {/* Footer note */}
-      <section className="rounded-xl bg-ui-charcoal p-6 text-white">
-        <h2 className="text-base font-semibold text-ui-gold">How this page works</h2>
-        <p className="mt-3 text-sm leading-relaxed text-white/80">
-          Each entry corresponds to a standard IIDS has formally asked OIT
-          to publish. The day counter is computed from the request date.
-          When OIT publishes a standard, its entry moves to{" "}
-          <span className="text-ui-gold">Published</span> and the counter
-          stops. The page is durable: the request itself is the artifact,
-          dated and version-controlled.
-        </p>
-      </section>
     </div>
   );
 }

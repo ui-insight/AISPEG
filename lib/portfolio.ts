@@ -2,14 +2,12 @@
 // UI AI Intervention Inventory
 // ============================================================
 // The authoritative list of AI interventions across University of Idaho units
-// that AISPEG coordinates, builds, or tracks. An "intervention" is a UI
+// that IIDS coordinates, builds, or tracks. An "intervention" is a UI
 // deployment / UI-owned effort — not a GitHub repo. Repos are artifacts;
 // interventions have home units, operational owners, and status-at-UI.
 //
-// This file replaces the repo-centric "portfolioProjects" that predated the
-// April 2026 interview with Barrie Robison. AI4RA reference projects
-// (prompt-library, evaluation-harness, AI4RA-UDM, mcp-ecfr, etc.) live on
-// /ai4ra-ecosystem, not here.
+// AI4RA reference projects (prompt-library, evaluation-harness, AI4RA-UDM,
+// mcp-ecfr, etc.) live on /ai4ra-ecosystem, not here.
 // ============================================================
 
 export type Visibility =
@@ -22,7 +20,7 @@ export type InterventionStatus =
   | "Prototype"    // Built, not yet in use with real users
   | "Piloting"     // Deployed prototype in use with a limited group
   | "Production"   // Deployed for regular institutional use
-  | "Tracked"      // Not built by AISPEG/IIDS; tracking-only stub
+  | "Tracked"      // Not built by IIDS; tracking-only stub
   | "Archived";
 
 export type AI4RARelationship =
@@ -268,7 +266,7 @@ export const interventions: Intervention[] = [
     tagline:
       "Co-built with SEM — experiential learning and student engagement records.",
     description:
-      "Platform for managing experiential learning and student engagement records. MVP covers organizations, events, attendance, dashboard metrics, and admin user lifecycle. Scaffolded from TEMPLATE-app following OpenERA patterns. This is an early example of AISPEG diffusing agentic-coding capability out of IIDS: SEM is co-building alongside IIDS, not just consuming.",
+      "Platform for managing experiential learning and student engagement records. MVP covers organizations, events, attendance, dashboard metrics, and admin user lifecycle. Scaffolded from TEMPLATE-app following OpenERA patterns. This is an early example of IIDS diffusing agentic-coding capability out into partner units: SEM is co-building alongside IIDS, not just consuming.",
     homeUnits: ["Strategic Enrollment Management"],
     operationalOwners: [
       { name: "Dean Kahler", title: "Vice Provost of SEM" },
@@ -388,14 +386,14 @@ export const interventions: Intervention[] = [
   },
 
   // ============================================================
-  // Tracked — not built by AISPEG / IIDS
+  // Tracked — not built by IIDS
   // ============================================================
   {
     slug: "oit-data-modernization",
     name: "OIT Data Modernization (Huron)",
     tagline: "Enterprise data modernization led by OIT with Huron consulting.",
     description:
-      "OIT is leading an institutional data modernization effort in partnership with Huron Consulting. AISPEG is tracking this work as part of the AI interventions inventory; detailed information will be added as OIT shares scope, timelines, and integration points with existing AISPEG-coordinated work.",
+      "OIT is leading an institutional data modernization effort in partnership with Huron Consulting. The work is tracked here as part of the AI interventions inventory; detailed information will be added as OIT shares scope, timelines, and integration points with related IIDS-built work.",
     homeUnits: ["Office of Information Technology"],
     operationalOwners: [],
     buildParticipants: ["OIT", "Huron Consulting"],

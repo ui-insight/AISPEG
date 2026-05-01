@@ -14,7 +14,7 @@ const publicSans = Public_Sans({
 export const metadata: Metadata = {
   title: "Institutional AI Initiative · University of Idaho",
   description:
-    "What IIDS shipped, what's stalled, and why. A coordination nexus for the University of Idaho's institutional AI work — operated by IIDS, sponsored by AISPEG.",
+    "AI work at the University of Idaho, coordinated by the Institute for Interdisciplinary Data Sciences.",
 };
 
 export default function RootLayout({

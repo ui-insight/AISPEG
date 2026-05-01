@@ -7,7 +7,7 @@ import { useState } from "react";
 const primaryItems = [
   { href: "/", label: "Home", icon: "squares" },
   { href: "/portfolio", label: "The Work", icon: "grid" },
-  { href: "/standards", label: "Standards Watch", icon: "shield" },
+  { href: "/standards", label: "Standards", icon: "shield" },
   { href: "/builder-guide", label: "Submit a Project", icon: "compass" },
   { href: "/reports", label: "Reports", icon: "document" },
 ];
@@ -102,7 +102,7 @@ export default function Sidebar() {
             University of Idaho
           </h1>
           <p className="mt-2 text-xs text-white/50">
-            Operated by IIDS · Sponsored by AISPEG
+            Coordinated by IIDS
           </p>
         </div>
 
@@ -154,9 +154,9 @@ export default function Sidebar() {
 
         <div className="border-t border-white/10 px-6 py-4">
           <p className="text-xs text-white/40">
-            What IIDS shipped, what&rsquo;s stalled,
+            Institute for Interdisciplinary
             <br />
-            and why.
+            Data Sciences
           </p>
         </div>
       </aside>

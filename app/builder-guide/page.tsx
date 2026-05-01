@@ -740,7 +740,7 @@ function ResultsView({
           </span>
         </div>
         <p className="mt-2 text-xs text-gray-400">
-          Template repositories are being developed. Check back soon or contact AISPEG for guidance.
+          Template repositories are being developed. Check back soon or contact IIDS for guidance.
         </p>
       </div>
 

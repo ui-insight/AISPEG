@@ -1,7 +1,9 @@
-# AISPEG — Agent Collaboration Guide
+# Institutional AI Initiative — Agent Collaboration Guide
 
 ## Project Overview
-Interactive website for the AI Strategic Plan Execution Group (AISPEG) at the University of Idaho. AISPEG is a Presidentially-chartered cross-cutting initiative chaired by Ben Hunter (Dean of the Libraries), with members Barrie Robison, Luke Sheneman, Dan Ewart, and Bert Baumgaertner. The site is a growing inventory of AI interventions for operational excellence across UI units — some built by IIDS (Institute for Interdisciplinary Data Sciences, which runs MindRouter and DGX Stack), others tracked from partner units (OIT, OGC, etc.). AI4RA is the UI+SUU NSF GRANTED partnership producing reference open-source tools that UI also deploys institutionally (OpenERA, Vandalizer, MindRouter, ProcessMapping). Built with Next.js (App Router), Tailwind CSS v4, and TypeScript.
+Interactive website for the University of Idaho's institutional AI initiative, coordinated by IIDS (Institute for Interdisciplinary Data Sciences, which runs MindRouter and DGX Stack). The site maintains a growing inventory of AI interventions across UI units — some built by IIDS, others led by partner units, plus tools from the AI4RA partnership (UI + Southern Utah University NSF GRANTED, producing OpenERA, Vandalizer, MindRouter, ProcessMapping) that UI deploys institutionally. Built with Next.js (App Router), Tailwind CSS v4, and TypeScript.
+
+The repository name and infrastructure identifiers (URLs, container names, database) carry the legacy `aispeg` slug from the project's origin as an AI Strategic Plan Execution Group collaboration site. The AISPEG group is dormant; user-facing surfaces have been rewritten to drop AISPEG branding and present the site as IIDS-coordinated. See `REFACTOR.md` at the project root for the May 2026 refactor history.
 
 ## Design Context
 
