@@ -1,6 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 import { query, queryOne } from "@/lib/db";
 
+// All applications columns the registry detail page reads. Stays in lockstep
+// with the schema added in db/migrations/005_friction_ledger.sql.
+const READ_COLUMNS = `
+  id, slug, name, tagline, description,
+  owner_name, owner_email, department,
+  home_units, operational_owners, build_participants, tags,
+  github_repo, url, tier, status, visibility_tier,
+  sensitivity, complexity, userbase, auth_level,
+  integrations, data_sources, university_systems, output_types,
+  ai4ra_relationship, dual_destiny_planned, external_deployments,
+  institutional_review_status,
+  repo_url, docs_url, live_url, is_private_repo,
+  funding,
+  operational_function, operational_excellence_outcome,
+  features, tech,
+  tracking_only, related_slugs,
+  clickup_task_id,
+  submission_id, created_at, updated_at
+`;
+
 // GET /api/registry/[id] — get a single application
 export async function GET(
   _request: NextRequest,
@@ -9,12 +29,7 @@ export async function GET(
   try {
     const { id } = await params;
     const app = await queryOne(
-      `SELECT id, name, description, owner_name, owner_email, department,
-              github_repo, url, tier, status, sensitivity, complexity, userbase,
-              auth_level, integrations, data_sources, university_systems,
-              output_types, submission_id, created_at, updated_at
-       FROM applications
-       WHERE id = $1`,
+      `SELECT ${READ_COLUMNS} FROM applications WHERE id = $1`,
       [id]
     );
 
@@ -28,6 +43,29 @@ export async function GET(
   }
 }
 
+// Columns the PATCH endpoint will touch. Maps allowed body keys → column
+// names. JSONB columns are listed separately so they can be passed
+// through ::jsonb in the dynamic SET clause; pg's default text encoder
+// otherwise emits the value as a quoted string.
+const SCALAR_COLUMNS: string[] = [
+  "name", "slug", "tagline", "description",
+  "owner_name", "owner_email", "department",
+  "home_units", "build_participants", "tags",
+  "github_repo", "url", "tier", "status", "visibility_tier",
+  "sensitivity", "complexity", "userbase", "auth_level",
+  "integrations", "data_sources", "university_systems", "output_types",
+  "ai4ra_relationship", "dual_destiny_planned", "external_deployments",
+  "institutional_review_status",
+  "repo_url", "docs_url", "live_url", "is_private_repo",
+  "funding",
+  "operational_function", "operational_excellence_outcome",
+  "features", "tech",
+  "tracking_only", "related_slugs",
+  "clickup_task_id",
+];
+
+const JSONB_COLUMNS: string[] = ["operational_owners"];
+
 // PATCH /api/registry/[id] — update an application
 export async function PATCH(
   request: NextRequest,
@@ -37,35 +75,24 @@ export async function PATCH(
     const { id } = await params;
     const body = await request.json();
 
-    // Build dynamic SET clause from provided fields
-    const allowedFields: Record<string, string> = {
-      name: "name",
-      description: "description",
-      owner_name: "owner_name",
-      owner_email: "owner_email",
-      department: "department",
-      github_repo: "github_repo",
-      url: "url",
-      tier: "tier",
-      status: "status",
-      sensitivity: "sensitivity",
-      complexity: "complexity",
-      userbase: "userbase",
-      auth_level: "auth_level",
-      integrations: "integrations",
-      data_sources: "data_sources",
-      university_systems: "university_systems",
-      output_types: "output_types",
-    };
-
     const sets: string[] = [];
     const values: unknown[] = [];
     let paramIdx = 1;
 
-    for (const [key, col] of Object.entries(allowedFields)) {
-      if (key in body) {
+    for (const col of SCALAR_COLUMNS) {
+      if (col in body) {
         sets.push(`${col} = $${paramIdx}`);
-        values.push(body[key]);
+        values.push(body[col]);
+        paramIdx++;
+      }
+    }
+
+    for (const col of JSONB_COLUMNS) {
+      if (col in body) {
+        const value =
+          typeof body[col] === "string" ? body[col] : JSON.stringify(body[col]);
+        sets.push(`${col} = $${paramIdx}::jsonb`);
+        values.push(value);
         paramIdx++;
       }
     }
