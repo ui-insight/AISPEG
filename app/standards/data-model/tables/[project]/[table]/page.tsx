@@ -6,7 +6,7 @@ import {
   projects,
   tables,
 } from "@/lib/governance/catalog";
-import { vocabularyGroups } from "@/lib/governance/vocabularies";
+import { resolveVocabularyGroupForColumn } from "@/lib/governance/vocabulary-usage";
 import type { Column, Table, TableKind } from "@/lib/governance/types";
 
 export function generateStaticParams() {
@@ -69,62 +69,30 @@ function ClassificationBadge({
   );
 }
 
-/**
- * Build the set of vocabulary-group names that may apply to a given project.
- * Match by both `application` (e.g. "OpenERA") and `domain` (e.g. "openera"),
- * using case-insensitive comparison so the loose tagging in upstream JSON
- * still matches our project slugs/applications.
- */
-function vocabularyGroupNamesForProject(
-  projectSlug: string,
-  projectApplication: string,
-): Set<string> {
-  const slugLower = projectSlug.toLowerCase();
-  const appLower = projectApplication.toLowerCase();
-  const names = new Set<string>();
-  for (const g of vocabularyGroups) {
-    const domainLower = (g.domain ?? "").toLowerCase();
-    const appField = (g.application ?? "").toLowerCase();
-    if (
-      domainLower === slugLower ||
-      domainLower === appLower ||
-      appField === appLower ||
-      appField === slugLower
-    ) {
-      names.add(g.group.toLowerCase());
-    }
-  }
-  return names;
-}
-
-/**
- * Heuristic: is this column a controlled-vocabulary column?
- * 1. Foreign key targets the AllowedValues table.
- * 2. Column name (normalized) matches a known vocabulary group name in this project.
- */
-function isVocabularyColumn(
-  column: Column,
-  vocabNamesLower: Set<string>,
-): boolean {
-  const fk = column.foreignKey ?? "";
-  if (fk.startsWith("AllowedValues.")) return true;
-
-  const normalize = (s: string) =>
-    s.replace(/[_\s-]+/g, "").replace(/id$/i, "").toLowerCase();
-  const normalized = normalize(column.name);
-  if (!normalized) return false;
-  for (const g of vocabNamesLower) {
-    if (normalize(g) === normalized) return true;
-  }
-  return false;
+function VocabPill({
+  domain,
+  group,
+}: {
+  domain: string;
+  group: string;
+}) {
+  return (
+    <Link
+      href={`/standards/data-model/vocabularies/${encodeURIComponent(domain)}/${encodeURIComponent(group)}`}
+      className="unstyled ml-2 inline-block rounded bg-brand-huckleberry/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-brand-huckleberry hover:bg-brand-huckleberry/20"
+      title={`Vocabulary group: ${domain}/${group}`}
+    >
+      Vocab
+    </Link>
+  );
 }
 
 function ColumnRow({
   column,
-  isVocab,
+  vocabKey,
 }: {
   column: Column;
-  isVocab: boolean;
+  vocabKey: { domain: string; group: string } | null;
 }) {
   return (
     <tr className="border-t border-gray-100 align-top">
@@ -135,13 +103,8 @@ function ColumnRow({
             PK
           </span>
         )}
-        {isVocab && (
-          <span
-            className="ml-2 rounded bg-brand-huckleberry/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-brand-huckleberry"
-            title="Values controlled by a vocabulary group"
-          >
-            Vocab
-          </span>
+        {vocabKey && (
+          <VocabPill domain={vocabKey.domain} group={vocabKey.group} />
         )}
       </td>
       <td className="py-2 pr-4 font-mono text-xs text-gray-600">
@@ -173,15 +136,10 @@ export default async function TableDetailPage({
   const table = findTable(projectSlug, tableName);
   if (!table) notFound();
 
-  const vocabNamesLower = vocabularyGroupNamesForProject(
-    project.slug,
-    project.application,
+  const vocabKeys = table.columns.map((c) =>
+    resolveVocabularyGroupForColumn(table, c),
   );
-
-  const vocabFlags = table.columns.map((c) =>
-    isVocabularyColumn(c, vocabNamesLower),
-  );
-  const vocabColumnCount = vocabFlags.filter(Boolean).length;
+  const vocabColumnCount = vocabKeys.filter((k) => k !== null).length;
 
   // Group declared relationships by target.
   const relationshipsByTarget = new Map<string, typeof table.relationships>();
@@ -325,7 +283,7 @@ export default async function TableDetailPage({
                 <ColumnRow
                   key={c.name}
                   column={c}
-                  isVocab={vocabFlags[i] ?? false}
+                  vocabKey={vocabKeys[i] ?? null}
                 />
               ))}
             </tbody>
@@ -429,15 +387,9 @@ export default async function TableDetailPage({
         >
           ui-insight/data-governance#9
         </a>
-        ; vocabulary hyperlinking arrives with{" "}
-        <a
-          href="https://github.com/ui-insight/AISPEG/issues/57"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          #57
-        </a>
-        . See{" "}
+        . Vocab pills link to the vocabulary detail page when the resolver
+        can pick a single destination; ambiguous matches stay unlinked.
+        See{" "}
         <a
           href="https://github.com/ui-insight/AISPEG/issues/53"
           target="_blank"
@@ -445,7 +397,7 @@ export default async function TableDetailPage({
         >
           #53
         </a>{" "}
-        for the full epic and follow-up tracking.
+        for the full epic.
       </footer>
     </div>
   );

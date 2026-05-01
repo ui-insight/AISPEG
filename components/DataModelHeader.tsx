@@ -2,22 +2,28 @@ import Link from "next/link";
 import { projects } from "@/lib/governance/catalog";
 import { vocabularyGroups } from "@/lib/governance/vocabularies";
 
-const TAB_ITEMS = [
-  { id: "projects" as const, label: "Projects", href: "/standards/data-model" },
+export type DataModelTab = "projects" | "tables" | "vocabularies";
+
+interface TabItem {
+  id: DataModelTab;
+  label: string;
+  href: string;
+  stub?: boolean;
+}
+
+const TAB_ITEMS: TabItem[] = [
+  { id: "projects", label: "Projects", href: "/standards/data-model" },
   {
-    id: "tables" as const,
+    id: "tables",
     label: "Tables",
     href: "/standards/data-model/tables",
   },
   {
-    id: "vocabularies" as const,
+    id: "vocabularies",
     label: "Vocabularies",
     href: "/standards/data-model/vocabularies",
-    stub: true,
   },
 ];
-
-export type DataModelTab = "projects" | "tables" | "vocabularies";
 
 function TabBar({ active }: { active: DataModelTab }) {
   return (
