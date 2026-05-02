@@ -8,6 +8,7 @@ import {
 } from "@/lib/governance/catalog";
 import { resolveVocabularyGroupForColumn } from "@/lib/governance/vocabulary-usage";
 import { getProjectFraming } from "@/lib/governance/project-framing";
+import GlossaryTerm from "@/components/GlossaryTerm";
 import type { Column, Table, TableKind } from "@/lib/governance/types";
 
 export function generateStaticParams() {
@@ -253,8 +254,12 @@ export default async function TableDetailPage({
           <div>
             <h2 className="text-xl font-bold text-ui-charcoal">Columns</h2>
             <p className="mt-1 text-sm text-gray-600">
-              Full column list. PK marks primary keys; Vocab marks columns
-              whose values come from a controlled vocabulary group.
+              Full column list.{" "}
+              <GlossaryTerm term="PK">PK</GlossaryTerm> marks primary keys;{" "}
+              <GlossaryTerm term="Vocab">Vocab</GlossaryTerm> marks columns
+              whose values come from a controlled vocabulary group.{" "}
+              <GlossaryTerm term="FK">Foreign keys</GlossaryTerm> reference rows in
+              another table.
             </p>
           </div>
           <p className="text-xs text-gray-500">
