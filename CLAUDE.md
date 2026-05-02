@@ -34,8 +34,9 @@ sprint sequencing.
 - **Sprint 2** — The Work rebuild + Migration 005 (friction-ledger schema)
   + auth-gated `/internal`.
 - **Sprint 3** — ClickUp wiring + Submit-a-Project delivery improvements.
-- **Sprint 4** — Reports unification, About page, salvage from `_archive/`,
-  deeper cleanup of `lib/data.ts` and `app/docs/*`.
+- **Sprint 4** — Reports unification *(complete)*, About page *(complete)*,
+  `_archive/` deletion *(complete)*, deeper cleanup of `lib/data.ts` and
+  `app/docs/*` *(in progress)*.
 
 ## Information architecture
 
@@ -45,17 +46,17 @@ Four primary surfaces in the sidebar, plus an About link in the footer:
 |---|---|---|
 | The Work | `/portfolio` | `lib/portfolio.ts` (TS for now; migrating to Postgres `applications` in Sprint 2) |
 | Submit a Project | `/builder-guide` | `lib/builder-guide-data.ts` (quiz definition); Postgres `submissions` (responses) |
-| Reports | `/reports` | `lib/artifacts.ts` — unified timeline of briefs, activity reports, decks, and external presentations |
+| Reports | `/reports` | `lib/artifacts.ts` — unified timeline of briefs, activity reports, and external presentations |
 | Standards | `/standards` | `lib/standards-watch.ts` (ledger entries; commit-worthy) |
 
-Plus `/ai4ra-ecosystem` (kept active until Sprint 4 salvage), `/docs/*`
+Plus `/ai4ra-ecosystem` (deep-dive linked from About), `/docs/*`
 (technical and user documentation), `/admin/*` (registry + submissions
 admin during the ClickUp transition).
 
-Routes archived in the Sprint 1 cuts (live in `_archive/app-routes/`):
-`/knowledge`, `/cautionary-tales`, `/roadmap`, `/outreach`, `/action-plan`,
-`/approach`, and `/standards/[id]`. Do not reintroduce content into these
-without checking `REFACTOR.md` — they were cut for cause.
+Routes cut in the May 2026 refactor (`/knowledge`, `/cautionary-tales`,
+`/roadmap`, `/outreach`, `/action-plan`, `/approach`, `/standards/[id]`)
+were removed entirely in Sprint 4. Recover from git history if a salvage
+need arises; check `REFACTOR.md` for the rationale.
 
 ## Design context
 
@@ -137,9 +138,6 @@ scripts/                   # Node scripts run via tsx
 
 vendor/                    # Vendored dependencies
   data-governance/         # Git submodule → ui-insight/data-governance
-
-_archive/                  # Routes/files archived in May 2026 refactor
-                           # Pending Sprint 4 salvage; deletion candidate
 ```
 
 ## Conventions

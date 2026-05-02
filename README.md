@@ -16,14 +16,14 @@ The site shows what's being built, what's stalled, and where to engage.
 |---|---|---|
 | **The Work** | `/portfolio` | Portfolio of AI interventions across UI units. Each entry names a home unit and operational owner. |
 | **Submit a Project** | `/builder-guide` | A 9-step assessment that scopes an AI idea, classifies it into one of four tiers, and connects the submitter to a named owner at IIDS. |
-| **Reports** | `/reports` | Activity reports, decks, and time-stamped public artifacts. |
+| **Reports** | `/reports` | Activity reports, briefs, and time-stamped public artifacts. |
 | **Standards** | `/standards` | Public ledger of the institutional software-development and user-experience standards IIDS has formally requested from OIT. The `/standards/data-model` sub-section is an interactive explorer for the AI4RA Unified Data Model and the per-project extensions across the IIDS portfolio. |
 
 Plus `/docs` (technical and user documentation) and `/admin/*` (registry +
-submissions admin during the ClickUp transition). The May 2026 refactor
-archived several legacy routes (`/knowledge`, `/cautionary-tales`,
-`/roadmap`, `/outreach`, `/action-plan`, `/approach`) into `_archive/`;
-they are not part of the active site.
+submissions admin during the ClickUp transition). Several legacy routes
+(`/knowledge`, `/cautionary-tales`, `/roadmap`, `/outreach`,
+`/action-plan`, `/approach`) were cut in the May 2026 refactor; recover
+from git history if needed.
 
 ## Quick start
 
@@ -95,8 +95,6 @@ lib/                         # Domain logic and data
   data.ts                    # Legacy strategic content data (slated for cleanup)
 
 db/migrations/               # SQL migrations (001 → 004)
-_archive/                    # Routes/files archived in the May 2026 refactor
-                             # Pending Sprint 4 salvage; deletion candidate
 ```
 
 ## Refactor in progress
@@ -115,8 +113,9 @@ the full plan, sprint sequencing, and decisions:
 - **Sprint 3** — ClickUp wiring + Submit-a-Project improvements: named-SLA
   acknowledgment, submitter-visible status page (`/intake/[token]`),
   similarity matching surfaced during assessment.
-- **Sprint 4** — Reports unification, About page, salvage from `_archive/`,
-  cleanup pass on `lib/data.ts` and `app/docs/*`.
+- **Sprint 4** — Reports unification *(complete)*, About page *(complete)*,
+  `_archive/` deletion *(complete)*, cleanup pass on `lib/data.ts` and
+  `app/docs/*` *(in progress)*.
 
 ## Working on the codebase
 

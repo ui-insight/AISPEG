@@ -112,7 +112,7 @@ export default function AboutPage() {
               Reports
             </p>
             <h3 className="mt-2 text-base font-semibold text-ui-charcoal group-hover:text-ui-gold-dark">
-              Activity reports, briefs, decks
+              Activity reports and briefs
             </h3>
             <p className="mt-2 text-sm text-gray-600">
               Time-stamped artifacts produced by IIDS and partner

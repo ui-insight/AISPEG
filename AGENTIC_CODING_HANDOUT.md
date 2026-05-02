@@ -81,7 +81,6 @@ The session will likely move through four stages:
 - `lib/data.ts` — legacy strategic data (slated for cleanup)
 - `lib/github.ts` — fetches GitHub issue data
 - `db/migrations/` — SQL migrations
-- `_archive/` — routes/files archived in the May 2026 refactor
 
 The safest first tasks are usually:
 

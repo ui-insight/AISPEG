@@ -257,15 +257,16 @@ Give your agent the strategic context first. A good opening:
 - Tailwind tokens: `ui-charcoal`, `ui-gold`, `ui-gold-dark`,
   `brand-huckleberry`, `brand-lupine`. No raw hex in components.
 - `npm run build` must pass before committing.
-- The site is mid-refactor; archived routes live in `_archive/` and should
-  not be reintroduced without checking `REFACTOR.md`.
+- The site is mid-refactor; legacy routes were cut for cause in the May
+  2026 refactor and should not be reintroduced without checking
+  `REFACTOR.md`.
 
 ### Common pitfalls
 
 - **Don't add new content to `lib/data.ts`** — use the typed modules.
 - **Don't reach for `"use client"`** unless a component genuinely needs
   client-side state or events.
-- **Don't reintroduce archived routes** (`/knowledge`, `/cautionary-tales`,
+- **Don't reintroduce cut routes** (`/knowledge`, `/cautionary-tales`,
   `/roadmap`, `/outreach`, `/action-plan`, `/approach`) — they were cut
   for cause; check `REFACTOR.md` before touching them.
 - **Don't editorialize on user-facing surfaces** — the design principle is

@@ -405,6 +405,6 @@ export const recommendations = [
 //   strategicTakeaways, institutionalQuestion, CautionaryTale,
 //   cautionaryTales, standardsRoadmapSource, institutionalStandards,
 //   standardsPhases, standardDocuments, standardsSuccessMetrics
-// They were referenced only by routes archived under `_archive/app-routes`
+// They were referenced only by routes cut in the May 2026 refactor
 // (/approach, /knowledge, /cautionary-tales, /standards/[id]). Recover
-// from git history if a salvage need arises during Sprint 4 cleanup.
+// from git history if a salvage need arises.
