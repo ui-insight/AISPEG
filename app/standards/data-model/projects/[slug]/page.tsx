@@ -247,9 +247,25 @@ export default async function ProjectDetailPage({
                 Tables in catalog
               </dt>
               <dd className="mt-0.5 text-brand-black">
-                <span className="font-semibold">{project.tableCount}</span> total
-                {" — "}
-                {project.canonicalUdmCount} canonical, {project.projectExtensionCount} project-specific
+                {project.tableCount === 0 ? (
+                  "No tables in the catalog yet."
+                ) : project.canonicalUdmCount === 0 ? (
+                  <>
+                    <span className="font-semibold">{project.tableCount}</span> total
+                    {" — all project-specific"}
+                  </>
+                ) : project.projectExtensionCount === 0 ? (
+                  <>
+                    <span className="font-semibold">{project.tableCount}</span> total
+                    {" — all canonical UDM"}
+                  </>
+                ) : (
+                  <>
+                    <span className="font-semibold">{project.tableCount}</span> total
+                    {" — "}
+                    {project.canonicalUdmCount} canonical, {project.projectExtensionCount} project-specific
+                  </>
+                )}
               </dd>
             </div>
             <div>
