@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { vocabularyGroups } from "@/lib/governance/vocabularies";
 import { getProject } from "@/lib/governance/catalog";
+import { getVocabularyDomainFraming } from "@/lib/governance/project-framing";
 import {
   getProjectsUsingGroup,
   type MatchReason,
@@ -93,17 +94,19 @@ export default async function VocabularyDetailPage({
     0,
   );
 
+  const domainFraming = getVocabularyDomainFraming(vg.domain);
+
   return (
     <div className="space-y-10">
       <header>
         <p className="text-xs">
           <Link href="/standards/data-model/vocabularies">← Vocabularies</Link>
         </p>
-        <p className="mt-3 text-[11px] font-semibold uppercase tracking-wider text-ui-gold-dark">
+        <p className="mt-3 text-[11px] font-semibold uppercase tracking-wider text-brand-clearwater">
           {vg.domain}
         </p>
         <div className="mt-1 flex flex-wrap items-center gap-3">
-          <h1 className="font-mono text-3xl font-black tracking-tight text-ui-charcoal">
+          <h1 className="font-mono text-3xl font-black tracking-tight text-brand-black">
             {vg.group}
           </h1>
           {vg.application && (
@@ -112,6 +115,18 @@ export default async function VocabularyDetailPage({
             </span>
           )}
         </div>
+
+        {domainFraming && (
+          <p className="mt-3 text-sm text-ink-muted">
+            <span className="font-semibold text-brand-black">{vg.domain}</span>{" "}
+            vocabularies are stewarded by{" "}
+            <span className="font-semibold text-brand-black">
+              {domainFraming.owners.map((o) => o.name).join(", ")}
+            </span>
+            {" · "}
+            {domainFraming.homeUnit}
+          </p>
+        )}
 
         <dl className="mt-6 grid grid-cols-2 gap-x-8 gap-y-3 text-sm md:grid-cols-3">
           <div>
