@@ -35,8 +35,8 @@ sprint sequencing.
   + auth-gated `/internal`.
 - **Sprint 3** — ClickUp wiring + Submit-a-Project delivery improvements.
 - **Sprint 4** — Reports unification *(complete)*, About page *(complete)*,
-  `_archive/` deletion *(complete)*, deeper cleanup of `lib/data.ts` and
-  `app/docs/*` *(in progress)*.
+  `_archive/` deletion *(complete)*, `lib/data.ts` retirement *(complete)*,
+  `app/docs/*` cleanup *(in progress)*.
 
 ## Information architecture
 
@@ -124,7 +124,6 @@ lib/                       # Domain logic
   github.ts                # GitHub Issues API
   mindrouter.ts            # MindRouter LLM client
   db.ts                    # Postgres connection pool
-  data.ts                  # Legacy strategic data (slated for Sprint 4 cleanup)
   governance/              # Data Governance Explorer typed modules
     types.ts               # Shared interfaces (Project, Table, Column, Vocabulary*)
     canonical-udm-tables.ts # Hand-curated canonical-vs-extension tagging (v1)

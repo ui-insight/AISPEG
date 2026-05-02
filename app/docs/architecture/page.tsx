@@ -223,7 +223,6 @@ lib/
   github.ts               # GitHub Issues API
   mindrouter.ts           # MindRouter LLM client
   db.ts                   # PostgreSQL connection pool
-  data.ts                 # Legacy strategic data (slated for cleanup)
 db/
   migrations/             # SQL migrations (001-004; 005 in Sprint 2)
       `}</pre>

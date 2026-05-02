@@ -67,21 +67,18 @@ catches schema drift:
 - `lib/portfolio.ts` — interventions inventory (seed source; runtime via Postgres)
 - `lib/standards-watch.ts` — standards ledger
 - `lib/builder-guide-data.ts` — quiz, scoring, tiers
-- `lib/artifacts.ts` — unified Reports timeline (briefs, activity reports, decks, talks)
+- `lib/artifacts.ts` — unified Reports timeline (briefs, activity reports, external talks)
 - `lib/intake-config.ts` — Submit-a-Project named human + SLA + status labels
 
-`lib/data.ts` carries legacy AISPEG-era data (principles, lessons, action
-plan, cautionary tales, etc.). Most of its exports are referenced only by
-archived/orphan code at this point and are slated for Sprint 4 cleanup.
-**Don't add new content to `lib/data.ts`.** Use one of the typed modules
-above, or open a discussion if a new module is warranted.
+Per-page data that backs only one route lives next to the page (e.g.
+`app/reports/feb-2026/data.ts`), not in `lib/`. Reserve `lib/` for data
+shared across surfaces.
 
 ### Server vs client components
 
 - Pages are **server components** by default (no `"use client"`).
 - Components needing `useState`, `useEffect`, or event handlers use
-  `"use client"` (`Sidebar.tsx`, `RevealDeck.tsx`, the builder-guide
-  wizard).
+  `"use client"` (`Sidebar.tsx`, the builder-guide wizard).
 - Don't reach for `"use client"` reflexively — server components keep
   bundles small and let Next render on the server.
 
@@ -252,8 +249,9 @@ Give your agent the strategic context first. A good opening:
 ### What your agent needs to know
 
 - `REFACTOR.md` and `CLAUDE.md` are the primary orientation docs.
-- Typed `lib/*.ts` modules are the source of truth for content; avoid
-  putting new data in `lib/data.ts`.
+- Typed `lib/*.ts` modules are the source of truth for cross-surface
+  content. Per-page data lives next to the page (e.g.
+  `app/reports/<slug>/data.ts`).
 - Tailwind tokens: `ui-charcoal`, `ui-gold`, `ui-gold-dark`,
   `brand-huckleberry`, `brand-lupine`. No raw hex in components.
 - `npm run build` must pass before committing.
@@ -263,7 +261,9 @@ Give your agent the strategic context first. A good opening:
 
 ### Common pitfalls
 
-- **Don't add new content to `lib/data.ts`** — use the typed modules.
+- **Don't put route-specific data in `lib/`** — colocate it with the page
+  that consumes it (e.g. `app/reports/<slug>/data.ts`). Reserve `lib/`
+  for content shared across surfaces.
 - **Don't reach for `"use client"`** unless a component genuinely needs
   client-side state or events.
 - **Don't reintroduce cut routes** (`/knowledge`, `/cautionary-tales`,

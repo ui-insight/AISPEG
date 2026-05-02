@@ -78,7 +78,6 @@ The session will likely move through four stages:
 - `lib/portfolio.ts` — interventions inventory (typed)
 - `lib/standards-watch.ts` — standards ledger
 - `lib/builder-guide-data.ts` — assessment quiz, scoring, tiers
-- `lib/data.ts` — legacy strategic data (slated for cleanup)
 - `lib/github.ts` — fetches GitHub issue data
 - `db/migrations/` — SQL migrations
 
@@ -157,8 +156,7 @@ These are good first wins because they are:
 - "Start with the smallest safe change."
 - "Follow the existing patterns in the repo."
 - "Don't make unrelated changes."
-- "Don't add content to `lib/data.ts` — use the typed modules in `lib/`."
-- "Don't reintroduce archived routes — check `REFACTOR.md` first."
+- "Don't reintroduce cut routes — check `REFACTOR.md` first."
 - "Explain your reasoning briefly before editing."
 - "Run `npm run build` after the change."
 
