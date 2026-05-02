@@ -298,16 +298,31 @@ delivery — named human, factual SLA, bookmarkable status URL,
 similarity-aware review. Status updates flow from manual edits to
 `submissions.status` for now; ClickUp eventually becomes the source.
 
-### Sprint 4 — Reports unification + About + cleanup
+### Sprint 4 — Reports unification + About + cleanup *(complete, May 2026)*
 
-- Merge `/presentations` + `/reports` into single `/reports` surface,
-  reverse-chronological.
-- Build `/about` page absorbing strategic frame, AI4RA partnership context,
-  AISPEG charter context, IIDS operator note. Selectively salvage from
-  `/approach` and `/knowledge` content.
-- Delete archived routes from `_archive/`.
-- Sweep dead code in `lib/data.ts` (everything no longer referenced).
-- Update `CLAUDE.md` and `README.md` to describe the new architecture.
+- ✅ Merge `/presentations` + `/reports` into single `/reports` surface,
+  reverse-chronological. Shipped in PR #90 (and the data-side merge
+  preceding it); `/presentations` retained as a redirect.
+- ✅ `/about` page absorbing strategic frame, AI4RA partnership context,
+  AISPEG charter context, IIDS operator note. Note: `/about` had
+  already shipped before this sprint formally opened; the sprint audit
+  confirmed it covered the intended scope.
+- ✅ Delete archived routes from `_archive/`. Shipped in PR #91 after a
+  salvage audit. The Lovable cautionary tale (the one entry worth
+  keeping) was recovered into Reports in PR #92 with IIDS-register
+  retoning.
+- ✅ Sweep dead code in `lib/data.ts`. Shipped in PR #93 — surprise
+  finding: there was no actual dead code. All 10 remaining exports were
+  per-report data, so the file was retired entirely and content was
+  colocated at `app/reports/<slug>/data.ts`.
+- ✅ Update `CLAUDE.md` and `README.md` to describe the new architecture
+  (rolled into PRs #90, #91, #92, #93 incrementally; final completion
+  sweep in this PR).
+- ⏭️ Deferred: `app/docs/*` drift cleanup. Audit performed at sprint
+  close found 5 distinct items worth addressing
+  ([#94](https://github.com/ui-insight/AISPEG/issues/94)–[#98](https://github.com/ui-insight/AISPEG/issues/98)).
+  Dev-facing docs, lower priority than the stakeholder surfaces shipped
+  this sprint.
 
 **Output:** old AISPEG-collaborator-era content is fully retired or salvaged.
 Codebase reflects the new architecture without legacy cruft.

@@ -112,9 +112,12 @@ the full plan, sprint sequencing, and decisions:
 - **Sprint 3** — ClickUp wiring + Submit-a-Project improvements: named-SLA
   acknowledgment, submitter-visible status page (`/intake/[token]`),
   similarity matching surfaced during assessment.
-- **Sprint 4** — Reports unification *(complete)*, About page *(complete)*,
-  `_archive/` deletion *(complete)*, `lib/data.ts` retirement *(complete)*,
-  `app/docs/*` cleanup *(in progress)*.
+- **Sprint 4** — *complete (May 2026)*. Reports unification (PR #90),
+  `_archive/` deletion (PR #91), Lovable cautionary tale salvaged into
+  Reports (PR #92), `lib/data.ts` retired with per-page colocation
+  (PR #93). The About page predated the sprint and is live at `/about`.
+  Remaining `app/docs/*` drift is tracked as
+  [#94](https://github.com/ui-insight/AISPEG/issues/94)–[#98](https://github.com/ui-insight/AISPEG/issues/98).
 
 ## Working on the codebase
 

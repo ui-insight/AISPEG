@@ -34,9 +34,12 @@ sprint sequencing.
 - **Sprint 2** — The Work rebuild + Migration 005 (friction-ledger schema)
   + auth-gated `/internal`.
 - **Sprint 3** — ClickUp wiring + Submit-a-Project delivery improvements.
-- **Sprint 4** — Reports unification *(complete)*, About page *(complete)*,
-  `_archive/` deletion *(complete)*, `lib/data.ts` retirement *(complete)*,
-  `app/docs/*` cleanup *(in progress)*.
+- **Sprint 4** — *complete (May 2026)*. Reports unification (PR #90),
+  `_archive/` deletion (PR #91), Lovable cautionary tale salvaged into
+  Reports (PR #92), `lib/data.ts` retired with per-page colocation
+  (PR #93). The About page predated the sprint and is live at `/about`.
+  Remaining `app/docs/*` drift is tracked as
+  [#94](https://github.com/ui-insight/AISPEG/issues/94)–[#98](https://github.com/ui-insight/AISPEG/issues/98).
 
 ## Information architecture
 
@@ -104,7 +107,7 @@ app/                       # Next.js App Router
   reports/                 # Reports surface
   standards/               # Standards (sub-nav: ledger + data-model explorer)
   standards/data-model/    # Data Governance Explorer (UDM catalog + extensions)
-  ai4ra-ecosystem/         # AI4RA partnership reference (Sprint 4 salvage)
+  ai4ra-ecosystem/         # AI4RA partnership deep-dive (linked from /about)
   admin/                   # Registry + submissions admin
   api/                     # Next.js API routes
   docs/                    # Technical + user documentation
