@@ -24,8 +24,7 @@ function ProjectCard({ project }: { project: (typeof projects)[number] }) {
       <p className="mt-3 text-sm text-ink-muted">
         <span className="font-semibold text-brand-black">{project.tableCount} tables</span>
         {" — "}
-        {project.canonicalUdmCount} canonical, {project.projectExtensionCount}{" "}
-        project-specific.
+        {project.canonicalUdmCount}&nbsp;canonical, {project.projectExtensionCount}&nbsp;project-specific.
       </p>
       {project.runtimeModes && project.runtimeModes.length > 0 && (
         <p className="mt-2 text-xs text-ink-subtle">

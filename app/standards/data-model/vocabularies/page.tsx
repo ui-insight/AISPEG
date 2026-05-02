@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import DataModelHeader from "@/components/DataModelHeader";
 import VocabulariesExplorer, {
   type VocabularyRow,
@@ -33,7 +34,7 @@ export default function VocabulariesIndexPage() {
       <section className="space-y-4">
         <div>
           <h2 className="text-xl font-bold text-ui-charcoal">
-            Every controlled vocabulary, every domain
+            All controlled vocabularies
           </h2>
           <p className="mt-1 max-w-3xl text-sm text-gray-600">
             Sortable, filterable index spanning every allowed-value group in
@@ -43,11 +44,13 @@ export default function VocabulariesIndexPage() {
           </p>
         </div>
 
-        <VocabulariesExplorer
-          rows={rows}
-          domains={domains}
-          applications={applications}
-        />
+        <Suspense fallback={null}>
+          <VocabulariesExplorer
+            rows={rows}
+            domains={domains}
+            applications={applications}
+          />
+        </Suspense>
       </section>
 
       <p className="text-xs text-ink-subtle">

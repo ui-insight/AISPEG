@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import DataModelHeader from "@/components/DataModelHeader";
 import TablesExplorer, {
   type ProjectMeta,
@@ -37,7 +38,7 @@ export default function TablesIndexPage() {
       <section className="space-y-4">
         <div>
           <h2 className="text-xl font-bold text-ui-charcoal">
-            Every table, every project
+            All tables across the portfolio
           </h2>
           <p className="mt-1 max-w-3xl text-sm text-gray-600">
             Sortable, filterable index spanning all five governed
@@ -46,7 +47,9 @@ export default function TablesIndexPage() {
           </p>
         </div>
 
-        <TablesExplorer rows={rows} projectsList={projectsList} />
+        <Suspense fallback={null}>
+          <TablesExplorer rows={rows} projectsList={projectsList} />
+        </Suspense>
       </section>
 
       <p className="text-xs text-ink-subtle">

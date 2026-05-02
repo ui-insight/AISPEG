@@ -4,6 +4,7 @@ import { vocabularyGroups } from "@/lib/governance/vocabularies";
 import { getProject } from "@/lib/governance/catalog";
 import { getVocabularyDomainFraming } from "@/lib/governance/project-framing";
 import GlossaryTerm from "@/components/GlossaryTerm";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import {
   getProjectsUsingGroup,
   type MatchReason,
@@ -100,14 +101,19 @@ export default async function VocabularyDetailPage({
   return (
     <div className="space-y-10">
       <header>
-        <p className="text-xs">
-          <Link href="/standards/data-model/vocabularies">← Vocabularies</Link>
-        </p>
+        <Breadcrumbs
+          items={[
+            { label: "Data Model", href: "/standards/data-model" },
+            { label: "Vocabularies", href: "/standards/data-model/vocabularies" },
+            { label: vg.domain },
+            { label: vg.group },
+          ]}
+        />
         <p className="mt-3 text-[11px] font-semibold uppercase tracking-wider text-brand-clearwater">
           {vg.domain}
         </p>
         <div className="mt-1 flex flex-wrap items-center gap-3">
-          <h1 className="font-mono text-3xl font-black tracking-tight text-brand-black">
+          <h1 className="text-3xl font-black tracking-tight text-brand-black">
             {vg.group}
           </h1>
           {vg.application && (

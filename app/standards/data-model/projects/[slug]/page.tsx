@@ -7,6 +7,8 @@ import {
 } from "@/lib/governance/catalog";
 import { getProjectFraming } from "@/lib/governance/project-framing";
 import GlossaryTerm from "@/components/GlossaryTerm";
+import ExpandAllSchemas from "@/components/ExpandAllSchemas";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import type { Table, TableKind } from "@/lib/governance/types";
 
 export function generateStaticParams() {
@@ -88,9 +90,18 @@ function ColumnRow({
   );
 }
 
-function TableCard({ table }: { table: Table }) {
+function TableCard({
+  table,
+  defaultOpen = false,
+}: {
+  table: Table;
+  defaultOpen?: boolean;
+}) {
   return (
-    <article className="rounded-lg border border-gray-200 bg-white p-5">
+    <article
+      data-table-card
+      className="rounded-lg border border-gray-200 bg-white p-5"
+    >
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
@@ -126,9 +137,9 @@ function TableCard({ table }: { table: Table }) {
         </div>
       </header>
 
-      <details className="mt-4 group">
+      <details className="mt-4 group" open={defaultOpen}>
         <summary className="cursor-pointer text-xs font-medium text-gray-500 hover:text-ui-charcoal">
-          Show columns
+          {defaultOpen ? "Hide columns" : "Show columns"}
         </summary>
         <div className="mt-3 overflow-x-auto">
           <table className="w-full min-w-full text-left">
@@ -169,14 +180,22 @@ export default async function ProjectDetailPage({
     (t) => t.classification === "project-extension",
   );
 
+  // For projects with a small enough catalog, default-open the column lists
+  // so engineers don't have to click through every Show columns disclosure.
+  // Above 10 tables (e.g., OpenERA at 32), keep them collapsed by default.
+  const defaultOpenColumns = allTables.length <= 10;
+
   const framing = getProjectFraming(project.slug);
 
   return (
     <div className="space-y-10">
       <header>
-        <p className="text-xs">
-          <Link href="/standards/data-model">← Data Model</Link>
-        </p>
+        <Breadcrumbs
+          items={[
+            { label: "Data Model", href: "/standards/data-model" },
+            { label: project.application },
+          ]}
+        />
         <p className="mt-3 text-[11px] font-semibold uppercase tracking-wider text-brand-clearwater">
           {project.domain}
         </p>
@@ -273,6 +292,12 @@ export default async function ProjectDetailPage({
         )}
       </header>
 
+      {!defaultOpenColumns && allTables.length > 0 && (
+        <div className="-mb-4 flex justify-end">
+          <ExpandAllSchemas />
+        </div>
+      )}
+
       {canonical.length > 0 && (
         <section className="space-y-4">
           <div>
@@ -286,7 +311,11 @@ export default async function ProjectDetailPage({
           </div>
           <div className="space-y-3">
             {canonical.map((t) => (
-              <TableCard key={`${t.kind}-${t.name}`} table={t} />
+              <TableCard
+                key={`${t.kind}-${t.name}`}
+                table={t}
+                defaultOpen={defaultOpenColumns}
+              />
             ))}
           </div>
         </section>
@@ -305,7 +334,11 @@ export default async function ProjectDetailPage({
           </div>
           <div className="space-y-3">
             {extension.map((t) => (
-              <TableCard key={`${t.kind}-${t.name}`} table={t} />
+              <TableCard
+                key={`${t.kind}-${t.name}`}
+                table={t}
+                defaultOpen={defaultOpenColumns}
+              />
             ))}
           </div>
         </section>

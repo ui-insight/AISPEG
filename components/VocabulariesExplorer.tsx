@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 
 type SortKey =
   | "group"
@@ -75,11 +76,31 @@ export default function VocabulariesExplorer({
   domains: string[];
   applications: string[];
 }) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
   const [sortKey, setSortKey] = useState<SortKey>("domain");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
-  const [domainFilter, setDomainFilter] = useState<Set<string>>(new Set());
-  const [applicationFilter, setApplicationFilter] = useState<string>("all");
-  const [minValues, setMinValues] = useState<number>(0);
+  const [domainFilter, setDomainFilter] = useState<string>(
+    searchParams.get("domain") ?? "all",
+  );
+  const [applicationFilter, setApplicationFilter] = useState<string>(
+    searchParams.get("application") ?? "all",
+  );
+  const [minValues, setMinValues] = useState<number>(
+    Number(searchParams.get("min")) || 0,
+  );
+
+  // Reflect filter state into the URL so views are bookmarkable.
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (domainFilter !== "all") params.set("domain", domainFilter);
+    if (applicationFilter !== "all") params.set("application", applicationFilter);
+    if (minValues > 0) params.set("min", String(minValues));
+    const qs = params.toString();
+    router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+  }, [domainFilter, applicationFilter, minValues, pathname, router]);
 
   const handleSort = (k: SortKey) => {
     if (k === sortKey) {
@@ -91,18 +112,9 @@ export default function VocabulariesExplorer({
     }
   };
 
-  const toggleDomain = (d: string) => {
-    setDomainFilter((prev) => {
-      const next = new Set(prev);
-      if (next.has(d)) next.delete(d);
-      else next.add(d);
-      return next;
-    });
-  };
-
   const filteredSorted = useMemo(() => {
     const filtered = rows.filter((r) => {
-      if (domainFilter.size > 0 && !domainFilter.has(r.domain)) return false;
+      if (domainFilter !== "all" && r.domain !== domainFilter) return false;
       if (
         applicationFilter !== "all" &&
         (r.application ?? "shared") !== applicationFilter
@@ -147,38 +159,25 @@ export default function VocabulariesExplorer({
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
         <div className="flex items-center gap-2">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+          <label
+            htmlFor="domain-filter"
+            className="text-[11px] font-semibold uppercase tracking-wider text-gray-500"
+          >
             Domain
-          </span>
-          <div className="flex flex-wrap overflow-hidden rounded border border-gray-300 text-xs">
-            {domains.map((d) => {
-              const active = domainFilter.has(d);
-              return (
-                <button
-                  key={d}
-                  type="button"
-                  onClick={() => toggleDomain(d)}
-                  aria-pressed={active}
-                  className={`unstyled border-l border-gray-300 px-3 py-1 first:border-l-0 transition-colors ${
-                    active
-                      ? "bg-ui-charcoal text-white"
-                      : "bg-white text-gray-600 hover:text-ui-charcoal"
-                  }`}
-                >
-                  {d}
-                </button>
-              );
-            })}
-          </div>
-          {domainFilter.size > 0 && (
-            <button
-              type="button"
-              onClick={() => setDomainFilter(new Set())}
-              className="unstyled text-[11px] text-gray-500 hover:text-ui-charcoal"
-            >
-              clear
-            </button>
-          )}
+          </label>
+          <select
+            id="domain-filter"
+            value={domainFilter}
+            onChange={(e) => setDomainFilter(e.target.value)}
+            className="rounded border border-gray-300 bg-white px-2 py-1 text-xs text-ui-charcoal focus:border-brand-clearwater focus:outline-none"
+          >
+            <option value="all">All domains</option>
+            {domains.map((d) => (
+              <option key={d} value={d}>
+                {d}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="flex items-center gap-2">
