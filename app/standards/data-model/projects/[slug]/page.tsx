@@ -6,6 +6,7 @@ import {
   projects,
 } from "@/lib/governance/catalog";
 import { getProjectFraming } from "@/lib/governance/project-framing";
+import GlossaryTerm from "@/components/GlossaryTerm";
 import type { Table, TableKind } from "@/lib/governance/types";
 
 export function generateStaticParams() {
@@ -276,7 +277,7 @@ export default async function ProjectDetailPage({
         <section className="space-y-4">
           <div>
             <h2 className="text-xl font-bold text-ui-charcoal">
-              Canonical UDM tables
+              <GlossaryTerm term="Canonical UDM">Canonical UDM</GlossaryTerm> tables
             </h2>
             <p className="mt-1 text-sm text-gray-600">
               Adopted from the AI4RA Unified Data Model. Naming and shape
@@ -295,7 +296,7 @@ export default async function ProjectDetailPage({
         <section className="space-y-4">
           <div>
             <h2 className="text-xl font-bold text-ui-charcoal">
-              Project extensions
+              <GlossaryTerm term="Project extension">Project extensions</GlossaryTerm>
             </h2>
             <p className="mt-1 text-sm text-gray-600">
               Tables specific to this project — workflow, tooling, or

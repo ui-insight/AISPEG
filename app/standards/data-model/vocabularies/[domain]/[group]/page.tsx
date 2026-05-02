@@ -3,6 +3,7 @@ import Link from "next/link";
 import { vocabularyGroups } from "@/lib/governance/vocabularies";
 import { getProject } from "@/lib/governance/catalog";
 import { getVocabularyDomainFraming } from "@/lib/governance/project-framing";
+import GlossaryTerm from "@/components/GlossaryTerm";
 import {
   getProjectsUsingGroup,
   type MatchReason,
@@ -156,7 +157,9 @@ export default async function VocabularyDetailPage({
 
       <section className="space-y-3">
         <div>
-          <h2 className="text-xl font-bold text-ui-charcoal">Allowed values</h2>
+          <h2 className="text-xl font-bold text-ui-charcoal">
+            <GlossaryTerm term="Allowed values">Allowed values</GlossaryTerm>
+          </h2>
           <p className="mt-1 text-sm text-gray-600">
             Codes are the persisted form; labels are the human-readable
             display. Display Order, when set, is the suggested sort order
