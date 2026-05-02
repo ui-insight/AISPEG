@@ -16,19 +16,24 @@ export const metadata = {
 export default function TablesIndexPage() {
   const projectsBySlug = new Map(projects.map((p) => [p.slug, p]));
 
-  const rows: TableRow[] = tables.map((t) => ({
-    project: t.project,
-    projectApplication: projectsBySlug.get(t.project)?.application ?? t.project,
-    name: t.name,
-    kind: t.kind,
-    classification: t.classification,
-    columnCount: t.columns.length,
-    relationshipCount: t.relationships.length,
-  }));
+  const rows: TableRow[] = tables.map((t) => {
+    const proj = projectsBySlug.get(t.project);
+    return {
+      project: t.project,
+      projectApplication: proj?.application ?? t.project,
+      domain: proj?.domain ?? "Unassigned",
+      name: t.name,
+      kind: t.kind,
+      classification: t.classification,
+      columnCount: t.columns.length,
+      relationshipCount: t.relationships.length,
+    };
+  });
 
   const projectsList: ProjectMeta[] = projects.map((p) => ({
     slug: p.slug,
     application: p.application,
+    domain: p.domain,
   }));
 
   return (
