@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import DataModelHeader from "@/components/DataModelHeader";
 import TablesExplorer, {
   type ProjectMeta,
@@ -46,7 +47,9 @@ export default function TablesIndexPage() {
           </p>
         </div>
 
-        <TablesExplorer rows={rows} projectsList={projectsList} />
+        <Suspense fallback={null}>
+          <TablesExplorer rows={rows} projectsList={projectsList} />
+        </Suspense>
       </section>
 
       <p className="text-xs text-ink-subtle">
