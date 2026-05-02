@@ -5,12 +5,11 @@
 // stakeholder-readable framing the .impeccable.md principle #1 requires
 // ("every claim names a human"). This module supplies that.
 //
-// Source-of-truth note: 4 of 5 governance projects (audit-dashboard, processmapping,
-// stratplan, ucm-daily-register) also exist in lib/portfolio.ts. The lede / owner
-// data here is hand-written for the data-model surface specifically; when a
-// fact diverges between this file and portfolio.ts, treat portfolio.ts as
-// canonical and update here. OpenERA is not yet a portfolio entry — see
-// `portfolioSlug: undefined` below.
+// Source-of-truth note: all 5 governance projects (audit-dashboard, openera,
+// processmapping, stratplan, ucm-daily-register) also exist in lib/portfolio.ts.
+// The lede / owner data here is hand-written for the data-model surface
+// specifically; when a fact diverges between this file and portfolio.ts, treat
+// portfolio.ts as canonical and update here.
 
 interface ProjectOwner {
   name: string;
@@ -41,10 +40,7 @@ const FRAMINGS: ProjectFraming[] = [
   },
   {
     slug: "openera",
-    // TODO: Add a portfolio entry for OpenERA in lib/portfolio.ts so this
-    // surface can join cleanly to the rest of /portfolio. Until then, the
-    // owner below is the ORED default — confirm with Sarah before public
-    // ramp-up.
+    portfolioSlug: "openera",
     lede:
       "OpenERA is the institutional sponsored-research administration system, operated by IIDS for the Office of Research and Economic Development. The canonical implementor of the AI4RA Unified Data Model in research administration.",
     homeUnit: "Office of Research and Economic Development",

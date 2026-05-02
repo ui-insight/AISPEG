@@ -234,6 +234,34 @@ export const interventions: Intervention[] = [
   },
 
   // ============================================================
+  // Office of Research and Economic Development
+  // ============================================================
+  {
+    slug: "openera",
+    name: "OpenERA",
+    tagline:
+      "Open electronic research administration system — canonical UDM implementor for sponsored research.",
+    description:
+      "Institutional sponsored-research administration system, operated by IIDS for the Office of Research and Economic Development. The canonical implementor of the AI4RA Unified Data Model in research administration: 32 tables spanning 20 canonical UDM tables and 12 project-specific extensions. AI4RA Core dual-destiny project; designed to be deployable beyond UI as the partnership matures.",
+    homeUnits: ["Office of Research and Economic Development"],
+    operationalOwners: [
+      { name: "Sarah Martonick", title: "UI implementation owner" },
+    ],
+    buildParticipants: ["IIDS"],
+    status: "Production",
+    visibility: "Public",
+    ai4raRelationship: "Core",
+    dualDestinyPlanned: true,
+    repoUrl: "https://github.com/ui-insight/OpenERA",
+    operationalFunction:
+      "Sponsored-research administration: proposal lifecycle, award management, compliance, and reporting for ORED. Anchors the institutional research-admin data layer that Vandalizer, ProcessMapping, and adjacent ORED tools build against.",
+    operationalExcellenceOutcome:
+      "On-prem, UDM-aligned ERA system with shared data semantics across ORED tooling. Enables AI features (extraction, lookup, classification) on research-admin data without third-party data egress. Reference deployment for AI4RA partners.",
+    tech: ["React", "TypeScript", "Tailwind CSS", "FastAPI", "SQLAlchemy 2.0", "PostgreSQL 16"],
+    relatedSlugs: ["vandalizer", "processmapping", "embargoed-osp"],
+  },
+
+  // ============================================================
   // ORED + Office of General Counsel (dual home)
   // ============================================================
   {
