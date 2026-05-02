@@ -41,3 +41,7 @@ Updates and lessons.docx
 SBOE_AI_Projects_Robison.pptx
 agentic-ai-lessons.pptx
 *.pptx
+.test-governance/output.md
+
+# Agent worktrees (created by Claude Code background agents)
+.claude/worktrees/

@@ -1,0 +1,211 @@
+name: Governance PR Summary
+
+# Two advisories that compose with the existing Governance Drift workflow:
+#   1. Freshness — warn (NOT fail) when the vendored data-governance
+#      submodule pointer is more than STALE_AFTER_DAYS old.
+#   2. Catalog changes — post a human-readable diff summary when the
+#      typed catalog or vocabularies have changed.
+# Both jobs upsert their PR comment via an HTML marker so subsequent pushes
+# update in place rather than spam.
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+env:
+  STALE_AFTER_DAYS: "14"
+
+jobs:
+  freshness:
+    name: Submodule freshness
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository (with submodules)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Compute submodule lag
+        id: lag
+        run: |
+          set -e
+          cd vendor/data-governance
+
+          pinned_sha=$(git rev-parse HEAD)
+          pinned_date_iso=$(git log -1 --format=%cI "$pinned_sha")
+
+          git fetch origin main --quiet
+          upstream_sha=$(git rev-parse origin/main)
+
+          echo "pinned_sha=$pinned_sha" >> "$GITHUB_OUTPUT"
+          echo "pinned_date_iso=$pinned_date_iso" >> "$GITHUB_OUTPUT"
+          echo "upstream_sha=$upstream_sha" >> "$GITHUB_OUTPUT"
+
+      - name: Render freshness advisory
+        id: render
+        env:
+          PINNED_SHA: ${{ steps.lag.outputs.pinned_sha }}
+          PINNED_COMMIT_DATE_ISO: ${{ steps.lag.outputs.pinned_date_iso }}
+          UPSTREAM_HEAD_SHA: ${{ steps.lag.outputs.upstream_sha }}
+          OUTPUT_PATH: /tmp/freshness.md
+        run: |
+          set -e
+          npx tsx scripts/governance-freshness.ts
+          if [ -s /tmp/freshness.md ]; then
+            echo "stale=true" >> "$GITHUB_OUTPUT"
+            {
+              echo "## Submodule freshness"
+              echo
+              cat /tmp/freshness.md
+            } >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "stale=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upsert stale-advisory comment
+        if: steps.render.outputs.stale == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -e
+          body=$(cat /tmp/freshness.md)
+          existing_id=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" \
+            --paginate \
+            --jq '.[] | select(.body | startswith("<!-- governance-bot:freshness -->")) | .id' \
+            | head -1 || true)
+          if [ -n "$existing_id" ]; then
+            gh api "repos/$REPO/issues/comments/$existing_id" -X PATCH -f body="$body"
+          else
+            gh api "repos/$REPO/issues/$PR_NUMBER/comments" -X POST -f body="$body"
+          fi
+
+      - name: Delete prior advisory when no longer stale
+        if: steps.render.outputs.stale == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -e
+          existing_id=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" \
+            --paginate \
+            --jq '.[] | select(.body | startswith("<!-- governance-bot:freshness -->")) | .id' \
+            | head -1 || true)
+          if [ -n "$existing_id" ]; then
+            gh api "repos/$REPO/issues/comments/$existing_id" -X DELETE
+          fi
+
+  catalog-changes:
+    name: Catalog change summary
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out PR head (with submodules)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Stage HEAD generated catalog
+        run: |
+          set -e
+          mkdir -p /tmp/governance-head
+          npm run build:governance --silent
+          cp lib/governance/catalog.ts lib/governance/vocabularies.ts /tmp/governance-head/
+
+      - name: Stage BASE generated catalog
+        run: |
+          set -e
+          mkdir -p /tmp/governance-base
+          base_ref="origin/${{ github.base_ref }}"
+          # The committed lib/governance/*.ts files on the base ref are exactly
+          # what would be deployed from that ref — no need to regenerate. If a
+          # file isn't present on the base ref (e.g. comparing against a ref
+          # before slice #55), the script treats it as an empty catalog and
+          # everything reads as "added".
+          git show "$base_ref:lib/governance/catalog.ts" \
+            > /tmp/governance-base/catalog.ts 2>/dev/null || true
+          git show "$base_ref:lib/governance/vocabularies.ts" \
+            > /tmp/governance-base/vocabularies.ts 2>/dev/null || true
+
+      - name: Render diff summary
+        id: render
+        env:
+          BASE_CATALOG_PATH: /tmp/governance-base/catalog.ts
+          BASE_VOCAB_PATH: /tmp/governance-base/vocabularies.ts
+          HEAD_CATALOG_PATH: /tmp/governance-head/catalog.ts
+          HEAD_VOCAB_PATH: /tmp/governance-head/vocabularies.ts
+          OUTPUT_PATH: /tmp/summary.md
+        run: |
+          set -e
+          npx tsx scripts/governance-pr-summary.ts
+          # The script always emits markdown — even "no structural changes" —
+          # so we use a presence check on the body, not a size check, to
+          # decide whether to post a comment. Comparing the headline phrase
+          # is safer than `[ -s ]`.
+          if grep -q "No structural changes detected" /tmp/summary.md; then
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+            {
+              echo "## Catalog summary preview"
+              echo
+              cat /tmp/summary.md
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upsert catalog-changes comment
+        if: steps.render.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -e
+          body=$(cat /tmp/summary.md)
+          existing_id=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" \
+            --paginate \
+            --jq '.[] | select(.body | startswith("<!-- governance-bot:catalog-changes -->")) | .id' \
+            | head -1 || true)
+          if [ -n "$existing_id" ]; then
+            gh api "repos/$REPO/issues/comments/$existing_id" -X PATCH -f body="$body"
+          else
+            gh api "repos/$REPO/issues/$PR_NUMBER/comments" -X POST -f body="$body"
+          fi
+
+      - name: Delete prior catalog-changes comment when no longer relevant
+        if: steps.render.outputs.has_changes == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -e
+          existing_id=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" \
+            --paginate \
+            --jq '.[] | select(.body | startswith("<!-- governance-bot:catalog-changes -->")) | .id' \
+            | head -1 || true)
+          if [ -n "$existing_id" ]; then
+            gh api "repos/$REPO/issues/comments/$existing_id" -X DELETE
+          fi
