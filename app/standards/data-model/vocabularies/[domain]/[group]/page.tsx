@@ -164,7 +164,33 @@ export default async function VocabularyDetailPage({
           </p>
         </div>
 
-        <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
+        {/* Mobile: card list (< sm) */}
+        <ul className="space-y-2 sm:hidden">
+          {sortedValues.map((v) => (
+            <li
+              key={v.code}
+              className="rounded-lg border border-gray-200 bg-white p-3"
+            >
+              <div className="flex flex-wrap items-baseline gap-2">
+                <span className="break-all font-mono text-sm font-semibold text-ui-charcoal">
+                  {v.code}
+                </span>
+                <span className="text-sm text-ui-charcoal">{v.label}</span>
+                {typeof v.displayOrder === "number" && (
+                  <span className="font-mono text-[11px] text-gray-500">
+                    #{v.displayOrder}
+                  </span>
+                )}
+              </div>
+              {v.description && (
+                <p className="mt-1.5 text-xs text-gray-600">{v.description}</p>
+              )}
+            </li>
+          ))}
+        </ul>
+
+        {/* Tablet+: values table (≥ sm) */}
+        <div className="hidden overflow-x-auto rounded-lg border border-gray-200 bg-white sm:block">
           <table className="w-full min-w-[640px] text-left">
             <thead className="border-b border-gray-200 bg-gray-50">
               <tr className="text-[10px] font-semibold uppercase tracking-wider text-gray-500">

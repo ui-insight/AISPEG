@@ -227,8 +227,51 @@ export default function VocabulariesExplorer({
         </p>
       </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
+      {/* Mobile: card list (< sm) */}
+      <div className="space-y-2 sm:hidden">
+        {filteredSorted.map((r) => (
+          <article
+            key={`${r.domain}/${r.group}`}
+            className="rounded-lg border border-gray-200 bg-white p-4"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0 flex-1">
+                <Link
+                  href={`/standards/data-model/vocabularies/${encodeURIComponent(
+                    r.domain,
+                  )}/${encodeURIComponent(r.group)}`}
+                  className="unstyled break-all font-mono text-sm font-semibold text-ui-charcoal hover:text-brand-clearwater"
+                >
+                  {r.group}
+                </Link>
+                <p className="mt-1 text-xs text-gray-600">
+                  {r.application ?? (
+                    <span className="italic text-gray-400">shared</span>
+                  )}
+                </p>
+              </div>
+              <DomainBadge domain={r.domain} />
+            </div>
+            <p className="mt-3 text-xs text-gray-500">
+              <span className="font-mono tabular-nums text-ui-charcoal">
+                {r.valueCount} {r.valueCount === 1 ? "value" : "values"}
+              </span>
+              <span className="mx-1.5">·</span>
+              <span className="font-mono tabular-nums text-ui-charcoal">
+                {r.projectsUsing} {r.projectsUsing === 1 ? "project" : "projects"}
+              </span>
+            </p>
+          </article>
+        ))}
+        {filteredSorted.length === 0 && (
+          <p className="rounded-lg border border-gray-200 bg-white px-4 py-8 text-center text-xs text-gray-500">
+            No vocabulary groups match the current filters.
+          </p>
+        )}
+      </div>
+
+      {/* Tablet+: sortable table (≥ sm) */}
+      <div className="hidden overflow-x-auto rounded-lg border border-gray-200 bg-white sm:block">
         <table className="w-full min-w-[760px] text-left">
           <thead className="border-b border-gray-200 bg-gray-50">
             <tr>
