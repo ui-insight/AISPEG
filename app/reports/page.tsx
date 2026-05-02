@@ -17,7 +17,6 @@ export const metadata = {
 const kindStyles: Record<ArtifactKind, string> = {
   "activity-report": "bg-ui-gold/15 text-ui-gold-dark",
   brief: "bg-blue-100 text-blue-800",
-  deck: "bg-violet-100 text-violet-800",
   presentation: "bg-emerald-100 text-emerald-800",
 };
 

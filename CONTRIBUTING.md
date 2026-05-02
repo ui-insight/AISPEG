@@ -148,18 +148,19 @@ When OIT responds, edit the entry's `status` and add `responseUrl` /
 `responseNote` as appropriate. Don't delete entries — published standards
 keep their history visible.
 
-### Adding a report, brief, deck, or presentation
+### Adding a report, brief, or presentation
 
 The Reports surface is a single reverse-chronological timeline. To add an
 artifact:
 
 1. Append an entry to `lib/artifacts.ts` with the appropriate `kind`
-   (`activity-report` | `brief` | `deck` | `presentation`), `dateIso`,
-   `dateLabel`, and `href` (internal route or external URL).
+   (`activity-report` | `brief` | `presentation`), `dateIso`, `dateLabel`,
+   and `href` (internal route or external URL).
 2. If the artifact has its own page (most reports and briefs do), create
    `app/reports/<slug>/page.tsx`.
-3. If the artifact is a Reveal.js deck, write the markdown at
-   `content/presentations/<slug>.md` and point `href` at the renderer.
+3. For an external talk or deck hosted elsewhere, use
+   `kind: "presentation"`, `external: true`, and point `href` at the
+   hosted URL.
 4. Set `featured: true` to give the artifact the hero spot on /reports
    (most-recent featured wins).
 

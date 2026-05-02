@@ -23,7 +23,7 @@ const cards = [
     href: "/reports",
     eyebrow: "Reports",
     heading: "Activity reports and presentations",
-    body: "Time-stamped artifacts: monthly briefs, decks, and public communications.",
+    body: "Time-stamped artifacts: monthly briefs and executive communications.",
     cta: "Browse reports",
   },
   {

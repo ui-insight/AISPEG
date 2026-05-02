@@ -1,10 +1,8 @@
 // lib/artifacts.ts
 //
 // Unified timeline of public-facing artifacts: written briefs, activity
-// reports, interactive decks (reveal.js), and external presentations.
-// Replaces the split between lib/decks.ts and lib/data.ts `presentations`
-// for the /reports surface, which is now the single index for everything
-// time-stamped.
+// reports, and external presentations. Backs the /reports surface, which
+// is the single index for everything time-stamped.
 //
 // Sorting: every artifact carries an ISO-date `dateIso` that drives
 // reverse-chronological order on /reports. `dateLabel` is the
@@ -18,7 +16,6 @@
 export type ArtifactKind =
   | "activity-report" // Long-form internal report (e.g. monthly activity)
   | "brief"           // Executive briefing document
-  | "deck"            // Interactive reveal.js deck
   | "presentation";   // External presentation, podium talk, etc.
 
 export type ArtifactStatus = "Draft" | "Ready" | "Delivered";
@@ -83,7 +80,6 @@ export const artifacts: Artifact[] = [
 const KIND_LABELS: Record<ArtifactKind, string> = {
   "activity-report": "Activity report",
   brief: "Brief",
-  deck: "Deck",
   presentation: "Presentation",
 };
 
