@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { interventions } from "@/lib/portfolio";
+import { Callout } from "@/components/Callout";
 
 // AI4RA reference projects — open-source assets produced by the AI4RA
 // partnership. These are NOT UI interventions; they are reference material
@@ -83,7 +84,7 @@ export default function AI4RAEcosystemPage() {
     <div className="space-y-10">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-ui-charcoal">
+        <h1 className="text-3xl font-black tracking-tight text-brand-black">
           AI4RA Ecosystem
         </h1>
         <p className="mt-2 max-w-3xl text-gray-600">
@@ -111,31 +112,29 @@ export default function AI4RAEcosystemPage() {
       </div>
 
       {/* Context card */}
-      <div className="rounded-xl border-l-4 border-ui-gold bg-white p-6 shadow-sm">
-        <p className="text-sm font-medium text-gray-500">About the partnership</p>
-        <div className="mt-2 space-y-3 text-sm leading-relaxed text-gray-700">
+      <Callout eyebrow="About the partnership">
+        <div className="space-y-3 text-sm leading-relaxed">
           <p>
-            <strong className="text-ui-charcoal">Funding:</strong> NSF GRANTED
+            <strong className="text-brand-black">Funding:</strong> NSF GRANTED
             program, Award{" "}
             <a
               href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=2427549"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-ui-gold-dark hover:underline"
             >
               #2427549
             </a>
             .
           </p>
           <p>
-            <strong className="text-ui-charcoal">Partners:</strong> University
+            <strong className="text-brand-black">Partners:</strong> University
             of Idaho (prime), Southern Utah University (subaward). AI4RA is
             currently a two-institution consortium; additional peer
             institutions adopt open-source outputs (Vandalizer, MindRouter,
             DGX Stack) without being consortium members.
           </p>
           <p>
-            <strong className="text-ui-charcoal">Dual-destiny pattern:</strong>{" "}
+            <strong className="text-brand-black">Dual-destiny pattern:</strong>{" "}
             AI4RA produces <em>open-source reference implementations</em>{" "}
             (released to the community) while UI separately maintains{" "}
             <em>UI-specific deployments</em> of the same tools, configured
@@ -143,15 +142,15 @@ export default function AI4RAEcosystemPage() {
             are tracked separately.
           </p>
         </div>
-      </div>
+      </Callout>
 
       {/* Reference projects */}
       <section className="space-y-4">
-        <div className="border-l-4 border-ui-gold pl-4">
-          <h2 className="text-xl font-bold text-ui-charcoal">
+        <div>
+          <h2 className="text-xl font-black tracking-tight text-brand-black">
             Reference projects
           </h2>
-          <p className="mt-1 text-sm text-gray-600">
+          <p className="mt-1 text-sm text-ink-muted">
             Open-source assets published by the AI4RA partnership. Most are
             consumable by any institution.
           </p>
@@ -190,11 +189,11 @@ export default function AI4RAEcosystemPage() {
 
       {/* UI interventions that touch AI4RA */}
       <section className="space-y-4">
-        <div className="border-l-4 border-ui-gold pl-4">
-          <h2 className="text-xl font-bold text-ui-charcoal">
+        <div>
+          <h2 className="text-xl font-black tracking-tight text-brand-black">
             UI interventions in the AI4RA Core
           </h2>
-          <p className="mt-1 text-sm text-gray-600">
+          <p className="mt-1 text-sm text-ink-muted">
             UI operational interventions that are also AI4RA dual-destiny
             projects — an open-source reference implementation maintained for
             the community alongside a UI-specific deployment.

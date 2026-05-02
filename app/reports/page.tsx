@@ -112,7 +112,7 @@ function ArtifactCard({ artifact }: { artifact: Artifact }) {
 function FeaturedHero({ artifact }: { artifact: Artifact }) {
   const isExternal = !!artifact.external;
   const inner = (
-    <article className="group relative rounded-xl border border-gray-200 bg-gradient-to-br from-ui-charcoal to-ui-charcoal/90 p-7 text-white shadow-sm transition-all hover:border-ui-gold/40 hover:shadow-md">
+    <article className="group relative rounded-xl bg-brand-black p-7 text-white shadow-sm transition-shadow hover:shadow-md">
       <div className="flex flex-wrap items-baseline gap-3">
         <span className="rounded-full bg-ui-gold/20 px-2.5 py-0.5 text-xs font-medium text-ui-gold">
           {artifact.subtitle ?? kindLabel(artifact.kind)}
@@ -163,7 +163,7 @@ export default function ReportsPage() {
     <div className="space-y-10">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-ui-charcoal">Reports</h1>
+        <h1 className="text-3xl font-black tracking-tight text-brand-black">Reports</h1>
         <p className="mt-2 max-w-3xl text-gray-600">
           Activity reports, executive briefs, and presentations from IIDS
           and partner leadership. Reverse-chronological.

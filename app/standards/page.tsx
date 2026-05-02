@@ -110,59 +110,31 @@ export default function StandardsWatchPage() {
     <div className="space-y-10">
       {/* Header */}
       <header>
-        <h1 className="text-3xl font-black tracking-tight text-ui-charcoal">
+        <h1 className="text-3xl font-black tracking-tight text-brand-black">
           Software-development and user-experience standards
         </h1>
-        <p className="mt-3 max-w-3xl text-base leading-relaxed text-gray-700">
+        <p className="mt-3 max-w-3xl text-base leading-relaxed text-ink-muted">
           The institutional standards IIDS has formally requested from the
           Office of Information Technology. Each entry shows the date
           requested and elapsed time since. Entries move to{" "}
           <span className="font-medium text-green-700">Published</span> as
           OIT releases them.
         </p>
+        <p className="mt-4 max-w-3xl text-base leading-relaxed text-brand-black">
+          <span className="font-bold">{stats.oldestOutstanding} days</span>{" "}
+          since the oldest of <span className="font-bold">{stats.outstanding}</span>{" "}
+          outstanding asks. <span className="font-bold">{stats.counts.published}</span>{" "}
+          published.
+        </p>
       </header>
-
-      {/* Summary band */}
-      <section className="grid grid-cols-2 gap-4 rounded-xl border border-gray-200 bg-white p-5 shadow-sm md:grid-cols-4">
-        <div>
-          <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
-            Total asks
-          </p>
-          <p className="mt-1 text-2xl font-black text-ui-charcoal">{stats.total}</p>
-        </div>
-        <div>
-          <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
-            Outstanding
-          </p>
-          <p className="mt-1 text-2xl font-black text-orange-700">
-            {stats.outstanding}
-          </p>
-        </div>
-        <div>
-          <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
-            Published
-          </p>
-          <p className="mt-1 text-2xl font-black text-green-700">
-            {stats.counts.published}
-          </p>
-        </div>
-        <div>
-          <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
-            Oldest open
-          </p>
-          <p className="mt-1 text-2xl font-black text-ui-charcoal">
-            {stats.oldestOutstanding} <span className="text-sm font-medium text-gray-500">days</span>
-          </p>
-        </div>
-      </section>
 
       {/* Agenda I */}
       <section className="space-y-4">
         <div>
-          <h2 className="text-xl font-bold text-ui-charcoal">
+          <h2 className="text-xl font-black tracking-tight text-brand-black">
             Software Development Standards
           </h2>
-          <p className="mt-1 text-sm text-gray-600">
+          <p className="mt-1 text-sm text-ink-muted">
             Requested deliverables governing how applications are architected,
             secured, deployed, and maintained at the University of Idaho.
           </p>
@@ -177,10 +149,10 @@ export default function StandardsWatchPage() {
       {/* Agenda II */}
       <section className="space-y-4">
         <div>
-          <h2 className="text-xl font-bold text-ui-charcoal">
+          <h2 className="text-xl font-black tracking-tight text-brand-black">
             User Experience Standards
           </h2>
-          <p className="mt-1 text-sm text-gray-600">
+          <p className="mt-1 text-sm text-ink-muted">
             Requested deliverables governing how University of Idaho
             applications look, behave, and treat the people who use them.
           </p>

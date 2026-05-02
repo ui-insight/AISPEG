@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Callout } from "@/components/Callout";
 import PortfolioCard from "@/components/PortfolioCard";
 import PortfolioFilters from "@/components/PortfolioFilters";
 import {
@@ -103,7 +104,7 @@ export default async function PortfolioPage({
     <div className="space-y-10">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-ui-charcoal">
+        <h1 className="text-3xl font-black tracking-tight text-brand-black">
           AI Interventions for Operational Excellence
         </h1>
         <p className="mt-2 max-w-3xl text-gray-600">
@@ -176,14 +177,12 @@ export default async function PortfolioPage({
         groups.length > 0 &&
         groups.map(({ unit, items }) => (
           <section key={unit} className="space-y-4">
-            <div className="border-l-4 border-ui-gold pl-4">
-              <div className="flex items-baseline gap-3">
-                <h2 className="text-xl font-bold text-ui-charcoal">{unit}</h2>
-                <span className="text-sm text-gray-500">
-                  {items.length}{" "}
-                  {items.length === 1 ? "intervention" : "interventions"}
-                </span>
-              </div>
+            <div className="flex items-baseline gap-3">
+              <h2 className="text-xl font-black tracking-tight text-brand-black">{unit}</h2>
+              <span className="text-sm text-ink-subtle">
+                {items.length}{" "}
+                {items.length === 1 ? "intervention" : "interventions"}
+              </span>
             </div>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {items.map((app) => (
@@ -195,11 +194,8 @@ export default async function PortfolioPage({
 
       {/* Context callout — only shown when no filters active and no sort */}
       {!selectedUnit && !selectedStatus && !blockersOnly && sortMode === "default" && (
-        <div className="rounded-xl border-l-4 border-ui-gold bg-white p-6 shadow-sm">
-          <p className="text-sm font-medium text-gray-500">
-            How to read this inventory
-          </p>
-          <p className="mt-2 text-sm leading-relaxed text-gray-700">
+        <Callout eyebrow="How to read this inventory">
+          <p className="text-sm leading-relaxed">
             Interventions are grouped by{" "}
             <strong>UI home unit</strong>. Each card shows the operational
             owner, current status, and any active blockers (with a counter
@@ -209,16 +205,16 @@ export default async function PortfolioPage({
             </span>{" "}
             means the work is part of the NSF-funded UI+SUU partnership and
             has a dual open-source / UI-implementation identity;{" "}
-            <span className="inline-block rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">
+            <span className="inline-block rounded-full border border-brand-lupine/30 bg-brand-lupine/10 px-2 py-0.5 text-xs font-medium text-brand-lupine">
               Capability diffusion
             </span>{" "}
             flags interventions where a non-IIDS UI unit is co-building;{" "}
-            <span className="inline-block rounded-full border border-violet-200 bg-violet-50 px-2 py-0.5 text-xs font-medium text-violet-700">
+            <span className="inline-block rounded-full border border-brand-huckleberry/30 bg-brand-huckleberry/10 px-2 py-0.5 text-xs font-medium text-brand-huckleberry">
               Tracked
             </span>{" "}
             means the work is in the inventory but is not built by IIDS.
           </p>
-        </div>
+        </Callout>
       )}
 
       {/* AI4RA pointer (always at bottom) */}

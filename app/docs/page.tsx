@@ -4,7 +4,7 @@ export default function DocsIndexPage() {
   return (
     <div className="space-y-10">
       <div>
-        <h1 className="text-3xl font-bold text-ui-charcoal">Documentation</h1>
+        <h1 className="text-3xl font-black tracking-tight text-brand-black">Documentation</h1>
         <p className="mt-2 text-gray-600 max-w-3xl">
           User and technical documentation for the Institutional AI
           Initiative site — from the Submit-a-Project assessment to the
