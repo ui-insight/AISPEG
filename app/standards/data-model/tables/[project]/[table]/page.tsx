@@ -7,6 +7,7 @@ import {
   tables,
 } from "@/lib/governance/catalog";
 import { resolveVocabularyGroupForColumn } from "@/lib/governance/vocabulary-usage";
+import { getProjectFraming } from "@/lib/governance/project-framing";
 import type { Column, Table, TableKind } from "@/lib/governance/types";
 
 export function generateStaticParams() {
@@ -159,6 +160,8 @@ export default async function TableDetailPage({
       ? "Adopted from the AI4RA Unified Data Model — naming and shape follow the institutional standard."
       : "Specific to this project — workflow, tooling, or domain-specific entities not part of the canonical UDM.";
 
+  const projectFraming = getProjectFraming(project.slug);
+
   return (
     <div className="space-y-10">
       <header>
@@ -167,18 +170,30 @@ export default async function TableDetailPage({
             ← {project.application}
           </Link>
         </p>
-        <p className="mt-3 text-[11px] font-semibold uppercase tracking-wider text-ui-gold-dark">
+        <p className="mt-3 text-[11px] font-semibold uppercase tracking-wider text-brand-clearwater">
           {project.domain}
         </p>
         <div className="mt-1 flex flex-wrap items-center gap-3">
-          <h1 className="font-mono text-3xl font-black tracking-tight text-ui-charcoal">
+          <h1 className="font-mono text-3xl font-black tracking-tight text-brand-black">
             {table.name}
           </h1>
           <ClassificationBadge classification={table.classification} />
-          <span className="text-[10px] font-medium uppercase tracking-wider text-gray-500">
+          <span className="text-[10px] font-medium uppercase tracking-wider text-ink-subtle">
             {KIND_LABEL[table.kind]}
           </span>
         </div>
+
+        {projectFraming && (
+          <p className="mt-3 text-sm text-ink-muted">
+            <span className="font-semibold text-brand-black">{project.application}</span>
+            {" "}is operated by{" "}
+            <span className="font-semibold text-brand-black">
+              {projectFraming.owners.map((o) => o.name).join(", ")}
+            </span>
+            {" · "}
+            {projectFraming.homeUnit}
+          </p>
+        )}
 
         <dl className="mt-6 grid grid-cols-2 gap-x-8 gap-y-3 text-sm md:grid-cols-4">
           <div>

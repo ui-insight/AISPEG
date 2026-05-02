@@ -5,6 +5,7 @@ import {
   getTablesForProject,
   projects,
 } from "@/lib/governance/catalog";
+import { getProjectFraming } from "@/lib/governance/project-framing";
 import type { Table, TableKind } from "@/lib/governance/types";
 
 export function generateStaticParams() {
@@ -167,64 +168,93 @@ export default async function ProjectDetailPage({
     (t) => t.classification === "project-extension",
   );
 
+  const framing = getProjectFraming(project.slug);
+
   return (
     <div className="space-y-10">
       <header>
         <p className="text-xs">
           <Link href="/standards/data-model">← Data Model</Link>
         </p>
-        <p className="mt-3 text-[11px] font-semibold uppercase tracking-wider text-ui-gold-dark">
+        <p className="mt-3 text-[11px] font-semibold uppercase tracking-wider text-brand-clearwater">
           {project.domain}
         </p>
-        <h1 className="mt-1 text-3xl font-black tracking-tight text-ui-charcoal">
+        <h1 className="mt-1 text-3xl font-black tracking-tight text-brand-black">
           {project.application}
         </h1>
-        <dl className="mt-6 grid grid-cols-2 gap-x-8 gap-y-3 text-sm md:grid-cols-4">
-          <div>
-            <dt className="text-[11px] font-medium uppercase tracking-wider text-gray-500">
-              Tables
-            </dt>
-            <dd className="mt-1 font-bold text-ui-charcoal">
-              {project.tableCount}
-            </dd>
-          </div>
-          <div>
-            <dt className="text-[11px] font-medium uppercase tracking-wider text-gray-500">
-              Canonical UDM
-            </dt>
-            <dd className="mt-1 font-bold text-ui-charcoal">
-              {project.canonicalUdmCount}
-            </dd>
-          </div>
-          <div>
-            <dt className="text-[11px] font-medium uppercase tracking-wider text-gray-500">
-              Project extensions
-            </dt>
-            <dd className="mt-1 font-bold text-ui-charcoal">
-              {project.projectExtensionCount}
-            </dd>
-          </div>
-          <div>
-            <dt className="text-[11px] font-medium uppercase tracking-wider text-gray-500">
-              Repository
-            </dt>
-            <dd className="mt-1">
-              <a
-                href={project.repository}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs"
-              >
-                {project.repository.replace("https://github.com/", "")}
-              </a>
-            </dd>
-          </div>
-        </dl>
+
+        {framing && (
+          <p className="mt-4 max-w-3xl text-base leading-relaxed text-ink-muted">
+            {framing.lede}
+          </p>
+        )}
+
+        <div className="mt-6 grid gap-x-8 gap-y-4 md:grid-cols-[1.5fr_1fr]">
+          {/* Left: ownership */}
+          <dl className="space-y-3 text-sm">
+            {framing && (
+              <>
+                <div>
+                  <dt className="text-[11px] font-medium uppercase tracking-wider text-ink-subtle">
+                    Home unit
+                  </dt>
+                  <dd className="mt-0.5 text-brand-black">{framing.homeUnit}</dd>
+                </div>
+                <div>
+                  <dt className="text-[11px] font-medium uppercase tracking-wider text-ink-subtle">
+                    {framing.owners.length === 1 ? "Operational owner" : "Operational owners"}
+                  </dt>
+                  <dd className="mt-0.5 text-brand-black">
+                    {framing.owners.map((o, i) => (
+                      <span key={o.name}>
+                        {i > 0 && ", "}
+                        <span className="font-semibold">{o.name}</span>
+                        {o.title && (
+                          <span className="text-ink-muted"> · {o.title}</span>
+                        )}
+                      </span>
+                    ))}
+                  </dd>
+                </div>
+              </>
+            )}
+          </dl>
+
+          {/* Right: facts */}
+          <dl className="space-y-3 text-sm md:border-l md:border-hairline md:pl-8">
+            <div>
+              <dt className="text-[11px] font-medium uppercase tracking-wider text-ink-subtle">
+                Tables in catalog
+              </dt>
+              <dd className="mt-0.5 text-brand-black">
+                <span className="font-semibold">{project.tableCount}</span> total
+                {" — "}
+                {project.canonicalUdmCount} canonical, {project.projectExtensionCount} project-specific
+              </dd>
+            </div>
+            <div>
+              <dt className="text-[11px] font-medium uppercase tracking-wider text-ink-subtle">
+                Repository
+              </dt>
+              <dd className="mt-0.5">
+                <a
+                  href={project.repository}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs"
+                >
+                  {project.repository.replace("https://github.com/", "")}
+                </a>
+              </dd>
+            </div>
+          </dl>
+        </div>
+
         {(project.techStack.backend ||
           project.techStack.frontend ||
           project.techStack.database) && (
-          <p className="mt-4 max-w-2xl text-xs text-gray-600">
-            <span className="font-semibold text-ui-charcoal">Stack:</span>{" "}
+          <p className="mt-6 max-w-2xl text-xs text-ink-muted">
+            <span className="font-semibold text-brand-black">Stack:</span>{" "}
             {[
               project.techStack.backend,
               project.techStack.frontend,
@@ -235,8 +265,8 @@ export default async function ProjectDetailPage({
           </p>
         )}
         {project.runtimeModes && project.runtimeModes.length > 0 && (
-          <p className="mt-1 max-w-2xl text-xs text-gray-600">
-            <span className="font-semibold text-ui-charcoal">Runtime:</span>{" "}
+          <p className="mt-1 max-w-2xl text-xs text-ink-muted">
+            <span className="font-semibold text-brand-black">Runtime:</span>{" "}
             {project.runtimeModes.join(" / ")}
           </p>
         )}
