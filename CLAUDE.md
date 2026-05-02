@@ -195,6 +195,30 @@ on PRs that touch `vendor/data-governance/**`, `lib/governance/**`,
 fails the build if the upstream drift script reports drift between the
 vendored registry and the live portfolio repos.
 
+A second `Governance PR Summary` workflow
+(`.github/workflows/governance-pr-summary.yml`) is **advisory only** (does
+not fail the build) and runs on every PR. It posts (and updates in place)
+two PR comments via HTML markers:
+
+- **Submodule freshness** (`<!-- governance-bot:freshness -->`) — warns
+  when the vendored `vendor/data-governance` pointer is more than
+  `STALE_AFTER_DAYS` (default 14) behind upstream `main`.
+- **Catalog change summary**
+  (`<!-- governance-bot:catalog-changes -->`) — when this PR changes
+  `lib/governance/catalog.ts` or `lib/governance/vocabularies.ts`,
+  posts a human-readable diff (tables / columns / vocabulary groups /
+  values added or removed) so reviewers can scan the impact without
+  reading the full generated diff. The diff logic lives in
+  `scripts/governance-pr-summary.ts`; freshness rendering lives in
+  `scripts/governance-freshness.ts`. Both have npm-script aliases for
+  local use:
+
+```bash
+npm run governance:pr-summary       # needs BASE_*_PATH env vars
+npm run governance:pr-summary:test  # uses .test-governance/test.env fixtures
+npm run governance:freshness        # needs PINNED_SHA + PINNED_COMMIT_DATE_ISO
+```
+
 ### Governance submodule
 
 `vendor/data-governance/` is a git submodule pointing at

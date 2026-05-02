@@ -1,6 +1,14 @@
 import nextConfig from "eslint-config-next";
 
 const eslintConfig = [
+  {
+    // Agent worktrees created by Claude Code background agents — they
+    // contain their own .next/ build output and we don't want to lint
+    // sibling agents' artifacts in this checkout.
+    // Test fixtures — committed copies of generated catalogs used by
+    // scripts/governance-pr-summary.ts locally; linting them is noisy.
+    ignores: [".claude/worktrees/**", ".test-governance/**"],
+  },
   ...nextConfig,
   {
     rules: {
