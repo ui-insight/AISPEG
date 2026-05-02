@@ -9,6 +9,7 @@ import {
 import { resolveVocabularyGroupForColumn } from "@/lib/governance/vocabulary-usage";
 import { getProjectFraming } from "@/lib/governance/project-framing";
 import GlossaryTerm from "@/components/GlossaryTerm";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import type { Column, Table, TableKind } from "@/lib/governance/types";
 
 export function generateStaticParams() {
@@ -81,7 +82,7 @@ function VocabPill({
   return (
     <Link
       href={`/standards/data-model/vocabularies/${encodeURIComponent(domain)}/${encodeURIComponent(group)}`}
-      className="unstyled ml-2 inline-block rounded bg-brand-huckleberry/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-brand-huckleberry hover:bg-brand-huckleberry/20"
+      className="unstyled ml-2 inline-block rounded bg-brand-lupine/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-brand-lupine hover:bg-brand-lupine/20"
       title={`Vocabulary group: ${domain}/${group}`}
     >
       Vocab
@@ -166,16 +167,22 @@ export default async function TableDetailPage({
   return (
     <div className="space-y-10">
       <header>
-        <p className="text-xs">
-          <Link href={`/standards/data-model/projects/${project.slug}`}>
-            ← {project.application}
-          </Link>
-        </p>
+        <Breadcrumbs
+          items={[
+            { label: "Data Model", href: "/standards/data-model" },
+            { label: "Tables", href: "/standards/data-model/tables" },
+            {
+              label: project.application,
+              href: `/standards/data-model/projects/${project.slug}`,
+            },
+            { label: table.name },
+          ]}
+        />
         <p className="mt-3 text-[11px] font-semibold uppercase tracking-wider text-brand-clearwater">
           {project.domain}
         </p>
         <div className="mt-1 flex flex-wrap items-center gap-3">
-          <h1 className="font-mono text-3xl font-black tracking-tight text-brand-black">
+          <h1 className="text-3xl font-black tracking-tight text-brand-black">
             {table.name}
           </h1>
           <ClassificationBadge classification={table.classification} />
@@ -271,7 +278,7 @@ export default async function TableDetailPage({
               <>
                 {" "}
                 ·{" "}
-                <span className="font-bold text-brand-huckleberry">
+                <span className="font-bold text-brand-lupine">
                   {vocabColumnCount}
                 </span>{" "}
                 vocabulary

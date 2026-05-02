@@ -69,6 +69,7 @@ function TabBar({ active }: { active: DataModelTab }) {
 export default function DataModelHeader({ active }: { active: DataModelTab }) {
   const totalTables = projects.reduce((sum, p) => sum + p.tableCount, 0);
   const totalVocab = vocabularyGroups.length;
+  const isIndex = active === "projects";
 
   return (
     <header className="space-y-6">
@@ -76,25 +77,29 @@ export default function DataModelHeader({ active }: { active: DataModelTab }) {
         <h1 className="text-3xl font-black tracking-tight text-brand-black">
           Data Model
         </h1>
-        <p className="mt-3 max-w-3xl text-base leading-relaxed text-ink-muted">
-          The AI4RA Unified Data Model and the per-project extensions
-          installed across the IIDS portfolio. Engineers can use this to
-          connect to our data; stakeholders can use it to understand the
-          definitions and business rules. Source of truth:{" "}
-          <a
-            href="https://github.com/ui-insight/data-governance"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            ui-insight/data-governance
-          </a>
-          .
-        </p>
-        <p className="mt-3 max-w-3xl text-base leading-relaxed text-brand-black">
-          <span className="font-bold">{projects.length} projects</span> governed,{" "}
-          <span className="font-bold">{totalTables} tables</span> across the portfolio,{" "}
-          <span className="font-bold">{totalVocab} controlled-vocabulary groups</span>.
-        </p>
+        {isIndex && (
+          <>
+            <p className="mt-3 max-w-3xl text-base leading-relaxed text-ink-muted">
+              The AI4RA Unified Data Model and the per-project extensions
+              installed across the IIDS portfolio. Engineers can use this to
+              connect to our data; stakeholders can use it to understand the
+              definitions and business rules. Source of truth:{" "}
+              <a
+                href="https://github.com/ui-insight/data-governance"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                ui-insight/data-governance
+              </a>
+              .
+            </p>
+            <p className="mt-3 max-w-3xl text-base leading-relaxed text-brand-black">
+              <span className="font-bold">{projects.length} projects</span> governed,{" "}
+              <span className="font-bold">{totalTables} tables</span> across the portfolio,{" "}
+              <span className="font-bold">{totalVocab} controlled-vocabulary groups</span>.
+            </p>
+          </>
+        )}
       </div>
 
       <TabBar active={active} />

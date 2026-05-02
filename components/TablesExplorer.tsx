@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import type { Table, TableKind } from "@/lib/governance/types";
 
 const KIND_LABEL: Record<TableKind, string> = {
@@ -102,10 +103,27 @@ export default function TablesExplorer({
   rows: TableRow[];
   projectsList: ProjectMeta[];
 }) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
   const [sortKey, setSortKey] = useState<SortKey>("project");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
-  const [projectFilter, setProjectFilter] = useState<string>("all");
-  const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
+  const [projectFilter, setProjectFilter] = useState<string>(
+    searchParams.get("project") ?? "all",
+  );
+  const [typeFilter, setTypeFilter] = useState<TypeFilter>(
+    (searchParams.get("type") as TypeFilter) ?? "all",
+  );
+
+  // Reflect filter state into the URL so views are bookmarkable.
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (projectFilter !== "all") params.set("project", projectFilter);
+    if (typeFilter !== "all") params.set("type", typeFilter);
+    const qs = params.toString();
+    router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+  }, [projectFilter, typeFilter, pathname, router]);
 
   const handleSort = (k: SortKey) => {
     if (k === sortKey) {
@@ -178,35 +196,22 @@ export default function TablesExplorer({
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+          <label
+            htmlFor="type-filter"
+            className="text-[11px] font-semibold uppercase tracking-wider text-gray-500"
+          >
             Type
-          </span>
-          <div className="flex overflow-hidden rounded border border-gray-300 text-xs">
-            {(
-              [
-                { v: "all", label: "All" },
-                { v: "canonical-udm", label: "Canonical" },
-                { v: "project-extension", label: "Extension" },
-              ] as { v: TypeFilter; label: string }[]
-            ).map((opt) => {
-              const active = typeFilter === opt.v;
-              return (
-                <button
-                  key={opt.v}
-                  type="button"
-                  onClick={() => setTypeFilter(opt.v)}
-                  aria-pressed={active}
-                  className={`unstyled px-3 py-1 transition-colors ${
-                    active
-                      ? "bg-ui-charcoal text-white"
-                      : "bg-white text-gray-600 hover:text-ui-charcoal"
-                  }`}
-                >
-                  {opt.label}
-                </button>
-              );
-            })}
-          </div>
+          </label>
+          <select
+            id="type-filter"
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value as TypeFilter)}
+            className="rounded border border-gray-300 bg-white px-2 py-1 text-xs text-ui-charcoal focus:border-brand-clearwater focus:outline-none"
+          >
+            <option value="all">All</option>
+            <option value="canonical-udm">Canonical UDM</option>
+            <option value="project-extension">Project extension</option>
+          </select>
         </div>
 
         <p className="ml-auto text-xs text-gray-500">
