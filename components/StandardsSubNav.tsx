@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const subNavItems = [
-  { href: "/standards", label: "Standards Watch" },
+  { href: "/standards", label: "Standards" },
   { href: "/standards/data-model", label: "Data Model" },
 ];
 
