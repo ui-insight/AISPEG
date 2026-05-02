@@ -183,9 +183,9 @@ export default function AdminSubmissionsPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-ui-charcoal">Submissions Explorer</h1>
+        <h1 className="text-3xl font-black tracking-tight text-brand-black">Submissions Explorer</h1>
         <p className="mt-2 text-gray-600">
-          Search, filter, and explore App Builder Guide submissions.
+          Search, filter, and explore Submit-a-Project assessment submissions.
         </p>
       </div>
 

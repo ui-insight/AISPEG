@@ -4,16 +4,16 @@ import Link from "next/link";
 export default function BuilderGuideDocsPage() {
   return (
     <DocPage
-      title="App Builder Guide"
-      subtitle="How to use the interactive wizard to scope your application idea and get started building."
+      title="Submit-a-Project assessment"
+      subtitle="How the 9-step assessment scopes a project, surfaces similar work in the registry, and routes the submission to a named IIDS owner."
       breadcrumbs={[
         { label: "Docs", href: "/docs" },
-        { label: "Builder Guide" },
+        { label: "Submit a Project" },
       ]}
     >
       <h2>Overview</h2>
       <p>
-        The <Link href="/builder-guide">App Builder Guide</Link> is an interactive questionnaire
+        <Link href="/builder-guide">Submit a project</Link> is an interactive questionnaire
         that walks you through scoping an application idea. By answering questions about your
         data, users, and integration needs, the wizard determines what tier your application
         falls into and recommends the right standards, tech stack, deployment path, and GitHub

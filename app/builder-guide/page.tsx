@@ -14,6 +14,7 @@ import {
   type ContactInfo,
 } from "@/lib/builder-guide-data";
 import { intakeConfig, statusUrlFor } from "@/lib/intake-config";
+import { Callout } from "@/components/Callout";
 
 // Subset of the similarity engine's SimilarityResult shape — the wizard
 // only renders name + status + overlap counts, not the full overlap detail.
@@ -287,24 +288,22 @@ function AiAnalysisPanel({
 }) {
   if (!analysis && !analyzing && !error) {
     return (
-      <div className="mt-4 rounded-xl border border-dashed border-purple-200 bg-purple-50/50 p-4">
+      <div className="mt-4 rounded-xl border border-hairline bg-surface-alt p-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-100">
-            <svg className="h-4 w-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-          </div>
           <div className="flex-1">
-            <p className="text-sm font-medium text-purple-700">AI-Powered Analysis</p>
-            <p className="text-xs text-purple-500">
-              Let our on-campus LLM analyze your idea and pre-fill the quiz
+            <p className="text-sm font-semibold text-brand-black">
+              Pre-fill the assessment from a description
+            </p>
+            <p className="mt-0.5 text-xs text-ink-muted">
+              Optional. The on-prem MindRouter LLM reads your idea and proposes
+              answers to the next 8 steps. You review and edit every answer.
             </p>
           </div>
           <button
             onClick={onAnalyze}
-            className="rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 transition-colors"
+            className="rounded-lg bg-brand-black px-4 py-2 text-sm font-medium text-white hover:bg-brand-black/90 transition-colors"
           >
-            Analyze
+            Pre-fill
           </button>
         </div>
       </div>
@@ -313,11 +312,11 @@ function AiAnalysisPanel({
 
   if (analyzing) {
     return (
-      <div className="mt-4 rounded-xl border border-purple-200 bg-purple-50/50 p-5">
+      <div className="mt-4 rounded-xl border border-hairline bg-surface-alt p-5">
         <div className="flex items-center gap-3">
-          <div className="h-5 w-5 animate-spin rounded-full border-2 border-purple-300 border-t-purple-600" />
-          <p className="text-sm text-purple-600">
-            Analyzing your idea with MindRouter (on-prem LLM)...
+          <div className="h-5 w-5 animate-spin rounded-full border-2 border-hairline border-t-brand-black" />
+          <p className="text-sm text-ink-muted">
+            Reading your idea with MindRouter (on-prem LLM)…
           </p>
         </div>
       </div>
@@ -341,37 +340,32 @@ function AiAnalysisPanel({
   if (!analysis) return null;
 
   return (
-    <div className="mt-4 rounded-xl border border-purple-200 bg-purple-50/50 p-5 space-y-4">
+    <div className="mt-4 rounded-xl border border-hairline bg-surface-alt p-5 space-y-4">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="flex h-6 w-6 items-center justify-center rounded-md bg-purple-100">
-            <svg className="h-3.5 w-3.5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-          </div>
-          <h4 className="text-sm font-semibold text-purple-700">AI Analysis</h4>
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-clearwater">
+            Pre-fill suggestions
+          </p>
+          <p className="mt-0.5 text-xs text-ink-subtle">via MindRouter (on-prem)</p>
         </div>
-        <span className="rounded-full bg-purple-100 px-2 py-0.5 text-xs text-purple-600">
-          via MindRouter
-        </span>
       </div>
 
       {/* Summary */}
-      <div className="rounded-lg bg-white p-3 border border-purple-100">
-        <p className="text-xs font-medium uppercase tracking-wide text-gray-500">Summary</p>
-        <p className="mt-1 text-sm text-ui-charcoal">{analysis.summary}</p>
+      <div className="rounded-lg border border-hairline bg-white p-3">
+        <p className="text-xs font-medium uppercase tracking-wide text-ink-subtle">Summary</p>
+        <p className="mt-1 text-sm text-brand-black">{analysis.summary}</p>
       </div>
 
       {/* Clarifying Questions */}
       {analysis.clarifying_questions.length > 0 && (
         <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-purple-600">
-            Questions to Consider
+          <p className="text-xs font-medium uppercase tracking-wide text-brand-clearwater">
+            Questions to consider
           </p>
           <ul className="mt-2 space-y-1.5">
             {analysis.clarifying_questions.map((q, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
-                <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-400" />
+              <li key={i} className="flex items-start gap-2 text-sm text-ink-muted">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-brand-clearwater" />
                 {q}
               </li>
             ))}
@@ -382,13 +376,13 @@ function AiAnalysisPanel({
       {/* Similar Tools */}
       {analysis.similar_existing_tools.length > 0 && (
         <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-purple-600">
-            Similar Existing Tools
+          <p className="text-xs font-medium uppercase tracking-wide text-brand-clearwater">
+            Similar existing tools
           </p>
           <ul className="mt-2 space-y-1.5">
             {analysis.similar_existing_tools.map((t, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
-                <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-400" />
+              <li key={i} className="flex items-start gap-2 text-sm text-ink-muted">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-brand-clearwater" />
                 {t}
               </li>
             ))}
@@ -399,13 +393,13 @@ function AiAnalysisPanel({
       {/* Risks */}
       {analysis.risks_and_considerations.length > 0 && (
         <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-orange-600">
-            Risks & Considerations
+          <p className="text-xs font-medium uppercase tracking-wide text-orange-700">
+            Risks &amp; considerations
           </p>
           <ul className="mt-2 space-y-1.5">
             {analysis.risks_and_considerations.map((r, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
-                <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-orange-400" />
+              <li key={i} className="flex items-start gap-2 text-sm text-ink-muted">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-orange-500" />
                 {r}
               </li>
             ))}
@@ -416,12 +410,12 @@ function AiAnalysisPanel({
       {/* Apply Button */}
       <button
         onClick={onApplySuggestions}
-        className="w-full rounded-lg bg-purple-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-purple-700 transition-colors"
+        className="w-full rounded-lg bg-brand-black px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-black/90 transition-colors"
       >
-        Apply AI Suggestions to Quiz
+        Apply suggestions to the quiz
       </button>
-      <p className="text-center text-xs text-purple-500">
-        You can review and modify every answer before submitting
+      <p className="text-center text-xs text-ink-subtle">
+        You can review and modify every answer before submitting.
       </p>
     </div>
   );
@@ -492,7 +486,7 @@ function AiChatPanel() {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-full bg-purple-600 px-5 py-3 text-sm font-medium text-white shadow-lg hover:bg-purple-700 transition-colors"
+        className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-full bg-brand-black px-5 py-3 text-sm font-medium text-white shadow-lg hover:bg-brand-black/90 transition-colors"
       >
         <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -502,23 +496,18 @@ function AiChatPanel() {
             d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
           />
         </svg>
-        AI Assistant
+        Ask a question
       </button>
     );
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex h-[480px] w-96 flex-col rounded-2xl border border-gray-200 bg-white shadow-2xl">
+    <div className="fixed bottom-6 right-6 z-50 flex h-[480px] w-96 flex-col rounded-2xl border border-hairline bg-white shadow-2xl">
       {/* Header */}
-      <div className="flex items-center justify-between rounded-t-2xl bg-purple-600 px-4 py-3">
-        <div className="flex items-center gap-2">
-          <svg className="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-          </svg>
-          <div>
-            <p className="text-sm font-semibold text-white">AI Assistant</p>
-            <p className="text-xs text-purple-200">Powered by MindRouter</p>
-          </div>
+      <div className="flex items-center justify-between rounded-t-2xl bg-brand-black px-4 py-3">
+        <div>
+          <p className="text-sm font-semibold text-white">Ask a question</p>
+          <p className="text-xs text-white/60">MindRouter (on-prem)</p>
         </div>
         <button onClick={() => setOpen(false)} className="text-white/70 hover:text-white">
           <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -531,14 +520,9 @@ function AiChatPanel() {
       <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3">
         {messages.length === 0 && (
           <div className="text-center py-8">
-            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-purple-100">
-              <svg className="h-6 w-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            </div>
-            <p className="text-sm font-medium text-gray-700">How can I help?</p>
-            <p className="mt-1 text-xs text-gray-500">
-              Ask about data sensitivity, tech stacks, university systems, or anything about your app idea.
+            <p className="text-sm font-medium text-brand-black">What can we help with?</p>
+            <p className="mt-1 text-xs text-ink-muted">
+              Ask about data sensitivity, tech stacks, university systems, or anything about your project idea.
             </p>
           </div>
         )}
@@ -550,8 +534,8 @@ function AiChatPanel() {
             <div
               className={`max-w-[85%] rounded-xl px-3.5 py-2.5 text-sm ${
                 msg.role === "user"
-                  ? "bg-purple-600 text-white"
-                  : "bg-gray-100 text-gray-700"
+                  ? "bg-brand-black text-white"
+                  : "bg-surface-alt text-brand-black"
               }`}
             >
               <p className="whitespace-pre-wrap">{msg.content}</p>
@@ -560,11 +544,11 @@ function AiChatPanel() {
         ))}
         {loading && (
           <div className="flex justify-start">
-            <div className="rounded-xl bg-gray-100 px-4 py-3">
+            <div className="rounded-xl bg-surface-alt px-4 py-3">
               <div className="flex gap-1.5">
-                <div className="h-2 w-2 animate-bounce rounded-full bg-gray-400" style={{ animationDelay: "0ms" }} />
-                <div className="h-2 w-2 animate-bounce rounded-full bg-gray-400" style={{ animationDelay: "150ms" }} />
-                <div className="h-2 w-2 animate-bounce rounded-full bg-gray-400" style={{ animationDelay: "300ms" }} />
+                <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-ink-subtle" style={{ animationDelay: "0ms" }} />
+                <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-ink-subtle" style={{ animationDelay: "200ms" }} />
+                <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-ink-subtle" style={{ animationDelay: "400ms" }} />
               </div>
             </div>
           </div>
@@ -572,21 +556,21 @@ function AiChatPanel() {
       </div>
 
       {/* Input */}
-      <div className="border-t border-gray-200 p-3">
+      <div className="border-t border-hairline p-3">
         <div className="flex items-center gap-2">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-            placeholder={unavailable ? "AI not configured..." : "Ask a question..."}
+            placeholder={unavailable ? "Assistant not configured..." : "Ask a question..."}
             disabled={unavailable}
-            className="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-purple-400 focus:outline-none focus:ring-1 focus:ring-purple-400 disabled:bg-gray-50 disabled:text-gray-400"
+            className="flex-1 rounded-lg border border-hairline px-3 py-2 text-sm focus:border-brand-black focus:outline-none focus:ring-1 focus:ring-brand-black disabled:bg-surface-alt disabled:text-ink-subtle"
           />
           <button
             onClick={sendMessage}
             disabled={loading || !input.trim() || unavailable}
-            className="rounded-lg bg-purple-600 p-2 text-white hover:bg-purple-700 disabled:bg-gray-200 disabled:text-gray-400 transition-colors"
+            className="rounded-lg bg-brand-black p-2 text-white hover:bg-brand-black/90 disabled:bg-hairline disabled:text-ink-subtle transition-colors"
           >
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -794,11 +778,8 @@ function ResultsView({
       </div>
 
       {/* What happens next — named human + SLA + status link */}
-      <div className="rounded-xl border-l-4 border-ui-gold bg-ui-gold/5 p-5">
-        <p className="text-xs font-medium uppercase tracking-wider text-ui-gold-dark">
-          What happens next
-        </p>
-        <p className="mt-2 text-sm leading-relaxed text-ui-charcoal">
+      <Callout eyebrow="What happens next" tone="emphasis">
+        <p className="text-sm leading-relaxed text-brand-black">
           Your submission is in the IIDS intake queue.{" "}
           <span className="font-semibold">{owner.name}</span> ({owner.title}) will
           review the assessment and reach out within{" "}
@@ -808,24 +789,24 @@ function ResultsView({
           .
         </p>
         {statusUrl && (
-          <div className="mt-3 rounded-lg border border-ui-gold/30 bg-white p-3 text-xs">
-            <p className="font-medium text-gray-700">
+          <div className="mt-3 rounded-lg border border-hairline bg-white p-3 text-xs">
+            <p className="font-medium text-ink-muted">
               Bookmark this URL to track your submission:
             </p>
             <Link
               href={statusUrl}
-              className="mt-1 block break-all font-mono text-ui-gold-dark hover:underline"
+              className="mt-1 block break-all font-mono text-brand-black hover:underline"
             >
               {statusUrl}
             </Link>
           </div>
         )}
         {!statusUrl && (
-          <p className="mt-3 text-xs italic text-gray-500">
+          <p className="mt-3 text-xs italic text-ink-subtle">
             Status link will appear shortly. Your submission is being recorded.
           </p>
         )}
-      </div>
+      </Callout>
 
       {/* Related work in the portfolio */}
       <SimilarMatchesCallout
@@ -836,12 +817,9 @@ function ResultsView({
 
       {/* Project Idea */}
       {answers.idea && (
-        <div className="rounded-xl border-l-4 border-ui-gold bg-white p-5 shadow-sm">
-          <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
-            Your Project Idea
-          </p>
-          <p className="mt-2 text-sm text-ui-charcoal">{answers.idea as string}</p>
-        </div>
+        <Callout eyebrow="Your project idea">
+          <p className="text-sm text-brand-black">{answers.idea as string}</p>
+        </Callout>
       )}
 
       <div className="grid gap-6 md:grid-cols-2">
@@ -1202,9 +1180,9 @@ export default function BuilderGuidePage() {
     return (
       <div className="space-y-10">
         <div>
-          <h1 className="text-3xl font-bold text-ui-charcoal">App Builder Guide</h1>
-          <p className="mt-2 text-gray-600">
-            Your personalized assessment and recommendations.
+          <h1 className="text-3xl font-black tracking-tight text-brand-black">Submit a project</h1>
+          <p className="mt-2 text-ink-muted">
+            Your assessment and recommendations.
           </p>
         </div>
         <ResultsView
@@ -1225,10 +1203,12 @@ export default function BuilderGuidePage() {
     <div className="space-y-10">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-ui-charcoal">App Builder Guide</h1>
-        <p className="mt-2 max-w-3xl text-gray-600">
-          Answer a few questions about your project idea and we&apos;ll recommend the right
-          standards, tech stack, deployment path, and GitHub template to get you started.
+        <h1 className="text-3xl font-black tracking-tight text-brand-black">Submit a project</h1>
+        <p className="mt-2 max-w-3xl text-ink-muted">
+          Nine short questions. The assessment classifies the project,
+          surfaces similar work already in the inventory, and routes the
+          submission to a named IIDS owner who responds within{" "}
+          <span className="font-semibold text-brand-black">2 business days</span>.
         </p>
       </div>
 

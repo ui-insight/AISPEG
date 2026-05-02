@@ -73,10 +73,10 @@ export default function DataModelHeader({ active }: { active: DataModelTab }) {
   return (
     <header className="space-y-6">
       <div>
-        <h1 className="text-3xl font-black tracking-tight text-ui-charcoal">
+        <h1 className="text-3xl font-black tracking-tight text-brand-black">
           Data Model
         </h1>
-        <p className="mt-3 max-w-3xl text-base leading-relaxed text-gray-700">
+        <p className="mt-3 max-w-3xl text-base leading-relaxed text-ink-muted">
           The AI4RA Unified Data Model and the per-project extensions
           installed across the IIDS portfolio. Engineers can use this to
           connect to our data; stakeholders can use it to understand the
@@ -90,34 +90,12 @@ export default function DataModelHeader({ active }: { active: DataModelTab }) {
           </a>
           .
         </p>
+        <p className="mt-3 max-w-3xl text-base leading-relaxed text-brand-black">
+          <span className="font-bold">{projects.length} projects</span> governed,{" "}
+          <span className="font-bold">{totalTables} tables</span> across the portfolio,{" "}
+          <span className="font-bold">{totalVocab} controlled-vocabulary groups</span>.
+        </p>
       </div>
-
-      <dl className="grid grid-cols-3 gap-6 text-sm">
-        <div>
-          <dt className="text-xs font-medium uppercase tracking-wider text-gray-500">
-            Projects governed
-          </dt>
-          <dd className="mt-1 text-2xl font-black text-ui-charcoal">
-            {projects.length}
-          </dd>
-        </div>
-        <div>
-          <dt className="text-xs font-medium uppercase tracking-wider text-gray-500">
-            Tables across portfolio
-          </dt>
-          <dd className="mt-1 text-2xl font-black text-ui-charcoal">
-            {totalTables}
-          </dd>
-        </div>
-        <div>
-          <dt className="text-xs font-medium uppercase tracking-wider text-gray-500">
-            Vocabulary groups
-          </dt>
-          <dd className="mt-1 text-2xl font-black text-ui-charcoal">
-            {totalVocab}
-          </dd>
-        </div>
-      </dl>
 
       <TabBar active={active} />
     </header>

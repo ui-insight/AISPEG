@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
+import { Callout } from "@/components/Callout";
 
 const tierLabels: Record<number, { label: string; color: string }> = {
   1: { label: "Tier 1: Simple Static App", color: "bg-green-100 text-green-700 border-green-200" },
@@ -222,7 +223,7 @@ export default function AdminSubmissionDetailPage() {
           <Link href="/admin/submissions" className="text-sm text-gray-500 hover:text-ui-charcoal">
             &larr; Back to submissions
           </Link>
-          <h1 className="mt-2 text-2xl font-bold text-ui-charcoal">Submission Detail</h1>
+          <h1 className="mt-2 text-2xl font-black tracking-tight text-brand-black">Submission Detail</h1>
           <p className="mt-1 text-xs text-gray-400 font-mono">{submission.id}</p>
         </div>
         <div className="flex items-center gap-3">
@@ -270,12 +271,11 @@ export default function AdminSubmissionDetailPage() {
         </div>
 
         {/* Idea */}
-        <div className="rounded-xl border-l-4 border-ui-gold bg-white p-5 shadow-sm">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500">Project Idea</h2>
-          <p className="mt-3 text-sm text-ui-charcoal whitespace-pre-wrap">
+        <Callout eyebrow="Project Idea">
+          <p className="text-sm text-brand-black whitespace-pre-wrap">
             {submission.idea_text || "(no description provided)"}
           </p>
-        </div>
+        </Callout>
       </div>
 
       {/* Quiz Answers */}

@@ -46,14 +46,12 @@ export default async function InternalPortfolioPage() {
       {/* Groups by home unit */}
       {groups.map(({ unit, items }) => (
         <section key={unit} className="space-y-4">
-          <div className="border-l-4 border-ui-gold pl-4">
-            <div className="flex items-baseline gap-3">
-              <h2 className="text-xl font-bold text-ui-charcoal">{unit}</h2>
-              <span className="text-sm text-gray-500">
-                {items.length}{" "}
-                {items.length === 1 ? "intervention" : "interventions"}
-              </span>
-            </div>
+          <div className="flex items-baseline gap-3">
+            <h2 className="text-xl font-black tracking-tight text-brand-black">{unit}</h2>
+            <span className="text-sm text-ink-subtle">
+              {items.length}{" "}
+              {items.length === 1 ? "intervention" : "interventions"}
+            </span>
           </div>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {items.map((app) => (

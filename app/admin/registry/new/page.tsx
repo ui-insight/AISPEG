@@ -119,7 +119,7 @@ export default function NewRegistryEntryPage() {
         >
           &larr; Back to registry
         </Link>
-        <h1 className="mt-2 text-2xl font-bold text-ui-charcoal">
+        <h1 className="mt-2 text-2xl font-black tracking-tight text-brand-black">
           Register new application
         </h1>
         <p className="mt-1 text-sm text-gray-500">

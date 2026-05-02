@@ -7,7 +7,7 @@ const statusStyles: Record<string, string> = {
   Piloting: "bg-blue-100 text-blue-800",
   Prototype: "bg-amber-100 text-amber-800",
   Planned: "bg-gray-100 text-gray-700",
-  Tracked: "bg-violet-100 text-violet-800",
+  Tracked: "bg-brand-huckleberry/10 text-brand-huckleberry",
   Archived: "bg-gray-100 text-gray-500",
 };
 

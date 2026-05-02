@@ -79,7 +79,7 @@ export default async function AdminRegistryPage() {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-ui-charcoal">
+          <h1 className="text-3xl font-black tracking-tight text-brand-black">
             Application Registry
           </h1>
           <p className="mt-2 text-gray-600">

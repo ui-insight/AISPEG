@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Callout } from "@/components/Callout";
 
 export const metadata = {
   title: "About · Institutional AI Initiative",
@@ -27,11 +28,8 @@ export default function AboutPage() {
       </header>
 
       {/* What this site is */}
-      <section className="rounded-xl border-l-4 border-ui-gold bg-white p-6 shadow-sm">
-        <h2 className="text-lg font-semibold text-ui-charcoal">
-          What this site is
-        </h2>
-        <p className="mt-3 text-sm leading-relaxed text-gray-700">
+      <Callout title="What this site is">
+        <p>
           The Institutional AI Initiative site is a single surface for
           institutional AI activity at UI. It maintains a growing inventory
           of AI interventions across UI units &mdash; some built by IIDS,
@@ -40,12 +38,12 @@ export default function AboutPage() {
           ownership, project status, and the institutional standards
           governing AI work.
         </p>
-        <p className="mt-3 text-sm leading-relaxed text-gray-700">
+        <p className="mt-3">
           The site is operated by IIDS, which runs MindRouter and the DGX
           Stack and is the University&rsquo;s primary builder for
           institutional AI software.
         </p>
-      </section>
+      </Callout>
 
       {/* The four surfaces */}
       <section>

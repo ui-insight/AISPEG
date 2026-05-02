@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Callout } from "@/components/Callout";
 import MetricCard from "@/components/MetricCard";
 import ProjectTable from "@/components/ProjectTable";
 import ProjectDetail from "@/components/ProjectDetail";
@@ -26,7 +27,7 @@ export default function FebReportPage() {
         <p className="text-sm font-medium uppercase tracking-wider text-ui-gold-dark">
           Origin story
         </p>
-        <h1 className="mt-1 text-3xl font-bold text-ui-charcoal">
+        <h1 className="mt-1 text-3xl font-black tracking-tight text-brand-black">
           Development Activity Report &mdash; February 1&ndash;26, 2026
         </h1>
         <p className="mt-2 max-w-3xl text-gray-600">
@@ -44,9 +45,8 @@ export default function FebReportPage() {
       </div>
 
       {/* Executive summary */}
-      <div className="rounded-xl border-l-4 border-ui-gold bg-white p-6 shadow-sm">
-        <p className="text-sm font-medium text-gray-500">Executive Summary</p>
-        <p className="mt-2 text-sm leading-relaxed text-gray-700">
+      <Callout eyebrow="Executive Summary">
+        <p className="text-sm leading-relaxed">
           Analysis of software development activity across 11 GitHub
           repositories during 26 days. The repositories span electronic
           research administration, data lakehouse ETL, strategic planning
@@ -56,7 +56,7 @@ export default function FebReportPage() {
           project represents production-grade software with modern
           architecture, testing, and documentation.
         </p>
-      </div>
+      </Callout>
 
       {/* Summary metrics */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

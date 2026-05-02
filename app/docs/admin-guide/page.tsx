@@ -13,7 +13,7 @@ export default function AdminGuideDocsPage() {
       <h2>Submissions Dashboard</h2>
       <p>
         The <strong>Submissions</strong> page (<code>/admin/submissions</code>) shows every idea
-        that has come through the App Builder Guide. The dashboard displays:
+        that has come through the Submit-a-Project assessment. The dashboard displays:
       </p>
       <ul>
         <li>Summary stats: total, new, in-progress, and archived counts</li>
