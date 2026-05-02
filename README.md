@@ -74,7 +74,6 @@ app/                         # Next.js App Router
   reports/                   # Reports surface
   standards/                 # Standards ledger
   ai4ra-ecosystem/           # AI4RA partnership reference page
-  presentations/             # Reveal.js decks (folds into reports in Sprint 4)
   admin/                     # Registry + submissions admin
     registry/
     submissions/
@@ -83,7 +82,7 @@ app/                         # Next.js App Router
   docs/                      # User + technical documentation
 
 components/                  # Reusable React components
-  Sidebar.tsx, PortfolioCard.tsx, IssueCard.tsx, RevealDeck.tsx, DocPage.tsx, ...
+  Sidebar.tsx, PortfolioCard.tsx, IssueCard.tsx, DocPage.tsx, ...
 
 lib/                         # Domain logic and data
   portfolio.ts               # Inventory of AI interventions (typed)

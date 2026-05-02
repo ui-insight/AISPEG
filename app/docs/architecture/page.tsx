@@ -202,7 +202,6 @@ app/
   reports/                # Reports surface
   standards/              # Standards ledger
   ai4ra-ecosystem/        # AI4RA partnership reference
-  presentations/          # Reveal.js decks
   admin/
     submissions/          # Submission list + detail
     registry/             # App registry list + detail + new
@@ -215,7 +214,6 @@ components/
   Sidebar.tsx             # Navigation sidebar
   PortfolioCard.tsx       # Intervention card
   IssueCard.tsx           # GitHub issue card
-  RevealDeck.tsx          # Reveal.js wrapper
   DocPage.tsx             # Documentation layout components
 lib/
   portfolio.ts            # Interventions inventory (typed)

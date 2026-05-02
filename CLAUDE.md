@@ -104,7 +104,6 @@ app/                       # Next.js App Router
   standards/               # Standards (sub-nav: ledger + data-model explorer)
   standards/data-model/    # Data Governance Explorer (UDM catalog + extensions)
   ai4ra-ecosystem/         # AI4RA partnership reference (Sprint 4 salvage)
-  presentations/           # Reveal.js decks
   admin/                   # Registry + submissions admin
   api/                     # Next.js API routes
   docs/                    # Technical + user documentation
@@ -113,13 +112,12 @@ components/                # Reusable components
   Sidebar.tsx              # Sidebar navigation
   PortfolioCard.tsx        # Intervention card
   IssueCard.tsx            # GitHub issue card
-  RevealDeck.tsx           # Reveal.js wrapper
   DocPage.tsx              # Docs layout primitives
 
 lib/                       # Domain logic
   portfolio.ts             # Intervention inventory (typed)
   standards-watch.ts       # Standards ledger
-  artifacts.ts             # Unified Reports timeline — briefs, activity reports, decks, talks
+  artifacts.ts             # Unified Reports timeline — briefs, activity reports, external talks
   builder-guide-data.ts    # Assessment quiz + scoring + tiers
   similarity.ts            # Submission ↔ registry overlap engine
   github.ts                # GitHub Issues API
@@ -151,7 +149,7 @@ _archive/                  # Routes/files archived in May 2026 refactor
   drift.
 - Pages are server components by default. Add `"use client"` only when a
   component needs `useState`, `useEffect`, or event handlers
-  (`Sidebar.tsx`, `RevealDeck.tsx`, the wizard).
+  (`Sidebar.tsx`, the wizard).
 - Tailwind utilities use the project tokens: `ui-charcoal`, `ui-gold`,
   `ui-gold-dark`, `brand-huckleberry`, `brand-lupine`. Avoid raw hex.
 - New routes go in `app/<route>/page.tsx` and pick up the layout
@@ -171,7 +169,7 @@ _archive/                  # Routes/files archived in May 2026 refactor
 | A standards ledger entry | `lib/standards-watch.ts` | Each is commit-worthy; the git log is the audit trail. |
 | A sub-section under `/standards` | `app/standards/<sub>/page.tsx` + add a row to `subNavItems` in `components/StandardsSubNav.tsx` | The shared eyebrow + sub-nav lives in `app/standards/layout.tsx`. Each sub-page owns its own H1. Sidebar stays at one "Standards" entry — never edit `Sidebar.tsx` for sub-sections. |
 | A canonical UDM table tag | `lib/governance/canonical-udm-tables.ts` | Hand-curated v1 list. The data-governance catalog JSONs do not yet carry canonical/extension classification — once they do, this module retires. |
-| A presentation/deck | `lib/artifacts.ts` (entry with `kind: "deck"`) plus `content/presentations/<slug>.md` if rendered via reveal.js | The artifact appears in the /reports timeline; the markdown drives the deck itself. |
+| A presentation or external talk | `lib/artifacts.ts` (entry with `kind: "presentation"`, `external: true`, `href` pointing at the hosted deck) | The artifact appears in the /reports timeline. |
 | A report | `app/reports/page.tsx` and (if needed) a route under `app/reports/<slug>` | Time-stamped, reverse-chron. |
 
 For Sprint 2+ schema changes, write a SQL migration under `db/migrations/`
