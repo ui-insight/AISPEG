@@ -1,3 +1,4 @@
+import Link from "next/link";
 import DataModelHeader from "@/components/DataModelHeader";
 import TablesExplorer, {
   type ProjectMeta,
@@ -48,28 +49,11 @@ export default function TablesIndexPage() {
         <TablesExplorer rows={rows} projectsList={projectsList} />
       </section>
 
-      <footer className="rounded-md border border-gray-200 bg-gray-50 px-4 py-3 text-xs text-gray-600">
-        Canonical / extension tagging is a v1 heuristic against a
-        hand-curated list of research-admin UDM tables. PII flags and
-        column-level data classification are not yet captured upstream and
-        are tracked at{" "}
-        <a
-          href="https://github.com/ui-insight/data-governance/issues/9"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          ui-insight/data-governance#9
-        </a>
-        ; see{" "}
-        <a
-          href="https://github.com/ui-insight/AISPEG/issues/53"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          #53
-        </a>{" "}
-        for the full epic.
-      </footer>
+      <p className="text-xs text-ink-subtle">
+        <Link href="/standards/data-model#tagging-method">
+          Tagging method &rarr;
+        </Link>
+      </p>
     </div>
   );
 }

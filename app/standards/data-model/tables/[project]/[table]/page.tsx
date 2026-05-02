@@ -431,29 +431,13 @@ export default async function TableDetailPage({
         </section>
       ) : null}
 
-      <footer className="rounded-md border border-gray-200 bg-gray-50 px-4 py-3 text-xs text-gray-600">
-        Canonical / extension tagging and vocabulary-column detection are
-        v1 heuristics. PII flags and column-level classification are not
-        yet captured upstream and are tracked at{" "}
-        <a
-          href="https://github.com/ui-insight/data-governance/issues/9"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          ui-insight/data-governance#9
-        </a>
-        . Vocab pills link to the vocabulary detail page when the resolver
-        can pick a single destination; ambiguous matches stay unlinked.
-        See{" "}
-        <a
-          href="https://github.com/ui-insight/AISPEG/issues/53"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          #53
-        </a>{" "}
-        for the full epic.
-      </footer>
+      <p className="text-xs text-ink-subtle">
+        Vocab pills link to the vocabulary detail page when the resolver
+        can pick a single destination; ambiguous matches stay unlinked.{" "}
+        <Link href="/standards/data-model#tagging-method">
+          Tagging method &rarr;
+        </Link>
+      </p>
     </div>
   );
 }

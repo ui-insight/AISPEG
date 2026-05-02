@@ -310,19 +310,11 @@ export default async function ProjectDetailPage({
         </section>
       )}
 
-      <footer className="rounded-md border border-gray-200 bg-gray-50 px-4 py-3 text-xs text-gray-600">
-        Canonical / extension tagging is a v1 heuristic against a
-        hand-curated list of research-admin UDM tables; PII and
-        classification metadata are not yet captured upstream. See{" "}
-        <a
-          href="https://github.com/ui-insight/AISPEG/issues/53"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          #53
-        </a>{" "}
-        for the full epic and follow-up tracking.
-      </footer>
+      <p className="text-xs text-ink-subtle">
+        <Link href="/standards/data-model#tagging-method">
+          Tagging method &rarr;
+        </Link>
+      </p>
     </div>
   );
 }

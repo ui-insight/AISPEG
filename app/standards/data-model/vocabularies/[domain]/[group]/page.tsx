@@ -296,27 +296,11 @@ export default async function VocabularyDetailPage({
         )}
       </section>
 
-      <footer className="rounded-md border border-gray-200 bg-gray-50 px-4 py-3 text-xs text-gray-600">
-        Cross-walk is a v1 heuristic — see{" "}
-        <span className="font-mono">lib/governance/vocabulary-usage.ts</span>{" "}
-        for the matching logic and tie-breaking rules. Source of truth:{" "}
-        <a
-          href="https://github.com/ui-insight/data-governance"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          ui-insight/data-governance
-        </a>
-        ; see{" "}
-        <a
-          href="https://github.com/ui-insight/AISPEG/issues/53"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          #53
-        </a>{" "}
-        for the full epic.
-      </footer>
+      <p className="text-xs text-ink-subtle">
+        <Link href="/standards/data-model#tagging-method">
+          Tagging method &rarr;
+        </Link>
+      </p>
     </div>
   );
 }
