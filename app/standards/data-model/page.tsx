@@ -1,5 +1,6 @@
 import Link from "next/link";
 import DataModelHeader from "@/components/DataModelHeader";
+import TaggingMethod from "@/components/TaggingMethod";
 import { projects } from "@/lib/governance/catalog";
 
 export const metadata = {
@@ -45,6 +46,8 @@ export default function DataModelIndexPage() {
           <ProjectCard key={p.slug} project={p} />
         ))}
       </section>
+
+      <TaggingMethod />
     </div>
   );
 }

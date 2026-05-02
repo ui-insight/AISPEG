@@ -1,3 +1,4 @@
+import Link from "next/link";
 import DataModelHeader from "@/components/DataModelHeader";
 import VocabulariesExplorer, {
   type VocabularyRow,
@@ -49,29 +50,11 @@ export default function VocabulariesIndexPage() {
         />
       </section>
 
-      <footer className="rounded-md border border-gray-200 bg-gray-50 px-4 py-3 text-xs text-gray-600">
-        &ldquo;Projects using&rdquo; is a v1 cross-walk: a project counts as a
-        user when one of its tables has either an{" "}
-        <span className="font-mono">AllowedValues.&lt;group&gt;</span>{" "}
-        foreign key OR a column whose name matches the group name (PascalCase
-        / snake_case / camelCase normalized). Source of truth:{" "}
-        <a
-          href="https://github.com/ui-insight/data-governance"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          ui-insight/data-governance
-        </a>
-        ; see{" "}
-        <a
-          href="https://github.com/ui-insight/AISPEG/issues/53"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          #53
-        </a>{" "}
-        for the full epic.
-      </footer>
+      <p className="text-xs text-ink-subtle">
+        <Link href="/standards/data-model#tagging-method">
+          Tagging method &rarr;
+        </Link>
+      </p>
     </div>
   );
 }
