@@ -160,7 +160,7 @@ export default function StandardsWatchPage() {
       <section className="space-y-4">
         <div>
           <h2 className="text-xl font-bold text-ui-charcoal">
-            Agenda Item I — Software Development Standards
+            Software Development Standards
           </h2>
           <p className="mt-1 text-sm text-gray-600">
             Requested deliverables governing how applications are architected,
@@ -178,7 +178,7 @@ export default function StandardsWatchPage() {
       <section className="space-y-4">
         <div>
           <h2 className="text-xl font-bold text-ui-charcoal">
-            Agenda Item II — User Experience Standards
+            User Experience Standards
           </h2>
           <p className="mt-1 text-sm text-gray-600">
             Requested deliverables governing how University of Idaho
