@@ -195,42 +195,42 @@ export default async function TableDetailPage({
           </p>
         )}
 
-        <dl className="mt-6 grid grid-cols-2 gap-x-8 gap-y-3 text-sm md:grid-cols-4">
-          <div>
-            <dt className="text-[11px] font-medium uppercase tracking-wider text-gray-500">
-              Columns
-            </dt>
-            <dd className="mt-1 font-bold text-ui-charcoal">
-              {table.columns.length}
-            </dd>
-          </div>
-          <div>
-            <dt className="text-[11px] font-medium uppercase tracking-wider text-gray-500">
-              Relationships
-            </dt>
-            <dd className="mt-1 font-bold text-ui-charcoal">
-              {table.relationships.length}
-            </dd>
-          </div>
-          <div>
-            <dt className="text-[11px] font-medium uppercase tracking-wider text-gray-500">
-              Vocab columns
-            </dt>
-            <dd className="mt-1 font-bold text-ui-charcoal">
-              {vocabColumnCount}
-            </dd>
-          </div>
-          {table.modelClass && (
-            <div>
-              <dt className="text-[11px] font-medium uppercase tracking-wider text-gray-500">
-                Model class
-              </dt>
-              <dd className="mt-1 font-mono text-xs font-bold text-ui-charcoal">
-                {table.modelClass}
-              </dd>
-            </div>
+        <p className="mt-4 max-w-3xl text-base leading-relaxed text-brand-black">
+          <span className="font-bold">{table.columns.length}</span>{" "}
+          {table.columns.length === 1 ? "column" : "columns"}
+          {vocabColumnCount > 0 && (
+            <>
+              ,{" "}
+              <span className="font-bold">{vocabColumnCount}</span>{" "}
+              {vocabColumnCount === 1
+                ? "drawn from a controlled vocabulary"
+                : "drawn from controlled vocabularies"}
+            </>
           )}
-        </dl>
+          {table.relationships.length > 0 ? (
+            <>
+              ,{" "}
+              <span className="font-bold">{table.relationships.length}</span>{" "}
+              {table.relationships.length === 1
+                ? "declared relationship"
+                : "declared relationships"}
+              .
+            </>
+          ) : inferredFks.length > 0 ? (
+            <>. No relationships declared; {inferredFks.length} inferred from foreign keys.</>
+          ) : (
+            <>. No relationships declared in the catalog.</>
+          )}
+        </p>
+
+        {table.modelClass && (
+          <p className="mt-1 max-w-3xl text-xs text-ink-muted">
+            <span className="font-semibold text-brand-black">Model class:</span>{" "}
+            <code className="rounded bg-surface-alt px-1 py-0.5 font-mono text-brand-black">
+              {table.modelClass}
+            </code>
+          </p>
+        )}
       </header>
 
       <section className="rounded-lg border border-gray-200 bg-white p-5">

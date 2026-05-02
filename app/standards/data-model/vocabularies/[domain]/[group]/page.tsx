@@ -128,32 +128,22 @@ export default async function VocabularyDetailPage({
           </p>
         )}
 
-        <dl className="mt-6 grid grid-cols-2 gap-x-8 gap-y-3 text-sm md:grid-cols-3">
-          <div>
-            <dt className="text-[11px] font-medium uppercase tracking-wider text-gray-500">
-              Allowed values
-            </dt>
-            <dd className="mt-1 font-bold text-ui-charcoal">
-              {vg.values.length}
-            </dd>
-          </div>
-          <div>
-            <dt className="text-[11px] font-medium uppercase tracking-wider text-gray-500">
-              Projects using
-            </dt>
-            <dd className="mt-1 font-bold text-ui-charcoal">
-              {usages.length}
-            </dd>
-          </div>
-          <div>
-            <dt className="text-[11px] font-medium uppercase tracking-wider text-gray-500">
-              Column references
-            </dt>
-            <dd className="mt-1 font-bold text-ui-charcoal">
-              {totalColumnHits}
-            </dd>
-          </div>
-        </dl>
+        <p className="mt-4 max-w-3xl text-base leading-relaxed text-brand-black">
+          <span className="font-bold">{vg.values.length}</span>{" "}
+          {vg.values.length === 1 ? "allowed value" : "allowed values"}
+          {usages.length === 0 ? (
+            <>. Not yet referenced by any catalog table.</>
+          ) : (
+            <>
+              , used by{" "}
+              <span className="font-bold">{usages.length}</span>{" "}
+              {usages.length === 1 ? "project" : "projects"} across{" "}
+              <span className="font-bold">{totalColumnHits}</span>{" "}
+              {totalColumnHits === 1 ? "column reference" : "column references"}
+              .
+            </>
+          )}
+        </p>
       </header>
 
       {vg.description && (
