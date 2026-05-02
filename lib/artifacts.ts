@@ -75,6 +75,19 @@ export const artifacts: Artifact[] = [
     href: "/reports/presidential-brief-feb-2026",
     tags: ["Executive briefing"],
   },
+  {
+    slug: "lovable-vibe-coding-2026",
+    kind: "brief",
+    title: "Cautionary tale: Lovable vibe-coding security crisis",
+    audience: "UI institutional context",
+    dateLabel: "April 21, 2026",
+    dateIso: "2026-04-21",
+    author: "IIDS",
+    abstract:
+      "External signal: Lovable left thousands of vibe-coded projects exposed for 48 days after closing the bug report without escalation. Documented breaches revealed source code, credentials, and real user records — a preview of what happens when AI-assisted development scales without institutional governance.",
+    href: "/reports/lovable-vibe-coding-2026",
+    tags: ["Cautionary tale", "External signal"],
+  },
 ];
 
 const KIND_LABELS: Record<ArtifactKind, string> = {
