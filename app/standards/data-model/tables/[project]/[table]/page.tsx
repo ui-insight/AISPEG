@@ -275,7 +275,47 @@ export default async function TableDetailPage({
           </p>
         </div>
 
-        <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
+        {/* Mobile: card list (< sm) */}
+        <ul className="space-y-2 sm:hidden">
+          {table.columns.map((c, i) => {
+            const vocabKey = vocabKeys[i] ?? null;
+            const meta = [
+              c.type,
+              c.nullable === true
+                ? "nullable"
+                : c.nullable === false
+                  ? "required"
+                  : null,
+              c.foreignKey ? `FK → ${c.foreignKey}` : null,
+            ].filter(Boolean);
+            return (
+              <li
+                key={c.name}
+                className="rounded-lg border border-gray-200 bg-white p-3"
+              >
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="break-all font-mono text-sm font-semibold text-ui-charcoal">
+                    {c.name}
+                  </span>
+                  {c.primaryKey && (
+                    <span className="rounded bg-ui-gold/20 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-ui-gold-dark">
+                      PK
+                    </span>
+                  )}
+                  {vocabKey && (
+                    <VocabPill domain={vocabKey.domain} group={vocabKey.group} />
+                  )}
+                </div>
+                <p className="mt-1.5 break-words font-mono text-xs text-gray-600">
+                  {meta.join(" · ")}
+                </p>
+              </li>
+            );
+          })}
+        </ul>
+
+        {/* Tablet+: schema table (≥ sm) */}
+        <div className="hidden overflow-x-auto rounded-lg border border-gray-200 bg-white sm:block">
           <table className="w-full min-w-[720px] text-left">
             <thead className="border-b border-gray-200 bg-gray-50">
               <tr className="text-[10px] font-semibold uppercase tracking-wider text-gray-500">

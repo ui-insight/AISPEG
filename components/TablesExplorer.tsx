@@ -214,8 +214,56 @@ export default function TablesExplorer({
         </p>
       </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
+      {/* Mobile: card list (< sm) */}
+      <div className="space-y-2 sm:hidden">
+        {filteredSorted.map((r) => (
+          <article
+            key={`${r.project}/${r.name}/${r.kind}`}
+            className="rounded-lg border border-gray-200 bg-white p-4"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0 flex-1">
+                <Link
+                  href={`/standards/data-model/tables/${r.project}/${encodeURIComponent(
+                    r.name,
+                  )}`}
+                  className="unstyled break-all font-mono text-sm font-semibold text-ui-charcoal hover:text-brand-clearwater"
+                >
+                  {r.name}
+                </Link>
+                <Link
+                  href={`/standards/data-model/projects/${r.project}`}
+                  className="unstyled mt-1 block text-xs text-gray-600 hover:text-brand-clearwater"
+                >
+                  {r.projectApplication}
+                </Link>
+              </div>
+              <ClassificationPill classification={r.classification} />
+            </div>
+            <p className="mt-3 text-xs text-gray-500">
+              <span className="font-medium uppercase tracking-wider">
+                {KIND_LABEL[r.kind]}
+              </span>
+              <span className="mx-1.5">·</span>
+              <span className="font-mono tabular-nums text-ui-charcoal">
+                {r.columnCount} {r.columnCount === 1 ? "col" : "cols"}
+              </span>
+              <span className="mx-1.5">·</span>
+              <span className="font-mono tabular-nums text-ui-charcoal">
+                {r.relationshipCount} {r.relationshipCount === 1 ? "rel" : "rels"}
+              </span>
+            </p>
+          </article>
+        ))}
+        {filteredSorted.length === 0 && (
+          <p className="rounded-lg border border-gray-200 bg-white px-4 py-8 text-center text-xs text-gray-500">
+            No tables match the current filters.
+          </p>
+        )}
+      </div>
+
+      {/* Tablet+: sortable table (≥ sm) */}
+      <div className="hidden overflow-x-auto rounded-lg border border-gray-200 bg-white sm:block">
         <table className="w-full min-w-[760px] text-left">
           <thead className="border-b border-gray-200 bg-gray-50">
             <tr>
