@@ -5,7 +5,7 @@ import {
   currentConstraints,
   recommendations,
   adoptionPhases,
-} from "@/lib/data";
+} from "./data";
 
 export const metadata = {
   title: "Presidential Brief — Agentic AI · February 7, 2026",

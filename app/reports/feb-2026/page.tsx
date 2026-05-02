@@ -9,7 +9,7 @@ import {
   keyMetrics,
   repositoryTimeline,
   methodologyNote,
-} from "@/lib/data";
+} from "./data";
 
 export default function FebReportPage() {
   return (

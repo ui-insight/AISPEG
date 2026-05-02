@@ -92,7 +92,6 @@ lib/                         # Domain logic and data
   github.ts                  # Issue fetching for home/about surfaces
   mindrouter.ts              # MindRouter LLM client
   db.ts                      # Postgres connection pool
-  data.ts                    # Legacy strategic content data (slated for cleanup)
 
 db/migrations/               # SQL migrations (001 → 004)
 ```
@@ -114,8 +113,8 @@ the full plan, sprint sequencing, and decisions:
   acknowledgment, submitter-visible status page (`/intake/[token]`),
   similarity matching surfaced during assessment.
 - **Sprint 4** — Reports unification *(complete)*, About page *(complete)*,
-  `_archive/` deletion *(complete)*, cleanup pass on `lib/data.ts` and
-  `app/docs/*` *(in progress)*.
+  `_archive/` deletion *(complete)*, `lib/data.ts` retirement *(complete)*,
+  `app/docs/*` cleanup *(in progress)*.
 
 ## Working on the codebase
 

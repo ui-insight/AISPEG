@@ -1,6 +1,6 @@
-// ============================================================
-// Key Metrics
-// ============================================================
+// Data backing app/reports/feb-2026/page.tsx — the Feb 1–26, 2026
+// Development Activity Report. Point-in-time snapshot; do not amend
+// metrics retroactively.
 
 export const keyMetrics = {
   totalCommits: 830,
@@ -18,10 +18,6 @@ export const keyMetrics = {
   productivityMultiplier: "10-16x",
   manualEstimate: "72-108 months for a single developer",
 };
-
-// ============================================================
-// Projects (enriched with activity report detail)
-// ============================================================
 
 export const projects = [
   {
@@ -305,106 +301,3 @@ export const repositoryTimeline = [
 
 export const methodologyNote =
   "Data for this report was collected from GitHub repository activity logs covering the period of February 1-26, 2026. Metrics include commit counts, lines of code added and deleted, files changed, pull requests, and issues. All line counts are based on git diff statistics and include code, configuration, documentation, and test files. The manual development time estimate is based on published industry benchmarks that place senior developer productivity at 100-150 lines of production-quality code per day (including associated design, testing, code review, and documentation time). This figure is consistent with research from sources such as The Mythical Man-Month and contemporary software engineering productivity studies. The productivity multiplier (10-16x) is derived by comparing the estimated traditional effort (1,586-2,379 developer-days) to the actual human effort (152 developer-days: 8 contributors x 19 working days). Repository data was gathered using the GitHub API and git clone statistics. Automated commits (Dependabot, GitHub Actions) are counted in commit totals but noted separately in contributor breakdowns.";
-
-// ============================================================
-// Adoption Phases
-// ============================================================
-
-export const adoptionPhases = [
-  {
-    phase: "Pre-Agentic",
-    period: "Feb 1-5",
-    avgCommitsPerDay: 2.6,
-    avgNetLOCPerDay: 539,
-  },
-  {
-    phase: "Tools Available",
-    period: "Feb 6-11",
-    avgCommitsPerDay: 8.5,
-    avgNetLOCPerDay: 4681,
-  },
-  {
-    phase: "Robison & Sheneman Adopt",
-    period: "Feb 12-19",
-    avgCommitsPerDay: 32.1,
-    avgNetLOCPerDay: 14777,
-  },
-  {
-    phase: "Full Team",
-    period: "Feb 20-26",
-    avgCommitsPerDay: 72.7,
-    avgNetLOCPerDay: 12701,
-  },
-];
-
-// ============================================================
-// Shadow Applications
-// ============================================================
-
-export const shadowApplications = [
-  { name: "Dissertation reformatting", owner: "Jerry McMurtry" },
-  { name: "Strategic Plan Dashboard", owner: "Michele Bartlett" },
-  { name: "Institutional AI Initiative coordination site", owner: "IIDS" },
-  { name: "RFD Career Dashboard", owner: "Carly Cummings" },
-  { name: "Out of State Tax tool", owner: "Cretia Bunney" },
-  { name: "SEM Experiential Learning Dashboard", owner: "Dean Kahler, SEM Vibe Coder in Chief" },
-  { name: "Public Administration Education Tool", owner: "Michael Overton" },
-  { name: "UCM Daily Register Newsletter Application", owner: "Jodi Walker" },
-  { name: "GPSA Exhibition Judging Application", owner: "GPSA" },
-  { name: "Process Mapping Dashboard", owner: "AI4RA" },
-];
-
-// ============================================================
-// ORED Projects Leveraging Agentic AI
-// ============================================================
-
-export const oredProjects = [
-  { name: "AI4RA UDM / Data Lakehouse", lead: "Layman", unit: "AI4RA", featured: true },
-  { name: "Vandalizer", lead: "Brunsfeld", unit: "AI4RA", featured: true },
-  { name: "MindRouter 2.0", lead: "Sheneman", unit: "RCDS", featured: true },
-  { name: "OpenERA", lead: "Robison", unit: "AI4RA", featured: true },
-  { name: "ProposalForge", lead: "Sheneman", unit: "RCDS", featured: false },
-  { name: "Idaho Unfiltered", lead: "Child", unit: "RCDS", featured: false },
-];
-
-// ============================================================
-// Current Constraints & Recommendations
-// ============================================================
-
-export const currentConstraints = [
-  "Cultural resistance: 'Yeah, but...' framing limits exploration",
-  "Cannot deploy the tools with university data and systems",
-  "No approved deployment target for shadow applications increases risks and reduces ROI",
-];
-
-export const recommendations = [
-  {
-    title: "Framing and Culture",
-    description: "YES, AND... — shift from resistance framing to additive exploration",
-  },
-  {
-    title: "Internal Infrastructure",
-    description: "Enterprise agreement(s) that allow us to securely use these tools with institutional data and systems. Institutional Ecosystem supporting templated development, testing, and deployment of Agentic AI coded applications.",
-  },
-  {
-    title: "New Approach to SaaS",
-    description: "Create and implement a plan for data repatriation alongside the governance and data modernization initiative. Open Source deployment into the higher ed sector is an opportunity for widespread impact.",
-  },
-];
-
-// Presentations & Reports — moved to lib/artifacts.ts as part of the
-// Sprint 4 reports unification. The `presentations` export is retired;
-// the unified Reports timeline now lives in lib/artifacts.ts.
-
-// ============================================================
-// Retired exports
-// ============================================================
-// The following exports lived in this file during the AISPEG-collaborator
-// era and have been removed as part of the May 2026 refactor:
-//   principles, lessons, playbookItems, knowledgeArticles,
-//   strategicTakeaways, institutionalQuestion, CautionaryTale,
-//   cautionaryTales, standardsRoadmapSource, institutionalStandards,
-//   standardsPhases, standardDocuments, standardsSuccessMetrics
-// They were referenced only by routes cut in the May 2026 refactor
-// (/approach, /knowledge, /cautionary-tales, /standards/[id]). Recover
-// from git history if a salvage need arises.
