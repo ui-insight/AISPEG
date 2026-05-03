@@ -50,7 +50,7 @@ The site runs at <http://localhost:3000>.
 
 | Surface | Route | Source of truth |
 |---|---|---|
-| The Work | `/portfolio` | `lib/portfolio.ts` |
+| Projects | `/portfolio` | `lib/portfolio.ts` |
 | Submit a Project | `/builder-guide` | `lib/builder-guide-data.ts` (quiz) + Postgres `submissions` (responses) |
 | Reports | `/reports` | `lib/artifacts.ts` (unified timeline) + per-report routes |
 | Standards | `/standards` | `lib/standards-watch.ts` |
@@ -281,7 +281,7 @@ If approved:
 1. Create `app/<route>/page.tsx`.
 2. Add the entry to `primaryItems` (or `footerItems`) in
    `components/Sidebar.tsx`. Existing icons (each used by exactly one
-   entry): `house` (Home), `grid` (The Work), `compass` (Submit a
+   entry): `house` (Home), `grid` (Projects), `compass` (Submit a
    Project), `shield` (Standards), `document` (Reports), `book` (About).
    **Each sidebar entry uses a distinct icon** — adding a new entry
    means adding a new glyph to `NavIcon`, not reusing an existing one.
@@ -343,7 +343,7 @@ Give your agent the strategic context first. A good opening:
 > Next.js 16 site that's the coordination nexus for the University of
 > Idaho's institutional AI initiative, operated by IIDS. We're mid-refactor
 > from a legacy AISPEG-collaboration framing. The IA is four surfaces:
-> The Work, Submit a Project, Reports, Standards. Run `npm run build` to
+> Projects, Submit a Project, Reports, Standards. Run `npm run build` to
 > verify changes.
 
 ### Effective prompt patterns

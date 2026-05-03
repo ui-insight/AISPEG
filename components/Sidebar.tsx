@@ -6,7 +6,7 @@ import { useState } from "react";
 
 const primaryItems = [
   { href: "/", label: "Home", icon: "house" },
-  { href: "/portfolio", label: "The Work", icon: "grid" },
+  { href: "/portfolio", label: "Projects", icon: "grid" },
   { href: "/explore", label: "Explore", icon: "search" },
   { href: "/builder-guide", label: "Submit a Project", icon: "compass" },
   { href: "/standards", label: "Standards", icon: "shield" },

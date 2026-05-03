@@ -109,7 +109,7 @@ Five primary surfaces in the sidebar, plus an About link in the footer:
 
 | Surface | Route | Source of truth |
 |---|---|---|
-| The Work | `/portfolio` | Postgres `applications` table (read via `lib/work.ts`); `lib/portfolio.ts` is the TS shadow + seed source for `scripts/seed-portfolio.ts`. Filter UI is two-tier: public stage (rollup) → operational status (drill-in), per [ADR 0001](docs/adr/0001-product-lifecycle-taxonomy.md). |
+| Projects | `/portfolio` | Postgres `applications` table (read via `lib/work.ts`); `lib/portfolio.ts` is the TS shadow + seed source for `scripts/seed-portfolio.ts`. Filter UI is two-tier: public stage (rollup) → operational status (drill-in), per [ADR 0001](docs/adr/0001-product-lifecycle-taxonomy.md). |
 | Explore | `/explore` | `lib/work-categories.ts` (taxonomy) + `lib/portfolio.ts` (counts and representative names) — by-problem axis, complementary to `/portfolio`'s by-home-unit grouping |
 | Submit a Project | `/builder-guide` | `lib/builder-guide-data.ts` (quiz definition); Postgres `submissions` (responses) |
 | Reports | `/reports` | `lib/artifacts.ts` — unified timeline of briefs, activity reports, and external presentations |
@@ -165,7 +165,7 @@ Headings weight 900; body 400; emphasis 600–700. No display serif pairing.
 app/                       # Next.js App Router
   page.tsx                 # Landing — four-card steering page
   layout.tsx               # Root layout, sidebar, metadata
-  portfolio/               # The Work
+  portfolio/               # Projects
   explore/                 # Explore — "by problem" axis, category-tile entry
   builder-guide/           # Submit a Project (assessment quiz)
   reports/                 # Reports surface

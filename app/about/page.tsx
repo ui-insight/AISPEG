@@ -59,7 +59,7 @@ export default function AboutPage() {
             className="group block rounded-xl border border-hairline bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
           >
             <p className="text-xs font-medium uppercase tracking-wider text-brand-silver">
-              The Work
+              Projects
             </p>
             <h3 className="mt-2 text-base font-semibold text-ui-charcoal">
               Portfolio of AI projects
@@ -135,7 +135,7 @@ export default function AboutPage() {
             </h3>
             <p className="mt-1 text-sm text-gray-600 leading-relaxed">
               Deans, the Provost&rsquo;s office, ORED leadership,
-              partner-unit leadership. The Work and Reports surfaces are
+              partner-unit leadership. The Projects and Reports surfaces are
               designed for scanning &mdash; owner names and home-unit
               groupings let a stakeholder find their unit&rsquo;s slice
               without reading everything.
@@ -176,7 +176,7 @@ export default function AboutPage() {
                 href="/portfolio"
                 className="text-brand-black hover:underline"
               >
-                The Work
+                Projects
               </Link>{" "}
               to find related ongoing efforts before starting something
               new.

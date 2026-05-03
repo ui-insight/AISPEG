@@ -87,7 +87,7 @@ export default async function Home() {
           className="group block rounded-xl border border-hairline bg-white p-8 transition-shadow hover:shadow-md"
         >
           <p className="text-xs font-medium uppercase tracking-wider text-brand-silver">
-            The Work
+            Projects
           </p>
           <h2 className="mt-2 text-2xl font-semibold">
             {projectCount} AI projects across UI units
