@@ -17,13 +17,37 @@ export type Visibility =
   | "Partial"      // Entry acknowledged; UI deployment details embargoed
   | "Internal-only"; // Not shown on the public site at all
 
+// Operational ladder — see docs/adr/0001-product-lifecycle-taxonomy.md.
+// 9 lifecycle states + 1 meta state (`tracked`). Verification rules for
+// each are spec'd in the ADR; the verifier itself lands in a follow-up PR.
 export type InterventionStatus =
-  | "Planned"
-  | "Prototype"    // Built, not yet in use with real users
-  | "Piloting"     // Deployed prototype in use with a limited group
-  | "Production"   // Deployed for regular institutional use
-  | "Tracked"      // Not built by IIDS; tracking-only stub
-  | "Archived";
+  | "idea"
+  | "approved"
+  | "building"
+  | "prototype"
+  | "piloting"
+  | "production"
+  | "maintained"
+  | "sunsetting"
+  | "archived"
+  | "tracked";
+
+// Public-stage rollup — what stakeholders see on /portfolio, /explore, and
+// the landing stat strip. Computed from `status` via `computePublicStage`.
+export type PublicStage =
+  | "exploring"
+  | "building"
+  | "live"
+  | "retired"
+  | "tracked";
+
+export type ProductionScope = "home-unit" | "institution-wide" | "external";
+
+export interface PilotCohort {
+  size: number;
+  scope: string;
+  namedUsers?: string[];
+}
 
 export type AI4RARelationship =
   | "Core"         // Dual-destiny: AI4RA OSS project + UI deployment
@@ -57,6 +81,20 @@ export interface Intervention {
   status: InterventionStatus;
   visibility: Visibility;
   institutionalReviewStatus?: InstitutionalReviewStatus;
+
+  // Lifecycle taxonomy — see docs/adr/0001-product-lifecycle-taxonomy.md.
+  // Required transitively by the verification rules for certain statuses
+  // (e.g. `production` requires `productionScope` + `supportContact`,
+  // `piloting` requires `pilotCohort`). Optional on the type so the audit
+  // PR can land before the verifier; the verifier polices the transitives.
+  iidsSponsor: string;
+  featureComplete?: boolean;
+  liveUrlIsStaging?: boolean;
+  pilotCohort?: PilotCohort;
+  productionScope?: ProductionScope;
+  supportContact?: string;
+  sunsetDate?: string;   // ISO date
+  replacedBy?: string;   // successor slug or "manual-process"
 
   // AI4RA
   ai4raRelationship: AI4RARelationship;
@@ -100,9 +138,12 @@ export const interventions: Intervention[] = [
     homeUnits: ["Office of the President"],
     operationalOwners: [{ name: "Michele Bartlett" }],
     buildParticipants: ["IIDS"],
-    status: "Production",
+    status: "production",
     visibility: "Public",
     ai4raRelationship: "None",
+    iidsSponsor: "Barrie Robison",
+    productionScope: "institution-wide",
+    supportContact: "Barrie Robison",
     repoUrl: "https://github.com/ui-insight/StratPlanTacticsMB",
     liveUrl: "https://strategicplan.insight.uidaho.edu",
     operationalFunction:
@@ -126,9 +167,10 @@ export const interventions: Intervention[] = [
     homeUnits: ["Division of Financial Affairs"],
     operationalOwners: [{ name: "Kim Salisbury" }],
     buildParticipants: ["IIDS"],
-    status: "Prototype",
+    status: "building",
     visibility: "Partial",
     ai4raRelationship: "None",
+    iidsSponsor: "Barrie Robison",
     repoUrl: "https://github.com/ui-insight/AuditDashboard",
     operationalFunction:
       "Audit observation lifecycle: ingest report PDF → extract observations and action items → assign responsible parties → monitor closure with overdue alerts. Replaces spreadsheet tracking.",
@@ -155,9 +197,11 @@ export const interventions: Intervention[] = [
       { name: "Jodi Walker" },
     ],
     buildParticipants: ["IIDS"],
-    status: "Prototype",
+    status: "prototype",
     visibility: "Public",
     ai4raRelationship: "None",
+    iidsSponsor: "Barrie Robison",
+    featureComplete: false,
     repoUrl: "https://github.com/ui-insight/UCMDailyRegister",
     liveUrl: "https://ucmnews.insight.uidaho.edu",
     operationalFunction:
@@ -185,10 +229,11 @@ export const interventions: Intervention[] = [
     homeUnits: ["Office of Sponsored Programs (ORED)"],
     operationalOwners: [{ name: "Sarah Martonick" }],
     buildParticipants: ["IIDS"],
-    status: "Prototype",
+    status: "building",
     visibility: "Partial",
     ai4raRelationship: "Core",
     dualDestinyPlanned: true,
+    iidsSponsor: "Barrie Robison",
     operationalFunction: "Embargoed.",
     operationalExcellenceOutcome: "Embargoed.",
     workCategories: ["research-admin"],
@@ -205,11 +250,14 @@ export const interventions: Intervention[] = [
       { name: "John Brunsfeld", title: "Lead developer" },
     ],
     buildParticipants: ["IIDS"],
-    status: "Production",
+    status: "production",
     visibility: "Public",
     ai4raRelationship: "Core",
     dualDestinyPlanned: true,
     externalDeployments: ["Southern Utah University"],
+    iidsSponsor: "John Brunsfeld",
+    productionScope: "external",
+    supportContact: "John Brunsfeld",
     repoUrl: "https://github.com/ui-insight/vandalizer",
     liveUrl: "https://vandalizer.uidaho.edu",
     funding: "NSF GRANTED Award #2427549",
@@ -230,10 +278,12 @@ export const interventions: Intervention[] = [
     homeUnits: ["Office of Sponsored Programs (ORED)"],
     operationalOwners: [{ name: "Barrie Robison" }],
     buildParticipants: ["IIDS"],
-    status: "Prototype",
+    status: "prototype",
     visibility: "Public",
     ai4raRelationship: "Core",
     dualDestinyPlanned: true,
+    iidsSponsor: "Barrie Robison",
+    featureComplete: false,
     repoUrl: "https://github.com/ui-insight/ProcessMapping",
     liveUrl: "https://processmapping.insight.uidaho.edu",
     operationalFunction:
@@ -260,10 +310,11 @@ export const interventions: Intervention[] = [
       { name: "Sarah Martonick", title: "UI implementation owner" },
     ],
     buildParticipants: ["IIDS"],
-    status: "Production",
+    status: "building",
     visibility: "Public",
     ai4raRelationship: "Core",
     dualDestinyPlanned: true,
+    iidsSponsor: "Barrie Robison",
     repoUrl: "https://github.com/ui-insight/OpenERA",
     operationalFunction:
       "Sponsored-research administration: proposal lifecycle, award management, compliance, and reporting for ORED. Anchors the institutional research-admin data layer that Vandalizer, ProcessMapping, and adjacent ORED tools build against.",
@@ -287,9 +338,11 @@ export const interventions: Intervention[] = [
     homeUnits: ["Office of Research and Economic Development", "Office of General Counsel"],
     operationalOwners: [{ name: "Sarah Martonick" }],
     buildParticipants: ["IIDS"],
-    status: "Prototype",
+    status: "prototype",
     visibility: "Partial",
     ai4raRelationship: "None",
+    iidsSponsor: "Barrie Robison",
+    featureComplete: false,
     repoUrl: "https://github.com/ui-insight/ExecOrd",
     isPrivateRepo: true,
     operationalFunction:
@@ -314,9 +367,10 @@ export const interventions: Intervention[] = [
       { name: "Dean Kahler", title: "Vice Provost of SEM" },
     ],
     buildParticipants: ["IIDS", "SEM"],
-    status: "Prototype",
+    status: "building",
     visibility: "Public",
     ai4raRelationship: "None",
+    iidsSponsor: "Barrie Robison",
     repoUrl: "https://github.com/ui-insight/SEM-experiential",
     operationalFunction:
       "Single record of student engagement: events, attendance, organizations. Foundation for verified experience transcripts.",
@@ -339,9 +393,11 @@ export const interventions: Intervention[] = [
     homeUnits: ["Research Faculty Development (ORED)"],
     operationalOwners: [{ name: "Eric Torok" }],
     buildParticipants: ["IIDS"],
-    status: "Piloting",
+    status: "piloting",
     visibility: "Public",
     ai4raRelationship: "Adjacent",
+    iidsSponsor: "Barrie Robison",
+    pilotCohort: { size: 12, scope: "CAREER Club cohort" },
     repoUrl: "https://github.com/ui-insight/RFD-career",
     operationalFunction:
       "Visualizes CAREER Club cohort and individual-participant progress against workbook rubric milestones.",
@@ -364,10 +420,13 @@ export const interventions: Intervention[] = [
     homeUnits: ["IIDS"],
     operationalOwners: [{ name: "Luke Sheneman" }],
     buildParticipants: ["IIDS"],
-    status: "Production",
+    status: "production",
     visibility: "Public",
     ai4raRelationship: "Core",
     dualDestinyPlanned: true,
+    iidsSponsor: "Luke Sheneman",
+    productionScope: "external",
+    supportContact: "Luke Sheneman",
     repoUrl: "https://github.com/ui-insight/MindRouter",
     liveUrl: "https://mindrouter.ai",
     operationalFunction:
@@ -388,10 +447,13 @@ export const interventions: Intervention[] = [
     homeUnits: ["IIDS"],
     operationalOwners: [{ name: "Luke Sheneman" }],
     buildParticipants: ["IIDS"],
-    status: "Production",
+    status: "production",
     visibility: "Public",
     ai4raRelationship: "Adjacent",
     externalDeployments: ["Southern Utah University"],
+    iidsSponsor: "Luke Sheneman",
+    productionScope: "external",
+    supportContact: "Luke Sheneman",
     repoUrl: "https://github.com/ui-insight/dgx-stack",
     operationalFunction:
       "On-prem LLM + OCR appliance. Serves as a backend node to MindRouter. Provides the OCR used by Audit Dashboard, Vandalizer, OpenERA. Supports air-gapped workloads.",
@@ -411,10 +473,13 @@ export const interventions: Intervention[] = [
     homeUnits: ["IIDS"],
     operationalOwners: [{ name: "Barrie Robison" }],
     buildParticipants: ["IIDS"],
-    status: "Production",
+    status: "production",
     visibility: "Public",
     institutionalReviewStatus: "Under OIT review",
     ai4raRelationship: "Adjacent",
+    iidsSponsor: "Luke Sheneman",
+    productionScope: "institution-wide",
+    supportContact: "Barrie Robison",
     repoUrl: "https://github.com/ui-insight/TEMPLATE-app",
     operationalFunction:
       "Standardizes how new UI business apps start. Enforces data governance, security, documentation, CI/CD, and agentic-development norms from day one. Consumed by SEM-experiential, Audit Dashboard, StratPlanTactics.",
@@ -444,9 +509,10 @@ export const interventions: Intervention[] = [
     homeUnits: ["Office of Information Technology"],
     operationalOwners: [],
     buildParticipants: ["OIT", "Huron Consulting"],
-    status: "Tracked",
+    status: "tracked",
     visibility: "Public",
     ai4raRelationship: "None",
+    iidsSponsor: "Barrie Robison",
     operationalFunction:
       "Enterprise data modernization scope to be confirmed.",
     operationalExcellenceOutcome:
@@ -466,9 +532,12 @@ export const interventions: Intervention[] = [
       { name: "Colin Addington" },
     ],
     buildParticipants: ["OIT", "IIDS"],
-    status: "Production",
+    status: "production",
     visibility: "Public",
     ai4raRelationship: "None",
+    iidsSponsor: "Barrie Robison",
+    productionScope: "institution-wide",
+    supportContact: "Kali Armitage",
     tech: ["React", "FastAPI", "OIT managed infrastructure"],
     operationalFunction:
       "Hosts UI application modules on OIT-managed secure infrastructure with a consistent runtime, identity, and security baseline. Target deployment surface for new UI apps that need institutional hosting.",
@@ -482,6 +551,27 @@ export const interventions: Intervention[] = [
 // ============================================================
 // Helpers
 // ============================================================
+
+// Operational status → public stage rollup. See ADR 0001.
+export function computePublicStage(status: InterventionStatus): PublicStage {
+  switch (status) {
+    case "idea":
+    case "approved":
+      return "exploring";
+    case "building":
+    case "prototype":
+      return "building";
+    case "piloting":
+    case "production":
+    case "maintained":
+      return "live";
+    case "sunsetting":
+    case "archived":
+      return "retired";
+    case "tracked":
+      return "tracked";
+  }
+}
 
 export function getInterventionBySlug(slug: string): Intervention | undefined {
   return interventions.find((i) => i.slug === slug);
