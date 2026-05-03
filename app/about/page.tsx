@@ -12,7 +12,7 @@ export default function AboutPage() {
     <div className="space-y-12">
       {/* Header */}
       <header>
-        <p className="text-xs font-semibold uppercase tracking-wider text-ui-gold-dark">
+        <p className="text-xs font-medium uppercase tracking-wider text-brand-silver">
           About
         </p>
         <h1 className="mt-2 text-3xl font-black tracking-tight text-ui-charcoal">
@@ -56,12 +56,12 @@ export default function AboutPage() {
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           <Link
             href="/portfolio"
-            className="group block rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:border-ui-gold/40 hover:shadow-md"
+            className="group block rounded-xl border border-hairline bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
           >
-            <p className="text-xs font-medium uppercase tracking-wider text-ui-gold-dark">
+            <p className="text-xs font-medium uppercase tracking-wider text-brand-silver">
               The Work
             </p>
-            <h3 className="mt-2 text-base font-semibold text-ui-charcoal group-hover:text-ui-gold-dark">
+            <h3 className="mt-2 text-base font-semibold text-ui-charcoal">
               Portfolio of AI interventions
             </h3>
             <p className="mt-2 text-sm text-gray-600">
@@ -72,12 +72,12 @@ export default function AboutPage() {
           </Link>
           <Link
             href="/builder-guide"
-            className="group block rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:border-ui-gold/40 hover:shadow-md"
+            className="group block rounded-xl border border-hairline bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
           >
-            <p className="text-xs font-medium uppercase tracking-wider text-ui-gold-dark">
+            <p className="text-xs font-medium uppercase tracking-wider text-brand-silver">
               Submit a Project
             </p>
-            <h3 className="mt-2 text-base font-semibold text-ui-charcoal group-hover:text-ui-gold-dark">
+            <h3 className="mt-2 text-base font-semibold text-ui-charcoal">
               9-step assessment
             </h3>
             <p className="mt-2 text-sm text-gray-600">
@@ -89,12 +89,12 @@ export default function AboutPage() {
           </Link>
           <Link
             href="/standards"
-            className="group block rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:border-ui-gold/40 hover:shadow-md"
+            className="group block rounded-xl border border-hairline bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
           >
-            <p className="text-xs font-medium uppercase tracking-wider text-ui-gold-dark">
+            <p className="text-xs font-medium uppercase tracking-wider text-brand-silver">
               Standards
             </p>
-            <h3 className="mt-2 text-base font-semibold text-ui-charcoal group-hover:text-ui-gold-dark">
+            <h3 className="mt-2 text-base font-semibold text-ui-charcoal">
               Outstanding institutional standards
             </h3>
             <p className="mt-2 text-sm text-gray-600">
@@ -106,12 +106,12 @@ export default function AboutPage() {
           </Link>
           <Link
             href="/reports"
-            className="group block rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:border-ui-gold/40 hover:shadow-md"
+            className="group block rounded-xl border border-hairline bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
           >
-            <p className="text-xs font-medium uppercase tracking-wider text-ui-gold-dark">
+            <p className="text-xs font-medium uppercase tracking-wider text-brand-silver">
               Reports
             </p>
-            <h3 className="mt-2 text-base font-semibold text-ui-charcoal group-hover:text-ui-gold-dark">
+            <h3 className="mt-2 text-base font-semibold text-ui-charcoal">
               Activity reports and briefs
             </h3>
             <p className="mt-2 text-sm text-gray-600">
@@ -149,7 +149,7 @@ export default function AboutPage() {
               Start with{" "}
               <Link
                 href="/builder-guide"
-                className="text-ui-gold-dark hover:underline"
+                className="text-brand-black hover:underline"
               >
                 Submit a Project
               </Link>
@@ -166,7 +166,7 @@ export default function AboutPage() {
               The{" "}
               <Link
                 href="/docs"
-                className="text-ui-gold-dark hover:underline"
+                className="text-brand-black hover:underline"
               >
                 Documentation
               </Link>{" "}
@@ -174,7 +174,7 @@ export default function AboutPage() {
               MindRouter integration. Use{" "}
               <Link
                 href="/portfolio"
-                className="text-ui-gold-dark hover:underline"
+                className="text-brand-black hover:underline"
               >
                 The Work
               </Link>{" "}
@@ -187,7 +187,7 @@ export default function AboutPage() {
 
       {/* AI4RA partnership */}
       <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-        <p className="text-xs font-medium uppercase tracking-wider text-ui-gold-dark">
+        <p className="text-xs font-medium uppercase tracking-wider text-brand-silver">
           Partnership
         </p>
         <h2 className="mt-2 text-lg font-semibold text-ui-charcoal">
@@ -211,7 +211,7 @@ export default function AboutPage() {
         <p className="mt-4 text-sm">
           <Link
             href="/ai4ra-ecosystem"
-            className="font-medium text-ui-gold-dark hover:underline"
+            className="font-medium text-brand-black hover:underline"
           >
             See the AI4RA ecosystem in detail &rarr;
           </Link>
@@ -220,7 +220,7 @@ export default function AboutPage() {
 
       {/* Repo / charter history */}
       <section className="rounded-xl bg-ui-charcoal p-6 text-white">
-        <h2 className="text-base font-semibold text-ui-gold">
+        <h2 className="text-base font-semibold text-white">
           A note on the repository name
         </h2>
         <p className="mt-3 text-sm leading-relaxed text-white/80">
@@ -275,7 +275,7 @@ export default function AboutPage() {
           channels. To submit a project idea, use{" "}
           <Link
             href="/builder-guide"
-            className="text-ui-gold-dark hover:underline"
+            className="text-brand-black hover:underline"
           >
             Submit a Project
           </Link>

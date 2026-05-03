@@ -96,7 +96,7 @@ export default async function Home() {
           href="/builder-guide"
           className="group block rounded-xl bg-brand-gold p-8 transition-colors hover:bg-brand-gold-dark"
         >
-          <p className="text-xs font-semibold uppercase tracking-wider text-brand-black/70">
+          <p className="text-xs font-medium uppercase tracking-wider text-brand-black/70">
             Have an AI project idea?
           </p>
           <h2 className="mt-2 text-2xl text-brand-black">Submit a Project</h2>

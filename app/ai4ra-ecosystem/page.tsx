@@ -163,10 +163,10 @@ export default function AI4RAEcosystemPage() {
               href={p.repoUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex h-full flex-col rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:border-ui-gold/40 hover:shadow-md"
+              className="group flex h-full flex-col rounded-xl border border-hairline bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
             >
               <div className="flex items-start justify-between gap-2">
-                <h3 className="text-base font-semibold text-ui-charcoal group-hover:text-ui-gold-dark">
+                <h3 className="text-base font-semibold text-ui-charcoal">
                   {p.name}
                 </h3>
                 {p.isPrivate && (
@@ -179,7 +179,7 @@ export default function AI4RAEcosystemPage() {
               <p className="mt-3 text-sm leading-relaxed text-gray-600">
                 {p.description}
               </p>
-              <p className="mt-auto pt-4 text-xs font-medium text-ui-gold-dark group-hover:underline">
+              <p className="mt-auto pt-4 text-xs font-medium text-brand-black group-hover:underline">
                 View on GitHub &rarr;
               </p>
             </a>
@@ -205,9 +205,9 @@ export default function AI4RAEcosystemPage() {
             <Link
               key={i.slug}
               href={`/portfolio/${i.slug}`}
-              className="group rounded-lg border border-gray-200 bg-white p-4 transition-colors hover:border-ui-gold/40"
+              className="group rounded-lg border border-hairline bg-white p-4 transition-shadow hover:shadow-md"
             >
-              <p className="text-sm font-semibold text-ui-charcoal group-hover:text-ui-gold-dark">
+              <p className="text-sm font-semibold text-ui-charcoal">
                 {i.name}
               </p>
               <p className="mt-1 text-xs text-gray-500">{i.tagline}</p>
@@ -229,7 +229,7 @@ export default function AI4RAEcosystemPage() {
         <p className="mt-3">
           <Link
             href="/portfolio"
-            className="font-medium text-ui-gold-dark hover:underline"
+            className="font-medium text-brand-black hover:underline"
           >
             See the UI portfolio &rarr;
           </Link>
