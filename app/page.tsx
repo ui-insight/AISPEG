@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getPubliclyVisible } from "@/lib/portfolio";
 import { artifacts, sortedArtifacts } from "@/lib/artifacts";
 import { summary as standardsSummary } from "@/lib/standards-watch";
+import { PUBLIC_STAGE_LABEL, stageBreakdown } from "@/lib/lifecycle-display";
 
 // Editorial pick of three featured interventions for the landing's
 // Work tile. Curated by IIDS — rotate when the work changes. There is
@@ -15,6 +16,7 @@ export default async function Home() {
   const interventionCount = all.length;
   const homeUnitCount = new Set(all.flatMap((i) => i.homeUnits)).size;
   const mostRecent = sortedArtifacts()[0]?.dateLabel;
+  const stageStats = stageBreakdown(all);
   const featuredPicks = FEATURED_PICKS
     .map((slug) => all.find((i) => i.slug === slug))
     .filter((i): i is NonNullable<typeof i> => i !== undefined);
@@ -60,6 +62,23 @@ export default async function Home() {
             </>
           )}
         </p>
+        {stageStats.length > 1 && (
+          <p className="mt-1 text-sm text-ink-muted">
+            {stageStats.map((s, idx) => (
+              <span key={s.stage}>
+                {idx > 0 && (
+                  <span aria-hidden className="text-brand-silver">
+                    {" · "}
+                  </span>
+                )}
+                <span className="font-bold tabular-nums text-brand-black">
+                  {s.count}
+                </span>{" "}
+                {PUBLIC_STAGE_LABEL[s.stage].toLowerCase()}
+              </span>
+            ))}
+          </p>
+        )}
       </section>
 
       <section>

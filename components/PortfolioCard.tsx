@@ -2,15 +2,13 @@ import Link from "next/link";
 import type { ApplicationWithBlockers, Blocker } from "@/lib/work";
 import { blockerCategoryLabels, daysSince } from "@/lib/work";
 import { WORK_CATEGORY_LABELS } from "@/lib/work-categories";
-
-const statusStyles: Record<string, string> = {
-  Production: "bg-green-100 text-green-800",
-  Piloting: "bg-blue-100 text-blue-800",
-  Prototype: "bg-amber-100 text-amber-800",
-  Planned: "bg-gray-100 text-gray-700",
-  Tracked: "bg-brand-huckleberry/10 text-brand-huckleberry",
-  Archived: "bg-gray-100 text-gray-500",
-};
+import {
+  OPERATIONAL_LABEL,
+  PUBLIC_STAGE_CHIP,
+  PUBLIC_STAGE_LABEL,
+  isInterventionStatus,
+  publicStageFromStatus,
+} from "@/lib/lifecycle-display";
 
 const visibilityNote: Record<"public" | "embargoed" | "internal", string | null> = {
   public: null,
@@ -81,6 +79,13 @@ export default function PortfolioCard({
   const liveHost = app.liveUrl ? hostnameOf(app.liveUrl) : null;
   const ai4raLabel = ai4raChip[app.ai4raRelationship];
 
+  const stage = publicStageFromStatus(app.status);
+  // The operational chip is suppressed for `tracked` — the ladder
+  // doesn't apply to externally-owned interventions, so the primary
+  // stage chip carries the whole signal. (See ADR 0001.)
+  const showOperationalChip =
+    isInterventionStatus(app.status) && app.status !== "tracked";
+
   return (
     <article className="group relative flex h-full flex-col rounded-xl border border-hairline bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
       <div className="flex items-start justify-between gap-3">
@@ -100,13 +105,18 @@ export default function PortfolioCard({
             </p>
           )}
         </div>
-        <span
-          className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${
-            statusStyles[app.status] ?? "bg-gray-100 text-gray-700"
-          }`}
-        >
-          {app.status}
-        </span>
+        <div className="flex shrink-0 flex-col items-end gap-1">
+          <span
+            className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-semibold ${PUBLIC_STAGE_CHIP[stage]}`}
+          >
+            {PUBLIC_STAGE_LABEL[stage]}
+          </span>
+          {showOperationalChip && (
+            <span className="inline-flex items-center rounded-full border border-hairline bg-surface-alt px-1.5 py-0.5 text-[10px] font-medium text-ink-muted">
+              {OPERATIONAL_LABEL[app.status as keyof typeof OPERATIONAL_LABEL]}
+            </span>
+          )}
+        </div>
       </div>
 
       {app.tagline && (
@@ -142,11 +152,6 @@ export default function PortfolioCard({
         {app.externalDeployments.length > 0 && (
           <span className="rounded-full border border-gray-200 px-2 py-0.5 text-xs text-gray-600">
             Also at {app.externalDeployments.join(", ")}
-          </span>
-        )}
-        {app.trackingOnly && (
-          <span className="rounded-full border border-brand-huckleberry/30 bg-brand-huckleberry/10 px-2 py-0.5 text-xs font-medium text-brand-huckleberry">
-            Tracked (not built by IIDS)
           </span>
         )}
         {app.workCategories.slice(0, 3).map((slug) => (

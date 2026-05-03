@@ -1,6 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import {
+  OPERATIONAL_LABEL,
+  PUBLIC_STAGE_LABEL,
+  PUBLIC_STAGE_ORDER,
+  STAGE_OPERATIONAL_ROLLUP,
+  publicStageFromStatus,
+} from "@/lib/lifecycle-display";
+import type { InterventionStatus, PublicStage } from "@/lib/portfolio";
 
 // Pure URL-state filter chip group. The portfolio page builds the option
 // lists from the unfiltered data and passes them in; clicking a pill
@@ -13,16 +21,28 @@ interface FilterOption {
   count: number;
 }
 
+interface StageFilterOption {
+  stage: PublicStage;
+  count: number;
+}
+
+interface OperationalFilterOption {
+  status: InterventionStatus;
+  count: number;
+}
+
 export interface PortfolioFiltersProps {
   homeUnits: FilterOption[];
-  statuses: FilterOption[];
+  stageOptions: StageFilterOption[];
+  operationalOptions: OperationalFilterOption[];
   categories: FilterOption[];
   totalCount: number;
   filteredCount: number;
   blockerCount: number;
   selected: {
     unit: string | null;
-    status: string | null;
+    stage: PublicStage | null;
+    status: InterventionStatus | null;
     category: string | null;
     blockers: boolean;
     sort: "default" | "name" | "blockers";
@@ -74,7 +94,8 @@ function Chip({
 
 export default function PortfolioFilters({
   homeUnits,
-  statuses,
+  stageOptions,
+  operationalOptions,
   categories,
   totalCount,
   filteredCount,
@@ -83,6 +104,7 @@ export default function PortfolioFilters({
 }: PortfolioFiltersProps) {
   const filtersActive =
     !!selected.unit ||
+    !!selected.stage ||
     !!selected.status ||
     !!selected.category ||
     selected.blockers ||
@@ -91,11 +113,31 @@ export default function PortfolioFilters({
   // Helpers — when toggling a chip, preserve other selections.
   const baseParams = {
     unit: selected.unit,
+    stage: selected.stage,
     status: selected.status,
     category: selected.category,
     blockers: selected.blockers ? "1" : null,
     sort: selected.sort === "default" ? null : selected.sort,
   };
+
+  // The drill-in stage = either the explicitly-selected stage, or the
+  // stage that the selected operational status rolls up into. This way
+  // selecting "Production" auto-reveals the Live drill-in.
+  const activeStage: PublicStage | null =
+    selected.stage ??
+    (selected.status ? publicStageFromStatus(selected.status) : null);
+
+  // Operational chips visible in the drill-in: the rollup for the active
+  // stage, with counts pulled from the page's pre-computed totals.
+  const drillInOperational =
+    activeStage && activeStage !== "tracked"
+      ? STAGE_OPERATIONAL_ROLLUP[activeStage]
+          .map((status) => {
+            const opt = operationalOptions.find((o) => o.status === status);
+            return opt ? { status, count: opt.count } : null;
+          })
+          .filter((x): x is OperationalFilterOption => x !== null)
+      : [];
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
@@ -170,28 +212,71 @@ export default function PortfolioFilters({
         </div>
       </div>
 
-      {/* Status pills */}
+      {/* Stage pills (top tier) — public stage rollup from ADR 0001 */}
       <div className="mt-4">
         <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-gray-500">
-          Status
+          Stage
         </p>
         <div className="flex flex-wrap gap-1.5">
           <Chip
-            label="Any"
-            active={!selected.status}
-            href={buildHref({ ...baseParams, status: null })}
+            label="All"
+            count={totalCount}
+            active={!selected.stage && !selected.status}
+            href={buildHref({ ...baseParams, stage: null, status: null })}
           />
-          {statuses.map((s) => (
-            <Chip
-              key={s.value}
-              label={s.label}
-              count={s.count}
-              active={selected.status === s.value}
-              href={buildHref({ ...baseParams, status: s.value })}
-            />
-          ))}
+          {PUBLIC_STAGE_ORDER.map((stage) => {
+            const opt = stageOptions.find((o) => o.stage === stage);
+            if (!opt) return null;
+            return (
+              <Chip
+                key={stage}
+                label={PUBLIC_STAGE_LABEL[stage]}
+                count={opt.count}
+                active={activeStage === stage}
+                href={buildHref({
+                  ...baseParams,
+                  stage,
+                  // Selecting a stage clears any prior operational filter —
+                  // the user just zoomed back out one level.
+                  status: null,
+                })}
+              />
+            );
+          })}
         </div>
       </div>
+
+      {/* Operational drill-in (second tier) — only when a non-tracked stage is active */}
+      {drillInOperational.length > 0 && (
+        <div className="mt-3 rounded-lg border border-hairline bg-surface-alt/40 p-3">
+          <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+            Operational status within {PUBLIC_STAGE_LABEL[activeStage!]}
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            <Chip
+              label="Any"
+              active={!selected.status}
+              href={buildHref({ ...baseParams, status: null })}
+            />
+            {drillInOperational.map((o) => (
+              <Chip
+                key={o.status}
+                label={OPERATIONAL_LABEL[o.status]}
+                count={o.count}
+                active={selected.status === o.status}
+                href={buildHref({
+                  ...baseParams,
+                  // Selecting an operational status implies its stage; we
+                  // null `stage` so the URL stays clean (the stage is
+                  // recoverable via publicStageFromStatus).
+                  stage: null,
+                  status: o.status,
+                })}
+              />
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Blocker toggle + sort */}
       <div className="mt-4 flex flex-wrap items-end justify-between gap-4">

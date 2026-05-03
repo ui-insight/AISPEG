@@ -12,6 +12,13 @@ import {
   WORK_CATEGORY_LABELS,
   type WorkCategory,
 } from "@/lib/work-categories";
+import {
+  PUBLIC_STAGE_ORDER,
+  STAGE_OPERATIONAL_ROLLUP,
+  isInterventionStatus,
+  publicStageFromStatus,
+} from "@/lib/lifecycle-display";
+import type { InterventionStatus, PublicStage } from "@/lib/portfolio";
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +26,7 @@ type SortMode = "default" | "name" | "blockers";
 
 interface PortfolioSearchParams {
   unit?: string;
+  stage?: string;
   status?: string;
   category?: string;
   blockers?: string;
@@ -27,6 +35,10 @@ interface PortfolioSearchParams {
 
 function isWorkCategory(v: string | undefined): v is WorkCategory {
   return !!v && (WORK_CATEGORIES as readonly string[]).includes(v);
+}
+
+function isPublicStage(v: string | undefined): v is PublicStage {
+  return !!v && (PUBLIC_STAGE_ORDER as readonly string[]).includes(v);
 }
 
 function isSortMode(v: string | undefined): v is SortMode {
@@ -66,7 +78,12 @@ export default async function PortfolioPage({
 }) {
   const params = await searchParams;
   const selectedUnit = params.unit?.trim() || null;
-  const selectedStatus = params.status?.trim() || null;
+  const selectedStage: PublicStage | null = isPublicStage(params.stage?.trim())
+    ? (params.stage!.trim() as PublicStage)
+    : null;
+  const rawStatus = params.status?.trim();
+  const selectedStatus: InterventionStatus | null =
+    rawStatus && isInterventionStatus(rawStatus) ? rawStatus : null;
   const selectedCategory: WorkCategory | null = isWorkCategory(
     params.category?.trim()
   )
@@ -80,13 +97,21 @@ export default async function PortfolioPage({
   // Build filter option lists from the unfiltered set so users see what's
   // available to filter by even after they've applied something.
   const homeUnitCounts = new Map<string, number>();
-  const statusCounts = new Map<string, number>();
+  const stageCounts = new Map<PublicStage, number>();
+  const operationalCounts = new Map<InterventionStatus, number>();
   const categoryCounts = new Map<WorkCategory, number>();
   for (const app of allApps) {
     for (const unit of app.homeUnits) {
       homeUnitCounts.set(unit, (homeUnitCounts.get(unit) ?? 0) + 1);
     }
-    statusCounts.set(app.status, (statusCounts.get(app.status) ?? 0) + 1);
+    const stage = publicStageFromStatus(app.status);
+    stageCounts.set(stage, (stageCounts.get(stage) ?? 0) + 1);
+    if (isInterventionStatus(app.status)) {
+      operationalCounts.set(
+        app.status,
+        (operationalCounts.get(app.status) ?? 0) + 1
+      );
+    }
     for (const cat of app.workCategories) {
       categoryCounts.set(cat, (categoryCounts.get(cat) ?? 0) + 1);
     }
@@ -94,9 +119,12 @@ export default async function PortfolioPage({
   const homeUnitOptions = Array.from(homeUnitCounts.entries())
     .map(([value, count]) => ({ value, label: value, count }))
     .sort((a, b) => a.label.localeCompare(b.label));
-  const statusOptions = Array.from(statusCounts.entries())
-    .map(([value, count]) => ({ value, label: value, count }))
-    .sort((a, b) => b.count - a.count);
+  const stageFilterOptions = PUBLIC_STAGE_ORDER.filter((s) =>
+    stageCounts.has(s)
+  ).map((stage) => ({ stage, count: stageCounts.get(stage)! }));
+  const operationalFilterOptions = Array.from(operationalCounts.entries()).map(
+    ([status, count]) => ({ status, count })
+  );
   // Category options follow the canonical taxonomy order from
   // lib/work-categories.ts. Categories with zero tagged interventions
   // are dropped — no point offering an empty filter.
@@ -108,10 +136,16 @@ export default async function PortfolioPage({
     count: categoryCounts.get(slug) ?? 0,
   }));
 
-  // Apply filters
+  // Apply filters. Stage matches if the row's status rolls up into the
+  // selected stage; an explicit operational status filter is more
+  // specific and supersedes stage.
   const filtered = allApps.filter((app) => {
     if (selectedUnit && !app.homeUnits.includes(selectedUnit)) return false;
     if (selectedStatus && app.status !== selectedStatus) return false;
+    if (selectedStage && !selectedStatus) {
+      const rollup = STAGE_OPERATIONAL_ROLLUP[selectedStage] as readonly string[];
+      if (!rollup.includes(app.status)) return false;
+    }
     if (selectedCategory && !app.workCategories.includes(selectedCategory))
       return false;
     if (blockersOnly && app.activeBlockers.length === 0) return false;
@@ -169,13 +203,15 @@ export default async function PortfolioPage({
       {/* Filter / sort UI */}
       <PortfolioFilters
         homeUnits={homeUnitOptions}
-        statuses={statusOptions}
+        stageOptions={stageFilterOptions}
+        operationalOptions={operationalFilterOptions}
         categories={categoryOptions}
         totalCount={allApps.length}
         filteredCount={filtered.length}
         blockerCount={blockerCount}
         selected={{
           unit: selectedUnit,
+          stage: selectedStage,
           status: selectedStatus,
           category: selectedCategory,
           blockers: blockersOnly,
@@ -229,7 +265,7 @@ export default async function PortfolioPage({
         ))}
 
       {/* Context callout — only shown when no filters active and no sort */}
-      {!selectedUnit && !selectedStatus && !selectedCategory && !blockersOnly && sortMode === "default" && (
+      {!selectedUnit && !selectedStage && !selectedStatus && !selectedCategory && !blockersOnly && sortMode === "default" && (
         <Callout eyebrow="How to read this inventory">
           <p className="text-sm leading-relaxed">
             Interventions are grouped by{" "}
