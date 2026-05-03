@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getPillar, pillars } from "@/lib/strategic-plan/catalog";
 import { countProjectsForPriority } from "@/lib/strategic-plan/project-alignment";
+import { getPillarFraming } from "@/lib/strategic-plan/pillar-framing";
 
 export function generateStaticParams() {
   return pillars.map((p) => ({ code: p.code }));
@@ -29,6 +30,7 @@ export default async function PillarDetailPage({
   const { code } = await params;
   const pillar = getPillar(code);
   if (!pillar) notFound();
+  const framing = getPillarFraming(code);
 
   return (
     <div className="space-y-10">
@@ -48,6 +50,11 @@ export default async function PillarDetailPage({
         <h1 className="mt-2 text-3xl font-black tracking-tight text-brand-black">
           {pillar.name}
         </h1>
+        {framing && (
+          <p className="mt-3 max-w-3xl text-base leading-relaxed text-ink-muted">
+            {framing}
+          </p>
+        )}
         <p className="mt-3 text-sm text-ink-muted">
           {pillar.priorities.length}{" "}
           {pillar.priorities.length === 1 ? "priority" : "priorities"}
