@@ -8,7 +8,7 @@ import {
   STAGE_OPERATIONAL_ROLLUP,
   publicStageFromStatus,
 } from "@/lib/lifecycle-display";
-import type { InterventionStatus, PublicStage } from "@/lib/portfolio";
+import type { ProjectStatus, PublicStage } from "@/lib/portfolio";
 
 // Pure URL-state filter chip group. The portfolio page builds the option
 // lists from the unfiltered data and passes them in; clicking a pill
@@ -27,7 +27,7 @@ interface StageFilterOption {
 }
 
 interface OperationalFilterOption {
-  status: InterventionStatus;
+  status: ProjectStatus;
   count: number;
 }
 
@@ -42,7 +42,7 @@ export interface PortfolioFiltersProps {
   selected: {
     unit: string | null;
     stage: PublicStage | null;
-    status: InterventionStatus | null;
+    status: ProjectStatus | null;
     category: string | null;
     blockers: boolean;
     sort: "default" | "name" | "blockers";

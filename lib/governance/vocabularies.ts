@@ -565,8 +565,8 @@ export const vocabularyGroups: VocabularyGroup[] = [
   {
     "domain": "iids-portfolio",
     "application": "IIDS Portfolio",
-    "group": "InterventionStatus",
-    "description": "Operational ladder for an intervention — the day-to-day status IIDS tracks. Source of truth: lib/portfolio.ts. Each value's Verification_Rule is enforced by lib/portfolio-verification.ts on every PR.",
+    "group": "ProjectStatus",
+    "description": "Operational ladder for a project — the day-to-day status IIDS tracks. Source of truth: lib/portfolio.ts. Each value's Verification_Rule is enforced by lib/portfolio-verification.ts on every PR.",
     "values": [
       {
         "code": "idea",
@@ -622,7 +622,7 @@ export const vocabularyGroups: VocabularyGroup[] = [
         "label": "Sunsetting",
         "displayOrder": 8,
         "description": "Being wound down with a planned successor.",
-        "verificationRule": "sunsetDate (ISO) set; replacedBy populated — successor intervention slug or the literal 'manual-process'."
+        "verificationRule": "sunsetDate (ISO) set; replacedBy populated — successor project slug or the literal 'manual-process'."
       },
       {
         "code": "archived",
@@ -635,7 +635,7 @@ export const vocabularyGroups: VocabularyGroup[] = [
         "code": "tracked",
         "label": "Tracked",
         "displayOrder": 10,
-        "description": "Externally-owned intervention IIDS observes but does not build.",
+        "description": "Externally-owned project IIDS observes but does not build.",
         "verificationRule": "trackingOnly:true; bypasses the operational ladder."
       }
     ]
@@ -644,42 +644,42 @@ export const vocabularyGroups: VocabularyGroup[] = [
     "domain": "iids-portfolio",
     "application": "IIDS Portfolio",
     "group": "PublicStage",
-    "description": "Stakeholder-facing rollup. Computed deterministically from InterventionStatus by lib/portfolio.ts:computePublicStage. The public surfaces (/portfolio cards primary chip, landing stat strip, /explore tile breakdowns) render this axis; operational status is only shown as a secondary detail on cards.",
+    "description": "Stakeholder-facing rollup. Computed deterministically from ProjectStatus by lib/portfolio.ts:computePublicStage. The public surfaces (/portfolio cards primary chip, landing stat strip, /explore tile breakdowns) render this axis; operational status is only shown as a secondary detail on cards.",
     "values": [
       {
         "code": "exploring",
         "label": "Exploring",
         "displayOrder": 1,
         "description": "Thinking about it / committed to build.",
-        "verificationRule": "Rolls up from InterventionStatus values: idea, approved."
+        "verificationRule": "Rolls up from ProjectStatus values: idea, approved."
       },
       {
         "code": "building",
         "label": "Building",
         "displayOrder": 2,
         "description": "Code exists; not yet for real users.",
-        "verificationRule": "Rolls up from InterventionStatus values: building, prototype."
+        "verificationRule": "Rolls up from ProjectStatus values: building, prototype."
       },
       {
         "code": "live",
         "label": "Live",
         "displayOrder": 3,
         "description": "In use today.",
-        "verificationRule": "Rolls up from InterventionStatus values: piloting, production, maintained."
+        "verificationRule": "Rolls up from ProjectStatus values: piloting, production, maintained."
       },
       {
         "code": "retired",
         "label": "Retired",
         "displayOrder": 4,
         "description": "Done or winding down.",
-        "verificationRule": "Rolls up from InterventionStatus values: sunsetting, archived."
+        "verificationRule": "Rolls up from ProjectStatus values: sunsetting, archived."
       },
       {
         "code": "tracked",
         "label": "Tracked",
         "displayOrder": 5,
         "description": "Not built by IIDS.",
-        "verificationRule": "Rolls up from InterventionStatus value: tracked. Bypasses the operational ladder."
+        "verificationRule": "Rolls up from ProjectStatus value: tracked. Bypasses the operational ladder."
       }
     ]
   },
@@ -687,13 +687,13 @@ export const vocabularyGroups: VocabularyGroup[] = [
     "domain": "iids-portfolio",
     "application": "IIDS Portfolio",
     "group": "ProductionScope",
-    "description": "Granularity of production reach. Required on InterventionStatus values production and maintained.",
+    "description": "Granularity of production reach. Required on ProjectStatus values production and maintained.",
     "values": [
       {
         "code": "home-unit",
         "label": "Home Unit",
         "displayOrder": 1,
-        "description": "Accessible to all users in the intervention's home unit."
+        "description": "Accessible to all users in the project's home unit."
       },
       {
         "code": "institution-wide",
@@ -713,7 +713,7 @@ export const vocabularyGroups: VocabularyGroup[] = [
     "domain": "iids-portfolio",
     "application": "IIDS Portfolio",
     "group": "Visibility",
-    "description": "Public-site disclosure level for an intervention's record.",
+    "description": "Public-site disclosure level for a project's record.",
     "values": [
       {
         "code": "Public",
@@ -739,7 +739,7 @@ export const vocabularyGroups: VocabularyGroup[] = [
     "domain": "iids-portfolio",
     "application": "IIDS Portfolio",
     "group": "AI4RARelationship",
-    "description": "How an intervention relates to the AI4RA partnership (UI + Southern Utah University NSF GRANTED).",
+    "description": "How a project relates to the AI4RA partnership (UI + Southern Utah University NSF GRANTED).",
     "values": [
       {
         "code": "Core",
@@ -777,7 +777,7 @@ export const vocabularyGroups: VocabularyGroup[] = [
     "domain": "iids-portfolio",
     "application": "IIDS Portfolio",
     "group": "WorkCategory",
-    "description": "By-problem axis for browsing the portfolio. Audience-facing labels written in a Dean's vocabulary (not technical jargon). Source of truth: lib/work-categories.ts. One intervention can sit in 2-3 categories.",
+    "description": "By-problem axis for browsing the portfolio. Audience-facing labels written in a Dean's vocabulary (not technical jargon). Source of truth: lib/work-categories.ts. One project can sit in 2-3 categories.",
     "values": [
       {
         "code": "documents",
@@ -825,7 +825,7 @@ export const vocabularyGroups: VocabularyGroup[] = [
         "code": "ai-infrastructure",
         "label": "AI infrastructure",
         "displayOrder": 8,
-        "description": "LLM gateways, GPU stacks, agent platforms — the plumbing other interventions run on, not a problem on its own."
+        "description": "LLM gateways, GPU stacks, agent platforms — the plumbing other projects run on, not a problem on its own."
       }
     ]
   },

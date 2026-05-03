@@ -16,12 +16,12 @@
 // (see ADR — "skip gracefully").
 // ============================================================
 
-import type { Intervention, InterventionStatus } from "./portfolio";
+import type { Intervention, ProjectStatus } from "./portfolio";
 import { portfolioMeta } from "./portfolio-meta";
 
 export interface VerificationProblem {
   slug: string;
-  claimedStatus: InterventionStatus;
+  claimedStatus: ProjectStatus;
   problem: string;
   rule: string;
   severity: "error" | "warning";
@@ -311,7 +311,7 @@ const verifyUniversal: Verifier = (i) => {
   return problems;
 };
 
-const verifiers: Record<InterventionStatus, Verifier> = {
+const verifiers: Record<ProjectStatus, Verifier> = {
   idea: verifyIdea,
   approved: verifyApproved,
   building: verifyBuilding,
