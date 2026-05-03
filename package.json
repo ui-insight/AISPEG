@@ -12,6 +12,7 @@
     "governance:pr-summary": "tsx scripts/governance-pr-summary.ts",
     "governance:pr-summary:test": "tsx --env-file=.test-governance/test.env scripts/governance-pr-summary.ts",
     "governance:freshness": "tsx scripts/governance-freshness.ts",
+    "strategic-plan:freshness": "tsx scripts/strategic-plan-freshness.ts",
     "start": "next start",
     "lint": "eslint .",
     "migrate": "tsx --env-file=.env.local scripts/migrate.ts",

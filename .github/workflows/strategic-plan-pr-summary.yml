@@ -1,0 +1,109 @@
+name: Strategic Plan PR Summary
+
+# Advisory submodule-freshness comment for vendor/strategic-plan, mirroring
+# the freshness job in governance-pr-summary.yml. Posts/updates a single
+# comment via an HTML marker when the pinned submodule SHA is more than
+# STALE_AFTER_DAYS behind upstream main. Does NOT fail the build.
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+env:
+  STALE_AFTER_DAYS: "14"
+
+jobs:
+  freshness:
+    name: Strategic-plan submodule freshness
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository (with submodules)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          # vendor/strategic-plan is private; default GITHUB_TOKEN can't reach it.
+          token: ${{ secrets.PORTFOLIO_GH_TOKEN }}
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Compute submodule lag
+        id: lag
+        run: |
+          set -e
+          cd vendor/strategic-plan
+
+          pinned_sha=$(git rev-parse HEAD)
+          pinned_date_iso=$(git log -1 --format=%cI "$pinned_sha")
+
+          git fetch origin main --quiet
+          upstream_sha=$(git rev-parse origin/main)
+
+          echo "pinned_sha=$pinned_sha" >> "$GITHUB_OUTPUT"
+          echo "pinned_date_iso=$pinned_date_iso" >> "$GITHUB_OUTPUT"
+          echo "upstream_sha=$upstream_sha" >> "$GITHUB_OUTPUT"
+
+      - name: Render freshness advisory
+        id: render
+        env:
+          PINNED_SHA: ${{ steps.lag.outputs.pinned_sha }}
+          PINNED_COMMIT_DATE_ISO: ${{ steps.lag.outputs.pinned_date_iso }}
+          UPSTREAM_HEAD_SHA: ${{ steps.lag.outputs.upstream_sha }}
+          OUTPUT_PATH: /tmp/strategic-plan-freshness.md
+        run: |
+          set -e
+          npx tsx scripts/strategic-plan-freshness.ts
+          if [ -s /tmp/strategic-plan-freshness.md ]; then
+            echo "stale=true" >> "$GITHUB_OUTPUT"
+            {
+              echo "## Strategic-plan submodule freshness"
+              echo
+              cat /tmp/strategic-plan-freshness.md
+            } >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "stale=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upsert stale-advisory comment
+        if: steps.render.outputs.stale == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -e
+          body=$(cat /tmp/strategic-plan-freshness.md)
+          existing_id=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" \
+            --paginate \
+            --jq '.[] | select(.body | startswith("<!-- strategic-plan-bot:freshness -->")) | .id' \
+            | head -1 || true)
+          if [ -n "$existing_id" ]; then
+            gh api "repos/$REPO/issues/comments/$existing_id" -X PATCH -f body="$body"
+          else
+            gh api "repos/$REPO/issues/$PR_NUMBER/comments" -X POST -f body="$body"
+          fi
+
+      - name: Delete prior advisory when no longer stale
+        if: steps.render.outputs.stale == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -e
+          existing_id=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" \
+            --paginate \
+            --jq '.[] | select(.body | startswith("<!-- strategic-plan-bot:freshness -->")) | .id' \
+            | head -1 || true)
+          if [ -n "$existing_id" ]; then
+            gh api "repos/$REPO/issues/comments/$existing_id" -X DELETE
+          fi
