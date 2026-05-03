@@ -16,12 +16,14 @@ interface FilterOption {
 export interface PortfolioFiltersProps {
   homeUnits: FilterOption[];
   statuses: FilterOption[];
+  categories: FilterOption[];
   totalCount: number;
   filteredCount: number;
   blockerCount: number;
   selected: {
     unit: string | null;
     status: string | null;
+    category: string | null;
     blockers: boolean;
     sort: "default" | "name" | "blockers";
   };
@@ -73,6 +75,7 @@ function Chip({
 export default function PortfolioFilters({
   homeUnits,
   statuses,
+  categories,
   totalCount,
   filteredCount,
   blockerCount,
@@ -81,6 +84,7 @@ export default function PortfolioFilters({
   const filtersActive =
     !!selected.unit ||
     !!selected.status ||
+    !!selected.category ||
     selected.blockers ||
     selected.sort !== "default";
 
@@ -88,6 +92,7 @@ export default function PortfolioFilters({
   const baseParams = {
     unit: selected.unit,
     status: selected.status,
+    category: selected.category,
     blockers: selected.blockers ? "1" : null,
     sort: selected.sort === "default" ? null : selected.sort,
   };
@@ -137,6 +142,29 @@ export default function PortfolioFilters({
               count={u.count}
               active={selected.unit === u.value}
               href={buildHref({ ...baseParams, unit: u.value })}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Category pills */}
+      <div className="mt-4">
+        <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+          Category
+        </p>
+        <div className="flex flex-wrap gap-1.5">
+          <Chip
+            label="All"
+            active={!selected.category}
+            href={buildHref({ ...baseParams, category: null })}
+          />
+          {categories.map((c) => (
+            <Chip
+              key={c.value}
+              label={c.label}
+              count={c.count}
+              active={selected.category === c.value}
+              href={buildHref({ ...baseParams, category: c.value })}
             />
           ))}
         </div>
