@@ -164,11 +164,11 @@ export default function ProjectDetail({
         <SectionEyebrow>
           The Work{app.homeUnits[0] ? ` · ${app.homeUnits[0]}` : ""}
         </SectionEyebrow>
-        <h1 className="mt-2 text-3xl font-bold text-ui-charcoal">
+        <h1 className="mt-2 text-4xl font-black leading-tight tracking-tight text-brand-black md:text-5xl">
           {app.name}
         </h1>
         {app.tagline && (
-          <p className="mt-3 text-lg leading-relaxed text-ink-muted">
+          <p className="mt-4 text-xl leading-relaxed text-ink-muted">
             {app.tagline}
           </p>
         )}
@@ -176,12 +176,12 @@ export default function ProjectDetail({
           {ownerNames.length > 0 ? (
             <>
               Operationally owned by{" "}
-              <em className="font-medium italic text-brand-black">
+              <em className="font-semibold italic text-brand-black">
                 {ownerNames.join(", ")}
               </em>
             </>
           ) : app.trackingOnly ? (
-            <em className="font-medium italic text-brand-black">
+            <em className="font-semibold italic text-brand-black">
               Awaiting contact with unit
             </em>
           ) : null}
