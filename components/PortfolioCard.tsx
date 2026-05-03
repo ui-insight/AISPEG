@@ -70,12 +70,16 @@ export default function PortfolioCard({
   const liveHost = app.liveUrl ? hostnameOf(app.liveUrl) : null;
 
   const stage = publicStageFromStatus(app.status);
-  // The operational chip is suppressed for `tracked` — the ladder
-  // doesn't apply to externally-owned projects, so the primary
-  // stage chip carries the whole signal. (See ADR 0001.)
-  const showOperationalChip =
-    isProjectStatus(app.status) && app.status !== "tracked";
   const operationalStatus = isProjectStatus(app.status) ? app.status : null;
+  // Suppress the operational chip whenever its label collides with the
+  // public-stage label (e.g. `building` operational rolling up into the
+  // `Building` stage; `tracked` rolling up into the `Tracked` stage).
+  // The primary stage chip already carries that signal, and a duplicate
+  // chip below reads as redundant noise. The check generalises the prior
+  // `tracked` special case. (See ADR 0001.)
+  const showOperationalChip =
+    operationalStatus !== null &&
+    OPERATIONAL_LABEL[operationalStatus] !== PUBLIC_STAGE_LABEL[stage];
 
   const isAi4ra =
     app.ai4raRelationship === "Core" ||
