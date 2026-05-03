@@ -64,7 +64,7 @@ archived.
 Most structured data lives in typed TypeScript modules so the build
 catches schema drift:
 
-- `lib/portfolio.ts` — interventions inventory (seed source; runtime via Postgres)
+- `lib/portfolio.ts` — projects inventory (seed source; runtime via Postgres)
 - `lib/standards-watch.ts` — standards ledger
 - `lib/builder-guide-data.ts` — quiz, scoring, tiers
 - `lib/artifacts.ts` — unified Reports timeline (briefs, activity reports, external talks)
@@ -104,9 +104,9 @@ hand-maintained in `lib/portfolio.ts`.
 
 ## Common tasks
 
-### Adding an intervention to the portfolio
+### Adding a project to the portfolio
 
-Open `lib/portfolio.ts` and append a new entry to the `interventions`
+Open `lib/portfolio.ts` and append a new entry to the `projects`
 array. The shape is defined in the same file. Required fields include
 `slug`, `name`, `tagline`, `description`, `homeUnits`,
 `operationalOwners`, `buildParticipants`, `status`, `visibility`, and
@@ -114,8 +114,8 @@ array. The shape is defined in the same file. Required fields include
 
 ```ts
 {
-  slug: "my-new-intervention",
-  name: "My New Intervention",
+  slug: "my-new-project",
+  name: "My New Project",
   tagline: "One-line elevator pitch.",
   description: "Longer description shown on the detail page.",
   homeUnits: ["Office of the Provost"],
@@ -148,7 +148,7 @@ the editorial decisions that shape what shows up where.
   brief.
 - **`Partial`** — UI deployment exists but specific operational details
   (pilot scope, participant identities, configuration) are embargoed.
-  The intervention shows on `/portfolio` with a *"deployment details
+  The project shows on `/portfolio` with a *"deployment details
   embargoed"* notice. Use when the underlying work is sensitive, in
   negotiation, or pending public communications.
 - **`Internal-only`** — not visible on public `/portfolio` at all; only
@@ -180,8 +180,8 @@ owns it, IIDS may have advised but did not build. Always pair with
 #### `homeUnits` vs `buildParticipants`
 
 - **`homeUnits`** — the UI organizational unit(s) whose operations the
-  intervention serves. *Whose work depends on this.* Always at least
-  one entry. Multiple entries when an intervention serves more than
+  project serves. *Whose work depends on this.* Always at least
+  one entry. Multiple entries when a project serves more than
   one unit (rare).
 - **`buildParticipants`** — who actually built (or builds) the thing.
   Almost always includes `"IIDS"` for IIDS-built work; lists
@@ -210,7 +210,7 @@ owns it, IIDS may have advised but did not build. Always pair with
 `tags` is currently a free `string[]` used for situational flags. The
 known active values:
 
-- **`"diffusion"`** — the intervention is a *capability diffusion*
+- **`"diffusion"`** — the project is a *capability diffusion*
   case: a non-IIDS UI unit is co-building, not just consuming. Renders
   the *"Capability diffusion"* chip on `/portfolio`.
 
@@ -225,7 +225,7 @@ or open a new issue.
 
 The portfolio is only useful if it's current. The rules:
 
-- **At commit time** — when an intervention's *status*, *operational
+- **At commit time** — when a project's *status*, *operational
   owner*, *home unit*, or *scope* changes in real life, update
   `lib/portfolio.ts` in the same week. The git log is the audit
   trail.
@@ -349,7 +349,7 @@ Give your agent the strategic context first. A good opening:
 ### Effective prompt patterns
 
 **Adding content:**
-> "Add a new intervention to `lib/portfolio.ts`: [name], owned by [unit],
+> "Add a new project to `lib/portfolio.ts`: [name], owned by [unit],
 > built by IIDS. Use the existing entry shape. Visibility: Public."
 
 **Modifying a page:**

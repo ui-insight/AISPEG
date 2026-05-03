@@ -3,18 +3,18 @@
 **Status:** Accepted
 **Date:** 2026-05-03
 **Deciders:** Barrie Robison (with @ProfessorPolymorphic), Luke Sheneman (governance scope)
-**Supersedes:** the ad-hoc `InterventionStatus` union in [`lib/portfolio.ts`](../../lib/portfolio.ts) (`Planned | Prototype | Piloting | Production | Tracked | Archived`)
+**Supersedes:** the ad-hoc `ProjectStatus` union in [`lib/portfolio.ts`](../../lib/portfolio.ts) (`Planned | Prototype | Piloting | Production | Tracked | Archived`)
 **Related:** [#159](https://github.com/ui-insight/AISPEG/issues/159) (governance scope), [#154](https://github.com/ui-insight/AISPEG/issues/154) (work-categories epic — same pattern)
 
 ## Context
 
-The AISPEG portfolio catalogs AI interventions across UI units. Status accuracy is load-bearing: a stakeholder reading `/portfolio` makes resourcing decisions partly on what they see. The current six-state union (`Planned | Prototype | Piloting | Production | Tracked | Archived`) has three concrete failure modes:
+The AISPEG portfolio catalogs AI projects across UI units. Status accuracy is load-bearing: a stakeholder reading `/portfolio` makes resourcing decisions partly on what they see. The current six-state union (`Planned | Prototype | Piloting | Production | Tracked | Archived`) has three concrete failure modes:
 
 1. **No distinction between "idea" and "approved-to-build."** `Planned` covers both, so a stakeholder can't tell whether something has an owner or is aspirational.
 2. **`Prototype` conflates active development with idle demo state.** A project being built today and a project that was prototyped six months ago and abandoned read identically.
 3. **`Production` collapses three different operational realities** — actively maintained, in maintenance-only mode, and being sunset.
 
-Beyond the gaps, the labels are **not measurable**. Nothing in code verifies that a `Production` intervention actually has a `liveUrl` accessible institution-wide, or that a `Piloting` one has an actual cohort. Status drifts because nothing forces it to stay honest.
+Beyond the gaps, the labels are **not measurable**. Nothing in code verifies that a `Production` project actually has a `liveUrl` accessible institution-wide, or that a `Piloting` one has an actual cohort. Status drifts because nothing forces it to stay honest.
 
 ## Decision
 
@@ -33,7 +33,7 @@ The day-to-day status IIDS tracks. Each state has a verification rule that can b
 | `piloting` | Piloting | `liveUrl` accessible to a **named cohort**. `pilotCohort` populated with `size > 0` and a bounded `scope` (single unit OR named individuals OR an explicit "limited beta" descriptor). |
 | `production` | Production | A **publicly-accessible artifact** exists beyond the original pilot cohort: either (a) a `liveUrl` reachable beyond the pilot, or (b) a public `repoUrl` (`isPrivateRepo: false` or unset) where the repo itself is the consumable deliverable — the path that covers infrastructure, scaffolds, and self-hostable appliances. `productionScope` is `"home-unit"` (entire home unit's users), `"institution-wide"`, or `"external"` (institutional + outside-UI deployments). `supportContact` populated. |
 | `maintained` | Maintained | Inherits production's accessibility rule (liveUrl OR public repo). **No commits to `main` in the last 90 days.** No open feature issues — only `bug`-, `security`-, or `chore`-labeled issues. |
-| `sunsetting` | Sunsetting | `sunsetDate` set (ISO date, future or recent past). `replacedBy` populated — either a successor intervention `slug` or the literal string `manual-process`. |
+| `sunsetting` | Sunsetting | `sunsetDate` set (ISO date, future or recent past). `replacedBy` populated — either a successor project `slug` or the literal string `manual-process`. |
 | `archived` | Archived | `liveUrl` returns 404, is null, or domain is dead (or, for repo-as-artifact deliverables, `repoUrl` is archived/deleted). Service stopped. Record kept for institutional memory. |
 | `tracked` *(meta)* | Tracked | Not built by IIDS. `trackingOnly: true`. Bypasses the operational ladder; the public stage is its own bucket. |
 
@@ -61,7 +61,7 @@ This **resolves [#159](https://github.com/ui-insight/AISPEG/issues/159) in the a
 
 ### 2. `Tracked` gets its own public stage
 
-Three options were considered: own stage, roll into whatever the external owner reports, or flat secondary tag with no public stage. We chose **own stage**. Rationale: a stakeholder reading the registry needs to know whether IIDS is responsible for an intervention or is merely tracking it. Hiding that under a `Live`/`Building` rollup obscures the load-bearing distinction.
+Three options were considered: own stage, roll into whatever the external owner reports, or flat secondary tag with no public stage. We chose **own stage**. Rationale: a stakeholder reading the registry needs to know whether IIDS is responsible for a project or is merely tracking it. Hiding that under a `Live`/`Building` rollup obscures the load-bearing distinction.
 
 ### 3. `featureComplete` flag, not pure commit-cadence
 
@@ -71,9 +71,9 @@ Pure commit-cadence has false positives — a healthy maintained project with sp
 
 The first draft of the rules required a `liveUrl` for `production`. That broke for two real cases in the portfolio: `template-app` is a scaffold consumed by cloning, and `dgx-stack` is a self-hostable appliance — neither is a hosted webapp, and both are honestly in production use. The semantic the rule is reaching for is "**is there a publicly-accessible artifact someone outside the build team can use right now?**" For hosted apps, that's `liveUrl`. For infrastructure, scaffolds, and self-hostable deliverables, the public repo *is* the consumable artifact. Either satisfies the rule. The verifier checks that `repoUrl` is set and `isPrivateRepo` is not true — a private repo with no liveUrl fails, as it should.
 
-## Schema additions to `Intervention`
+## Schema additions to `Project`
 
-To make the rules checkable, the `Intervention` interface in [`lib/portfolio.ts`](../../lib/portfolio.ts) gains:
+To make the rules checkable, the `Project` interface in [`lib/portfolio.ts`](../../lib/portfolio.ts) gains:
 
 | Field | Type | Why | Authored or derived |
 |---|---|---|---|
@@ -97,16 +97,16 @@ Implementation lands as `lib/portfolio-verification.ts` exporting:
 ```ts
 export interface VerificationProblem {
   slug: string;
-  claimedStatus: InterventionStatus;
+  claimedStatus: ProjectStatus;
   problem: string;
   rule: string;
 }
 
-export function verifyIntervention(i: Intervention): VerificationProblem[];
-export function verifyAll(interventions: Intervention[]): VerificationProblem[];
+export function verifyProject(i: Project): VerificationProblem[];
+export function verifyAll(projects: Project[]): VerificationProblem[];
 ```
 
-Plus an npm script `npm run verify:portfolio` that fails non-zero if any intervention has problems. CI runs it on every PR. The rules in this ADR are the spec; the file is the executable.
+Plus an npm script `npm run verify:portfolio` that fails non-zero if any project has problems. CI runs it on every PR. The rules in this ADR are the spec; the file is the executable.
 
 `lastCommitDate` derivation: `scripts/refresh-commit-dates.ts` hits the GitHub API for each `repoUrl`, writes results to an auto-generated `lib/portfolio-meta.ts` (gitignored from manual edits, regenerated like `lib/governance/catalog.ts`). A weekly GitHub Action keeps it fresh.
 
@@ -116,7 +116,7 @@ The `vendor/data-governance` submodule grows a new domain. Initial vocabularies 
 
 | Group | Cardinality | Source of truth |
 |---|---|---|
-| `InterventionStatus` | 10 values (including `tracked`) | `lib/portfolio.ts` |
+| `ProjectStatus` | 10 values (including `tracked`) | `lib/portfolio.ts` |
 | `PublicStage` | 5 values | `lib/portfolio.ts` (derived) |
 | `ProductionScope` | 3 values | `lib/portfolio.ts` |
 | `Visibility` | 3 values | `lib/portfolio.ts` (existing) |
@@ -125,11 +125,11 @@ The `vendor/data-governance` submodule grows a new domain. Initial vocabularies 
 
 Each value carries `code`, `label`, `displayOrder`, `description`, and (new) a `verificationRule` description string. The implementation of the rule lives in `lib/portfolio-verification.ts`; the catalog records what the rule *is*, not how it's checked.
 
-## Migration of the existing 15 interventions
+## Migration of the existing 15 projects
 
 Status currently claimed → likely re-classification under the new rules. Final assignments happen during the schema PR's data audit; this is a starting point for that conversation.
 
-| Intervention | Current | Likely new | Notes |
+| Project | Current | Likely new | Notes |
 |---|---|---|---|
 | `stratplan` | Production | `production` (Live) | Verify `productionScope` + `supportContact` |
 | `audit-dashboard` | Prototype | `building` (Building) | Active dev; check commit cadence |
@@ -156,20 +156,20 @@ Status currently claimed → likely re-classification under the new rules. Final
 - Resolves [#159](https://github.com/ui-insight/AISPEG/issues/159) for the broader site-IA enums (`Visibility`, `AI4RARelationship`, etc. — all picked up under the same domain).
 
 **Negative:**
-- Adds eight authored fields to `Intervention`. Authors carry more discipline.
+- Adds eight authored fields to `Project`. Authors carry more discipline.
 - Requires a derivation script (`refresh-commit-dates.ts`) and a CI step.
-- The 15 existing interventions need a re-classification audit; some statuses will move.
+- The 15 existing projects need a re-classification audit; some statuses will move.
 - Couples the AISPEG site's iteration to upstream `vendor/data-governance` for taxonomy edits — the same coupling that already applies to research-admin domain vocabularies. Tradeoff accepted.
 
 **Neutral:**
-- The `Tracked` meta-state breaks the ladder pattern slightly, but this is honest — externally-owned interventions don't follow the same lifecycle and should be visibly separated.
+- The `Tracked` meta-state breaks the ladder pattern slightly, but this is honest — externally-owned projects don't follow the same lifecycle and should be visibly separated.
 
 ## Implementation sequencing
 
 Five PRs, in order. Each ships independently.
 
 1. **This ADR** *(merged)* — locks the design.
-2. **Schema PR** — extend `Intervention`, Migration 007 mirrors columns into `applications`, re-classify the 15 existing rows, update `scripts/seed-portfolio.ts`. CI green requires the verification check passes (which won't exist yet — this PR creates the data shape, not the verifier).
+2. **Schema PR** — extend `Project`, Migration 007 mirrors columns into `applications`, re-classify the 15 existing rows, update `scripts/seed-portfolio.ts`. CI green requires the verification check passes (which won't exist yet — this PR creates the data shape, not the verifier).
 3. **Verification PR** — `lib/portfolio-verification.ts` + `npm run verify:portfolio` + `scripts/refresh-commit-dates.ts` + a weekly GitHub Action for derivation. CI now polices status accuracy.
 4. **UI PR** — `PublicStage` chip on portfolio cards (primary), operational status chip (secondary). Status filter on `/portfolio` reorganized: top-level by public stage, drill-in by operational. `/explore` and the landing pick up the new public-stage signals. `.impeccable.md` updated.
 5. **Governance PR** — add the `iids-portfolio` domain to `vendor/data-governance`, regenerate `lib/governance/*.ts`, drift workflow now polices these vocabularies too. Closes [#159](https://github.com/ui-insight/AISPEG/issues/159).

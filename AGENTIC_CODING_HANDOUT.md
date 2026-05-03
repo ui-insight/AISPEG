@@ -75,7 +75,7 @@ The session will likely move through four stages:
 - `app/` — pages (Next.js App Router; four primary surfaces:
   `/portfolio`, `/builder-guide`, `/reports`, `/standards`)
 - `components/` — reusable UI pieces
-- `lib/portfolio.ts` — interventions inventory (typed)
+- `lib/portfolio.ts` — projects inventory (typed)
 - `lib/standards-watch.ts` — standards ledger
 - `lib/builder-guide-data.ts` — assessment quiz, scoring, tiers
 - `lib/github.ts` — fetches GitHub issue data
@@ -124,7 +124,7 @@ This keeps the tools complementary instead of redundant.
 
 Strong starter tasks in this repo include:
 
-- add or refine an intervention entry in `lib/portfolio.ts`
+- add or refine a project entry in `lib/portfolio.ts`
 - add a new entry to `lib/standards-watch.ts` when a new standard is
   formally requested from OIT
 - fix a small typography or layout detail on a page

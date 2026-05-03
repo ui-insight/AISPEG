@@ -593,7 +593,7 @@ export const HOME_UNIT_GROUP_ORDER = [
 export function groupByHomeUnit(
   items: Project[]
 ): { unit: string; items: Project[] }[] {
-  // An project is listed under its FIRST home unit for grouping.
+  // A project is listed under its FIRST home unit for grouping.
   const groups = new Map<string, Project[]>();
   for (const i of items) {
     const primary = i.homeUnits[0] || "Unclassified";
