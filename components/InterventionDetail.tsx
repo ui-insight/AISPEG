@@ -142,7 +142,7 @@ export default function InterventionDetail({
     <div className="space-y-10">
       {/* Breadcrumb */}
       <nav className="text-sm text-gray-500">
-        <Link href={basePath} className="hover:text-ui-gold-dark">
+        <Link href={basePath} className="hover:text-brand-black">
           {audience === "internal" ? "Internal portfolio" : "Portfolio"}
         </Link>
         {app.homeUnits[0] && (
@@ -160,7 +160,7 @@ export default function InterventionDetail({
         <div className="flex flex-wrap items-center gap-2">
           <StatusBadge status={app.status} />
           {app.ai4raRelationship !== "None" && (
-            <span className="rounded-full border border-ui-gold/30 bg-ui-gold/10 px-2.5 py-0.5 text-xs font-medium text-ui-gold-dark">
+            <span className="rounded-full border border-brand-lupine/30 bg-brand-lupine/10 px-2.5 py-0.5 text-xs font-medium text-brand-lupine">
               AI4RA {app.ai4raRelationship}
             </span>
           )}
@@ -195,7 +195,7 @@ export default function InterventionDetail({
           <p className="mt-2 text-lg text-gray-600">{app.tagline}</p>
         )}
         {app.funding && (
-          <p className="mt-2 text-sm font-medium text-ui-gold-dark">
+          <p className="mt-2 text-sm font-medium text-gray-600">
             {app.funding}
           </p>
         )}
@@ -293,7 +293,7 @@ export default function InterventionDetail({
               href={app.liveUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-ui-charcoal hover:border-ui-gold/40"
+              className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-ui-charcoal hover:border-brand-black"
             >
               Live site &rarr;
             </a>
@@ -303,7 +303,7 @@ export default function InterventionDetail({
               href={app.docsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-ui-charcoal hover:border-ui-gold/40"
+              className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-ui-charcoal hover:border-brand-black"
             >
               Documentation &rarr;
             </a>
@@ -372,7 +372,7 @@ export default function InterventionDetail({
                 className="flex items-start gap-2 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700"
               >
                 <svg
-                  className="mt-0.5 h-4 w-4 shrink-0 text-ui-gold"
+                  className="mt-0.5 h-4 w-4 shrink-0 text-brand-black"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -421,9 +421,9 @@ export default function InterventionDetail({
               <Link
                 key={r.slug}
                 href={`${basePath}/${r.slug}`}
-                className="group rounded-lg border border-gray-200 bg-white p-4 transition-colors hover:border-ui-gold/40"
+                className="group rounded-lg border border-hairline bg-white p-4 transition-shadow hover:shadow-md"
               >
-                <p className="text-sm font-semibold text-ui-charcoal group-hover:text-ui-gold-dark">
+                <p className="text-sm font-semibold text-ui-charcoal">
                   {r.name}
                 </p>
                 {r.tagline && (

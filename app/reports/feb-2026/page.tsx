@@ -16,7 +16,7 @@ export default function FebReportPage() {
     <div className="space-y-10">
       {/* Breadcrumb */}
       <nav className="text-sm text-gray-500">
-        <Link href="/reports" className="hover:text-ui-gold-dark">
+        <Link href="/reports" className="hover:text-brand-black">
           Reports &amp; Briefs
         </Link>
         <span className="mx-2">/</span>
@@ -24,7 +24,7 @@ export default function FebReportPage() {
       </nav>
 
       <div>
-        <p className="text-sm font-medium uppercase tracking-wider text-ui-gold-dark">
+        <p className="text-sm font-medium uppercase tracking-wider text-brand-silver">
           Origin story
         </p>
         <h1 className="mt-1 text-3xl font-black tracking-tight text-brand-black">
@@ -34,7 +34,7 @@ export default function FebReportPage() {
           A snapshot of the 26-day sprint that proved agentic development could
           work at institutional scale. These metrics are a point-in-time proof
           of concept &mdash; for the current portfolio of active projects, see{" "}
-          <Link href="/portfolio" className="text-ui-gold-dark hover:underline">
+          <Link href="/portfolio" className="text-brand-black hover:underline">
             Portfolio
           </Link>
           .

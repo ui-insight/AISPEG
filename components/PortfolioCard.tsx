@@ -81,10 +81,10 @@ export default function PortfolioCard({
   const ai4raLabel = ai4raChip[app.ai4raRelationship];
 
   return (
-    <article className="group relative flex h-full flex-col rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:border-brand-gold hover:shadow-md">
+    <article className="group relative flex h-full flex-col rounded-xl border border-hairline bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <h3 className="text-base font-semibold text-brand-black group-hover:text-brand-gold-dark transition-colors">
+          <h3 className="text-base font-semibold text-brand-black">
             <Link
               href={`${basePath}/${app.slug}`}
               className="unstyled before:absolute before:inset-0"
@@ -124,7 +124,7 @@ export default function PortfolioCard({
 
       <div className="mt-4 flex flex-wrap gap-1.5">
         {ai4raLabel && (
-          <span className="rounded-full border border-brand-gold bg-brand-gold/15 px-2 py-0.5 text-xs font-semibold text-brand-gold-dark">
+          <span className="rounded-full border border-brand-lupine/30 bg-brand-lupine/10 px-2 py-0.5 text-xs font-semibold text-brand-lupine">
             {ai4raLabel}
           </span>
         )}
@@ -176,7 +176,7 @@ export default function PortfolioCard({
           <span className="font-medium text-green-700">OIT-endorsed</span>
         )}
         {app.funding && (
-          <span className="truncate font-medium text-brand-gold-dark">
+          <span className="truncate font-medium text-gray-600">
             {app.funding}
           </span>
         )}

@@ -43,7 +43,7 @@ export function DocPage({
       </div>
 
       {/* Content */}
-      <div className="prose prose-sm max-w-none prose-headings:text-ui-charcoal prose-h2:text-xl prose-h2:mt-10 prose-h2:mb-4 prose-h3:text-base prose-h3:mt-6 prose-p:text-gray-600 prose-li:text-gray-600 prose-strong:text-ui-charcoal prose-code:bg-gray-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:before:content-none prose-code:after:content-none prose-a:text-ui-gold-dark prose-a:no-underline hover:prose-a:underline">
+      <div className="prose prose-sm max-w-none prose-headings:text-ui-charcoal prose-h2:text-xl prose-h2:mt-10 prose-h2:mb-4 prose-h3:text-base prose-h3:mt-6 prose-p:text-gray-600 prose-li:text-gray-600 prose-strong:text-ui-charcoal prose-code:bg-gray-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:before:content-none prose-code:after:content-none prose-a:text-brand-black prose-a:font-medium prose-a:no-underline hover:prose-a:underline">
         {children}
       </div>
     </div>
@@ -66,24 +66,24 @@ export function DocCard({
   return (
     <Link
       href={href}
-      className="group rounded-xl border border-gray-200 bg-white p-5 shadow-sm hover:border-ui-gold/50 hover:shadow-md transition-all"
+      className="group rounded-xl border border-hairline bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
     >
       <div className="flex items-start gap-3">
         <span className="text-2xl">{icon}</span>
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <h3 className="text-sm font-semibold text-ui-charcoal group-hover:text-ui-gold-dark transition-colors">
+            <h3 className="text-sm font-semibold text-ui-charcoal">
               {title}
             </h3>
             {badge && (
-              <span className="rounded-full bg-ui-gold/15 px-2 py-0.5 text-xs font-medium text-ui-gold-dark">
+              <span className="rounded-full border border-hairline bg-surface-alt px-2 py-0.5 text-xs font-medium text-brand-black">
                 {badge}
               </span>
             )}
           </div>
           <p className="mt-1 text-xs text-gray-500">{description}</p>
         </div>
-        <svg className="h-4 w-4 text-gray-300 group-hover:text-ui-gold transition-colors mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="h-4 w-4 text-gray-300 group-hover:text-brand-black transition-colors mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
         </svg>
       </div>

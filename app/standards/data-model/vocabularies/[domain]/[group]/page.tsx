@@ -267,7 +267,7 @@ export default async function VocabularyDetailPage({
                   key={u.project}
                   className="rounded-lg border border-gray-200 bg-white p-4"
                 >
-                  <p className="text-[11px] font-semibold uppercase tracking-wider text-ui-gold-dark">
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-brand-silver">
                     {project?.domain ?? ""}
                   </p>
                   <p className="mt-1">

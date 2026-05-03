@@ -8,7 +8,7 @@ export default function StandardsLayout({
   return (
     <div>
       <header className="mb-10 border-b border-gray-200">
-        <p className="text-xs font-semibold uppercase tracking-wider text-ui-gold-dark">
+        <p className="text-xs font-semibold uppercase tracking-wider text-brand-silver">
           Institutional Standards
         </p>
         <div className="mt-4">

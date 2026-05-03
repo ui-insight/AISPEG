@@ -100,7 +100,7 @@ export default function ProjectTable({ projects, totals }: ProjectTableProps) {
               </td>
               <td className="px-6 py-3 text-right text-gray-500">{p.lowEstimate}</td>
               <td className="px-6 py-3 text-right text-gray-500">{p.highEstimate}</td>
-              <td className="px-6 py-3 text-right font-semibold text-ui-gold-dark">
+              <td className="px-6 py-3 text-right font-bold text-brand-black">
                 {p.multiplier}
               </td>
             </tr>
@@ -115,7 +115,7 @@ export default function ProjectTable({ projects, totals }: ProjectTableProps) {
             </td>
             <td className="px-6 py-3 text-right text-gray-600">{totals.lowEstimate}</td>
             <td className="px-6 py-3 text-right text-gray-600">{totals.highEstimate}</td>
-            <td className="px-6 py-3 text-right text-ui-gold-dark">{totals.multiplier}</td>
+            <td className="px-6 py-3 text-right font-bold text-brand-black">{totals.multiplier}</td>
           </tr>
         </tfoot>
       </table>

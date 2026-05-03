@@ -39,7 +39,7 @@ export default function LovableCautionaryTalePage() {
   return (
     <article className="space-y-10">
       <nav className="text-sm text-gray-500">
-        <Link href="/reports" className="hover:text-ui-gold-dark">
+        <Link href="/reports" className="hover:text-brand-black">
           Reports
         </Link>
         <span className="mx-2">/</span>
@@ -49,7 +49,7 @@ export default function LovableCautionaryTalePage() {
       </nav>
 
       <header>
-        <p className="text-xs font-semibold uppercase tracking-wider text-ui-gold-dark">
+        <p className="text-xs font-semibold uppercase tracking-wider text-brand-silver">
           A cautionary tale &middot; April 21, 2026
         </p>
         <h1 className="mt-2 text-3xl font-black tracking-tight text-brand-black">
@@ -104,7 +104,7 @@ export default function LovableCautionaryTalePage() {
         </div>
       </section>
 
-      <blockquote className="rounded-xl border-l-0 border-t-4 border-brand-gold bg-brand-gold/5 p-6">
+      <blockquote className="rounded-xl border border-hairline bg-surface-alt p-6">
         <p className="text-lg italic leading-relaxed text-brand-black">
           &ldquo;The real risk of vibe coding isn&apos;t AI writing insecure
           code. It&apos;s humans shipping code they never had a chance to
@@ -145,8 +145,8 @@ export default function LovableCautionaryTalePage() {
         </div>
       </section>
 
-      <section className="rounded-xl border border-brand-gold bg-brand-gold/5 p-6">
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-brand-gold-dark">
+      <section className="rounded-xl border border-brand-clearwater/30 bg-brand-clearwater/5 p-6">
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-brand-clearwater">
           How UI&apos;s institutional posture differs
         </h2>
         <ul className="mt-3 space-y-2">
@@ -157,7 +157,7 @@ export default function LovableCautionaryTalePage() {
             >
               <span
                 aria-hidden="true"
-                className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-gold"
+                className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-clearwater"
               />
               <span>{item}</span>
             </li>

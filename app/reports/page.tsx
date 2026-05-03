@@ -15,7 +15,7 @@ export const metadata = {
 };
 
 const kindStyles: Record<ArtifactKind, string> = {
-  "activity-report": "bg-ui-gold/15 text-ui-gold-dark",
+  "activity-report": "bg-brand-clearwater/10 text-brand-clearwater",
   brief: "bg-blue-100 text-blue-800",
   presentation: "bg-emerald-100 text-emerald-800",
 };
@@ -42,7 +42,7 @@ function ExternalIcon() {
 function ArtifactCard({ artifact }: { artifact: Artifact }) {
   const isExternal = !!artifact.external;
   const cardInner = (
-    <article className="group relative h-full rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-all hover:border-ui-gold/40 hover:shadow-md">
+    <article className="group relative h-full rounded-xl border border-hairline bg-white p-6 shadow-sm transition-shadow hover:shadow-md">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <span
           className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${kindStyles[artifact.kind]}`}
@@ -52,7 +52,7 @@ function ArtifactCard({ artifact }: { artifact: Artifact }) {
         <span className="text-xs text-gray-400">{artifact.dateLabel}</span>
       </div>
 
-      <h2 className="mt-3 text-lg font-semibold text-ui-charcoal group-hover:text-ui-gold-dark">
+      <h2 className="mt-3 text-lg font-semibold text-ui-charcoal">
         {artifact.title}
         {isExternal && (
           <span className="ml-1 inline-flex translate-y-px text-gray-400">
@@ -61,7 +61,7 @@ function ArtifactCard({ artifact }: { artifact: Artifact }) {
         )}
       </h2>
       {artifact.subtitle && (
-        <p className="mt-1 text-sm font-medium text-ui-gold-dark">
+        <p className="mt-1 text-sm font-medium text-brand-silver">
           {artifact.subtitle}
         </p>
       )}

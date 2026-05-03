@@ -22,7 +22,7 @@ export default function LessonCard({
         {recommendations.map((rec, i) => (
           <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
             <svg
-              className="mt-0.5 h-4 w-4 shrink-0 text-ui-gold"
+              className="mt-0.5 h-4 w-4 shrink-0 text-brand-black"
               fill="currentColor"
               viewBox="0 0 20 20"
             >

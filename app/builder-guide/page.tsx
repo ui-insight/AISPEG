@@ -834,7 +834,7 @@ function ResultsView({
           <ul className="mt-3 space-y-2">
             {tier.techStack.map((item) => (
               <li key={item} className="flex items-start gap-2 text-sm text-gray-600">
-                <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-ui-gold" />
+                <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-brand-silver" />
                 {item}
               </li>
             ))}
@@ -859,7 +859,7 @@ function ResultsView({
           <code className="rounded bg-gray-100 px-3 py-1.5 text-sm font-mono text-ui-charcoal">
             {tier.githubTemplate}
           </code>
-          <span className="rounded-full bg-ui-gold/15 px-2.5 py-0.5 text-xs font-medium text-ui-gold-dark">
+          <span className="rounded-full border border-hairline bg-surface-alt px-2.5 py-0.5 text-xs font-medium text-brand-black">
             Placeholder
           </span>
         </div>
@@ -878,7 +878,7 @@ function ResultsView({
             <Link
               key={std}
               href={`/standards/${std}`}
-              className="inline-flex items-center gap-1.5 rounded-full border border-ui-gold/30 bg-ui-gold/10 px-3 py-1 text-xs font-medium text-ui-gold-dark hover:bg-ui-gold/20 transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-full border border-brand-clearwater/30 bg-brand-clearwater/10 px-3 py-1 text-xs font-medium text-brand-clearwater hover:bg-brand-clearwater/20 transition-colors"
             >
               <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
@@ -1258,7 +1258,7 @@ export default function BuilderGuidePage() {
                   <button
                     key={s.id}
                     onClick={() => handleJumpToStep(i)}
-                    className="w-full rounded-xl border border-gray-200 bg-white p-4 text-left hover:border-ui-gold transition-colors"
+                    className="w-full rounded-xl border border-hairline bg-white p-4 text-left transition-shadow hover:shadow-md"
                   >
                     <div className="flex items-center justify-between">
                       <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
