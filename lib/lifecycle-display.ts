@@ -1,0 +1,114 @@
+// ============================================================
+// Lifecycle Display — UI helpers for ADR 0001
+// ============================================================
+// Centralised labels, colors, and rollups for the operational ladder
+// and public-stage axes. Imported by PortfolioCard, PortfolioFilters,
+// the landing stat strip, and the /explore tile breakdowns.
+//
+// Color rule (locked in .impeccable.md):
+//   - Public-stage chips carry stage-specific color (silver / huckleberry /
+//     clearwater / gray / huckleberry-tint).
+//   - Operational chips are ALWAYS neutral surface — same restraint as
+//     the work-categories chips. No per-status color.
+// ============================================================
+
+import {
+  computePublicStage,
+  type InterventionStatus,
+  type PublicStage,
+} from "./portfolio";
+
+export const PUBLIC_STAGE_LABEL: Record<PublicStage, string> = {
+  exploring: "Exploring",
+  building: "Building",
+  live: "Live",
+  retired: "Retired",
+  tracked: "Tracked",
+};
+
+// Tailwind class strings for each public-stage chip.
+// Each entry is a one-shot className for a chip with border + bg + text.
+export const PUBLIC_STAGE_CHIP: Record<PublicStage, string> = {
+  exploring: "border-brand-silver/40 bg-brand-silver/10 text-brand-silver",
+  building: "border-brand-huckleberry/30 bg-brand-huckleberry/10 text-brand-huckleberry",
+  live: "border-brand-clearwater/40 bg-brand-clearwater/10 text-brand-clearwater",
+  retired: "border-gray-200 bg-gray-50 text-gray-500",
+  tracked: "border-brand-huckleberry/30 bg-brand-huckleberry/10 text-brand-huckleberry",
+};
+
+// Reading-order list — used by the filter UI and the landing stat strip.
+// `tracked` is omitted from the conventional progression and tacked on
+// at the end since it's a meta-state that bypasses the ladder.
+export const PUBLIC_STAGE_ORDER: PublicStage[] = [
+  "exploring",
+  "building",
+  "live",
+  "retired",
+  "tracked",
+];
+
+export const OPERATIONAL_LABEL: Record<InterventionStatus, string> = {
+  idea: "Idea",
+  approved: "Approved",
+  building: "Building",
+  prototype: "Prototype",
+  piloting: "Piloting",
+  production: "Production",
+  maintained: "Maintained",
+  sunsetting: "Sunsetting",
+  archived: "Archived",
+  tracked: "Tracked",
+};
+
+// Inverse of computePublicStage — for the filter drill-in.
+// Lists the 1-N operational states that roll up into each public stage,
+// in approximate ladder order.
+export const STAGE_OPERATIONAL_ROLLUP: Record<PublicStage, InterventionStatus[]> = {
+  exploring: ["idea", "approved"],
+  building: ["building", "prototype"],
+  live: ["piloting", "production", "maintained"],
+  retired: ["sunsetting", "archived"],
+  tracked: ["tracked"],
+};
+
+// String-input version of computePublicStage. Postgres-sourced rows
+// carry status as a plain string; if a row has a status outside the
+// canonical 10-value union (drift, legacy data, etc.), bucket it as
+// `exploring` so the UI never crashes.
+export function publicStageFromStatus(status: string): PublicStage {
+  if (isInterventionStatus(status)) return computePublicStage(status);
+  return "exploring";
+}
+
+const STATUSES: ReadonlyArray<InterventionStatus> = [
+  "idea",
+  "approved",
+  "building",
+  "prototype",
+  "piloting",
+  "production",
+  "maintained",
+  "sunsetting",
+  "archived",
+  "tracked",
+];
+
+export function isInterventionStatus(s: string): s is InterventionStatus {
+  return (STATUSES as readonly string[]).includes(s);
+}
+
+// Aggregate stage counts across a list of items keyed by status. Used by
+// the landing stat strip and /explore tile breakdowns. Returns the stages
+// in PUBLIC_STAGE_ORDER, with zero-count stages dropped.
+export function stageBreakdown(
+  items: ReadonlyArray<{ status: string }>
+): Array<{ stage: PublicStage; count: number }> {
+  const counts = new Map<PublicStage, number>();
+  for (const item of items) {
+    const stage = publicStageFromStatus(item.status);
+    counts.set(stage, (counts.get(stage) ?? 0) + 1);
+  }
+  return PUBLIC_STAGE_ORDER.filter((s) => (counts.get(s) ?? 0) > 0).map(
+    (stage) => ({ stage, count: counts.get(stage)! })
+  );
+}

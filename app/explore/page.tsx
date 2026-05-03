@@ -5,6 +5,11 @@ import {
   WORK_CATEGORY_LABELS,
   type WorkCategory,
 } from "@/lib/work-categories";
+import {
+  PUBLIC_STAGE_LABEL,
+  stageBreakdown,
+} from "@/lib/lifecycle-display";
+import type { PublicStage } from "@/lib/portfolio";
 
 export const metadata = {
   title: "Explore | UI AI Initiative",
@@ -18,6 +23,9 @@ interface CategoryTile {
   description: string;
   count: number;
   representatives: string[];
+  // Public-stage breakdown for this category. Suppressed when the
+  // entire category sits in a single stage (avoids "4 live" tautology).
+  stageBreakdown: Array<{ stage: PublicStage; count: number }>;
 }
 
 function buildTiles(interventions: Intervention[]): CategoryTile[] {
@@ -25,12 +33,14 @@ function buildTiles(interventions: Intervention[]): CategoryTile[] {
     const matches = interventions.filter((i) =>
       (i.workCategories ?? []).includes(slug)
     );
+    const stages = stageBreakdown(matches);
     return {
       slug,
       label: WORK_CATEGORY_LABELS[slug].label,
       description: WORK_CATEGORY_LABELS[slug].description,
       count: matches.length,
       representatives: matches.slice(0, 2).map((i) => i.name),
+      stageBreakdown: stages.length > 1 ? stages : [],
     };
   });
 }
@@ -105,7 +115,7 @@ function CategoryTileCard({ tile }: { tile: CategoryTile }) {
       <p className="mt-2 text-sm leading-relaxed text-ink-muted">
         {tile.description}
       </p>
-      <p className="mt-3 flex-1 text-sm text-ink-muted">
+      <p className="mt-3 text-sm text-ink-muted">
         <span className="font-bold tabular-nums text-brand-black">
           {tile.count}
         </span>{" "}
@@ -120,6 +130,24 @@ function CategoryTileCard({ tile }: { tile: CategoryTile }) {
           </>
         )}
       </p>
+      {tile.stageBreakdown.length > 0 && (
+        <p className="mt-1 flex-1 text-xs text-ink-muted">
+          {tile.stageBreakdown.map((s, idx) => (
+            <span key={s.stage}>
+              {idx > 0 && (
+                <span aria-hidden className="text-brand-silver">
+                  {" · "}
+                </span>
+              )}
+              <span className="font-semibold tabular-nums text-brand-black">
+                {s.count}
+              </span>{" "}
+              {PUBLIC_STAGE_LABEL[s.stage].toLowerCase()}
+            </span>
+          ))}
+        </p>
+      )}
+      {tile.stageBreakdown.length === 0 && <div className="flex-1" />}
       <p className="mt-4 text-sm font-medium text-brand-black group-hover:underline">
         View &rarr;
       </p>

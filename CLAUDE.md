@@ -47,7 +47,7 @@ Five primary surfaces in the sidebar, plus an About link in the footer:
 
 | Surface | Route | Source of truth |
 |---|---|---|
-| The Work | `/portfolio` | Postgres `applications` table (read via `lib/work.ts`); `lib/portfolio.ts` is the TS shadow + seed source for `scripts/seed-portfolio.ts` |
+| The Work | `/portfolio` | Postgres `applications` table (read via `lib/work.ts`); `lib/portfolio.ts` is the TS shadow + seed source for `scripts/seed-portfolio.ts`. Filter UI is two-tier: public stage (rollup) → operational status (drill-in), per [ADR 0001](docs/adr/0001-product-lifecycle-taxonomy.md). |
 | Explore | `/explore` | `lib/work-categories.ts` (taxonomy) + `lib/portfolio.ts` (counts and representative names) — by-problem axis, complementary to `/portfolio`'s by-home-unit grouping |
 | Submit a Project | `/builder-guide` | `lib/builder-guide-data.ts` (quiz definition); Postgres `submissions` (responses) |
 | Reports | `/reports` | `lib/artifacts.ts` — unified timeline of briefs, activity reports, and external presentations |
@@ -167,7 +167,7 @@ vendor/                    # Vendored dependencies
 
 | To add… | Edit | Notes |
 |---|---|---|
-| An intervention | `lib/portfolio.ts` | Use existing entries as templates. Set `visibility` honestly. Tag with `workCategories` from `lib/work-categories.ts`. After editing, re-run `scripts/seed-portfolio.ts` against dev to refresh the `applications` table. |
+| An intervention | `lib/portfolio.ts` | Use existing entries as templates. Set `visibility` honestly. Set `status` honestly per the verification rules in [ADR 0001](docs/adr/0001-product-lifecycle-taxonomy.md) — `npm run verify:portfolio` polices it. Tag with `workCategories` from `lib/work-categories.ts`. After editing, re-run `scripts/seed-portfolio.ts` against dev to refresh the `applications` table. |
 | A work category | `lib/work-categories.ts` (constant + label record) + tag relevant interventions | Audience-facing labels (a Dean's vocabulary). Header comment in the file documents add/rename/retire/promote mechanics. tsc enforces consistency across consumers. |
 | A standards ledger entry | `lib/standards-watch.ts` | Each is commit-worthy; the git log is the audit trail. |
 | A sub-section under `/standards` | `app/standards/<sub>/page.tsx` + add a row to `subNavItems` in `components/StandardsSubNav.tsx` | The shared eyebrow + sub-nav lives in `app/standards/layout.tsx`. Each sub-page owns its own H1. Sidebar stays at one "Standards" entry — never edit `Sidebar.tsx` for sub-sections. |
