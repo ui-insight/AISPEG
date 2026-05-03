@@ -407,6 +407,49 @@ export const projects: Project[] = [
   },
 
   // ============================================================
+  // UI Library
+  // ============================================================
+  {
+    slug: "universo",
+    name: "UniVerso",
+    tagline:
+      "AI-powered research discovery for the University of Idaho.",
+    description:
+      "Conversational research discovery platform: users search and discover UI research through natural-language queries, powered by vector search (ChromaDB) and LLM-generated overviews. Surfaces researchers, projects, and outputs across the university to internal and external audiences. Uniquely uses a MongoDB + ChromaDB stack rather than the Postgres + UDM line shared by the AI4RA-aligned projects.",
+    homeUnits: ["UI Library"],
+    operationalOwners: [
+      { name: "Devin Becker", title: "Associate Dean of the Library" },
+    ],
+    buildParticipants: ["IIDS"],
+    status: "piloting",
+    visibility: "Public",
+    ai4raRelationship: "None",
+    iidsSponsor: "Barrie Robison",
+    pilotCohort: { size: 10, scope: "UI Library and IIDS staff" },
+    repoUrl: "https://github.com/ui-iids/universo",
+    isPrivateRepo: true,
+    liveUrl: "https://universo.insight.uidaho.edu",
+    operationalFunction:
+      "Conversational interface for discovering UI research: search across researchers, projects, and outputs; AI-generated overviews summarise discovery results in context.",
+    operationalExcellenceOutcome:
+      "Lowers the barrier to discovering what UI researchers do — internally for cross-unit collaboration, externally for partners and prospective collaborators. Library-led complement to the ORED-led research-administration stack.",
+    tech: [
+      "FastAPI",
+      "Python 3.13",
+      "React 19",
+      "Vite",
+      "TypeScript",
+      "MongoDB",
+      "ChromaDB",
+      "LangChain",
+      "MindRouter",
+    ],
+    relatedSlugs: ["mindrouter"],
+    workCategories: ["research-admin"],
+    strategicPlanAlignment: ["D.2"],
+  },
+
+  // ============================================================
   // IIDS — Infrastructure
   // ============================================================
   {
