@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ApplicationWithBlockers, Blocker } from "@/lib/work";
 import { blockerCategoryLabels, daysSince } from "@/lib/work";
+import { WORK_CATEGORY_LABELS } from "@/lib/work-categories";
 
 const statusStyles: Record<string, string> = {
   Production: "bg-green-100 text-green-800",
@@ -146,6 +147,19 @@ export default function PortfolioCard({
         {app.trackingOnly && (
           <span className="rounded-full border border-brand-huckleberry/30 bg-brand-huckleberry/10 px-2 py-0.5 text-xs font-medium text-brand-huckleberry">
             Tracked (not built by IIDS)
+          </span>
+        )}
+        {app.workCategories.slice(0, 3).map((slug) => (
+          <span
+            key={slug}
+            className="rounded-full border border-hairline bg-surface-alt px-2 py-0.5 text-xs font-medium text-brand-black"
+          >
+            {WORK_CATEGORY_LABELS[slug].label}
+          </span>
+        ))}
+        {app.workCategories.length > 3 && (
+          <span className="rounded-full border border-hairline bg-surface-alt px-2 py-0.5 text-xs font-medium text-brand-black">
+            +{app.workCategories.length - 3}
           </span>
         )}
       </div>

@@ -14,6 +14,7 @@
 
 import "server-only";
 import { query } from "./db";
+import type { WorkCategory } from "./work-categories";
 
 export type VisibilityTier = "public" | "embargoed" | "internal";
 export type BlockerSeverity = "low" | "medium" | "high";
@@ -96,6 +97,7 @@ export interface Application {
   tech: string[];
   trackingOnly: boolean;
   relatedSlugs: string[];
+  workCategories: WorkCategory[];
   clickupTaskId: string | null;
   updatedAt: string;
 }
@@ -132,6 +134,7 @@ interface ApplicationRow {
   tech: string[];
   tracking_only: boolean;
   related_slugs: string[];
+  work_categories: string[];
   clickup_task_id: string | null;
   updated_at: string;
 }
@@ -177,6 +180,7 @@ function toApplication(row: ApplicationRow): Application {
     tech: row.tech ?? [],
     trackingOnly: row.tracking_only,
     relatedSlugs: row.related_slugs ?? [],
+    workCategories: ((row.work_categories ?? []) as WorkCategory[]),
     clickupTaskId: row.clickup_task_id,
     updatedAt: row.updated_at,
   };
@@ -220,6 +224,7 @@ const APPLICATION_COLUMNS = `
   operational_function, operational_excellence_outcome,
   features, tech,
   tracking_only, related_slugs,
+  work_categories,
   clickup_task_id, updated_at
 `;
 

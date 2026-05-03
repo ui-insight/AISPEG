@@ -301,7 +301,8 @@ async function seedIntervention(i: Intervention): Promise<{ id: string; blockers
        features, tech,
        tracking_only, related_slugs,
        sensitivity, complexity, userbase, auth_level,
-       integrations, data_sources, university_systems, output_types
+       integrations, data_sources, university_systems, output_types,
+       work_categories
      )
      VALUES (
        $1, $2, $3, $4,
@@ -316,7 +317,8 @@ async function seedIntervention(i: Intervention): Promise<{ id: string; blockers
        $25, $26,
        $27, $28,
        $29, $30, $31, $32,
-       $33, $34, $35, $36
+       $33, $34, $35, $36,
+       $37
      )
      RETURNING id`,
     [
@@ -356,6 +358,7 @@ async function seedIntervention(i: Intervention): Promise<{ id: string; blockers
       wizard.data_sources,
       wizard.university_systems,
       wizard.output_types,
+      i.workCategories ?? [],
     ]
   );
 
