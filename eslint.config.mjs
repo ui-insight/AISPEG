@@ -7,7 +7,7 @@ const eslintConfig = [
     // sibling agents' artifacts in this checkout.
     // Test fixtures — committed copies of generated catalogs used by
     // scripts/governance-pr-summary.ts locally; linting them is noisy.
-    ignores: [".claude/worktrees/**", ".test-governance/**"],
+    ignores: [".claude/worktrees/**", ".test-governance/**", "vendor/**"],
   },
   ...nextConfig,
   {
