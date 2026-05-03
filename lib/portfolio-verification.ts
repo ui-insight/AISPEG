@@ -6,7 +6,7 @@
 //
 // Each operational status has a measurable rule; this module checks each
 // claim against its rule and returns a list of problems. CI runs
-// `npm run verify:portfolio` to fail the build when an project's
+// `npm run verify:portfolio` to fail the build when a project's
 // claimed status is inconsistent with its data.
 //
 // `lastCommitDate` for each repoUrl-bearing project is derived

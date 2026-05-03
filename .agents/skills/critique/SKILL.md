@@ -42,7 +42,7 @@ Think like a design director. Evaluate:
 **Emotional Journey**:
 - What emotion does this interface evoke? Is that intentional?
 - **Peak-end rule**: Is the most intense moment positive? Does the experience end well?
-- **Emotional valleys**: Check for anxiety spikes at high-stakes moments (payment, delete, commit). Are there design interventions (progress indicators, reassurance copy, undo options)?
+- **Emotional valleys**: Check for anxiety spikes at high-stakes moments (payment, delete, commit). Are there design projects (progress indicators, reassurance copy, undo options)?
 
 **Nielsen's Heuristics** (consult [heuristics-scoring](reference/heuristics-scoring.md)):
 Score each of the 10 heuristics 0-4. This scoring will be presented in the report.

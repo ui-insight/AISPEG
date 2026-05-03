@@ -14,7 +14,7 @@ The site shows what's being built, what's stalled, and where to engage.
 
 | Surface | Route | Job |
 |---|---|---|
-| **The Work** | `/portfolio` | Portfolio of AI interventions across UI units. Each entry names a home unit and operational owner. |
+| **The Work** | `/portfolio` | Portfolio of AI projects across UI units. Each entry names a home unit and operational owner. |
 | **Submit a Project** | `/builder-guide` | A 9-step assessment that scopes an AI idea, classifies it into one of four tiers, and connects the submitter to a named owner at IIDS. |
 | **Reports** | `/reports` | Activity reports, briefs, and time-stamped public artifacts. |
 | **Standards** | `/standards` | Public ledger of the institutional software-development and user-experience standards IIDS has formally requested from OIT. The `/standards/data-model` sub-section is an interactive explorer for the AI4RA Unified Data Model and the per-project extensions across the IIDS portfolio. |
@@ -69,7 +69,7 @@ For full local-database setup, see [`/docs/deployment`](./app/docs/deployment/pa
 app/                         # Next.js App Router
   page.tsx                   # Landing — steering page
   layout.tsx                 # Root layout + metadata
-  portfolio/                 # The Work — AI interventions inventory
+  portfolio/                 # The Work — AI projects inventory
   builder-guide/             # Submit a Project — 9-step assessment
   reports/                   # Reports surface
   standards/                 # Standards ledger
@@ -85,7 +85,7 @@ components/                  # Reusable React components
   Sidebar.tsx, PortfolioCard.tsx, IssueCard.tsx, DocPage.tsx, ...
 
 lib/                         # Domain logic and data
-  portfolio.ts               # Inventory of AI interventions (typed)
+  portfolio.ts               # Inventory of AI projects (typed)
   standards-watch.ts         # Standards ledger entries
   builder-guide-data.ts      # Assessment quiz, scoring, tiers
   similarity.ts              # Submission ↔ registry overlap engine

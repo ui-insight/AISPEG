@@ -5,7 +5,7 @@
 Interactive website for the University of Idaho's institutional AI
 initiative, coordinated by **IIDS** (Institute for Interdisciplinary Data
 Sciences, which runs MindRouter and DGX Stack). The site maintains a
-growing inventory of AI interventions across UI units — some built by
+growing inventory of AI projects across UI units — some built by
 IIDS, others led by partner units, plus tools from the AI4RA partnership
 (UI + Southern Utah University NSF GRANTED, producing OpenERA, Vandalizer,
 MindRouter, ProcessMapping) that UI deploys institutionally. Built with
@@ -178,12 +178,12 @@ app/                       # Next.js App Router
 
 components/                # Reusable components
   Sidebar.tsx              # Sidebar navigation
-  PortfolioCard.tsx        # Intervention card
+  PortfolioCard.tsx        # Project card
   IssueCard.tsx            # GitHub issue card
   DocPage.tsx              # Docs layout primitives
 
 lib/                       # Domain logic
-  portfolio.ts             # Intervention inventory (typed; seed source for the applications table)
+  portfolio.ts             # Project inventory (typed; seed source for the applications table)
   work.ts                  # Postgres-backed query module for /portfolio (reads applications + blockers)
   work-categories.ts       # "By problem" taxonomy — typed slugs + audience-facing labels (drives /explore + the /portfolio category facet)
   standards-watch.ts       # Standards ledger
@@ -222,7 +222,7 @@ normative version of any of these lives in **Agent Rules** above).
   the builder-guide wizard, `components/PortfolioFilters.tsx`).
 - **Routes drop in by file convention.** New `app/<route>/page.tsx`
   picks up the layout automatically.
-- **Intervention entries are load-bearing UI.** When adding to
+- **Project entries are load-bearing UI.** When adding to
   `lib/portfolio.ts`, fill all required fields — the shape is in
   the same file. `homeUnits`, `operationalOwners`, and
   `buildParticipants` render directly to the public site, so name
@@ -232,8 +232,8 @@ normative version of any of these lives in **Agent Rules** above).
 
 | To add… | Edit | Notes |
 |---|---|---|
-| An intervention | `lib/portfolio.ts` | Use existing entries as templates. Set `visibility` honestly. Set `status` honestly per the verification rules in [ADR 0001](docs/adr/0001-product-lifecycle-taxonomy.md) — `npm run verify:portfolio` polices it. Tag with `workCategories` from `lib/work-categories.ts`. After editing, re-run `scripts/seed-portfolio.ts` against dev to refresh the `applications` table. |
-| A work category | `lib/work-categories.ts` (constant + label record) + tag relevant interventions | Audience-facing labels (a Dean's vocabulary). Header comment in the file documents add/rename/retire/promote mechanics. tsc enforces consistency across consumers. |
+| A project | `lib/portfolio.ts` | Use existing entries as templates. Set `visibility` honestly. Set `status` honestly per the verification rules in [ADR 0001](docs/adr/0001-product-lifecycle-taxonomy.md) — `npm run verify:portfolio` polices it. Tag with `workCategories` from `lib/work-categories.ts`. After editing, re-run `scripts/seed-portfolio.ts` against dev to refresh the `applications` table. |
+| A work category | `lib/work-categories.ts` (constant + label record) + tag relevant projects | Audience-facing labels (a Dean's vocabulary). Header comment in the file documents add/rename/retire/promote mechanics. tsc enforces consistency across consumers. |
 | A standards ledger entry | `lib/standards-watch.ts` | Each is commit-worthy; the git log is the audit trail. |
 | A sub-section under `/standards` | `app/standards/<sub>/page.tsx` + add a row to `subNavItems` in `components/StandardsSubNav.tsx` | The shared eyebrow + sub-nav lives in `app/standards/layout.tsx`. Each sub-page owns its own H1. Sidebar stays at one "Standards" entry — never edit `Sidebar.tsx` for sub-sections. |
 | A canonical UDM table tag | `lib/governance/canonical-udm-tables.ts` | Hand-curated v1 list. The data-governance catalog JSONs do not yet carry canonical/extension classification — once they do, this module retires. |
