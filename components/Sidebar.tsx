@@ -7,6 +7,7 @@ import { useState } from "react";
 const primaryItems = [
   { href: "/", label: "Home", icon: "house" },
   { href: "/portfolio", label: "The Work", icon: "grid" },
+  { href: "/explore", label: "Explore", icon: "search" },
   { href: "/builder-guide", label: "Submit a Project", icon: "compass" },
   { href: "/standards", label: "Standards", icon: "shield" },
   { href: "/reports", label: "Reports", icon: "document" },
@@ -43,6 +44,13 @@ function NavIcon({ icon, className }: { icon: string; className?: string }) {
           <circle cx="12" cy="12" r="10" strokeWidth={2} />
           <polygon points="16.24,7.76 14.12,14.12 7.76,16.24 9.88,9.88" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} />
           <circle cx="12" cy="12" r="1" fill="currentColor" strokeWidth={0} />
+        </svg>
+      );
+    case "search":
+      return (
+        <svg className={c} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="7" strokeWidth={2} />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.3-4.3" />
         </svg>
       );
     case "document":

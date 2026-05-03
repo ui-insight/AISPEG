@@ -43,11 +43,12 @@ sprint sequencing.
 
 ## Information architecture
 
-Four primary surfaces in the sidebar, plus an About link in the footer:
+Five primary surfaces in the sidebar, plus an About link in the footer:
 
 | Surface | Route | Source of truth |
 |---|---|---|
-| The Work | `/portfolio` | `lib/portfolio.ts` (TS for now; migrating to Postgres `applications` in Sprint 2) |
+| The Work | `/portfolio` | Postgres `applications` table (read via `lib/work.ts`); `lib/portfolio.ts` is the TS shadow + seed source for `scripts/seed-portfolio.ts` |
+| Explore | `/explore` | `lib/work-categories.ts` (taxonomy) + `lib/portfolio.ts` (counts and representative names) — by-problem axis, complementary to `/portfolio`'s by-home-unit grouping |
 | Submit a Project | `/builder-guide` | `lib/builder-guide-data.ts` (quiz definition); Postgres `submissions` (responses) |
 | Reports | `/reports` | `lib/artifacts.ts` — unified timeline of briefs, activity reports, and external presentations |
 | Standards | `/standards` | `lib/standards-watch.ts` (ledger entries; commit-worthy) |
@@ -103,6 +104,7 @@ app/                       # Next.js App Router
   page.tsx                 # Landing — four-card steering page
   layout.tsx               # Root layout, sidebar, metadata
   portfolio/               # The Work
+  explore/                 # Explore — "by problem" axis, category-tile entry
   builder-guide/           # Submit a Project (assessment quiz)
   reports/                 # Reports surface
   standards/               # Standards (sub-nav: ledger + data-model explorer)
@@ -119,7 +121,9 @@ components/                # Reusable components
   DocPage.tsx              # Docs layout primitives
 
 lib/                       # Domain logic
-  portfolio.ts             # Intervention inventory (typed)
+  portfolio.ts             # Intervention inventory (typed; seed source for the applications table)
+  work.ts                  # Postgres-backed query module for /portfolio (reads applications + blockers)
+  work-categories.ts       # "By problem" taxonomy — typed slugs + audience-facing labels (drives /explore + the /portfolio category facet)
   standards-watch.ts       # Standards ledger
   artifacts.ts             # Unified Reports timeline — briefs, activity reports, external talks
   builder-guide-data.ts    # Assessment quiz + scoring + tiers
@@ -133,7 +137,7 @@ lib/                       # Domain logic
     catalog.ts             # AUTO-GENERATED — projects + tables (do not edit)
     vocabularies.ts        # AUTO-GENERATED — controlled vocabularies (do not edit)
 
-db/migrations/             # SQL migrations (001 → 004; 005 lands in Sprint 2)
+db/migrations/             # SQL migrations (001 → 006)
 
 scripts/                   # Node scripts run via tsx
   build-governance-catalog.ts # Reads vendor/data-governance/ → emits lib/governance/{catalog,vocabularies}.ts
@@ -163,7 +167,8 @@ vendor/                    # Vendored dependencies
 
 | To add… | Edit | Notes |
 |---|---|---|
-| An intervention | `lib/portfolio.ts` | Use existing entries as templates. Set `visibility` honestly. |
+| An intervention | `lib/portfolio.ts` | Use existing entries as templates. Set `visibility` honestly. Tag with `workCategories` from `lib/work-categories.ts`. After editing, re-run `scripts/seed-portfolio.ts` against dev to refresh the `applications` table. |
+| A work category | `lib/work-categories.ts` (constant + label record) + tag relevant interventions | Audience-facing labels (a Dean's vocabulary). Header comment in the file documents add/rename/retire/promote mechanics. tsc enforces consistency across consumers. |
 | A standards ledger entry | `lib/standards-watch.ts` | Each is commit-worthy; the git log is the audit trail. |
 | A sub-section under `/standards` | `app/standards/<sub>/page.tsx` + add a row to `subNavItems` in `components/StandardsSubNav.tsx` | The shared eyebrow + sub-nav lives in `app/standards/layout.tsx`. Each sub-page owns its own H1. Sidebar stays at one "Standards" entry — never edit `Sidebar.tsx` for sub-sections. |
 | A canonical UDM table tag | `lib/governance/canonical-udm-tables.ts` | Hand-curated v1 list. The data-governance catalog JSONs do not yet carry canonical/extension classification — once they do, this module retires. |
