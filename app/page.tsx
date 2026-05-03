@@ -26,7 +26,7 @@ export default async function Home() {
         <p className="text-xs font-medium uppercase tracking-wider text-brand-silver">
           Institutional AI Initiative
         </p>
-        <h1 className="mt-2 text-4xl leading-tight">
+        <h1 className="mt-2 text-4xl font-black leading-tight">
           AI work at the University of Idaho
         </h1>
         <p className="mt-4 max-w-3xl text-base leading-relaxed text-ink-muted">
