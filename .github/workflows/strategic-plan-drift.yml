@@ -1,0 +1,69 @@
+name: Strategic Plan Drift
+
+# Mirrors .github/workflows/governance-drift.yml for the strategic-plan
+# vendored catalog. Fails the build when the committed
+# lib/strategic-plan/catalog.ts no longer matches what would be produced
+# from vendor/strategic-plan — i.e. someone bumped the submodule without
+# regenerating, or hand-edited the auto-generated file.
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "vendor/strategic-plan/**"
+      - "lib/strategic-plan/**"
+      - "app/standards/strategic-plan/**"
+      - "scripts/build-strategic-plan-catalog.*"
+      - ".github/workflows/strategic-plan-drift.yml"
+
+jobs:
+  drift:
+    name: Validate strategic-plan catalog
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository (with submodules)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          # vendor/strategic-plan is private; default GITHUB_TOKEN can't reach it.
+          # PORTFOLIO_GH_TOKEN is the same org secret used by governance workflows.
+          token: ${{ secrets.PORTFOLIO_GH_TOKEN }}
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Snapshot committed catalog
+        run: cp lib/strategic-plan/catalog.ts /tmp/committed-catalog.ts
+
+      - name: Regenerate catalog from submodule
+        run: npm run build:strategic-plan
+
+      - name: Diff regenerated against committed
+        run: |
+          set -e
+          if ! diff -u /tmp/committed-catalog.ts lib/strategic-plan/catalog.ts > /tmp/drift.diff; then
+            {
+              echo "## Strategic-plan catalog drift detected"
+              echo
+              echo "The committed \`lib/strategic-plan/catalog.ts\` does not match what \`npm run build:strategic-plan\` produces from the vendored submodule. Either the submodule was bumped without regenerating, or the file was hand-edited (it shouldn't be — it's auto-generated)."
+              echo
+              echo "**Fix:** run \`npm run build:strategic-plan\` locally and commit the result."
+              echo
+              echo '<details><summary>diff (committed → regenerated)</summary>'
+              echo
+              echo '```diff'
+              cat /tmp/drift.diff
+              echo '```'
+              echo
+              echo '</details>'
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+          echo "## Strategic-plan catalog drift check" >> "$GITHUB_STEP_SUMMARY"
+          echo >> "$GITHUB_STEP_SUMMARY"
+          echo "PASS — committed catalog matches submodule." >> "$GITHUB_STEP_SUMMARY"
