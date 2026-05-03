@@ -55,19 +55,22 @@ export default async function PillarDetailPage({
 
       <section className="space-y-3">
         {pillar.priorities.map((pr) => (
-          <article
+          <Link
             key={pr.code}
-            className="rounded-lg border border-hairline bg-white p-5"
+            href={`/standards/strategic-plan/priorities/${pr.code}`}
+            className="unstyled group block rounded-lg border border-hairline bg-white p-5 transition-colors hover:border-brand-black"
           >
-            <div className="flex items-start gap-4">
-              <span className="shrink-0 rounded bg-gray-100 px-2 py-0.5 font-mono text-xs font-semibold text-brand-black">
-                {pr.code}
-              </span>
-              <p className="text-sm leading-relaxed text-brand-black">
-                {pr.text}
-              </p>
-            </div>
-          </article>
+            <article>
+              <div className="flex items-start gap-4">
+                <span className="shrink-0 rounded bg-gray-100 px-2 py-0.5 font-mono text-xs font-semibold text-brand-black">
+                  {pr.code}
+                </span>
+                <p className="text-sm leading-relaxed text-brand-black group-hover:text-brand-clearwater">
+                  {pr.text}
+                </p>
+              </div>
+            </article>
+          </Link>
         ))}
       </section>
     </div>
