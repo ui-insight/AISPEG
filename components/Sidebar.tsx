@@ -7,8 +7,8 @@ import { useState } from "react";
 const primaryItems = [
   { href: "/", label: "Home", icon: "squares" },
   { href: "/portfolio", label: "The Work", icon: "grid" },
-  { href: "/standards", label: "Standards", icon: "shield" },
   { href: "/builder-guide", label: "Submit a Project", icon: "compass" },
+  { href: "/standards", label: "Standards", icon: "shield" },
   { href: "/reports", label: "Reports", icon: "document" },
 ];
 
@@ -84,7 +84,7 @@ export default function Sidebar() {
 
       {mobileOpen && (
         <div
-          className="fixed inset-0 z-30 bg-black/50 lg:hidden"
+          className="fixed inset-0 z-30 bg-brand-black/50 lg:hidden"
           onClick={() => setMobileOpen(false)}
         />
       )}
