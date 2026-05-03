@@ -98,6 +98,7 @@ export interface Application {
   trackingOnly: boolean;
   relatedSlugs: string[];
   workCategories: WorkCategory[];
+  strategicPlanAlignment: string[];
   clickupTaskId: string | null;
   updatedAt: string;
 }
@@ -135,6 +136,7 @@ interface ApplicationRow {
   tracking_only: boolean;
   related_slugs: string[];
   work_categories: string[];
+  strategic_plan_alignment: string[];
   clickup_task_id: string | null;
   updated_at: string;
 }
@@ -181,6 +183,7 @@ function toApplication(row: ApplicationRow): Application {
     trackingOnly: row.tracking_only,
     relatedSlugs: row.related_slugs ?? [],
     workCategories: ((row.work_categories ?? []) as WorkCategory[]),
+    strategicPlanAlignment: row.strategic_plan_alignment ?? [],
     clickupTaskId: row.clickup_task_id,
     updatedAt: row.updated_at,
   };
@@ -225,6 +228,7 @@ const APPLICATION_COLUMNS = `
   features, tech,
   tracking_only, related_slugs,
   work_categories,
+  strategic_plan_alignment,
   clickup_task_id, updated_at
 `;
 

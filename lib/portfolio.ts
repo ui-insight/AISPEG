@@ -122,6 +122,12 @@ export interface Intervention {
   // "By problem" exploration axis — see lib/work-categories.ts.
   // One intervention can sit in 2-3 categories.
   workCategories?: WorkCategory[];
+
+  // Strategic-plan priority codes this intervention advances (e.g.
+  // ["A.1", "D.2"]). Codes must match a Priority in
+  // lib/strategic-plan/catalog.ts; scripts/verify-portfolio.ts fails the
+  // build on unknown codes. Ship empty; IIDS fills in over time.
+  strategicPlanAlignment?: string[];
 }
 
 export const interventions: Intervention[] = [
