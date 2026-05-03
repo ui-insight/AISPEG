@@ -5,6 +5,8 @@ import {
   getPriority,
   priorities,
 } from "@/lib/strategic-plan/catalog";
+import { getProjectsForPriority } from "@/lib/strategic-plan/project-alignment";
+import { OPERATIONAL_LABEL } from "@/lib/lifecycle-display";
 
 export function generateStaticParams() {
   return priorities.map((p) => ({ code: p.code }));
@@ -76,6 +78,65 @@ export default async function PriorityDetailPage({
           </p>
         )}
       </header>
+
+      <ProjectsAdvancingPriority code={priority.code} />
     </div>
+  );
+}
+
+function ProjectsAdvancingPriority({ code }: { code: string }) {
+  const projects = getProjectsForPriority(code);
+
+  return (
+    <section className="space-y-4">
+      <header>
+        <h2 className="text-xl font-black tracking-tight text-brand-black">
+          Projects advancing this priority
+        </h2>
+        <p className="mt-1 text-sm text-ink-muted">
+          {projects.length === 0
+            ? "No IIDS projects have declared alignment with this priority yet."
+            : `${projects.length} ${projects.length === 1 ? "IIDS project has" : "IIDS projects have"} declared alignment.`}
+        </p>
+      </header>
+
+      {projects.length > 0 && (
+        <ul className="space-y-3">
+          {projects.map((p) => (
+            <li
+              key={p.slug}
+              className="rounded-lg border border-hairline bg-white p-5"
+            >
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <h3 className="text-base font-semibold text-brand-black">
+                    <Link
+                      href={`/portfolio/${p.slug}`}
+                      className="unstyled hover:text-brand-clearwater"
+                    >
+                      {p.name}
+                    </Link>
+                  </h3>
+                  <p className="mt-1 text-sm text-ink-muted">
+                    {p.tagline}
+                  </p>
+                  {(p.ownerNames.length > 0 || p.homeUnits.length > 0) && (
+                    <p className="mt-2 text-xs text-gray-500">
+                      {p.homeUnits[0] && <span>{p.homeUnits[0]}</span>}
+                      {p.homeUnits[0] && p.ownerNames.length > 0 && " · "}
+                      {p.ownerNames.slice(0, 2).join(", ")}
+                      {p.ownerNames.length > 2 && ` +${p.ownerNames.length - 2}`}
+                    </p>
+                  )}
+                </div>
+                <span className="inline-flex shrink-0 items-center rounded-full border border-hairline bg-surface-alt px-2 py-0.5 text-[11px] font-medium text-ink-muted">
+                  {OPERATIONAL_LABEL[p.status]}
+                </span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
   );
 }
