@@ -21,6 +21,68 @@ or metadata, frame the project as IIDS-coordinated. See
 [`REFACTOR.md`](./REFACTOR.md) for the May 2026 refactor history and the
 strategic decisions that shaped the current architecture.
 
+## Agent Rules (MUST follow)
+
+These are normative constraints, not suggestions. The rest of this file
+is background and patterns; the rules below are non-negotiable. When a
+rule conflicts with something else in this document, the rule wins.
+
+### Process
+1. **ALWAYS work on a feature branch.** NEVER commit directly to `main`.
+   All work lands via PR.
+2. **ALWAYS run `npm run build` before declaring work done.** It's the
+   primary verification step — type errors, missing imports, and
+   prerendering failures all surface here.
+3. **ALWAYS run `npm run verify:portfolio` if you touched
+   `lib/portfolio.ts`.** CI enforces it; running locally catches drift
+   before push. See [ADR 0001](./docs/adr/0001-product-lifecycle-taxonomy.md).
+4. **ALWAYS read [`.impeccable.md`](./.impeccable.md) before any visual
+   or design change.** The design direction is non-obvious and the
+   project has a documented restraint vs. decoration policy.
+5. **ALWAYS read [`REFACTOR.md`](./REFACTOR.md) before non-trivial
+   structural changes.** It documents what was deliberately removed and
+   why — saves you from re-introducing dead patterns.
+
+### Code
+6. **NEVER use raw hex colors.** Use Tailwind tokens (`ui-charcoal`,
+   `ui-gold`, `ui-gold-dark`, `brand-huckleberry`, `brand-lupine`,
+   `brand-clearwater`, `brand-silver`).
+7. **NEVER add `"use client"`** unless the component genuinely uses
+   `useState`, `useEffect`, or event handlers. Server components are
+   the default for a reason — they keep the bundle small and the data
+   path simple.
+8. **NEVER add component libraries.** The project uses native HTML +
+   Tailwind. No shadcn, MUI, Radix UI, Headless UI, or similar. If you
+   need a primitive, write it.
+9. **ALWAYS prefer a typed module over a JSON blob** for structured
+   data, so tsc catches drift across consumers.
+10. **NEVER reference "AISPEG" in user-facing copy, headings, or
+    metadata.** The project is IIDS-coordinated; AISPEG is the
+    historical repo name only. (Internal infra identifiers like
+    `aispeg.insight.uidaho.edu` and the Postgres database name stay
+    as-is.)
+
+### Structure
+11. **NEVER add Sidebar entries for sub-sections.** The IA is
+    intentionally narrow. Sub-pages live under their parent's `layout.tsx`
+    with a sub-nav (see `app/standards/layout.tsx` as the canonical
+    pattern), not as new sidebar items.
+12. **NEVER recreate routes removed in the May 2026 refactor**:
+    `/knowledge`, `/cautionary-tales`, `/roadmap`, `/outreach`,
+    `/action-plan`, `/approach`, `/standards/[id]`. They were cut on
+    purpose — see `REFACTOR.md`. Recover from git history only if a
+    salvage need is explicitly raised.
+13. **NEVER edit auto-generated files.** `lib/governance/catalog.ts`,
+    `lib/governance/vocabularies.ts`, and `lib/portfolio-meta.ts` are
+    overwritten by their build scripts. Edit the source (the
+    `vendor/data-governance/` JSONs or the `refresh-commit-dates`
+    script) and regenerate.
+
+### Deployment
+14. **NEVER use Docker's default 172.x.x.x address space** for this
+    stack. Use 10.x.x.x — there are routing conflicts on the host
+    network otherwise.
+
 ## Refactor status
 
 This codebase is mid-refactor. Read [`REFACTOR.md`](./REFACTOR.md) before
@@ -148,20 +210,23 @@ vendor/                    # Vendored dependencies
 
 ## Conventions
 
-- All structured data prefers a typed module (`lib/portfolio.ts`,
-  `lib/standards-watch.ts`) over a JSON blob, so the build catches schema
-  drift.
-- Pages are server components by default. Add `"use client"` only when a
-  component needs `useState`, `useEffect`, or event handlers
-  (`Sidebar.tsx`, the wizard).
-- Tailwind utilities use the project tokens: `ui-charcoal`, `ui-gold`,
-  `ui-gold-dark`, `brand-huckleberry`, `brand-lupine`. Avoid raw hex.
-- New routes go in `app/<route>/page.tsx` and pick up the layout
-  automatically. Add to `components/Sidebar.tsx` if it belongs in primary
-  nav (rare — the IA is intentionally narrow).
-- When adding to `lib/portfolio.ts`, fill **all** required fields. The
-  shape is in the same file. `homeUnits`, `operationalOwners`, and
-  `buildParticipants` are load-bearing UI.
+Patterns the codebase follows — explanatory, not normative (the
+normative version of any of these lives in **Agent Rules** above).
+
+- **Typed modules over JSON blobs** for structured data. Canonical
+  examples: `lib/portfolio.ts`, `lib/standards-watch.ts`,
+  `lib/work-categories.ts`, `lib/artifacts.ts`. tsc catches drift
+  across every consumer when a slug is renamed.
+- **Server components by default.** Client components are the
+  exception, used only for interactive surfaces (`components/Sidebar.tsx`,
+  the builder-guide wizard, `components/PortfolioFilters.tsx`).
+- **Routes drop in by file convention.** New `app/<route>/page.tsx`
+  picks up the layout automatically.
+- **Intervention entries are load-bearing UI.** When adding to
+  `lib/portfolio.ts`, fill all required fields — the shape is in
+  the same file. `homeUnits`, `operationalOwners`, and
+  `buildParticipants` render directly to the public site, so name
+  real people and units.
 
 ## Adding content
 
