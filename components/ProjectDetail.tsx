@@ -40,32 +40,11 @@ function LifecycleChips({ status }: { status: string }) {
   );
 }
 
-function OwnershipBlock({
-  label,
-  values,
-  emptyText,
-}: {
-  label: string;
-  values: string[];
-  emptyText?: string;
-}) {
+function SectionEyebrow({ children }: { children: React.ReactNode }) {
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-      <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
-        {label}
-      </p>
-      {values.length > 0 ? (
-        <ul className="mt-2 space-y-1 text-sm text-ui-charcoal">
-          {values.map((v) => (
-            <li key={v}>{v}</li>
-          ))}
-        </ul>
-      ) : (
-        <p className="mt-2 text-sm italic text-gray-400">
-          {emptyText || "—"}
-        </p>
-      )}
-    </div>
+    <p className="text-xs font-medium uppercase tracking-wider text-brand-silver">
+      {children}
+    </p>
   );
 }
 
@@ -152,8 +131,19 @@ export default function ProjectDetail({
   const isEmbargoed = app.visibilityTier === "embargoed";
   const isInternal = app.visibilityTier === "internal";
 
+  const ownerNames = app.operationalOwners.map((o) =>
+    o.title ? `${o.name} (${o.title})` : o.name
+  );
+  const homeUnitLabel = app.homeUnits.join(", ");
+  const buildParticipantsLabel = app.buildParticipants.join(", ");
+  // Collapse the "Built by" segment when it would just repeat the home unit —
+  // common for IIDS-built IIDS-housed projects, where the redundancy adds
+  // noise to the owner-line without adding signal.
+  const showBuildSegment =
+    buildParticipantsLabel && buildParticipantsLabel !== homeUnitLabel;
+
   return (
-    <div className="space-y-10">
+    <div className="space-y-12">
       {/* Breadcrumb */}
       <nav className="text-sm text-gray-500">
         <Link href={basePath} className="hover:text-brand-black">
@@ -169,9 +159,48 @@ export default function ProjectDetail({
         <span className="text-ui-charcoal">{app.name}</span>
       </nav>
 
-      {/* Header */}
-      <div>
-        <div className="flex flex-wrap items-center gap-2">
+      {/* Beat 1 — What is this? Hero band, no card shell. */}
+      <header>
+        <SectionEyebrow>
+          The Work{app.homeUnits[0] ? ` · ${app.homeUnits[0]}` : ""}
+        </SectionEyebrow>
+        <h1 className="mt-2 text-3xl font-bold text-ui-charcoal">
+          {app.name}
+        </h1>
+        {app.tagline && (
+          <p className="mt-3 text-lg leading-relaxed text-ink-muted">
+            {app.tagline}
+          </p>
+        )}
+        <p className="mt-4 text-sm leading-relaxed text-ui-charcoal">
+          {ownerNames.length > 0 ? (
+            <>
+              Operationally owned by{" "}
+              <em className="font-medium italic text-brand-black">
+                {ownerNames.join(", ")}
+              </em>
+            </>
+          ) : app.trackingOnly ? (
+            <em className="font-medium italic text-brand-black">
+              Awaiting contact with unit
+            </em>
+          ) : null}
+          {showBuildSegment && (
+            <>
+              {ownerNames.length > 0 || app.trackingOnly ? " · " : ""}
+              Built by {buildParticipantsLabel}
+            </>
+          )}
+          {homeUnitLabel && (
+            <>
+              {ownerNames.length > 0 || app.trackingOnly || showBuildSegment
+                ? " · "
+                : ""}
+              Home: {homeUnitLabel}
+            </>
+          )}
+        </p>
+        <div className="mt-5 flex flex-wrap items-center gap-2">
           <LifecycleChips status={app.status} />
           {app.ai4raRelationship !== "None" && (
             <span className="rounded-full border border-brand-lupine/30 bg-brand-lupine/10 px-2.5 py-0.5 text-xs font-medium text-brand-lupine">
@@ -204,16 +233,12 @@ export default function ProjectDetail({
             </span>
           )}
         </div>
-        <h1 className="mt-3 text-3xl font-bold text-ui-charcoal">{app.name}</h1>
-        {app.tagline && (
-          <p className="mt-2 text-lg text-gray-600">{app.tagline}</p>
-        )}
         {app.funding && (
-          <p className="mt-2 text-sm font-medium text-gray-600">
+          <p className="mt-3 text-sm font-medium text-ink-muted">
             {app.funding}
           </p>
         )}
-      </div>
+      </header>
 
       {/* Embargo notice for embargoed visibility (public view) */}
       {audience === "public" && isEmbargoed && (
@@ -243,13 +268,34 @@ export default function ProjectDetail({
         </div>
       )}
 
-      {/* Active blockers (friction ledger) */}
+      {/* Bridge prose — completes Beat 1's "What is this?" with the
+          fuller paragraph. No card shell; the hero already framed it. */}
+      {app.description && (
+        <section>
+          <SectionEyebrow>Overview</SectionEyebrow>
+          <p className="mt-2 max-w-3xl text-base leading-relaxed text-ui-charcoal">
+            {app.description}
+          </p>
+        </section>
+      )}
+
+      {/* Beat 2 — Why does it matter? Outcome is the lede; function and
+          blockers are supporting context. The single gold left-rule on
+          the outcome is the page's emotional center; per .impeccable.md,
+          gold is reserved for rare emphasis. */}
+      {app.operationalExcellenceOutcome && (
+        <section className="border-l-4 border-ui-gold pl-6">
+          <SectionEyebrow>Why this matters</SectionEyebrow>
+          <p className="mt-2 max-w-3xl text-lg leading-relaxed text-ui-charcoal">
+            {app.operationalExcellenceOutcome}
+          </p>
+        </section>
+      )}
+
       {app.activeBlockers.length > 0 && (
-        <div>
-          <h2 className="mb-3 text-lg font-semibold text-ui-charcoal">
-            Active blockers
-          </h2>
-          <div className="space-y-2">
+        <section>
+          <SectionEyebrow>What&apos;s in the way</SectionEyebrow>
+          <div className="mt-3 space-y-2">
             {app.activeBlockers.map((b) => (
               <ActiveBlockerRow key={b.id} blocker={b} audience={audience} />
             ))}
@@ -260,30 +306,20 @@ export default function ProjectDetail({
               contact history) lives on the internal view.
             </p>
           )}
-        </div>
+        </section>
       )}
 
-      {/* Ownership */}
-      <div className="grid gap-4 md:grid-cols-3">
-        <OwnershipBlock label="Home unit(s)" values={app.homeUnits} />
-        <OwnershipBlock
-          label={
-            app.operationalOwners.length === 1
-              ? "Operational owner"
-              : "Operational owners"
-          }
-          values={app.operationalOwners.map((o) =>
-            o.title ? `${o.name} (${o.title})` : o.name
-          )}
-          emptyText={app.trackingOnly ? "Awaiting contact with unit" : undefined}
-        />
-        <OwnershipBlock
-          label="Build participants"
-          values={app.buildParticipants}
-        />
-      </div>
+      {app.operationalFunction && (
+        <section>
+          <SectionEyebrow>How it&apos;s used</SectionEyebrow>
+          <p className="mt-2 max-w-3xl text-base leading-relaxed text-ink-muted">
+            {app.operationalFunction}
+          </p>
+        </section>
+      )}
 
-      {/* Links */}
+      {/* Beat 3 — Can I use it? Engagement surface: links, deployments,
+          tech, features, related. */}
       {(app.repoUrl || app.docsUrl || app.liveUrl) && (
         <div className="flex flex-wrap gap-3">
           {app.repoUrl && (
@@ -325,65 +361,25 @@ export default function ProjectDetail({
         </div>
       )}
 
-      {/* Description */}
-      <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="text-base font-semibold text-ui-charcoal">Overview</h2>
-        <p className="mt-3 text-sm leading-relaxed text-gray-700">
-          {app.description}
-        </p>
-      </div>
-
-      {/* Operational function + outcome */}
-      {(app.operationalFunction || app.operationalExcellenceOutcome) && (
-        <div className="grid gap-4 md:grid-cols-2">
-          {app.operationalFunction && (
-            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-              <h2 className="text-base font-semibold text-ui-charcoal">
-                Operational function at UI
-              </h2>
-              <p className="mt-3 text-sm leading-relaxed text-gray-700">
-                {app.operationalFunction}
-              </p>
-            </div>
-          )}
-          {app.operationalExcellenceOutcome && (
-            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-              <h2 className="text-base font-semibold text-ui-charcoal">
-                Operational excellence outcome
-              </h2>
-              <p className="mt-3 text-sm leading-relaxed text-gray-700">
-                {app.operationalExcellenceOutcome}
-              </p>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* External deployments */}
       {app.externalDeployments.length > 0 && (
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="text-base font-semibold text-ui-charcoal">
-            Also deployed at
-          </h2>
-          <ul className="mt-3 space-y-1 text-sm text-gray-700">
+        <section className="border-t border-hairline pt-6">
+          <SectionEyebrow>Also deployed at</SectionEyebrow>
+          <ul className="mt-2 space-y-1 text-sm text-ui-charcoal">
             {app.externalDeployments.map((d) => (
-              <li key={d}>&bull; {d}</li>
+              <li key={d}>{d}</li>
             ))}
           </ul>
-        </div>
+        </section>
       )}
 
-      {/* Features */}
       {app.features.length > 0 && (
-        <div>
-          <h2 className="mb-3 text-lg font-semibold text-ui-charcoal">
-            Key features
-          </h2>
-          <ul className="grid gap-2 sm:grid-cols-2">
+        <section>
+          <SectionEyebrow>Key features</SectionEyebrow>
+          <ul className="mt-3 grid gap-2 sm:grid-cols-2">
             {app.features.map((f, i) => (
               <li
                 key={i}
-                className="flex items-start gap-2 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700"
+                className="flex items-start gap-2 rounded-lg border border-hairline bg-white px-4 py-3 text-sm text-gray-700"
               >
                 <svg
                   className="mt-0.5 h-4 w-4 shrink-0 text-brand-black"
@@ -402,35 +398,29 @@ export default function ProjectDetail({
               </li>
             ))}
           </ul>
-        </div>
+        </section>
       )}
 
-      {/* Tech stack */}
       {app.tech.length > 0 && (
-        <div>
-          <h2 className="mb-3 text-lg font-semibold text-ui-charcoal">
-            Tech stack
-          </h2>
-          <div className="flex flex-wrap gap-2">
+        <section>
+          <SectionEyebrow>Tech stack</SectionEyebrow>
+          <div className="mt-3 flex flex-wrap gap-2">
             {app.tech.map((t) => (
               <span
                 key={t}
-                className="rounded-md border border-gray-200 bg-white px-3 py-1 text-sm text-gray-700"
+                className="rounded-md border border-hairline bg-surface-alt px-3 py-1 text-sm text-ui-charcoal"
               >
                 {t}
               </span>
             ))}
           </div>
-        </div>
+        </section>
       )}
 
-      {/* Related */}
       {related.length > 0 && (
-        <div>
-          <h2 className="mb-3 text-lg font-semibold text-ui-charcoal">
-            Related projects
-          </h2>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <section>
+          <SectionEyebrow>Related projects</SectionEyebrow>
+          <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((r) => (
               <Link
                 key={r.slug}
@@ -446,7 +436,7 @@ export default function ProjectDetail({
               </Link>
             ))}
           </div>
-        </div>
+        </section>
       )}
     </div>
   );
