@@ -158,6 +158,7 @@ export const projects: Project[] = [
       "Makes strategic execution visible. Surfaces under-served priorities, cross-unit synergies, and misalignment. Supports investment prioritization conversations.",
     tech: ["React 19", "TypeScript", "Tailwind v4", "FastAPI", "PostgreSQL"],
     workCategories: ["executive-analytics"],
+    strategicPlanAlignment: ["E.4"],
   },
 
   // ============================================================
@@ -187,6 +188,7 @@ export const projects: Project[] = [
     tech: ["React 19", "FastAPI", "PostgreSQL 16", "MindRouter", "Qwen3"],
     relatedSlugs: ["mindrouter", "dgx-stack", "template-app"],
     workCategories: ["documents", "reconciliation"],
+    strategicPlanAlignment: ["E.2", "E.4"],
   },
 
   // ============================================================
@@ -219,6 +221,7 @@ export const projects: Project[] = [
     tech: ["React 19", "FastAPI", "SQLAlchemy 2.0", "MindRouter"],
     relatedSlugs: ["mindrouter"],
     workCategories: ["documents", "process"],
+    strategicPlanAlignment: ["E.2"],
   },
 
   // ============================================================
@@ -254,6 +257,7 @@ export const projects: Project[] = [
     tech: ["React 19", "Python 3.11+", "FastAPI", "Docker"],
     relatedSlugs: ["mindrouter", "dgx-stack", "processmapping"],
     workCategories: ["documents", "research-admin"],
+    strategicPlanAlignment: ["D.2", "E.2"],
   },
   {
     slug: "processmapping",
@@ -279,6 +283,7 @@ export const projects: Project[] = [
     tech: ["React 19", "TypeScript", "Vite", "FastAPI", "Python 3.11+"],
     relatedSlugs: ["vandalizer"],
     workCategories: ["process", "research-admin"],
+    strategicPlanAlignment: ["D.2", "E.2", "E.4"],
   },
 
   // ============================================================
@@ -311,6 +316,7 @@ export const projects: Project[] = [
     tech: ["React", "TypeScript", "Tailwind CSS", "FastAPI", "SQLAlchemy 2.0", "PostgreSQL 16"],
     relatedSlugs: ["vandalizer", "processmapping"],
     workCategories: ["research-admin"],
+    strategicPlanAlignment: ["D.2", "E.2"],
   },
 
   // ============================================================
@@ -339,6 +345,7 @@ export const projects: Project[] = [
     operationalExcellenceOutcome:
       "Systematic EO response posture. Reduces scramble when new EOs drop. Living view of EO-driven obligations for leadership.",
     workCategories: ["documents", "process"],
+    strategicPlanAlignment: ["E.4"],
   },
 
   // ============================================================
@@ -368,6 +375,7 @@ export const projects: Project[] = [
     tags: ["diffusion"],
     relatedSlugs: ["template-app"],
     workCategories: ["coordination"],
+    strategicPlanAlignment: ["B.3"],
   },
 
   // ============================================================
@@ -395,6 +403,7 @@ export const projects: Project[] = [
       "Cohort visibility for program leaders. Data-driven program improvement. Stronger NSF CAREER-grant pipeline.",
     tech: ["React", "TypeScript", "Vite", "FastAPI"],
     workCategories: ["executive-analytics"],
+    strategicPlanAlignment: ["D.2", "E.3"],
   },
 
   // ============================================================
@@ -426,6 +435,7 @@ export const projects: Project[] = [
     tech: ["Python 3.11+", "Docker", "Ollama", "vLLM", "Azure AD SSO"],
     relatedSlugs: ["dgx-stack", "audit-dashboard", "vandalizer", "ucm-daily-register"],
     workCategories: ["ai-infrastructure"],
+    strategicPlanAlignment: ["A.3", "E.2"],
   },
   {
     slug: "dgx-stack",
@@ -452,6 +462,7 @@ export const projects: Project[] = [
     tech: ["Docker", "vLLM", "NVIDIA Container Toolkit", "CUDA 13"],
     relatedSlugs: ["mindrouter", "audit-dashboard", "vandalizer"],
     workCategories: ["ai-infrastructure"],
+    strategicPlanAlignment: ["D.2", "E.2"],
   },
   {
     slug: "template-app",
@@ -484,6 +495,7 @@ export const projects: Project[] = [
       "nexus",
     ],
     workCategories: ["ai-infrastructure"],
+    strategicPlanAlignment: ["E.2", "E.4"],
   },
 
   // ============================================================
@@ -507,6 +519,7 @@ export const projects: Project[] = [
     operationalExcellenceOutcome:
       "Foundation for institutional reporting, analytics, and interoperability across enterprise systems.",
     trackingOnly: true,
+    strategicPlanAlignment: ["E.1"],
   },
   {
     slug: "nexus",
@@ -533,6 +546,7 @@ export const projects: Project[] = [
       "Standardizes where institutional application modules live. Shared security posture, audit trail, and operational footprint across UI units. Reduces per-app hosting overhead and fragmentation.",
     relatedSlugs: ["template-app"],
     workCategories: ["ai-infrastructure"],
+    strategicPlanAlignment: ["E.1", "E.4"],
   },
 ];
 
