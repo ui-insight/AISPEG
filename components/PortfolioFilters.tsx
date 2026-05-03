@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   OPERATIONAL_LABEL,
   PUBLIC_STAGE_LABEL,
@@ -14,6 +15,12 @@ import type { ProjectStatus, PublicStage } from "@/lib/portfolio";
 // lists from the unfiltered data and passes them in; clicking a pill
 // updates the searchParams via plain anchor navigation, which re-renders
 // the server component with the new filter applied.
+//
+// Layout follows the IA from #209: Stage stays default-visible (it's the
+// most-asked-about facet from ADR 0001). Home Unit and Category collapse
+// behind native <details> disclosures that auto-open whenever a filter
+// inside is active, so the active state is never hidden. Sort moves to a
+// native <select> aligned with the result-count line.
 
 interface FilterOption {
   label: string;
@@ -92,6 +99,48 @@ function Chip({
   );
 }
 
+function FilterDisclosure({
+  label,
+  activeLabel,
+  children,
+}: {
+  label: string;
+  activeLabel: string | null;
+  children: React.ReactNode;
+}) {
+  // <details open={…}> only honors the prop on initial mount, which is
+  // exactly what we want: opens by default when something is selected,
+  // but the user can collapse it manually afterwards without React
+  // forcing it back open.
+  return (
+    <details open={activeLabel !== null} className="group">
+      <summary className="flex cursor-pointer list-none items-center gap-2 rounded-md px-1 py-1 text-[11px] font-semibold uppercase tracking-wider text-gray-500 hover:text-brand-black [&::-webkit-details-marker]:hidden">
+        <svg
+          aria-hidden
+          className="h-3 w-3 shrink-0 transition-transform group-open:rotate-90"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M9 5l7 7-7 7"
+          />
+        </svg>
+        <span>{label}</span>
+        {activeLabel !== null && (
+          <span className="rounded-full border border-ui-gold bg-ui-gold/15 px-2 py-0.5 text-[10px] font-medium normal-case tracking-normal text-brand-black">
+            {activeLabel}
+          </span>
+        )}
+      </summary>
+      <div className="mt-2 pl-5">{children}</div>
+    </details>
+  );
+}
+
 export default function PortfolioFilters({
   homeUnits,
   stageOptions,
@@ -102,6 +151,8 @@ export default function PortfolioFilters({
   blockerCount,
   selected,
 }: PortfolioFiltersProps) {
+  const router = useRouter();
+
   const filtersActive =
     !!selected.unit ||
     !!selected.stage ||
@@ -139,10 +190,27 @@ export default function PortfolioFilters({
           .filter((x): x is OperationalFilterOption => x !== null)
       : [];
 
+  const activeUnitLabel =
+    selected.unit && homeUnits.find((u) => u.value === selected.unit)?.label
+      ? homeUnits.find((u) => u.value === selected.unit)!.label
+      : null;
+  const activeCategoryLabel =
+    selected.category &&
+    categories.find((c) => c.value === selected.category)?.label
+      ? categories.find((c) => c.value === selected.category)!.label
+      : null;
+
+  const sortOptions: { value: "default" | "name" | "blockers"; label: string }[] = [
+    { value: "default", label: "Home unit" },
+    { value: "name", label: "Name" },
+    { value: "blockers", label: "Most blockers" },
+  ];
+
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-      <div className="flex flex-wrap items-baseline justify-between gap-3">
-        <div>
+      {/* Top row — eyebrow, result count, blockers toggle, sort, clear. */}
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
+        <div className="min-w-0">
           <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
             Filter &amp; sort
           </p>
@@ -155,65 +223,51 @@ export default function PortfolioFilters({
             )}
           </p>
         </div>
-        {filtersActive && (
-          <Link
-            href="/portfolio"
-            className="text-xs font-medium text-brand-black hover:underline"
-          >
-            Clear filters &times;
-          </Link>
-        )}
-      </div>
-
-      {/* Home unit pills */}
-      <div className="mt-4">
-        <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-gray-500">
-          Home unit
-        </p>
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex flex-wrap items-center gap-3">
           <Chip
-            label="All"
-            count={totalCount}
-            active={!selected.unit}
-            href={buildHref({ ...baseParams, unit: null })}
+            label="With active blockers"
+            count={blockerCount}
+            active={selected.blockers}
+            href={buildHref({
+              ...baseParams,
+              blockers: selected.blockers ? null : "1",
+            })}
           />
-          {homeUnits.map((u) => (
-            <Chip
-              key={u.value}
-              label={u.label}
-              count={u.count}
-              active={selected.unit === u.value}
-              href={buildHref({ ...baseParams, unit: u.value })}
-            />
-          ))}
+          <label className="flex items-center gap-1.5 text-xs font-medium text-gray-600">
+            Sort
+            <select
+              value={selected.sort}
+              onChange={(e) => {
+                const v = e.target.value as "default" | "name" | "blockers";
+                router.push(
+                  buildHref({
+                    ...baseParams,
+                    sort: v === "default" ? null : v,
+                  })
+                );
+              }}
+              className="rounded-md border border-gray-300 bg-white px-2 py-1 text-xs font-medium text-brand-black shadow-sm focus:border-ui-gold focus:outline-none focus:ring-1 focus:ring-ui-gold"
+            >
+              {sortOptions.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          {filtersActive && (
+            <Link
+              href="/portfolio"
+              className="text-xs font-medium text-brand-black hover:underline"
+            >
+              Clear filters &times;
+            </Link>
+          )}
         </div>
       </div>
 
-      {/* Category pills */}
-      <div className="mt-4">
-        <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-gray-500">
-          Category
-        </p>
-        <div className="flex flex-wrap gap-1.5">
-          <Chip
-            label="All"
-            active={!selected.category}
-            href={buildHref({ ...baseParams, category: null })}
-          />
-          {categories.map((c) => (
-            <Chip
-              key={c.value}
-              label={c.label}
-              count={c.count}
-              active={selected.category === c.value}
-              href={buildHref({ ...baseParams, category: c.value })}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* Stage pills (top tier) — public stage rollup from ADR 0001 */}
-      <div className="mt-4">
+      {/* Stage pills (default-visible) — public stage rollup from ADR 0001 */}
+      <div className="mt-5">
         <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-gray-500">
           Stage
         </p>
@@ -278,44 +332,49 @@ export default function PortfolioFilters({
         </div>
       )}
 
-      {/* Blocker toggle + sort */}
-      <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-gray-500">
-            Show only
-          </p>
-          <Chip
-            label="With active blockers"
-            count={blockerCount}
-            active={selected.blockers}
-            href={buildHref({
-              ...baseParams,
-              blockers: selected.blockers ? null : "1",
-            })}
-          />
-        </div>
-        <div>
-          <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-gray-500">
-            Sort by
-          </p>
+      {/* Home unit (collapsed by default; auto-opens when active) */}
+      <div className="mt-5 border-t border-hairline pt-4">
+        <FilterDisclosure label="Home unit" activeLabel={activeUnitLabel}>
           <div className="flex flex-wrap gap-1.5">
             <Chip
-              label="Home unit"
-              active={selected.sort === "default"}
-              href={buildHref({ ...baseParams, sort: null })}
+              label="All"
+              count={totalCount}
+              active={!selected.unit}
+              href={buildHref({ ...baseParams, unit: null })}
             />
-            <Chip
-              label="Name"
-              active={selected.sort === "name"}
-              href={buildHref({ ...baseParams, sort: "name" })}
-            />
-            <Chip
-              label="Most blockers"
-              active={selected.sort === "blockers"}
-              href={buildHref({ ...baseParams, sort: "blockers" })}
-            />
+            {homeUnits.map((u) => (
+              <Chip
+                key={u.value}
+                label={u.label}
+                count={u.count}
+                active={selected.unit === u.value}
+                href={buildHref({ ...baseParams, unit: u.value })}
+              />
+            ))}
           </div>
-        </div>
+        </FilterDisclosure>
+      </div>
+
+      {/* Category (collapsed by default; auto-opens when active) */}
+      <div className="mt-3">
+        <FilterDisclosure label="Category" activeLabel={activeCategoryLabel}>
+          <div className="flex flex-wrap gap-1.5">
+            <Chip
+              label="All"
+              active={!selected.category}
+              href={buildHref({ ...baseParams, category: null })}
+            />
+            {categories.map((c) => (
+              <Chip
+                key={c.value}
+                label={c.label}
+                count={c.count}
+                active={selected.category === c.value}
+                href={buildHref({ ...baseParams, category: c.value })}
+              />
+            ))}
+          </div>
+        </FilterDisclosure>
       </div>
     </div>
   );
