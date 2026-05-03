@@ -52,7 +52,7 @@ function ArtifactCard({ artifact }: { artifact: Artifact }) {
         <span className="text-xs text-gray-400">{artifact.dateLabel}</span>
       </div>
 
-      <h2 className="mt-3 text-lg font-semibold text-ui-charcoal">
+      <h2 className="mt-3 text-lg font-bold text-ui-charcoal">
         {artifact.title}
         {isExternal && (
           <span className="ml-1 inline-flex translate-y-px text-gray-400">
@@ -111,7 +111,7 @@ function ArtifactCard({ artifact }: { artifact: Artifact }) {
 function FeaturedHero({ artifact }: { artifact: Artifact }) {
   const isExternal = !!artifact.external;
   const inner = (
-    <article className="group relative rounded-xl bg-brand-black p-7 text-white shadow-sm transition-shadow hover:shadow-md">
+    <article className="group relative rounded-xl bg-brand-black p-6 text-white shadow-sm transition-shadow hover:shadow-md">
       <div className="flex flex-wrap items-baseline gap-3">
         <span className="rounded-full bg-ui-gold/20 px-2.5 py-0.5 text-xs font-medium text-ui-gold">
           {artifact.subtitle ?? kindLabel(artifact.kind)}
