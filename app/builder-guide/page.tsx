@@ -1180,7 +1180,7 @@ export default function BuilderGuidePage() {
     return (
       <div className="space-y-10">
         <div>
-          <h1 className="text-3xl font-black tracking-tight text-brand-black">Submit a project</h1>
+          <h1 className="text-3xl font-black tracking-tight text-brand-black">Submit a Project</h1>
           <p className="mt-2 text-ink-muted">
             Your assessment and recommendations.
           </p>
@@ -1203,7 +1203,7 @@ export default function BuilderGuidePage() {
     <div className="space-y-10">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-black tracking-tight text-brand-black">Submit a project</h1>
+        <h1 className="text-3xl font-black tracking-tight text-brand-black">Submit a Project</h1>
         <p className="mt-2 max-w-3xl text-ink-muted">
           Nine short questions. The assessment classifies the project,
           surfaces similar work already in the inventory, and routes the
