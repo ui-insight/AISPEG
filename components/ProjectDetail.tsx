@@ -438,6 +438,18 @@ export default function ProjectDetail({
           </div>
         </section>
       )}
+
+      {/* Closer — bookends the page with the eyebrow at the top.
+          Signals the page is a curated artifact, not auto-generated. */}
+      <footer className="border-t border-hairline pt-6 text-xs text-brand-silver">
+        Coordinated by IIDS ·{" "}
+        <Link
+          href="/builder-guide"
+          className="font-medium text-brand-silver hover:text-brand-black"
+        >
+          Submit a correction &rarr;
+        </Link>
+      </footer>
     </div>
   );
 }
