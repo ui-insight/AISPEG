@@ -7,6 +7,11 @@ import {
   groupByHomeUnit,
   type ApplicationWithBlockers,
 } from "@/lib/work";
+import {
+  WORK_CATEGORIES,
+  WORK_CATEGORY_LABELS,
+  type WorkCategory,
+} from "@/lib/work-categories";
 
 export const dynamic = "force-dynamic";
 
@@ -15,8 +20,13 @@ type SortMode = "default" | "name" | "blockers";
 interface PortfolioSearchParams {
   unit?: string;
   status?: string;
+  category?: string;
   blockers?: string;
   sort?: string;
+}
+
+function isWorkCategory(v: string | undefined): v is WorkCategory {
+  return !!v && (WORK_CATEGORIES as readonly string[]).includes(v);
 }
 
 function isSortMode(v: string | undefined): v is SortMode {
@@ -57,6 +67,11 @@ export default async function PortfolioPage({
   const params = await searchParams;
   const selectedUnit = params.unit?.trim() || null;
   const selectedStatus = params.status?.trim() || null;
+  const selectedCategory: WorkCategory | null = isWorkCategory(
+    params.category?.trim()
+  )
+    ? (params.category!.trim() as WorkCategory)
+    : null;
   const blockersOnly = params.blockers === "1";
   const sortMode: SortMode = isSortMode(params.sort) ? params.sort : "default";
 
@@ -66,11 +81,15 @@ export default async function PortfolioPage({
   // available to filter by even after they've applied something.
   const homeUnitCounts = new Map<string, number>();
   const statusCounts = new Map<string, number>();
+  const categoryCounts = new Map<WorkCategory, number>();
   for (const app of allApps) {
     for (const unit of app.homeUnits) {
       homeUnitCounts.set(unit, (homeUnitCounts.get(unit) ?? 0) + 1);
     }
     statusCounts.set(app.status, (statusCounts.get(app.status) ?? 0) + 1);
+    for (const cat of app.workCategories) {
+      categoryCounts.set(cat, (categoryCounts.get(cat) ?? 0) + 1);
+    }
   }
   const homeUnitOptions = Array.from(homeUnitCounts.entries())
     .map(([value, count]) => ({ value, label: value, count }))
@@ -78,11 +97,23 @@ export default async function PortfolioPage({
   const statusOptions = Array.from(statusCounts.entries())
     .map(([value, count]) => ({ value, label: value, count }))
     .sort((a, b) => b.count - a.count);
+  // Category options follow the canonical taxonomy order from
+  // lib/work-categories.ts. Categories with zero tagged interventions
+  // are dropped — no point offering an empty filter.
+  const categoryOptions = WORK_CATEGORIES.filter((slug) =>
+    categoryCounts.has(slug)
+  ).map((slug) => ({
+    value: slug,
+    label: WORK_CATEGORY_LABELS[slug].label,
+    count: categoryCounts.get(slug) ?? 0,
+  }));
 
   // Apply filters
   const filtered = allApps.filter((app) => {
     if (selectedUnit && !app.homeUnits.includes(selectedUnit)) return false;
     if (selectedStatus && app.status !== selectedStatus) return false;
+    if (selectedCategory && !app.workCategories.includes(selectedCategory))
+      return false;
     if (blockersOnly && app.activeBlockers.length === 0) return false;
     return true;
   });
@@ -139,12 +170,14 @@ export default async function PortfolioPage({
       <PortfolioFilters
         homeUnits={homeUnitOptions}
         statuses={statusOptions}
+        categories={categoryOptions}
         totalCount={allApps.length}
         filteredCount={filtered.length}
         blockerCount={blockerCount}
         selected={{
           unit: selectedUnit,
           status: selectedStatus,
+          category: selectedCategory,
           blockers: blockersOnly,
           sort: sortMode,
         }}
@@ -196,7 +229,7 @@ export default async function PortfolioPage({
         ))}
 
       {/* Context callout — only shown when no filters active and no sort */}
-      {!selectedUnit && !selectedStatus && !blockersOnly && sortMode === "default" && (
+      {!selectedUnit && !selectedStatus && !selectedCategory && !blockersOnly && sortMode === "default" && (
         <Callout eyebrow="How to read this inventory">
           <p className="text-sm leading-relaxed">
             Interventions are grouped by{" "}
