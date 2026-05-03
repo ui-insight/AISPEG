@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "predev": "npm run build:governance",
+    "predev": "npm run build:governance && npm run build:strategic-plan",
     "build": "next build",
-    "prebuild": "npm run build:governance",
+    "prebuild": "npm run build:governance && npm run build:strategic-plan",
     "build:governance": "tsx scripts/build-governance-catalog.ts",
+    "build:strategic-plan": "tsx scripts/build-strategic-plan-catalog.ts",
     "governance:pr-summary": "tsx scripts/governance-pr-summary.ts",
     "governance:pr-summary:test": "tsx --env-file=.test-governance/test.env scripts/governance-pr-summary.ts",
     "governance:freshness": "tsx scripts/governance-freshness.ts",

@@ -1,3 +1,6 @@
 [submodule "vendor/data-governance"]
 	path = vendor/data-governance
 	url = https://github.com/ui-insight/data-governance.git
+[submodule "vendor/strategic-plan"]
+	path = vendor/strategic-plan
+	url = https://github.com/ui-insight/StratPlanTacticsMB.git

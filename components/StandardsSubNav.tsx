@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 const subNavItems = [
   { href: "/standards", label: "Standards" },
   { href: "/standards/data-model", label: "Data Model" },
+  { href: "/standards/strategic-plan", label: "Strategic Plan" },
 ];
 
 export default function StandardsSubNav() {

@@ -51,6 +51,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+          # PAT needed because vendor/strategic-plan points at a private
+          # repo. The default GITHUB_TOKEN is scoped to this repo only and
+          # can't fetch private submodules from elsewhere in the org.
+          token: ${{ secrets.PORTFOLIO_GH_TOKEN }}
       - uses: actions/setup-node@v4
         with:
           node-version: 20

@@ -28,6 +28,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
+          # vendor/strategic-plan is private; default GITHUB_TOKEN can't
+          # reach it. See governance-drift.yml for context on the secret.
+          token: ${{ secrets.PORTFOLIO_GH_TOKEN }}
 
       - name: Set up Node
         uses: actions/setup-node@v4
@@ -118,6 +121,8 @@ jobs:
         with:
           submodules: recursive
           fetch-depth: 0
+          # vendor/strategic-plan is private; see freshness job above.
+          token: ${{ secrets.PORTFOLIO_GH_TOKEN }}
 
       - name: Set up Node
         uses: actions/setup-node@v4
