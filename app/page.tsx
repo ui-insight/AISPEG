@@ -4,14 +4,19 @@ import { sortedArtifacts } from "@/lib/artifacts";
 
 export const dynamic = "force-dynamic";
 
-const RECENT_PICKS = ["stratplan", "audit-dashboard", "vandalizer"];
+// Editorial pick of three featured interventions for the landing's
+// Work tile. Curated by IIDS — rotate when the work changes. There is
+// no automated freshness signal on Intervention yet (no lastUpdated
+// field; tracked for a future schema extension), so framing must stay
+// editorial: the order is curator's choice, not "most recent."
+const FEATURED_PICKS = ["stratplan", "audit-dashboard", "vandalizer"];
 
 export default async function Home() {
   const all = getPubliclyVisible();
   const interventionCount = all.length;
   const homeUnitCount = new Set(all.flatMap((i) => i.homeUnits)).size;
   const mostRecent = sortedArtifacts()[0]?.dateLabel;
-  const recentPicks = RECENT_PICKS
+  const featuredPicks = FEATURED_PICKS
     .map((slug) => all.find((i) => i.slug === slug))
     .filter((i): i is NonNullable<typeof i> => i !== undefined);
 
@@ -70,7 +75,7 @@ export default async function Home() {
             Projects, their operational owners, and current status.
           </p>
           <ul className="mt-6 divide-y divide-hairline border-y border-hairline">
-            {recentPicks.map((p) => (
+            {featuredPicks.map((p) => (
               <li key={p.slug} className="py-3">
                 <p className="text-base font-semibold text-brand-black">
                   {p.name}
