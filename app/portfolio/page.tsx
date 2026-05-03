@@ -15,10 +15,10 @@ import {
 import {
   PUBLIC_STAGE_ORDER,
   STAGE_OPERATIONAL_ROLLUP,
-  isInterventionStatus,
+  isProjectStatus,
   publicStageFromStatus,
 } from "@/lib/lifecycle-display";
-import type { InterventionStatus, PublicStage } from "@/lib/portfolio";
+import type { ProjectStatus, PublicStage } from "@/lib/portfolio";
 
 export const dynamic = "force-dynamic";
 
@@ -82,8 +82,8 @@ export default async function PortfolioPage({
     ? (params.stage!.trim() as PublicStage)
     : null;
   const rawStatus = params.status?.trim();
-  const selectedStatus: InterventionStatus | null =
-    rawStatus && isInterventionStatus(rawStatus) ? rawStatus : null;
+  const selectedStatus: ProjectStatus | null =
+    rawStatus && isProjectStatus(rawStatus) ? rawStatus : null;
   const selectedCategory: WorkCategory | null = isWorkCategory(
     params.category?.trim()
   )
@@ -98,7 +98,7 @@ export default async function PortfolioPage({
   // available to filter by even after they've applied something.
   const homeUnitCounts = new Map<string, number>();
   const stageCounts = new Map<PublicStage, number>();
-  const operationalCounts = new Map<InterventionStatus, number>();
+  const operationalCounts = new Map<ProjectStatus, number>();
   const categoryCounts = new Map<WorkCategory, number>();
   for (const app of allApps) {
     for (const unit of app.homeUnits) {
@@ -106,7 +106,7 @@ export default async function PortfolioPage({
     }
     const stage = publicStageFromStatus(app.status);
     stageCounts.set(stage, (stageCounts.get(stage) ?? 0) + 1);
-    if (isInterventionStatus(app.status)) {
+    if (isProjectStatus(app.status)) {
       operationalCounts.set(
         app.status,
         (operationalCounts.get(app.status) ?? 0) + 1

@@ -7,7 +7,7 @@ import {
   OPERATIONAL_LABEL,
   PUBLIC_STAGE_CHIP,
   PUBLIC_STAGE_LABEL,
-  isInterventionStatus,
+  isProjectStatus,
   publicStageFromStatus,
 } from "@/lib/lifecycle-display";
 
@@ -85,7 +85,7 @@ export default function PortfolioCard({
   // doesn't apply to externally-owned interventions, so the primary
   // stage chip carries the whole signal. (See ADR 0001.)
   const showOperationalChip =
-    isInterventionStatus(app.status) && app.status !== "tracked";
+    isProjectStatus(app.status) && app.status !== "tracked";
 
   return (
     <article className="group relative flex h-full flex-col rounded-xl border border-hairline bg-white p-5 shadow-sm transition-shadow hover:shadow-md">

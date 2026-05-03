@@ -20,7 +20,7 @@ export type Visibility =
 // Operational ladder — see docs/adr/0001-product-lifecycle-taxonomy.md.
 // 9 lifecycle states + 1 meta state (`tracked`). Verification rules for
 // each are spec'd in the ADR; the verifier itself lands in a follow-up PR.
-export type InterventionStatus =
+export type ProjectStatus =
   | "idea"
   | "approved"
   | "building"
@@ -78,7 +78,7 @@ export interface Intervention {
   buildParticipants: string[];
 
   // Status
-  status: InterventionStatus;
+  status: ProjectStatus;
   visibility: Visibility;
   institutionalReviewStatus?: InstitutionalReviewStatus;
 
@@ -541,7 +541,7 @@ export const interventions: Intervention[] = [
 // ============================================================
 
 // Operational status → public stage rollup. See ADR 0001.
-export function computePublicStage(status: InterventionStatus): PublicStage {
+export function computePublicStage(status: ProjectStatus): PublicStage {
   switch (status) {
     case "idea":
     case "approved":

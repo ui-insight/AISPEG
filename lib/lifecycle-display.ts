@@ -14,7 +14,7 @@
 
 import {
   computePublicStage,
-  type InterventionStatus,
+  type ProjectStatus,
   type PublicStage,
 } from "./portfolio";
 
@@ -47,7 +47,7 @@ export const PUBLIC_STAGE_ORDER: PublicStage[] = [
   "tracked",
 ];
 
-export const OPERATIONAL_LABEL: Record<InterventionStatus, string> = {
+export const OPERATIONAL_LABEL: Record<ProjectStatus, string> = {
   idea: "Idea",
   approved: "Approved",
   building: "Building",
@@ -63,7 +63,7 @@ export const OPERATIONAL_LABEL: Record<InterventionStatus, string> = {
 // Inverse of computePublicStage — for the filter drill-in.
 // Lists the 1-N operational states that roll up into each public stage,
 // in approximate ladder order.
-export const STAGE_OPERATIONAL_ROLLUP: Record<PublicStage, InterventionStatus[]> = {
+export const STAGE_OPERATIONAL_ROLLUP: Record<PublicStage, ProjectStatus[]> = {
   exploring: ["idea", "approved"],
   building: ["building", "prototype"],
   live: ["piloting", "production", "maintained"],
@@ -76,11 +76,11 @@ export const STAGE_OPERATIONAL_ROLLUP: Record<PublicStage, InterventionStatus[]>
 // canonical 10-value union (drift, legacy data, etc.), bucket it as
 // `exploring` so the UI never crashes.
 export function publicStageFromStatus(status: string): PublicStage {
-  if (isInterventionStatus(status)) return computePublicStage(status);
+  if (isProjectStatus(status)) return computePublicStage(status);
   return "exploring";
 }
 
-const STATUSES: ReadonlyArray<InterventionStatus> = [
+const STATUSES: ReadonlyArray<ProjectStatus> = [
   "idea",
   "approved",
   "building",
@@ -93,7 +93,7 @@ const STATUSES: ReadonlyArray<InterventionStatus> = [
   "tracked",
 ];
 
-export function isInterventionStatus(s: string): s is InterventionStatus {
+export function isProjectStatus(s: string): s is ProjectStatus {
   return (STATUSES as readonly string[]).includes(s);
 }
 

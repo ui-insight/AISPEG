@@ -52,7 +52,7 @@ export interface VocabularyValue {
   displayOrder?: number;
   description?: string;
   // Per-value verification rule (ADR 0001, iids-portfolio domain).
-  // Currently populated only for InterventionStatus and PublicStage;
+  // Currently populated only for ProjectStatus and PublicStage;
   // other domains/groups leave it unset. The catalog records what the
   // rule *is* — implementation lives in lib/portfolio-verification.ts.
   verificationRule?: string;
