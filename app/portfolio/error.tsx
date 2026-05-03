@@ -17,7 +17,7 @@ export default function PortfolioError({
   return (
     <main className="mx-auto max-w-3xl px-6 py-16">
       <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-clearwater">
-        The Work — temporarily unavailable
+        Projects — temporarily unavailable
       </p>
 
       <h1 className="mt-3 text-3xl font-black tracking-tight text-brand-black md:text-4xl">

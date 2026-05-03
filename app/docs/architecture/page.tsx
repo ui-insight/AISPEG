@@ -197,7 +197,7 @@ auth_level             5%     Exact match
 app/
   layout.tsx              # Root layout with Sidebar
   page.tsx                # Landing — four-card steering page
-  portfolio/              # The Work — projects inventory
+  portfolio/              # Projects inventory
   builder-guide/          # Submit-a-Project assessment
   reports/                # Reports surface
   standards/              # Standards ledger

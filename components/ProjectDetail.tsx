@@ -147,7 +147,7 @@ export default function ProjectDetail({
       {/* Breadcrumb */}
       <nav className="text-sm text-gray-500">
         <Link href={basePath} className="hover:text-brand-black">
-          {audience === "internal" ? "Internal portfolio" : "Portfolio"}
+          {audience === "internal" ? "Internal projects" : "Projects"}
         </Link>
         {app.homeUnits[0] && (
           <>
@@ -162,7 +162,7 @@ export default function ProjectDetail({
       {/* Beat 1 — What is this? Hero band, no card shell. */}
       <header>
         <SectionEyebrow>
-          The Work{app.homeUnits[0] ? ` · ${app.homeUnits[0]}` : ""}
+          Projects{app.homeUnits[0] ? ` · ${app.homeUnits[0]}` : ""}
         </SectionEyebrow>
         <h1 className="mt-2 text-4xl font-black leading-tight tracking-tight text-brand-black md:text-5xl">
           {app.name}

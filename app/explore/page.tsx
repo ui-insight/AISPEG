@@ -64,7 +64,7 @@ export default function ExplorePage() {
           counts the projects tagged with that kind of work and links
           straight into a filtered view of{" "}
           <Link href="/portfolio" className="font-medium text-brand-black hover:underline">
-            The Work
+            Projects
           </Link>
           .
         </p>

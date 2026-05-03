@@ -170,7 +170,7 @@ export default async function PortfolioPage({
       {/* Header */}
       <div>
         <p className="text-xs font-medium uppercase tracking-wider text-brand-silver">
-          The Work
+          Projects
         </p>
         <h1 className="mt-2 text-3xl font-black tracking-tight text-brand-black">
           AI Projects for Operational Excellence
