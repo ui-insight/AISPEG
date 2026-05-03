@@ -31,10 +31,10 @@ The day-to-day status IIDS tracks. Each state has a verification rule that can b
 | `building` | Building | `repoUrl` set; `lastCommitDate` within last 60 days; no `liveUrl` (or `liveUrl` is staging-only — flagged via a `liveUrlIsStaging: true`); `pilotCohort` empty. |
 | `prototype` | Prototype | Demo-able; `liveUrl` may be set (often staging). `pilotCohort` empty. **Either** `lastCommitDate` is older than 30 days **OR** `featureComplete: true` is explicitly set. |
 | `piloting` | Piloting | `liveUrl` accessible to a **named cohort**. `pilotCohort` populated with `size > 0` and a bounded `scope` (single unit OR named individuals OR an explicit "limited beta" descriptor). |
-| `production` | Production | `liveUrl` accessible **beyond the original pilot cohort**: `productionScope` is `"home-unit"` (entire home unit's users), `"institution-wide"`, or `"external"` (institutional + outside-UI deployments). `supportContact` populated. |
-| `maintained` | Maintained | In production. **No commits to `main` in the last 90 days.** No open feature issues — only `bug`-, `security`-, or `chore`-labeled issues. |
+| `production` | Production | A **publicly-accessible artifact** exists beyond the original pilot cohort: either (a) a `liveUrl` reachable beyond the pilot, or (b) a public `repoUrl` (`isPrivateRepo: false` or unset) where the repo itself is the consumable deliverable — the path that covers infrastructure, scaffolds, and self-hostable appliances. `productionScope` is `"home-unit"` (entire home unit's users), `"institution-wide"`, or `"external"` (institutional + outside-UI deployments). `supportContact` populated. |
+| `maintained` | Maintained | Inherits production's accessibility rule (liveUrl OR public repo). **No commits to `main` in the last 90 days.** No open feature issues — only `bug`-, `security`-, or `chore`-labeled issues. |
 | `sunsetting` | Sunsetting | `sunsetDate` set (ISO date, future or recent past). `replacedBy` populated — either a successor intervention `slug` or the literal string `manual-process`. |
-| `archived` | Archived | `liveUrl` returns 404, is null, or domain is dead. Service stopped. Record kept for institutional memory. |
+| `archived` | Archived | `liveUrl` returns 404, is null, or domain is dead (or, for repo-as-artifact deliverables, `repoUrl` is archived/deleted). Service stopped. Record kept for institutional memory. |
 | `tracked` *(meta)* | Tracked | Not built by IIDS. `trackingOnly: true`. Bypasses the operational ladder; the public stage is its own bucket. |
 
 ### Layer 2: Public stage rollup (5 buckets)
@@ -66,6 +66,10 @@ Three options were considered: own stage, roll into whatever the external owner 
 ### 3. `featureComplete` flag, not pure commit-cadence
 
 Pure commit-cadence has false positives — a healthy maintained project with sporadic commits would read as a prototype. The cost of authoring discipline (one boolean) is lower than the cost of stakeholders reading misleading status. The flag is verified, not just claimed: if `featureComplete: true` but the project has no `liveUrl` and the repo's main branch is empty, the verification fails.
+
+### 4. `production` accepts a public repo as the artifact, not just `liveUrl`
+
+The first draft of the rules required a `liveUrl` for `production`. That broke for two real cases in the portfolio: `template-app` is a scaffold consumed by cloning, and `dgx-stack` is a self-hostable appliance — neither is a hosted webapp, and both are honestly in production use. The semantic the rule is reaching for is "**is there a publicly-accessible artifact someone outside the build team can use right now?**" For hosted apps, that's `liveUrl`. For infrastructure, scaffolds, and self-hostable deliverables, the public repo *is* the consumable artifact. Either satisfies the rule. The verifier checks that `repoUrl` is set and `isPrivateRepo` is not true — a private repo with no liveUrl fails, as it should.
 
 ## Schema additions to `Intervention`
 
