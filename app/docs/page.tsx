@@ -19,12 +19,6 @@ export default function DocsIndexPage() {
         </h2>
         <div className="grid gap-4 md:grid-cols-2">
           <DocCard
-            title="About this site"
-            description="What this site does, who it serves, and how it fits into the University of Idaho's institutional AI work."
-            href="/docs/about"
-            icon="🏛️"
-          />
-          <DocCard
             title="Submit-a-Project Assessment"
             description="How to use the interactive assessment to scope an AI project idea."
             href="/docs/builder-guide"
