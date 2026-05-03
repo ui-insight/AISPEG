@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Callout } from "@/components/Callout";
 import PortfolioCard from "@/components/PortfolioCard";
 import PortfolioFilters from "@/components/PortfolioFilters";
 import {
@@ -275,8 +276,8 @@ export default async function PortfolioPage({
 
       {/* Empty state */}
       {filtered.length === 0 && (
-        <div className="rounded-xl border border-dashed border-gray-300 bg-white/50 p-8 text-center">
-          <p className="text-sm text-gray-500">
+        <div className="rounded-xl border border-dashed border-brand-silver/40 bg-white/50 p-8 text-center">
+          <p className="text-sm text-ink-subtle">
             No projects match the current filters.{" "}
             <Link
               href="/portfolio"
@@ -318,17 +319,17 @@ export default async function PortfolioPage({
           </section>
         ))}
 
-      {/* AI4RA pointer (always at bottom) */}
-      <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-        <p className="text-sm font-medium text-gray-500">About AI4RA</p>
-        <p className="mt-2 text-sm leading-relaxed text-gray-700">
-          <span className="font-semibold text-ui-charcoal">AI4RA</span> is a
+      {/* AI4RA pointer — uses subtle Callout surface so it doesn't read
+          as a 15th project card. */}
+      <Callout tone="subtle" eyebrow="About AI4RA">
+        <p className="text-sm leading-relaxed">
+          <span className="font-semibold text-brand-black">AI4RA</span> is a
           UI + Southern Utah University NSF GRANTED partnership producing
           open-source reference tools for research administration. Its
-          projects — the UDM spec, prompt library, evaluation harness — are
-          reference material, not UI projects.
+          projects &mdash; the UDM spec, prompt library, evaluation harness
+          &mdash; are reference material, not UI projects.
         </p>
-        <p className="mt-2 text-sm">
+        <p className="mt-3 text-sm">
           <Link
             href="/ai4ra-ecosystem"
             className="font-medium text-brand-black hover:underline"
@@ -336,7 +337,7 @@ export default async function PortfolioPage({
             See the AI4RA ecosystem &rarr;
           </Link>
         </p>
-      </div>
+      </Callout>
     </div>
   );
 }

@@ -14,7 +14,7 @@ import {
 } from "@/lib/lifecycle-display";
 
 const severityStyles: Record<"low" | "medium" | "high", string> = {
-  low: "border-gray-200 bg-gray-50 text-gray-700",
+  low: "border-hairline bg-surface-alt text-ink-muted",
   medium: "border-amber-200 bg-amber-50 text-amber-800",
   high: "border-red-200 bg-red-50 text-red-800",
 };
@@ -96,7 +96,7 @@ export default function PortfolioCard({
             </Link>
           </h3>
           {owners && (
-            <p className="mt-0.5 text-xs text-gray-500">
+            <p className="mt-0.5 text-xs text-ink-subtle">
               {owners}
               {extraOwners}
             </p>
@@ -121,7 +121,7 @@ export default function PortfolioCard({
       </div>
 
       {app.tagline && (
-        <p className="mt-3 text-sm leading-relaxed text-gray-700">
+        <p className="mt-3 text-sm leading-relaxed text-ink-muted">
           {app.tagline}
         </p>
       )}
@@ -188,7 +188,7 @@ export default function PortfolioCard({
       </div>
 
       {app.liveUrl && liveHost && (
-        <div className="mt-auto border-t border-gray-100 pt-3">
+        <div className="mt-auto border-t border-hairline pt-3">
           <a
             href={app.liveUrl}
             target="_blank"

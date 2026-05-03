@@ -82,14 +82,14 @@ function Chip({
       className={`unstyled inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
         active
           ? "border-ui-gold bg-ui-gold/15 text-brand-black"
-          : "border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50"
+          : "border-hairline bg-white text-ink-muted hover:border-brand-silver/40 hover:bg-surface-alt"
       }`}
     >
       {label}
       {typeof count === "number" && (
         <span
           className={`rounded-full px-1.5 py-0 text-[10px] font-semibold ${
-            active ? "bg-brand-black/10 text-brand-black" : "bg-gray-100 text-gray-500"
+            active ? "bg-brand-black/10 text-brand-black" : "bg-surface-alt text-ink-subtle"
           }`}
         >
           {count}
@@ -114,7 +114,7 @@ function FilterDisclosure({
   // forcing it back open.
   return (
     <details open={activeLabel !== null} className="group">
-      <summary className="flex cursor-pointer list-none items-center gap-2 rounded-md px-1 py-1 text-[11px] font-semibold uppercase tracking-wider text-gray-500 hover:text-brand-black [&::-webkit-details-marker]:hidden">
+      <summary className="flex cursor-pointer list-none items-center gap-2 rounded-md px-1 py-1 text-[11px] font-semibold uppercase tracking-wider text-ink-subtle hover:text-brand-black [&::-webkit-details-marker]:hidden">
         <svg
           aria-hidden
           className="h-3 w-3 shrink-0 transition-transform group-open:rotate-90"
@@ -207,14 +207,14 @@ export default function PortfolioFilters({
   ];
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+    <div className="rounded-xl border border-hairline bg-white p-5 shadow-sm">
       {/* Top row — eyebrow, result count, blockers toggle, sort, clear. */}
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
         <div className="min-w-0">
-          <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
+          <p className="text-xs font-medium uppercase tracking-wider text-ink-subtle">
             Filter &amp; sort
           </p>
-          <p className="mt-1 text-sm text-gray-600">
+          <p className="mt-1 text-sm text-ink-muted">
             Showing {filteredCount} of {totalCount} projects
             {blockerCount > 0 && (
               <span className="ml-2 text-amber-700">
@@ -233,7 +233,7 @@ export default function PortfolioFilters({
               blockers: selected.blockers ? null : "1",
             })}
           />
-          <label className="flex items-center gap-1.5 text-xs font-medium text-gray-600">
+          <label className="flex items-center gap-1.5 text-xs font-medium text-ink-muted">
             Sort
             <select
               value={selected.sort}
@@ -246,7 +246,7 @@ export default function PortfolioFilters({
                   })
                 );
               }}
-              className="rounded-md border border-gray-300 bg-white px-2 py-1 text-xs font-medium text-brand-black shadow-sm focus:border-ui-gold focus:outline-none focus:ring-1 focus:ring-ui-gold"
+              className="rounded-md border border-hairline bg-white px-2 py-1 text-xs font-medium text-brand-black shadow-sm focus:border-ui-gold focus:outline-none focus:ring-1 focus:ring-ui-gold"
             >
               {sortOptions.map((o) => (
                 <option key={o.value} value={o.value}>
@@ -268,7 +268,7 @@ export default function PortfolioFilters({
 
       {/* Stage pills (default-visible) — public stage rollup from ADR 0001 */}
       <div className="mt-5">
-        <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+        <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-ink-subtle">
           Stage
         </p>
         <div className="flex flex-wrap gap-1.5">
@@ -303,7 +303,7 @@ export default function PortfolioFilters({
       {/* Operational drill-in (second tier) — only when a non-tracked stage is active */}
       {drillInOperational.length > 0 && (
         <div className="mt-3 rounded-lg border border-hairline bg-surface-alt/40 p-3">
-          <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+          <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-ink-subtle">
             Operational status within {PUBLIC_STAGE_LABEL[activeStage!]}
           </p>
           <div className="flex flex-wrap gap-1.5">
