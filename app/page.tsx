@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getPubliclyVisible } from "@/lib/portfolio";
-import { sortedArtifacts } from "@/lib/artifacts";
+import { artifacts, sortedArtifacts } from "@/lib/artifacts";
+import { summary as standardsSummary } from "@/lib/standards-watch";
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +20,8 @@ export default async function Home() {
   const featuredPicks = FEATURED_PICKS
     .map((slug) => all.find((i) => i.slug === slug))
     .filter((i): i is NonNullable<typeof i> => i !== undefined);
+  const standards = standardsSummary();
+  const reportCount = artifacts.length;
 
   return (
     <div className="space-y-10">
@@ -68,7 +71,7 @@ export default async function Home() {
           <p className="text-xs font-medium uppercase tracking-wider text-brand-silver">
             The Work
           </p>
-          <h2 className="mt-2 text-2xl">
+          <h2 className="mt-2 text-2xl font-semibold">
             {interventionCount} AI interventions across UI units
           </h2>
           <p className="mt-2 text-sm text-ink-muted">
@@ -98,12 +101,74 @@ export default async function Home() {
         </Link>
       </section>
 
-      <p className="text-sm text-ink-muted">
-        Have a project idea?{" "}
-        <Link href="/builder-guide" className="font-medium text-brand-black">
-          Start the assessment &rarr;
+      <section className="grid gap-4 md:grid-cols-3">
+        <Link
+          href="/builder-guide"
+          className="group block rounded-xl border border-hairline bg-white p-5 transition-shadow hover:shadow-md"
+        >
+          <p className="text-xs font-medium uppercase tracking-wider text-brand-silver">
+            Submit a Project
+          </p>
+          <h3 className="mt-1 text-base font-semibold text-brand-black">
+            9-step assessment
+          </h3>
+          <p className="mt-2 text-sm leading-relaxed text-ink-muted">
+            Routes to a named IIDS owner with a 2-business-day SLA.
+          </p>
+          <p className="mt-3 text-sm font-medium text-brand-black group-hover:underline">
+            Start &rarr;
+          </p>
         </Link>
-      </p>
+
+        <Link
+          href="/standards"
+          className="group block rounded-xl border border-hairline bg-white p-5 transition-shadow hover:shadow-md"
+        >
+          <p className="text-xs font-medium uppercase tracking-wider text-brand-silver">
+            Standards
+          </p>
+          <h3 className="mt-1 text-base font-semibold text-brand-black">
+            Software + UX standards
+          </h3>
+          <p className="mt-2 text-sm leading-relaxed text-ink-muted">
+            <span className="font-semibold text-brand-black">
+              {standards.outstanding}
+            </span>{" "}
+            outstanding asks. Oldest is{" "}
+            <span className="font-semibold text-brand-black">
+              {standards.oldestOutstanding} days
+            </span>{" "}
+            old.{" "}
+            <span className="font-semibold text-brand-black">
+              {standards.counts.published}
+            </span>{" "}
+            published.
+          </p>
+          <p className="mt-3 text-sm font-medium text-brand-black group-hover:underline">
+            View &rarr;
+          </p>
+        </Link>
+
+        <Link
+          href="/reports"
+          className="group block rounded-xl border border-hairline bg-white p-5 transition-shadow hover:shadow-md"
+        >
+          <p className="text-xs font-medium uppercase tracking-wider text-brand-silver">
+            Reports
+          </p>
+          <h3 className="mt-1 text-base font-semibold text-brand-black">
+            Activity reports + briefs
+          </h3>
+          <p className="mt-2 text-sm leading-relaxed text-ink-muted">
+            <span className="font-semibold text-brand-black">{reportCount}</span>{" "}
+            published. Latest:{" "}
+            <span className="font-semibold text-brand-black">{mostRecent}</span>.
+          </p>
+          <p className="mt-3 text-sm font-medium text-brand-black group-hover:underline">
+            Browse &rarr;
+          </p>
+        </Link>
+      </section>
     </div>
   );
 }
