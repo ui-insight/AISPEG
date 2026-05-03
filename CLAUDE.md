@@ -155,8 +155,6 @@ vendor/                    # Vendored dependencies
 - New routes go in `app/<route>/page.tsx` and pick up the layout
   automatically. Add to `components/Sidebar.tsx` if it belongs in primary
   nav (rare — the IA is intentionally narrow).
-- Markdown content for narrative pages can live in `content/` (currently
-  unused but reserved).
 - When adding to `lib/portfolio.ts`, fill **all** required fields. The
   shape is in the same file. `homeUnits`, `operationalOwners`, and
   `buildParticipants` are load-bearing UI.
