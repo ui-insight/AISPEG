@@ -4,9 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
+// Lifecycle taxonomy from ADR 0001 — see lib/portfolio.ts InterventionStatus.
 const STATUS_OPTIONS = [
-  "idea", "approved", "in-development", "staging", "production", "retired",
-  "Planned", "Prototype", "Piloting", "Production", "Tracked", "Archived",
+  "idea", "approved", "building", "prototype", "piloting",
+  "production", "maintained", "sunsetting", "archived", "tracked",
 ];
 
 const VISIBILITY_OPTIONS = ["public", "embargoed", "internal"] as const;
