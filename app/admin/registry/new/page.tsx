@@ -124,7 +124,7 @@ export default function NewRegistryEntryPage() {
           Register new application
         </h1>
         <p className="mt-1 text-sm text-gray-500">
-          Manually register an intervention. The detail page will let you fill
+          Manually register an project. The detail page will let you fill
           in the rest (full description, blockers, classification, etc.). For
           submissions that came through Submit-a-Project, use the
           &ldquo;Promote to registry&rdquo; button on the submission detail

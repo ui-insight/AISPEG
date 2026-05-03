@@ -11,7 +11,7 @@ interface Project {
   multiplier: string;
 }
 
-interface ProjectTableProps {
+interface AICodingProjectTableProps {
   projects: Project[];
   totals: {
     daysActive: number;
@@ -37,7 +37,7 @@ function SortIcon({ column, sortKey, sortAsc }: { column: SortKey; sortKey: Sort
   );
 }
 
-export default function ProjectTable({ projects, totals }: ProjectTableProps) {
+export default function AICodingProjectTable({ projects, totals }: AICodingProjectTableProps) {
   const [sortKey, setSortKey] = useState<SortKey>("netNewLines");
   const [sortAsc, setSortAsc] = useState(false);
 

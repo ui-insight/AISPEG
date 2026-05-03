@@ -197,7 +197,7 @@ auth_level             5%     Exact match
 app/
   layout.tsx              # Root layout with Sidebar
   page.tsx                # Landing — four-card steering page
-  portfolio/              # The Work — interventions inventory
+  portfolio/              # The Work — projects inventory
   builder-guide/          # Submit-a-Project assessment
   reports/                # Reports surface
   standards/              # Standards ledger
@@ -212,11 +212,11 @@ app/
   docs/                   # Documentation pages (you are here)
 components/
   Sidebar.tsx             # Navigation sidebar
-  PortfolioCard.tsx       # Intervention card
+  PortfolioCard.tsx       # Project card
   IssueCard.tsx           # GitHub issue card
   DocPage.tsx             # Documentation layout components
 lib/
-  portfolio.ts            # Interventions inventory (typed)
+  portfolio.ts            # Projects inventory (typed)
   standards-watch.ts      # Standards ledger entries
   builder-guide-data.ts   # Quiz steps, scoring, tiers
   similarity.ts           # Similarity detection engine

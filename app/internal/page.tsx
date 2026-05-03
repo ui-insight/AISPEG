@@ -29,7 +29,7 @@ export default async function InternalHome() {
       <section className="grid gap-4 md:grid-cols-3">
         <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
           <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
-            Total interventions
+            Total projects
           </p>
           <p className="mt-1 text-3xl font-black text-ui-charcoal">{apps.length}</p>
           <p className="mt-2 text-xs text-gray-500">
@@ -43,7 +43,7 @@ export default async function InternalHome() {
           <p className="mt-1 text-3xl font-black text-amber-700">{blockerCount}</p>
           <p className="mt-2 text-xs text-gray-500">
             Across {apps.filter((a) => a.activeBlockers.length > 0).length}{" "}
-            interventions
+            projects
           </p>
         </div>
         <Link

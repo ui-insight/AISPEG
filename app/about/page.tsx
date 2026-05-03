@@ -32,7 +32,7 @@ export default function AboutPage() {
         <p>
           The Institutional AI Initiative site is a single surface for
           institutional AI activity at UI. It maintains a growing inventory
-          of AI interventions across UI units &mdash; some built by IIDS,
+          of AI projects across UI units &mdash; some built by IIDS,
           some led by partner units, some from the AI4RA partnership UI
           deploys institutionally &mdash; and surfaces operational
           ownership, project status, and the institutional standards
@@ -62,7 +62,7 @@ export default function AboutPage() {
               The Work
             </p>
             <h3 className="mt-2 text-base font-semibold text-ui-charcoal">
-              Portfolio of AI interventions
+              Portfolio of AI projects
             </h3>
             <p className="mt-2 text-sm text-gray-600">
               Each entry names a UI home unit, an operational owner, and

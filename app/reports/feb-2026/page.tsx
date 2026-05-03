@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { Callout } from "@/components/Callout";
 import MetricCard from "@/components/MetricCard";
-import ProjectTable from "@/components/ProjectTable";
-import ProjectDetail from "@/components/ProjectDetail";
+import AICodingProjectTable from "@/components/AICodingProjectTable";
+import AICodingProjectStats from "@/components/AICodingProjectStats";
 import {
   projects,
   projectTotals,
@@ -101,7 +101,7 @@ export default function FebReportPage() {
         <h2 className="mb-4 text-lg font-semibold text-ui-charcoal">
           Per-Project Effort Estimates
         </h2>
-        <ProjectTable projects={projects} totals={projectTotals} />
+        <AICodingProjectTable projects={projects} totals={projectTotals} />
       </div>
 
       {/* Productivity highlight */}
@@ -169,7 +169,7 @@ export default function FebReportPage() {
         </h2>
         <div className="space-y-4">
           {projects.map((p) => (
-            <ProjectDetail
+            <AICodingProjectStats
               key={p.name}
               name={p.name}
               description={p.description}

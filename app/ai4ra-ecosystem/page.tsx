@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { interventions } from "@/lib/portfolio";
+import { projects } from "@/lib/portfolio";
 import { Callout } from "@/components/Callout";
 
 // AI4RA reference projects — open-source assets produced by the AI4RA
-// partnership. These are NOT UI interventions; they are reference material
-// that UI's portfolio interventions may reference or consume.
+// partnership. These are NOT UI projects; they are reference material
+// that UI's portfolio projects may reference or consume.
 
 interface AI4RAReference {
   name: string;
@@ -75,7 +75,7 @@ const referenceProjects: AI4RAReference[] = [
   },
 ];
 
-const ai4raCoreInterventions = interventions.filter(
+const ai4raCoreProjects = projects.filter(
   (i) => i.ai4raRelationship === "Core" && i.visibility !== "Internal-only"
 );
 
@@ -95,8 +95,8 @@ export default function AI4RAEcosystemPage() {
           </strong>{" "}
           producing open-source reference tools and data specifications for
           research administration. The projects below are <em>reference
-          material</em> — they are not UI operational interventions; they are
-          community assets that UI&apos;s own interventions may adopt, extend,
+          material</em> — they are not UI operational projects; they are
+          community assets that UI&apos;s own projects may adopt, extend,
           or contribute back to.
         </p>
         <div className="mt-4">
@@ -187,21 +187,21 @@ export default function AI4RAEcosystemPage() {
         </div>
       </section>
 
-      {/* UI interventions that touch AI4RA */}
+      {/* UI projects that touch AI4RA */}
       <section className="space-y-4">
         <div>
           <h2 className="text-xl font-black tracking-tight text-brand-black">
-            UI interventions in the AI4RA Core
+            UI projects in the AI4RA Core
           </h2>
           <p className="mt-1 text-sm text-ink-muted">
-            UI operational interventions that are also AI4RA dual-destiny
+            UI operational projects that are also AI4RA dual-destiny
             projects — an open-source reference implementation maintained for
             the community alongside a UI-specific deployment.
           </p>
         </div>
 
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-          {ai4raCoreInterventions.map((i) => (
+          {ai4raCoreProjects.map((i) => (
             <Link
               key={i.slug}
               href={`/portfolio/${i.slug}`}
@@ -223,7 +223,7 @@ export default function AI4RAEcosystemPage() {
         </p>
         <p className="mt-2 text-sm leading-relaxed text-gray-700">
           This page is reference material for the broader community. For the
-          list of AI interventions actually running in UI operations, with
+          list of AI projects actually running in UI operations, with
           home units, operational owners, and status:
         </p>
         <p className="mt-3">

@@ -28,7 +28,7 @@ const keyStats = [
 ];
 
 const howUiDiffers = [
-  "Every IIDS-coordinated intervention names an operational owner who is accountable for the outcome, not just the code.",
+  "Every IIDS-coordinated project names an operational owner who is accountable for the outcome, not just the code.",
   "New UI applications start from TEMPLATE-app — JWT, RBAC, dependency scanning, CycloneDX SBOM, and an institutional review checklist baked in from day one.",
   "OIT holds a standards-review gate; IIDS-built tooling is evaluated before it propagates as an endorsed UI standard.",
   "AI inference for UI apps routes through MindRouter, which maintains an audit log of prompts, responses, and artifacts available for review.",

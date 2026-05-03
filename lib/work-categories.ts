@@ -1,13 +1,13 @@
 // ============================================================
 // Work Categories — "By problem" exploration axis
 // ============================================================
-// A taxonomy of the kinds of operational work UI's AI interventions help
+// A taxonomy of the kinds of operational work UI's AI projects help
 // with. Complementary to the home-unit grouping on /portfolio: a Dean
 // asking "I have a [reconciliation / scheduling / document review]
 // problem — is anyone already on it?" can scan by category instead of
 // by which unit owns the work.
 //
-// One intervention can sit in 2-3 categories (multi-tagged). Tags are
+// One project can sit in 2-3 categories (multi-tagged). Tags are
 // audience-facing (a Dean's vocabulary), not technical jargon.
 //
 // ------------------------------------------------------------
@@ -16,23 +16,23 @@
 // Add a category:
 //   1. Append a slug to WORK_CATEGORIES.
 //   2. Add a matching entry in WORK_CATEGORY_LABELS.
-//   3. Tag relevant interventions in lib/portfolio.ts.
+//   3. Tag relevant projects in lib/portfolio.ts.
 //   ~5 minutes; tsc verifies the label record is exhaustive.
 //
 // Rename a category:
 //   Change the slug in both WORK_CATEGORIES and WORK_CATEGORY_LABELS.
 //   tsc surfaces every callsite that still uses the old slug
-//   (intervention tags + UI consumers) — fix in one pass.
+//   (project tags + UI consumers) — fix in one pass.
 //
 // Retire a category:
 //   Remove the slug from WORK_CATEGORIES (and from WORK_CATEGORY_LABELS).
-//   tsc finds every intervention still tagged with it — untag in one
+//   tsc finds every project still tagged with it — untag in one
 //   pass. Don't soft-delete; if the category is gone, it's gone.
 //
 // Promote to first-class field:
 //   If a category later deserves its own subnavigation or schema
 //   relationship, the typed shape makes migration mechanical: grep for
-//   the slug, lift the matching interventions into whatever new shape
+//   the slug, lift the matching projects into whatever new shape
 //   is needed.
 // ============================================================
 
@@ -91,7 +91,7 @@ export const WORK_CATEGORY_LABELS: Record<
   "ai-infrastructure": {
     label: "AI infrastructure",
     description:
-      "LLM gateways, GPU stacks, agent platforms — the plumbing other interventions run on, not a problem on its own.",
+      "LLM gateways, GPU stacks, agent platforms — the plumbing other projects run on, not a problem on its own.",
   },
 };
 

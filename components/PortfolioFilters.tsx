@@ -147,7 +147,7 @@ export default function PortfolioFilters({
             Filter &amp; sort
           </p>
           <p className="mt-1 text-sm text-gray-600">
-            Showing {filteredCount} of {totalCount} interventions
+            Showing {filteredCount} of {totalCount} projects
             {blockerCount > 0 && (
               <span className="ml-2 text-amber-700">
                 · {blockerCount} active blocker{blockerCount === 1 ? "" : "s"}

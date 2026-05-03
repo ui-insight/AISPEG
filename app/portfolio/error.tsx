@@ -21,7 +21,7 @@ export default function PortfolioError({
       </p>
 
       <h1 className="mt-3 text-3xl font-black tracking-tight text-brand-black md:text-4xl">
-        The intervention registry isn&apos;t responding.
+        The project registry isn&apos;t responding.
       </h1>
 
       <p className="mt-6 text-base leading-relaxed text-ink-muted">

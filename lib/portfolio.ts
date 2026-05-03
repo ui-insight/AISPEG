@@ -1,10 +1,10 @@
 // ============================================================
-// UI AI Intervention Inventory
+// UI AI Project Inventory
 // ============================================================
-// The authoritative list of AI interventions across University of Idaho units
-// that IIDS coordinates, builds, or tracks. An "intervention" is a UI
+// The authoritative list of AI projects across University of Idaho units
+// that IIDS coordinates, builds, or tracks. An "project" is a UI
 // deployment / UI-owned effort — not a GitHub repo. Repos are artifacts;
-// interventions have home units, operational owners, and status-at-UI.
+// projects have home units, operational owners, and status-at-UI.
 //
 // AI4RA reference projects (prompt-library, evaluation-harness, AI4RA-UDM,
 // mcp-ecfr, etc.) live on /ai4ra-ecosystem, not here.
@@ -66,7 +66,7 @@ export interface OperationalOwner {
   title?: string;
 }
 
-export interface Intervention {
+export interface Project {
   slug: string;
   name: string;
   tagline: string;
@@ -120,17 +120,17 @@ export interface Intervention {
   relatedSlugs?: string[];
 
   // "By problem" exploration axis — see lib/work-categories.ts.
-  // One intervention can sit in 2-3 categories.
+  // One project can sit in 2-3 categories.
   workCategories?: WorkCategory[];
 
-  // Strategic-plan priority codes this intervention advances (e.g.
+  // Strategic-plan priority codes this project advances (e.g.
   // ["A.1", "D.2"]). Codes must match a Priority in
   // lib/strategic-plan/catalog.ts; scripts/verify-portfolio.ts fails the
   // build on unknown codes. Ship empty; IIDS fills in over time.
   strategicPlanAlignment?: string[];
 }
 
-export const interventions: Intervention[] = [
+export const projects: Project[] = [
   // ============================================================
   // Office of the President
   // ============================================================
@@ -494,7 +494,7 @@ export const interventions: Intervention[] = [
     name: "OIT Data Modernization (Huron)",
     tagline: "Enterprise data modernization led by OIT with Huron consulting.",
     description:
-      "OIT is leading an institutional data modernization effort in partnership with Huron Consulting. The work is tracked here as part of the AI interventions inventory; detailed information will be added as OIT shares scope, timelines, and integration points with related IIDS-built work.",
+      "OIT is leading an institutional data modernization effort in partnership with Huron Consulting. The work is tracked here as part of the AI projects inventory; detailed information will be added as OIT shares scope, timelines, and integration points with related IIDS-built work.",
     homeUnits: ["Office of Information Technology"],
     operationalOwners: [],
     buildParticipants: ["OIT", "Huron Consulting"],
@@ -561,19 +561,19 @@ export function computePublicStage(status: ProjectStatus): PublicStage {
   }
 }
 
-export function getInterventionBySlug(slug: string): Intervention | undefined {
-  return interventions.find((i) => i.slug === slug);
+export function getProjectBySlug(slug: string): Project | undefined {
+  return projects.find((i) => i.slug === slug);
 }
 
-export function getRelatedInterventions(i: Intervention): Intervention[] {
+export function getRelatedProjects(i: Project): Project[] {
   if (!i.relatedSlugs) return [];
   return i.relatedSlugs
-    .map((slug) => getInterventionBySlug(slug))
-    .filter((x): x is Intervention => x !== undefined);
+    .map((slug) => getProjectBySlug(slug))
+    .filter((x): x is Project => x !== undefined);
 }
 
-export function getPubliclyVisible(): Intervention[] {
-  return interventions.filter((i) => i.visibility !== "Internal-only");
+export function getPubliclyVisible(): Project[] {
+  return projects.filter((i) => i.visibility !== "Internal-only");
 }
 
 // Group ordering for display — home-unit groups appear in this order.
@@ -591,10 +591,10 @@ export const HOME_UNIT_GROUP_ORDER = [
 ];
 
 export function groupByHomeUnit(
-  items: Intervention[]
-): { unit: string; items: Intervention[] }[] {
-  // An intervention is listed under its FIRST home unit for grouping.
-  const groups = new Map<string, Intervention[]>();
+  items: Project[]
+): { unit: string; items: Project[] }[] {
+  // An project is listed under its FIRST home unit for grouping.
+  const groups = new Map<string, Project[]>();
   for (const i of items) {
     const primary = i.homeUnits[0] || "Unclassified";
     const existing = groups.get(primary) || [];

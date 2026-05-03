@@ -82,7 +82,7 @@ export default function PortfolioCard({
 
   const stage = publicStageFromStatus(app.status);
   // The operational chip is suppressed for `tracked` — the ladder
-  // doesn't apply to externally-owned interventions, so the primary
+  // doesn't apply to externally-owned projects, so the primary
   // stage chip carries the whole signal. (See ADR 0001.)
   const showOperationalChip =
     isProjectStatus(app.status) && app.status !== "tracked";

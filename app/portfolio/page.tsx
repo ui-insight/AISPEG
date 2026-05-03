@@ -126,7 +126,7 @@ export default async function PortfolioPage({
     ([status, count]) => ({ status, count })
   );
   // Category options follow the canonical taxonomy order from
-  // lib/work-categories.ts. Categories with zero tagged interventions
+  // lib/work-categories.ts. Categories with zero tagged projects
   // are dropped — no point offering an empty filter.
   const categoryOptions = WORK_CATEGORIES.filter((slug) =>
     categoryCounts.has(slug)
@@ -173,7 +173,7 @@ export default async function PortfolioPage({
           The Work
         </p>
         <h1 className="mt-2 text-3xl font-black tracking-tight text-brand-black">
-          AI Interventions for Operational Excellence
+          AI Projects for Operational Excellence
         </h1>
         <p className="mt-2 max-w-3xl text-gray-600">
           A growing inventory of AI-powered efforts across University of Idaho
@@ -184,11 +184,11 @@ export default async function PortfolioPage({
           <span className="font-medium text-ui-charcoal">
             operational owner
           </span>{" "}
-          whose work depends on the intervention — the people accountable for
+          whose work depends on the project — the people accountable for
           the outcome, not the code.
         </p>
         <p className="mt-3 text-sm text-gray-500">
-          {allApps.length} interventions visible
+          {allApps.length} projects visible
           {embargoedCount > 0 &&
             ` · ${embargoedCount} with deployment detail embargoed`}
           {blockerCount > 0 &&
@@ -223,7 +223,7 @@ export default async function PortfolioPage({
       {filtered.length === 0 && (
         <div className="rounded-xl border border-dashed border-gray-300 bg-white/50 p-8 text-center">
           <p className="text-sm text-gray-500">
-            No interventions match the current filters.{" "}
+            No projects match the current filters.{" "}
             <Link
               href="/portfolio"
               className="text-brand-black hover:underline"
@@ -253,7 +253,7 @@ export default async function PortfolioPage({
               <h2 className="text-xl font-black tracking-tight text-brand-black">{unit}</h2>
               <span className="text-sm text-ink-subtle">
                 {items.length}{" "}
-                {items.length === 1 ? "intervention" : "interventions"}
+                {items.length === 1 ? "project" : "projects"}
               </span>
             </div>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -268,7 +268,7 @@ export default async function PortfolioPage({
       {!selectedUnit && !selectedStage && !selectedStatus && !selectedCategory && !blockersOnly && sortMode === "default" && (
         <Callout eyebrow="How to read this inventory">
           <p className="text-sm leading-relaxed">
-            Interventions are grouped by{" "}
+            Projects are grouped by{" "}
             <strong>UI home unit</strong>. Each card shows the operational
             owner, current status, and any active blockers (with a counter
             of days since the block began). Tags signal relationships:{" "}
@@ -280,7 +280,7 @@ export default async function PortfolioPage({
             <span className="inline-block rounded-full border border-brand-clearwater/40 bg-brand-clearwater/10 px-2 py-0.5 text-xs font-medium text-brand-clearwater">
               Capability diffusion
             </span>{" "}
-            flags interventions where a non-IIDS UI unit is co-building;{" "}
+            flags projects where a non-IIDS UI unit is co-building;{" "}
             <span className="inline-block rounded-full border border-brand-huckleberry/30 bg-brand-huckleberry/10 px-2 py-0.5 text-xs font-medium text-brand-huckleberry">
               Tracked
             </span>{" "}
@@ -297,7 +297,7 @@ export default async function PortfolioPage({
           UI + Southern Utah University NSF GRANTED partnership producing
           open-source reference tools for research administration. Its
           projects — the UDM spec, prompt library, evaluation harness — are
-          reference material, not UI interventions.
+          reference material, not UI projects.
         </p>
         <p className="mt-2 text-sm">
           <Link
