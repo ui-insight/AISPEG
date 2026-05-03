@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ApplicationWithBlockers, Blocker } from "@/lib/work";
 import { blockerCategoryLabels, daysSince } from "@/lib/work";
 import { WORK_CATEGORY_LABELS } from "@/lib/work-categories";
+import { getPriority } from "@/lib/strategic-plan/catalog";
 import {
   OPERATIONAL_LABEL,
   PUBLIC_STAGE_CHIP,
@@ -165,6 +166,27 @@ export default function PortfolioCard({
         {app.workCategories.length > 3 && (
           <span className="rounded-full border border-hairline bg-surface-alt px-2 py-0.5 text-xs font-medium text-brand-black">
             +{app.workCategories.length - 3}
+          </span>
+        )}
+        {app.strategicPlanAlignment.slice(0, 3).map((code) => {
+          const priority = getPriority(code);
+          return (
+            <Link
+              key={code}
+              href={`/standards/strategic-plan/priorities/${code}`}
+              title={priority ? priority.text : undefined}
+              className="unstyled relative z-10 rounded-full border border-brand-clearwater/40 bg-brand-clearwater/10 px-2 py-0.5 font-mono text-xs font-semibold text-brand-clearwater hover:bg-brand-clearwater hover:text-white"
+            >
+              {code}
+            </Link>
+          );
+        })}
+        {app.strategicPlanAlignment.length > 3 && (
+          <span
+            className="rounded-full border border-brand-clearwater/40 bg-brand-clearwater/10 px-2 py-0.5 font-mono text-xs font-semibold text-brand-clearwater"
+            title={app.strategicPlanAlignment.slice(3).join(", ")}
+          >
+            +{app.strategicPlanAlignment.length - 3}
           </span>
         )}
       </div>

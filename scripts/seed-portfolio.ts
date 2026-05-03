@@ -293,6 +293,7 @@ async function seedIntervention(i: Intervention): Promise<{ id: string; blockers
        sensitivity, complexity, userbase, auth_level,
        integrations, data_sources, university_systems, output_types,
        work_categories,
+       strategic_plan_alignment,
        iids_sponsor, feature_complete, live_url_is_staging,
        pilot_cohort, production_scope, support_contact,
        sunset_date, replaced_by
@@ -312,9 +313,10 @@ async function seedIntervention(i: Intervention): Promise<{ id: string; blockers
        $29, $30, $31, $32,
        $33, $34, $35, $36,
        $37,
-       $38, $39, $40,
-       $41::jsonb, $42, $43,
-       $44, $45
+       $38,
+       $39, $40, $41,
+       $42::jsonb, $43, $44,
+       $45, $46
      )
      RETURNING id`,
     [
@@ -355,6 +357,7 @@ async function seedIntervention(i: Intervention): Promise<{ id: string; blockers
       wizard.university_systems,
       wizard.output_types,
       i.workCategories ?? [],
+      i.strategicPlanAlignment ?? [],
       i.iidsSponsor,
       i.featureComplete ?? null,
       i.liveUrlIsStaging ?? null,
