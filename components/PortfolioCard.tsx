@@ -5,23 +5,13 @@ import { WORK_CATEGORY_LABELS } from "@/lib/work-categories";
 import { getPriority } from "@/lib/strategic-plan/catalog";
 import {
   OPERATIONAL_LABEL,
+  OPERATIONAL_TITLE,
   PUBLIC_STAGE_CHIP,
   PUBLIC_STAGE_LABEL,
+  PUBLIC_STAGE_TITLE,
   isProjectStatus,
   publicStageFromStatus,
 } from "@/lib/lifecycle-display";
-
-const visibilityNote: Record<"public" | "embargoed" | "internal", string | null> = {
-  public: null,
-  embargoed: "Embargoed",
-  internal: "Internal",
-};
-
-const ai4raChip: Record<string, string | undefined> = {
-  Core: "AI4RA Core",
-  Adjacent: "AI4RA Adjacent",
-  Reference: "AI4RA Reference",
-};
 
 const severityStyles: Record<"low" | "medium" | "high", string> = {
   low: "border-gray-200 bg-gray-50 text-gray-700",
@@ -78,7 +68,6 @@ export default function PortfolioCard({
       : "";
 
   const liveHost = app.liveUrl ? hostnameOf(app.liveUrl) : null;
-  const ai4raLabel = ai4raChip[app.ai4raRelationship];
 
   const stage = publicStageFromStatus(app.status);
   // The operational chip is suppressed for `tracked` — the ladder
@@ -86,6 +75,13 @@ export default function PortfolioCard({
   // stage chip carries the whole signal. (See ADR 0001.)
   const showOperationalChip =
     isProjectStatus(app.status) && app.status !== "tracked";
+  const operationalStatus = isProjectStatus(app.status) ? app.status : null;
+
+  const isAi4ra =
+    app.ai4raRelationship === "Core" ||
+    app.ai4raRelationship === "Adjacent" ||
+    app.ai4raRelationship === "Reference";
+  const isCapabilityDiffusion = app.tags.includes("diffusion");
 
   return (
     <article className="group relative flex h-full flex-col rounded-xl border border-hairline bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
@@ -108,13 +104,17 @@ export default function PortfolioCard({
         </div>
         <div className="flex shrink-0 flex-col items-end gap-1">
           <span
+            title={PUBLIC_STAGE_TITLE[stage]}
             className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-semibold ${PUBLIC_STAGE_CHIP[stage]}`}
           >
             {PUBLIC_STAGE_LABEL[stage]}
           </span>
-          {showOperationalChip && (
-            <span className="inline-flex items-center rounded-full border border-hairline bg-surface-alt px-1.5 py-0.5 text-[10px] font-medium text-ink-muted">
-              {OPERATIONAL_LABEL[app.status as keyof typeof OPERATIONAL_LABEL]}
+          {showOperationalChip && operationalStatus && (
+            <span
+              title={OPERATIONAL_TITLE[operationalStatus]}
+              className="inline-flex items-center rounded-full border border-hairline bg-surface-alt px-1.5 py-0.5 text-[10px] font-medium text-ink-muted"
+            >
+              {OPERATIONAL_LABEL[operationalStatus]}
             </span>
           )}
         </div>
@@ -135,27 +135,23 @@ export default function PortfolioCard({
       )}
 
       <div className="mt-4 flex flex-wrap gap-1.5">
-        {ai4raLabel && (
-          <span className="rounded-full border border-brand-lupine/30 bg-brand-lupine/10 px-2 py-0.5 text-xs font-semibold text-brand-lupine">
-            {ai4raLabel}
+        {isAi4ra && (
+          <span
+            title={`Part of the NSF-funded UI+SUU AI4RA partnership · ${app.ai4raRelationship}`}
+            className="rounded-full border border-brand-lupine/30 bg-brand-lupine/10 px-2 py-0.5 text-xs font-semibold text-brand-lupine"
+          >
+            AI4RA
           </span>
         )}
-        {app.dualDestinyPlanned && (
-          <span className="rounded-full border border-gray-200 px-2 py-0.5 text-xs text-gray-600">
-            Dual destiny
-          </span>
-        )}
-        {app.tags.includes("diffusion") && (
-          <span className="rounded-full border border-brand-clearwater/40 bg-brand-clearwater/10 px-2 py-0.5 text-xs font-medium text-brand-clearwater">
+        {isCapabilityDiffusion && (
+          <span
+            title="A non-IIDS UI unit is co-building this project."
+            className="rounded-full border border-brand-clearwater/40 bg-brand-clearwater/10 px-2 py-0.5 text-xs font-medium text-brand-clearwater"
+          >
             Capability diffusion
           </span>
         )}
-        {app.externalDeployments.length > 0 && (
-          <span className="rounded-full border border-gray-200 px-2 py-0.5 text-xs text-gray-600">
-            Also at {app.externalDeployments.join(", ")}
-          </span>
-        )}
-        {app.workCategories.slice(0, 3).map((slug) => (
+        {app.workCategories.slice(0, 2).map((slug) => (
           <span
             key={slug}
             className="rounded-full border border-hairline bg-surface-alt px-2 py-0.5 text-xs font-medium text-brand-black"
@@ -163,9 +159,9 @@ export default function PortfolioCard({
             {WORK_CATEGORY_LABELS[slug].label}
           </span>
         ))}
-        {app.workCategories.length > 3 && (
+        {app.workCategories.length > 2 && (
           <span className="rounded-full border border-hairline bg-surface-alt px-2 py-0.5 text-xs font-medium text-brand-black">
-            +{app.workCategories.length - 3}
+            +{app.workCategories.length - 2}
           </span>
         )}
         {app.strategicPlanAlignment.slice(0, 3).map((code) => {
@@ -191,40 +187,8 @@ export default function PortfolioCard({
         )}
       </div>
 
-      <div className="mt-auto flex items-center gap-2 pt-4 text-xs text-gray-500">
-        {visibilityNote[app.visibilityTier] && (
-          <span className="inline-flex items-center gap-1 rounded border border-gray-200 px-1.5 py-0.5">
-            <svg
-              className="h-3 w-3"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-              />
-            </svg>
-            {visibilityNote[app.visibilityTier]}
-          </span>
-        )}
-        {app.institutionalReviewStatus === "Under OIT review" && (
-          <span className="font-medium text-amber-700">Under OIT review</span>
-        )}
-        {app.institutionalReviewStatus === "OIT-endorsed" && (
-          <span className="font-medium text-green-700">OIT-endorsed</span>
-        )}
-        {app.funding && (
-          <span className="truncate font-medium text-gray-600">
-            {app.funding}
-          </span>
-        )}
-      </div>
-
       {app.liveUrl && liveHost && (
-        <div className="mt-3 border-t border-gray-100 pt-3">
+        <div className="mt-auto border-t border-gray-100 pt-3">
           <a
             href={app.liveUrl}
             target="_blank"

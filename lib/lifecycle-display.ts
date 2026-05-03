@@ -60,6 +60,30 @@ export const OPERATIONAL_LABEL: Record<ProjectStatus, string> = {
   tracked: "Tracked",
 };
 
+// Tooltip-grade definitions for the colored chips on PortfolioCard. Each
+// string is short enough to read in a native `title` tooltip; together
+// they replace the bottom-of-page "How to read this inventory" callout.
+export const PUBLIC_STAGE_TITLE: Record<PublicStage, string> = {
+  exploring: "Exploring — idea or approval phase; not yet being built.",
+  building: "Building — actively being built or prototyped by IIDS.",
+  live: "Live — piloting, in production, or maintained.",
+  retired: "Retired — sunsetting or archived.",
+  tracked: "Tracked — in the inventory but not built by IIDS.",
+};
+
+export const OPERATIONAL_TITLE: Record<ProjectStatus, string> = {
+  idea: "Idea — proposal not yet evaluated.",
+  approved: "Approved — green-lit but not yet started.",
+  building: "Building — under active development.",
+  prototype: "Prototype — early build, not yet user-tested.",
+  piloting: "Piloting — limited user base validating the build.",
+  production: "Production — broadly deployed and in use.",
+  maintained: "Maintained — production with ongoing support.",
+  sunsetting: "Sunsetting — being phased out.",
+  archived: "Archived — fully retired.",
+  tracked: "Tracked — externally owned, in inventory only.",
+};
+
 // Inverse of computePublicStage — for the filter drill-in.
 // Lists the 1-N operational states that roll up into each public stage,
 // in approximate ladder order.

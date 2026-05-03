@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Callout } from "@/components/Callout";
 import PortfolioCard from "@/components/PortfolioCard";
 import PortfolioFilters from "@/components/PortfolioFilters";
 import {
@@ -318,31 +317,6 @@ export default async function PortfolioPage({
             </div>
           </section>
         ))}
-
-      {/* Context callout — only shown when no filters active and no sort */}
-      {!selectedUnit && !selectedStage && !selectedStatus && !selectedCategory && !blockersOnly && sortMode === "default" && (
-        <Callout eyebrow="How to read this inventory">
-          <p className="text-sm leading-relaxed">
-            Projects are grouped by{" "}
-            <strong>UI home unit</strong>. Each card shows the operational
-            owner, current status, and any active blockers (with a counter
-            of days since the block began). Tags signal relationships:{" "}
-            <span className="inline-block rounded-full border border-brand-lupine/30 bg-brand-lupine/10 px-2 py-0.5 text-xs font-medium text-brand-lupine">
-              AI4RA Core
-            </span>{" "}
-            means the work is part of the NSF-funded UI+SUU partnership and
-            has a dual open-source / UI-implementation identity;{" "}
-            <span className="inline-block rounded-full border border-brand-clearwater/40 bg-brand-clearwater/10 px-2 py-0.5 text-xs font-medium text-brand-clearwater">
-              Capability diffusion
-            </span>{" "}
-            flags projects where a non-IIDS UI unit is co-building;{" "}
-            <span className="inline-block rounded-full border border-brand-huckleberry/30 bg-brand-huckleberry/10 px-2 py-0.5 text-xs font-medium text-brand-huckleberry">
-              Tracked
-            </span>{" "}
-            means the work is in the inventory but is not built by IIDS.
-          </p>
-        </Callout>
-      )}
 
       {/* AI4RA pointer (always at bottom) */}
       <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
