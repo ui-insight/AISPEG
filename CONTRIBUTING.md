@@ -123,16 +123,124 @@ array. The shape is defined in the same file. Required fields include
     { name: "Pat Owner", title: "Director of Something" },
   ],
   buildParticipants: ["IIDS"],
-  status: "Piloting",        // Planned | Prototype | Piloting | Production | Tracked | Archived
-  visibility: "Public",      // Public | Partial | Internal-only
-  ai4raRelationship: "None", // None | Core | Adjacent
-  tags: ["diffusion"],       // optional
+  status: "Piloting",        // see "Status transitions" below
+  visibility: "Public",      // see "Visibility tier" below
+  ai4raRelationship: "None", // see "AI4RA relationship" below
+  tags: ["diffusion"],       // optional; see "Tag vocabulary" below
   // ...optional fields: funding, externalDeployments, links, etc.
 },
 ```
 
 The portfolio page automatically picks up the new entry, groups it under
 its home unit, and filters by visibility tier.
+
+### IIDS curator decision guidance
+
+The portfolio is the institution's representation of itself; keeping it
+honest is more important than keeping it tidy. The rules below codify
+the editorial decisions that shape what shows up where.
+
+#### Visibility tier
+
+- **`Public`** — default for anything UI is OK to talk about externally.
+  Owner-named, status-named, links visible. Use this when external
+  comms have aligned and the deployment is something we'd cite in a
+  brief.
+- **`Partial`** — UI deployment exists but specific operational details
+  (pilot scope, participant identities, configuration) are embargoed.
+  The intervention shows on `/portfolio` with a *"deployment details
+  embargoed"* notice. Use when the underlying work is sensitive, in
+  negotiation, or pending public communications.
+- **`Internal-only`** — not visible on public `/portfolio` at all; only
+  on `/internal` (auth-gated). Use when even the existence of the work
+  shouldn't appear publicly yet.
+
+**When in doubt:** start at `Partial` and revise to `Public` once
+external comms align. Do not start at `Internal-only` unless the
+existence of the work is itself sensitive.
+
+#### Status transitions
+
+| Status | Meaning | When to set it |
+|---|---|---|
+| `Planned` | Committed-to but not started | Ownership and home unit assigned, scope discussed, no code yet |
+| `Prototype` | Built but not in operational use | Functional artifact exists; not yet validated by a real user in real work |
+| `Piloting` | In limited operational use | A bounded group of real users is using it for real work; learning phase |
+| `Production` | Routine institutional use | The operational owner depends on it for day-to-day work and would push back if it went away |
+| `Tracked` | Not built by IIDS | In the inventory because IIDS coordinates around it; partner-unit-led |
+| `Archived` | Decommissioned | Excluded from active counts; retained for historical record |
+
+**The bar for `Piloting` → `Production`**: the operational owner would
+escalate if the tool stopped working tomorrow.
+
+**The bar for `Tracked`**: IIDS is aware of the work, the home unit
+owns it, IIDS may have advised but did not build. Always pair with
+`buildParticipants` that does *not* list IIDS.
+
+#### `homeUnits` vs `buildParticipants`
+
+- **`homeUnits`** — the UI organizational unit(s) whose operations the
+  intervention serves. *Whose work depends on this.* Always at least
+  one entry. Multiple entries when an intervention serves more than
+  one unit (rare).
+- **`buildParticipants`** — who actually built (or builds) the thing.
+  Almost always includes `"IIDS"` for IIDS-built work; lists
+  partner-unit teams for co-built work. For partner-unit-led `Tracked`
+  work, may not include IIDS at all.
+- **Example:** UCM Daily Register — `homeUnits:
+  ["University Communications and Marketing"]`, `buildParticipants:
+  ["UCM"]`, `status: "Tracked"`. IIDS coordinates; UCM owns and builds.
+
+#### AI4RA relationship
+
+- **`Core`** — *dual-destiny* project: an AI4RA open-source release
+  maintained for the partnership AND a UI deployment in the
+  institutional portfolio (Vandalizer, OpenERA, MindRouter,
+  ProcessMapping). Pair with `dualDestinyPlanned: true` if the
+  OSS+UI plan is on file.
+- **`Adjacent`** — related to AI4RA aims but not formally part of the
+  partnership.
+- **`Reference`** — the UI deployment consumes an AI4RA spec or tool
+  but isn't itself dual-destiny.
+- **`UI-parallel`** — UI work running alongside AI4RA work.
+- **`None`** — no AI4RA connection. Default.
+
+#### Tag vocabulary
+
+`tags` is currently a free `string[]` used for situational flags. The
+known active values:
+
+- **`"diffusion"`** — the intervention is a *capability diffusion*
+  case: a non-IIDS UI unit is co-building, not just consuming. Renders
+  the *"Capability diffusion"* chip on `/portfolio`.
+
+That's it for the active tag vocabulary today. Once the *"By problem"*
+exploration axis ships (epic [#154](https://github.com/ui-insight/AISPEG/issues/154)),
+category tagging migrates to a typed `workCategories` field;
+`tags` retains its current ad-hoc usage for situational flags only.
+**Don't invent new ad-hoc tags** — flag a need in [#154](https://github.com/ui-insight/AISPEG/issues/154)
+or open a new issue.
+
+#### Freshness expectations
+
+The portfolio is only useful if it's current. The rules:
+
+- **At commit time** — when an intervention's *status*, *operational
+  owner*, *home unit*, or *scope* changes in real life, update
+  `lib/portfolio.ts` in the same week. The git log is the audit
+  trail.
+- **At least quarterly** — IIDS reviews the full inventory and
+  confirms each entry is still accurate. Stale entries get a status
+  update or move to `Archived`. (A scheduled agent or a calendar
+  reminder is fine; either way, there is a recurring eye on this.)
+- **For partner-unit `Tracked` work** — confirm with the named
+  operational owner annually that the entry is still current. The
+  named-owner discipline is what makes the *"every claim names a
+  human"* design principle real.
+
+If a change to one of these fields would meaningfully change how a
+Provost reads the portfolio, prefer to make the change *before*
+external communications go out, not after.
 
 ### Adding a Standards ledger entry
 
@@ -163,16 +271,25 @@ artifact:
 
 ### Adding a new top-level route
 
-The IA is intentionally narrow (4 primary surfaces). Adding a new top-level
-route should be a deliberate choice — discuss in `REFACTOR.md` first.
+The IA is intentionally narrow (4 primary surfaces today, 5 once the
+*"By problem"* explore axis ships per [#154](https://github.com/ui-insight/AISPEG/issues/154)).
+Adding a new top-level route should be a deliberate choice — discuss in
+`REFACTOR.md` or open an issue first.
 
 If approved:
 
 1. Create `app/<route>/page.tsx`.
 2. Add the entry to `primaryItems` (or `footerItems`) in
-   `components/Sidebar.tsx`. Choose an icon from the existing set:
-   `squares`, `grid`, `shield`, `compass`, `document`, `book`.
-3. Verify with `npm run build`.
+   `components/Sidebar.tsx`. Existing icons (each used by exactly one
+   entry): `house` (Home), `grid` (The Work), `compass` (Submit a
+   Project), `shield` (Standards), `document` (Reports), `book` (About).
+   **Each sidebar entry uses a distinct icon** — adding a new entry
+   means adding a new glyph to `NavIcon`, not reusing an existing one.
+3. Apply the page-heading-and-eyebrow rule documented in
+   `.impeccable.md` — the H1 must thread the sidebar label (Form A: H1
+   matches verbatim; Form B: declarative H1 with the sidebar label as
+   the eyebrow).
+4. Verify with `npm run build`.
 
 ### Adding to the documentation surface
 
@@ -279,43 +396,59 @@ Give your agent the strategic context first. A good opening:
 
 ## Style guide
 
+For the full design context (audience, brand personality, anti-references,
+type system rationale), see [`.impeccable.md`](./.impeccable.md). The page
+heading + eyebrow rule and the eyebrow-color-by-surface rule both live
+there and are mandatory reading before any visual change.
+
 ### Brand colors (canonical)
 
 Defined in `app/globals.css` via `@theme {}`. Use the Tailwind tokens, not
-raw hex.
+raw hex. The site has been migrating from `ui-*` legacy aliases to
+`brand-*` tokens; **prefer `brand-*` in new code**. Legacy aliases still
+work and are retained for the existing surfaces.
 
 | Token | Hex | Usage |
 |---|---|---|
-| `ui-gold` (Pride Gold) | `#F1B300` | Emphasis, focus outlines, highlight fills |
-| `ui-gold-dark` | (computed) | Text on light backgrounds |
-| `ui-charcoal` (Brand Black) | `#191919` | Headings, sidebar, dark blocks |
-| `brand-huckleberry` | `#261882` | Section accents, status chips |
-| `brand-lupine` | `#5E48FF` | Variety in deck slides |
-| `brand-clearwater` | `#008080` | Link underlines |
+| `brand-gold` (Pride Gold) | `#F1B300` | Primary CTA buttons, focus outlines, sidebar active state. **Rare** — at most one focal moment per surface. |
+| `brand-gold-dark` | `#C58F00` | Hover state on the gold CTA. |
+| `brand-black` (Brand Black) | `#191919` | Body ink, headings (weight 900 enforced by `@layer base`), dark surfaces, sidebar background. |
+| `brand-silver` | `#808080` | All eyebrows (uppercase tracking-wider labels above H1/H2). |
+| `ink-muted` | `#595959` | Secondary body text — paragraphs subordinate to the main claim. |
+| `ink-subtle` | `#8a8a8a` | Meta / captions / hairline-importance text. |
+| `hairline` | `#E5E5E2` | Card borders, list dividers. |
+| `surface-alt` | `#FAFAF8` | Subtle off-white for chips, callouts, neutral panels. |
+| `brand-huckleberry` | `#261882` | Section accents, *"Tracked"* status chips. |
+| `brand-lupine` | `#5E48FF` | AI4RA chips. |
+| `brand-clearwater` | `#008080` | Link underline color, *"Capability diffusion"* / activity-report kind chips, domain-accent eyebrows on data-model pages. |
 
-Pride Gold is **rare**. Don't apply it to every card. Reserve for emphasis,
-active focus, and the highlight behind one or two emphasis words on a page.
+**Pride Gold is rare.** Never apply it as wallpaper (e.g., gold border on
+every card). Reserve for primary CTAs, active focus, sidebar active state,
+the highlight behind one or two emphasis words on a page, and the rare
+on-dark hero accent.
 
 ### Typography
 
 Single family: **Public Sans**, variable weight 100–900 (loaded via
-`next/font/google` in `app/layout.tsx`). Use weight contrast for hierarchy:
+`next/font/google` in `app/layout.tsx`). Use weight contrast for
+hierarchy:
 
-- Display headings: weight 900
+- Display headings: weight 900 (auto-applied to `main h1`–`h4` via
+  `@layer base` in `globals.css`)
 - Body: weight 400
 - Emphasis: weight 600–700
-- Italic axis available for owner-name treatments and emphasis
+- Italic axis: used sparingly for owner names and emphasis
 
 No display serif pairing. The brand is sans-only.
 
 ### Component conventions
 
-- Cards: `rounded-xl border border-gray-200 bg-white p-6 shadow-sm`
-- Hover: `transition-all hover:border-ui-gold/40 hover:shadow-md`
-- Status chips: `rounded-full px-2.5 py-0.5 text-xs font-medium`
-- Section spacing on pages: `space-y-10` or `space-y-12`
-- Headings: `h1` = `text-3xl font-black tracking-tight text-ui-charcoal`,
-  `h2` = `text-xl font-bold text-ui-charcoal`
+- **Cards**: `rounded-xl border border-hairline bg-white p-{5,6,8} shadow-sm`. Default `p-6`; `p-5` for secondary tiles, `p-8` for the focal hero tile.
+- **Card hover**: `transition-shadow hover:shadow-md`. **Do not** apply gold border on hover (this pattern was swept out in PR #124). **Do not** change H2 color on hover — the whole card is the click target; the title doesn't need to "look like a link."
+- **Status chips**: `rounded-full px-2.5 py-0.5 text-xs font-medium`. Default neutral: `bg-surface-alt border border-hairline text-brand-black`. Use brand secondary colors only for category accents that carry meaning.
+- **Eyebrows** (uppercase labels above headings): `text-xs font-medium uppercase tracking-wider`. Color varies by surface — `brand-silver` on light, `brand-black/70` on saturated, `white/60` on dark. Documented in `.impeccable.md`.
+- **Section spacing on pages**: `space-y-10` (default).
+- **Headings**: weight 900 is enforced globally for `main h1`–`h4` via `@layer base`. Do not redeclare `font-black` on every heading; do explicitly set the size class (e.g., `text-4xl`, `text-2xl`). Page H1 is typically `text-3xl font-black leading-tight sm:text-4xl`. Card H2 is `text-2xl`. The component-level `font-black` on the page H1 is intentional belt-and-suspenders against the cascade getting refactored out.
 
 ### File naming
 
