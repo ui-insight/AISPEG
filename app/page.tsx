@@ -24,6 +24,10 @@ export default async function Home() {
         <h1 className="mt-2 text-4xl leading-tight">
           AI work at the University of Idaho
         </h1>
+        <p className="mt-4 max-w-3xl text-base leading-relaxed text-ink-muted">
+          Coordinated by IIDS, this site tracks the AI work running across UI
+          units &mdash; what&apos;s built, who built it, and what&apos;s next.
+        </p>
         <p className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-muted">
           <span>
             <span className="font-semibold text-brand-black">
@@ -35,23 +39,19 @@ export default async function Home() {
             </span>{" "}
             home units
           </span>
-          <span aria-hidden className="text-brand-silver">
-            ·
-          </span>
           {mostRecent && (
             <>
+              <span aria-hidden className="text-brand-silver">
+                ·
+              </span>
               <span>
                 most recent update{" "}
                 <span className="font-semibold text-brand-black">
                   {mostRecent}
                 </span>
               </span>
-              <span aria-hidden className="text-brand-silver">
-                ·
-              </span>
             </>
           )}
-          <span>coordinated by IIDS</span>
         </p>
       </section>
 
@@ -85,64 +85,20 @@ export default async function Home() {
               </li>
             ))}
           </ul>
-          <p className="mt-6 text-sm font-medium text-brand-black group-hover:underline">
-            Explore the portfolio &rarr;
-          </p>
+          <div className="mt-6">
+            <span className="inline-flex items-center gap-2 rounded-lg bg-brand-gold px-5 py-2.5 text-sm font-bold text-brand-black transition-colors group-hover:bg-brand-gold-dark">
+              Explore the portfolio &rarr;
+            </span>
+          </div>
         </Link>
       </section>
 
-      <section>
-        <Link
-          href="/builder-guide"
-          className="group block rounded-xl bg-brand-gold p-8 transition-colors hover:bg-brand-gold-dark"
-        >
-          <p className="text-xs font-medium uppercase tracking-wider text-brand-black/70">
-            Have an AI project idea?
-          </p>
-          <h2 className="mt-2 text-2xl text-brand-black">Submit a Project</h2>
-          <p className="mt-2 max-w-2xl text-base leading-relaxed text-brand-black/80">
-            A short assessment scopes your idea, recommends a path, and connects
-            you to a named owner at IIDS.
-          </p>
-          <p className="mt-4 text-sm font-bold uppercase tracking-wider text-brand-black group-hover:underline">
-            Start the assessment &rarr;
-          </p>
+      <p className="text-sm text-ink-muted">
+        Have a project idea?{" "}
+        <Link href="/builder-guide" className="font-medium text-brand-black">
+          Start the assessment &rarr;
         </Link>
-      </section>
-
-      <section className="grid gap-4 md:grid-cols-2">
-        <Link
-          href="/reports"
-          className="group block rounded-xl border border-hairline bg-white p-5 transition-shadow hover:shadow-md"
-        >
-          <p className="text-xs font-medium uppercase tracking-wider text-brand-silver">
-            Reports
-          </p>
-          <h3 className="mt-1 text-base">Activity reports and presentations</h3>
-          <p className="mt-1 text-sm text-ink-muted">
-            Time-stamped briefs and executive communications.
-          </p>
-          <p className="mt-3 text-sm font-medium text-brand-black group-hover:underline">
-            Browse &rarr;
-          </p>
-        </Link>
-        <Link
-          href="/standards"
-          className="group block rounded-xl border border-hairline bg-white p-5 transition-shadow hover:shadow-md"
-        >
-          <p className="text-xs font-medium uppercase tracking-wider text-brand-silver">
-            Standards
-          </p>
-          <h3 className="mt-1 text-base">Standards documentation</h3>
-          <p className="mt-1 text-sm text-ink-muted">
-            Software-development and user-experience standards governing AI
-            work at UI.
-          </p>
-          <p className="mt-3 text-sm font-medium text-brand-black group-hover:underline">
-            View &rarr;
-          </p>
-        </Link>
-      </section>
+      </p>
     </div>
   );
 }
