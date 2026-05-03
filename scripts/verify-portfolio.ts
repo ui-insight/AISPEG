@@ -1,7 +1,7 @@
 // scripts/verify-portfolio.ts
 //
 // Runs the lifecycle-taxonomy verifier (lib/portfolio-verification.ts)
-// against the publicly-visible interventions and exits non-zero with a
+// against the publicly-visible projects and exits non-zero with a
 // formatted report if any errors are found.
 //
 // Warnings (e.g. "lastCommitDate unknown — cannot verify cadence") do
@@ -14,7 +14,7 @@
 // CI:
 //   wired into .github/workflows/ci.yml as a separate job.
 
-import { interventions } from "../lib/portfolio.js";
+import { projects } from "../lib/portfolio.js";
 import { verifyAll, type VerificationProblem } from "../lib/portfolio-verification.js";
 import { priorities } from "../lib/strategic-plan/catalog.js";
 
@@ -26,7 +26,7 @@ function format(p: VerificationProblem): string {
 function verifyStrategicPlanAlignment(): VerificationProblem[] {
   const validCodes = new Set(priorities.map((p) => p.code));
   const problems: VerificationProblem[] = [];
-  for (const i of interventions) {
+  for (const i of projects) {
     const codes = i.strategicPlanAlignment ?? [];
     for (const code of codes) {
       if (!validCodes.has(code)) {
@@ -44,13 +44,13 @@ function verifyStrategicPlanAlignment(): VerificationProblem[] {
 }
 
 function main(): void {
-  const lifecycleProblems = verifyAll(interventions);
+  const lifecycleProblems = verifyAll(projects);
   const stratPlanProblems = verifyStrategicPlanAlignment();
   const all = [...lifecycleProblems, ...stratPlanProblems];
   const errors = all.filter((p) => p.severity === "error");
   const warnings = all.filter((p) => p.severity === "warning");
 
-  console.log(`Verifying ${interventions.length} interventions against ADR 0001 rules and strategic-plan alignment ...\n`);
+  console.log(`Verifying ${projects.length} projects against ADR 0001 rules and strategic-plan alignment ...\n`);
 
   if (warnings.length > 0) {
     console.log(`Warnings (${warnings.length}):`);
@@ -66,7 +66,7 @@ function main(): void {
   }
 
   console.log(
-    `Verification PASSED — ${interventions.length} interventions, 0 errors, ${warnings.length} warning(s).`
+    `Verification PASSED — ${projects.length} projects, 0 errors, ${warnings.length} warning(s).`
   );
 }
 

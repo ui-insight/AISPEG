@@ -1,6 +1,6 @@
 // scripts/seed-portfolio.ts
 //
-// Ports the typed `interventions` array from lib/portfolio.ts into the
+// Ports the typed `projects` array from lib/portfolio.ts into the
 // `applications` table, and auto-derives initial blocker rows from the
 // existing portfolio metadata.
 //
@@ -21,8 +21,8 @@
 
 import { Pool } from "pg";
 import {
-  interventions,
-  type Intervention,
+  projects,
+  type Project,
   type Visibility,
 } from "../lib/portfolio.js";
 
@@ -223,8 +223,8 @@ function visibilityTier(v: Visibility): "public" | "embargoed" | "internal" {
 }
 
 // Portfolio entries don't carry a tier; default to 2 (Standard Web App)
-// which fits most IIDS-built interventions. Tracked entries get tier 1.
-function inferTier(i: Intervention): number {
+// which fits most IIDS-built projects. Tracked entries get tier 1.
+function inferTier(i: Project): number {
   if (i.trackingOnly) return 1;
   return 2;
 }
@@ -238,7 +238,7 @@ interface BlockerSeed {
   severity: "low" | "medium" | "high";
 }
 
-function deriveBlockers(i: Intervention): BlockerSeed[] {
+function deriveBlockers(i: Project): BlockerSeed[] {
   const blockers: BlockerSeed[] = [];
 
   if (i.visibility === "Partial") {
@@ -270,7 +270,7 @@ function deriveBlockers(i: Intervention): BlockerSeed[] {
   return blockers;
 }
 
-async function seedIntervention(i: Intervention): Promise<{ id: string; blockers: number }> {
+async function seedProject(i: Project): Promise<{ id: string; blockers: number }> {
   const tier = inferTier(i);
   const visibility_tier = visibilityTier(i.visibility);
   const home_unit_primary = i.homeUnits[0] ?? null;
@@ -390,7 +390,7 @@ async function main(): Promise<void> {
   console.log(
     `Connecting to ${databaseUrl?.replace(/\/\/[^@]+@/, "//***@")}`
   );
-  console.log(`Seeding ${interventions.length} interventions from lib/portfolio.ts ...\n`);
+  console.log(`Seeding ${projects.length} projects from lib/portfolio.ts ...\n`);
 
   // TRUNCATE in a transaction. CASCADE drops dependent blockers automatically;
   // similarity_matches FK uses ON DELETE CASCADE so those go too. Submissions
@@ -400,8 +400,8 @@ async function main(): Promise<void> {
     await pool.query("TRUNCATE TABLE applications RESTART IDENTITY CASCADE");
 
     let totalBlockers = 0;
-    for (const i of interventions) {
-      const result = await seedIntervention(i);
+    for (const i of projects) {
+      const result = await seedProject(i);
       const blockerNote = result.blockers > 0 ? ` [+${result.blockers} blocker${result.blockers > 1 ? "s" : ""}]` : "";
       console.log(`  ↳ ${i.slug.padEnd(30)} ${i.name}${blockerNote}`);
       totalBlockers += result.blockers;
@@ -409,7 +409,7 @@ async function main(): Promise<void> {
 
     await pool.query("COMMIT");
     console.log(
-      `\nSeeded ${interventions.length} interventions and ${totalBlockers} auto-derived blocker(s).`
+      `\nSeeded ${projects.length} projects and ${totalBlockers} auto-derived blocker(s).`
     );
   } catch (err) {
     await pool.query("ROLLBACK");

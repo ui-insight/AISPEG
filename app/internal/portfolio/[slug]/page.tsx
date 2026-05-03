@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import InterventionDetail from "@/components/InterventionDetail";
+import ProjectDetail from "@/components/ProjectDetail";
 import {
   getApplicationBySlug,
   getRelatedApplications,
@@ -21,7 +21,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function InternalInterventionDetailPage({
+export default async function InternalProjectDetailPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
@@ -33,7 +33,7 @@ export default async function InternalInterventionDetailPage({
   const related = await getRelatedApplications(app, { audience: "internal" });
 
   return (
-    <InterventionDetail
+    <ProjectDetail
       app={app}
       related={related}
       audience="internal"

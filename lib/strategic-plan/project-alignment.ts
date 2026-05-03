@@ -8,19 +8,19 @@
 // retires, swap this to read from Postgres via lib/work.ts.
 // ============================================================
 
-import { interventions, type Intervention } from "../portfolio";
+import { projects, type Project } from "../portfolio";
 
 export interface AlignedProject {
   slug: string;
   name: string;
   tagline: string;
-  status: Intervention["status"];
+  status: Project["status"];
   homeUnits: string[];
   ownerNames: string[];
-  visibility: Intervention["visibility"];
+  visibility: Project["visibility"];
 }
 
-function toAlignedProject(i: Intervention): AlignedProject {
+function toAlignedProject(i: Project): AlignedProject {
   return {
     slug: i.slug,
     name: i.name,
@@ -37,7 +37,7 @@ function toAlignedProject(i: Intervention): AlignedProject {
 // readers. Embargoed ("Partial") entries are included — same rule
 // PortfolioCard / lib/work.ts uses for the public audience.
 export function getProjectsForPriority(code: string): AlignedProject[] {
-  return interventions
+  return projects
     .filter(
       (i) =>
         i.visibility !== "Internal-only" &&

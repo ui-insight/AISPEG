@@ -4,16 +4,16 @@ import { artifacts, sortedArtifacts } from "@/lib/artifacts";
 import { summary as standardsSummary } from "@/lib/standards-watch";
 import { PUBLIC_STAGE_LABEL, stageBreakdown } from "@/lib/lifecycle-display";
 
-// Editorial pick of three featured interventions for the landing's
+// Editorial pick of three featured projects for the landing's
 // Work tile. Curated by IIDS — rotate when the work changes. There is
-// no automated freshness signal on Intervention yet (no lastUpdated
+// no automated freshness signal on Project yet (no lastUpdated
 // field; tracked for a future schema extension), so framing must stay
 // editorial: the order is curator's choice, not "most recent."
 const FEATURED_PICKS = ["stratplan", "audit-dashboard", "vandalizer"];
 
 export default async function Home() {
   const all = getPubliclyVisible();
-  const interventionCount = all.length;
+  const projectCount = all.length;
   const homeUnitCount = new Set(all.flatMap((i) => i.homeUnits)).size;
   const mostRecent = sortedArtifacts()[0]?.dateLabel;
   const stageStats = stageBreakdown(all);
@@ -34,15 +34,15 @@ export default async function Home() {
         </h1>
         <p className="mt-4 max-w-3xl text-base leading-relaxed text-ink-muted">
           Coordinated by the Institute for Interdisciplinary Data Sciences
-          (IIDS), this site tracks AI interventions &mdash; the discrete
+          (IIDS), this site tracks AI projects &mdash; the discrete
           builds, pilots, and integrations &mdash; running across UI units.
         </p>
         <p className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-1 text-sm text-ink-muted">
           <span>
             <span className="font-bold tabular-nums text-brand-black">
-              {interventionCount}
+              {projectCount}
             </span>{" "}
-            interventions across{" "}
+            projects across{" "}
             <span className="font-bold tabular-nums text-brand-black">
               {homeUnitCount}
             </span>{" "}
@@ -90,7 +90,7 @@ export default async function Home() {
             The Work
           </p>
           <h2 className="mt-2 text-2xl font-semibold">
-            {interventionCount} AI interventions across UI units
+            {projectCount} AI projects across UI units
           </h2>
           <p className="mt-2 text-sm text-ink-muted">
             Projects, their operational owners, and current status.

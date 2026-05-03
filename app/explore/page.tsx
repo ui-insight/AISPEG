@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getPubliclyVisible, type Intervention } from "@/lib/portfolio";
+import { getPubliclyVisible, type Project } from "@/lib/portfolio";
 import {
   WORK_CATEGORIES,
   WORK_CATEGORY_LABELS,
@@ -14,7 +14,7 @@ import type { PublicStage } from "@/lib/portfolio";
 export const metadata = {
   title: "Explore | UI AI Initiative",
   description:
-    "Browse AI interventions at the University of Idaho by the kind of operational work they help with.",
+    "Browse AI projects at the University of Idaho by the kind of operational work they help with.",
 };
 
 interface CategoryTile {
@@ -28,9 +28,9 @@ interface CategoryTile {
   stageBreakdown: Array<{ stage: PublicStage; count: number }>;
 }
 
-function buildTiles(interventions: Intervention[]): CategoryTile[] {
+function buildTiles(projects: Project[]): CategoryTile[] {
   return WORK_CATEGORIES.map((slug) => {
-    const matches = interventions.filter((i) =>
+    const matches = projects.filter((i) =>
       (i.workCategories ?? []).includes(slug)
     );
     const stages = stageBreakdown(matches);
@@ -46,8 +46,8 @@ function buildTiles(interventions: Intervention[]): CategoryTile[] {
 }
 
 export default function ExplorePage() {
-  const interventions = getPubliclyVisible();
-  const tiles = buildTiles(interventions);
+  const projects = getPubliclyVisible();
+  const tiles = buildTiles(projects);
 
   return (
     <div className="space-y-10">
@@ -56,12 +56,12 @@ export default function ExplorePage() {
           Explore
         </p>
         <h1 className="mt-2 text-3xl font-black leading-tight sm:text-4xl">
-          Browse interventions by the kind of work they help with
+          Browse projects by the kind of work they help with
         </h1>
         <p className="mt-4 max-w-3xl text-base leading-relaxed text-ink-muted">
           Find AI work tackling problems like yours &mdash; documents,
           processes, coordination, reconciliation, and more. Each tile
-          counts the interventions tagged with that kind of work and links
+          counts the projects tagged with that kind of work and links
           straight into a filtered view of{" "}
           <Link href="/portfolio" className="font-medium text-brand-black hover:underline">
             The Work
@@ -98,7 +98,7 @@ function CategoryTileCard({ tile }: { tile: CategoryTile }) {
           {tile.description}
         </p>
         <p className="mt-4 text-xs font-medium text-ink-muted">
-          No interventions tagged here yet
+          No projects tagged here yet
         </p>
       </div>
     );
@@ -119,7 +119,7 @@ function CategoryTileCard({ tile }: { tile: CategoryTile }) {
         <span className="font-bold tabular-nums text-brand-black">
           {tile.count}
         </span>{" "}
-        intervention{tile.count === 1 ? "" : "s"}
+        project{tile.count === 1 ? "" : "s"}
         {tile.representatives.length > 0 && (
           <>
             {" "}

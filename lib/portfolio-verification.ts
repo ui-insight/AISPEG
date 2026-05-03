@@ -6,17 +6,17 @@
 //
 // Each operational status has a measurable rule; this module checks each
 // claim against its rule and returns a list of problems. CI runs
-// `npm run verify:portfolio` to fail the build when an intervention's
+// `npm run verify:portfolio` to fail the build when an project's
 // claimed status is inconsistent with its data.
 //
-// `lastCommitDate` for each repoUrl-bearing intervention is derived
+// `lastCommitDate` for each repoUrl-bearing project is derived
 // out-of-band by `scripts/refresh-commit-dates.ts` and committed to
 // `lib/portfolio-meta.ts`. If portfolio-meta is stale or missing,
 // commit-cadence rules degrade to a warning rather than a hard failure
 // (see ADR — "skip gracefully").
 // ============================================================
 
-import type { Intervention, ProjectStatus } from "./portfolio";
+import type { Project, ProjectStatus } from "./portfolio";
 import { portfolioMeta } from "./portfolio-meta";
 
 export interface VerificationProblem {
@@ -27,7 +27,7 @@ export interface VerificationProblem {
   severity: "error" | "warning";
 }
 
-type Verifier = (i: Intervention) => VerificationProblem[];
+type Verifier = (i: Project) => VerificationProblem[];
 
 // ────────────────────────────────────────────────────────────
 // Helpers
@@ -45,7 +45,7 @@ function lastCommitDaysAgo(slug: string): number | null {
   return daysSince(meta.lastCommitDate);
 }
 
-function hasPubliclyAccessibleArtifact(i: Intervention): boolean {
+function hasPubliclyAccessibleArtifact(i: Project): boolean {
   // ADR sub-decision #4: production-grade accessibility is satisfied by
   // either a liveUrl OR a public repoUrl (the repo IS the deliverable
   // for infrastructure / scaffolds / self-hostable appliances).
@@ -55,7 +55,7 @@ function hasPubliclyAccessibleArtifact(i: Intervention): boolean {
 }
 
 function problem(
-  i: Intervention,
+  i: Project,
   rule: string,
   message: string,
   severity: "error" | "warning" = "error"
@@ -303,8 +303,8 @@ const verifyUniversal: Verifier = (i) => {
     problems.push(
       problem(
         i,
-        "every intervention requires an iidsSponsor",
-        "iidsSponsor is empty — every entry needs a named IIDS sponsor (the person at IIDS who owns awareness of this intervention)."
+        "every project requires an iidsSponsor",
+        "iidsSponsor is empty — every entry needs a named IIDS sponsor (the person at IIDS who owns awareness of this project)."
       )
     );
   }
@@ -328,10 +328,10 @@ const verifiers: Record<ProjectStatus, Verifier> = {
 // Public API
 // ────────────────────────────────────────────────────────────
 
-export function verifyIntervention(i: Intervention): VerificationProblem[] {
+export function verifyProject(i: Project): VerificationProblem[] {
   return [...verifyUniversal(i), ...verifiers[i.status](i)];
 }
 
-export function verifyAll(interventions: Intervention[]): VerificationProblem[] {
-  return interventions.flatMap(verifyIntervention);
+export function verifyAll(projects: Project[]): VerificationProblem[] {
+  return projects.flatMap(verifyProject);
 }
