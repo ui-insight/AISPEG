@@ -14,7 +14,9 @@
     "start": "next start",
     "lint": "eslint .",
     "migrate": "tsx --env-file=.env.local scripts/migrate.ts",
-    "seed:portfolio": "tsx --env-file=.env.local scripts/seed-portfolio.ts"
+    "seed:portfolio": "tsx --env-file=.env.local scripts/seed-portfolio.ts",
+    "verify:portfolio": "tsx scripts/verify-portfolio.ts",
+    "refresh:commit-dates": "tsx scripts/refresh-commit-dates.ts"
   },
   "dependencies": {
     "next": "^16.1.6",

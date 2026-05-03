@@ -96,16 +96,6 @@ const wizardShapeBySlug: Record<string, WizardShape> = {
     university_systems: ["CAS / SSO"],
     output_types: ["Generates documents", "Sends notifications"],
   },
-  "embargoed-osp": {
-    sensitivity: ["Research / IRB", "PII"],
-    complexity: "Complex pipelines",
-    userbase: "My department",
-    auth_level: "Role-based access",
-    integrations: ["External SaaS APIs", "University APIs"],
-    data_sources: ["Custom / internal APIs"],
-    university_systems: ["CAS / SSO"],
-    output_types: ["Creates / modifies records"],
-  },
   vandalizer: {
     sensitivity: ["No sensitive data"],
     complexity: "Simple CRUD",
