@@ -104,7 +104,10 @@ export default async function PortfolioPage({
     <div className="space-y-10">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-black tracking-tight text-brand-black">
+        <p className="text-xs font-medium uppercase tracking-wider text-brand-silver">
+          The Work
+        </p>
+        <h1 className="mt-2 text-3xl font-black tracking-tight text-brand-black">
           AI Interventions for Operational Excellence
         </h1>
         <p className="mt-2 max-w-3xl text-gray-600">

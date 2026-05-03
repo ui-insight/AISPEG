@@ -9,7 +9,7 @@ export default function StandardsLayout({
     <div>
       <header className="mb-10 border-b border-gray-200">
         <p className="text-xs font-semibold uppercase tracking-wider text-brand-silver">
-          Institutional Standards
+          Standards
         </p>
         <div className="mt-4">
           <StandardsSubNav />
