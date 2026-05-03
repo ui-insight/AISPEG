@@ -10,6 +10,8 @@
 // mcp-ecfr, etc.) live on /ai4ra-ecosystem, not here.
 // ============================================================
 
+import type { WorkCategory } from "./work-categories";
+
 export type Visibility =
   | "Public"       // Everything about this entry can be shown publicly
   | "Partial"      // Entry acknowledged; UI deployment details embargoed
@@ -78,6 +80,10 @@ export interface Intervention {
   tags?: string[];
   trackingOnly?: boolean;
   relatedSlugs?: string[];
+
+  // "By problem" exploration axis — see lib/work-categories.ts.
+  // One intervention can sit in 2-3 categories.
+  workCategories?: WorkCategory[];
 }
 
 export const interventions: Intervention[] = [
@@ -104,6 +110,7 @@ export const interventions: Intervention[] = [
     operationalExcellenceOutcome:
       "Makes strategic execution visible. Surfaces under-served priorities, cross-unit synergies, and misalignment. Supports investment prioritization conversations.",
     tech: ["React 19", "TypeScript", "Tailwind v4", "FastAPI", "PostgreSQL"],
+    workCategories: ["executive-analytics"],
   },
 
   // ============================================================
@@ -129,6 +136,7 @@ export const interventions: Intervention[] = [
       "Closes the audit follow-through loop. Reduces risk of observations lingering past target dates. Gives leadership a living compliance-posture view.",
     tech: ["React 19", "FastAPI", "PostgreSQL 16", "MindRouter", "Qwen3"],
     relatedSlugs: ["mindrouter", "dgx-stack", "template-app"],
+    workCategories: ["documents", "reconciliation"],
   },
 
   // ============================================================
@@ -158,6 +166,7 @@ export const interventions: Intervention[] = [
       "Faster newsletter turnaround. Enforces AP + UI style consistently across issues. Reduces manual editorial burden per issue.",
     tech: ["React 19", "FastAPI", "SQLAlchemy 2.0", "MindRouter"],
     relatedSlugs: ["mindrouter"],
+    workCategories: ["documents", "process"],
   },
 
   // ============================================================
@@ -182,6 +191,7 @@ export const interventions: Intervention[] = [
     dualDestinyPlanned: true,
     operationalFunction: "Embargoed.",
     operationalExcellenceOutcome: "Embargoed.",
+    workCategories: ["research-admin"],
   },
   {
     slug: "vandalizer",
@@ -209,6 +219,7 @@ export const interventions: Intervention[] = [
       "Staff time savings on document extraction. Higher extraction accuracy. Reusable extraction workflows. Citation-backed Q&A over RA document collections.",
     tech: ["React 19", "Python 3.11+", "FastAPI", "Docker"],
     relatedSlugs: ["embargoed-osp", "mindrouter", "dgx-stack", "processmapping"],
+    workCategories: ["documents", "research-admin"],
   },
   {
     slug: "processmapping",
@@ -231,6 +242,7 @@ export const interventions: Intervention[] = [
       "Shared vocabulary and visibility for RA processes. Identifies process/tool coverage gaps. Requirements source for automation. Onboarding and training asset.",
     tech: ["React 19", "TypeScript", "Vite", "FastAPI", "Python 3.11+"],
     relatedSlugs: ["embargoed-osp", "vandalizer"],
+    workCategories: ["process", "research-admin"],
   },
 
   // ============================================================
@@ -259,6 +271,7 @@ export const interventions: Intervention[] = [
       "On-prem, UDM-aligned ERA system with shared data semantics across ORED tooling. Enables AI features (extraction, lookup, classification) on research-admin data without third-party data egress. Reference deployment for AI4RA partners.",
     tech: ["React", "TypeScript", "Tailwind CSS", "FastAPI", "SQLAlchemy 2.0", "PostgreSQL 16"],
     relatedSlugs: ["vandalizer", "processmapping", "embargoed-osp"],
+    workCategories: ["research-admin"],
   },
 
   // ============================================================
@@ -283,6 +296,7 @@ export const interventions: Intervention[] = [
       "Tracks federal Executive Orders, applicability to UI, required actions, deadlines, responsible parties, and current posture.",
     operationalExcellenceOutcome:
       "Systematic EO response posture. Reduces scramble when new EOs drop. Living view of EO-driven obligations for leadership.",
+    workCategories: ["documents", "process"],
   },
 
   // ============================================================
@@ -310,6 +324,7 @@ export const interventions: Intervention[] = [
       "Consolidates fragmented student engagement tracking. Supports recruitment/retention reporting. Demonstrates unit-led co-build pattern — a repeatable path for other UI units to develop their own AI-assisted tooling.",
     tags: ["diffusion"],
     relatedSlugs: ["template-app"],
+    workCategories: ["coordination"],
   },
 
   // ============================================================
@@ -333,6 +348,7 @@ export const interventions: Intervention[] = [
     operationalExcellenceOutcome:
       "Cohort visibility for program leaders. Data-driven program improvement. Stronger NSF CAREER-grant pipeline.",
     tech: ["React", "TypeScript", "Vite", "FastAPI"],
+    workCategories: ["executive-analytics"],
   },
 
   // ============================================================
@@ -360,6 +376,7 @@ export const interventions: Intervention[] = [
       "Enables every downstream AI app at UI. Keeps data on-prem for compliance. Avoids per-seat vendor lock-in. Institutional audit trail. Fair access across research and operations workloads.",
     tech: ["Python 3.11+", "Docker", "Ollama", "vLLM", "Azure AD SSO"],
     relatedSlugs: ["dgx-stack", "audit-dashboard", "vandalizer", "ucm-daily-register"],
+    workCategories: ["ai-infrastructure"],
   },
   {
     slug: "dgx-stack",
@@ -382,6 +399,7 @@ export const interventions: Intervention[] = [
       "On-prem AI compute without cloud recurring costs. Supports compliance-sensitive and air-gapped workloads. Backbone for institutional OCR and LLM serving.",
     tech: ["Docker", "vLLM", "NVIDIA Container Toolkit", "CUDA 13"],
     relatedSlugs: ["mindrouter", "audit-dashboard", "vandalizer"],
+    workCategories: ["ai-infrastructure"],
   },
   {
     slug: "template-app",
@@ -411,6 +429,7 @@ export const interventions: Intervention[] = [
       "embargoed-osp",
       "nexus",
     ],
+    workCategories: ["ai-infrastructure"],
   },
 
   // ============================================================
@@ -456,6 +475,7 @@ export const interventions: Intervention[] = [
     operationalExcellenceOutcome:
       "Standardizes where institutional application modules live. Shared security posture, audit trail, and operational footprint across UI units. Reduces per-app hosting overhead and fragmentation.",
     relatedSlugs: ["template-app"],
+    workCategories: ["ai-infrastructure"],
   },
 ];
 
