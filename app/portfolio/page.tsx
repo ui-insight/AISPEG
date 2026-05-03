@@ -13,6 +13,7 @@ import {
   type WorkCategory,
 } from "@/lib/work-categories";
 import {
+  PUBLIC_STAGE_LABEL,
   PUBLIC_STAGE_ORDER,
   STAGE_OPERATIONAL_ROLLUP,
   isProjectStatus,
@@ -168,37 +169,91 @@ export default async function PortfolioPage({
   return (
     <div className="space-y-10">
       {/* Header */}
-      <div>
-        <p className="text-xs font-medium uppercase tracking-wider text-brand-silver">
-          Projects
-        </p>
-        <h1 className="mt-2 text-3xl font-black tracking-tight text-brand-black">
-          AI Projects for Operational Excellence
-        </h1>
-        <p className="mt-2 max-w-3xl text-gray-600">
+      <header className="space-y-5">
+        <div>
+          <p className="text-xs font-medium uppercase tracking-wider text-brand-silver">
+            Projects
+          </p>
+          <h1 className="mt-2 text-3xl font-black tracking-tight text-brand-black">
+            AI Projects for Operational Excellence
+          </h1>
+        </div>
+
+        {/* Stat-strip lede — the page's headline answer per ADR 0001 */}
+        <div>
+          <p className="text-2xl font-black tracking-tight text-brand-black md:text-3xl">
+            <span className="tabular-nums">{allApps.length}</span> projects
+            across{" "}
+            <span className="tabular-nums">{homeUnitOptions.length}</span>{" "}
+            home units
+          </p>
+          <p className="mt-1 flex flex-wrap items-baseline gap-x-2 text-base font-medium text-ink-muted">
+            {PUBLIC_STAGE_ORDER.filter((s) => (stageCounts.get(s) ?? 0) > 0).map(
+              (stage, idx) => (
+                <span key={stage} className="inline-flex items-baseline">
+                  {idx > 0 && (
+                    <span aria-hidden className="mr-2 text-brand-silver">
+                      ·
+                    </span>
+                  )}
+                  <span className="tabular-nums font-semibold text-brand-black">
+                    {stageCounts.get(stage)}
+                  </span>
+                  <span className="ml-1.5">
+                    {PUBLIC_STAGE_LABEL[stage].toLowerCase()}
+                  </span>
+                </span>
+              )
+            )}
+            {blockerCount > 0 && (
+              <span className="inline-flex items-baseline">
+                <span aria-hidden className="mr-2 text-brand-silver">
+                  ·
+                </span>
+                <span className="tabular-nums font-semibold text-amber-700">
+                  {blockerCount}
+                </span>
+                <span className="ml-1.5 text-amber-700">
+                  active blocker{blockerCount === 1 ? "" : "s"}
+                </span>
+              </span>
+            )}
+          </p>
+        </div>
+
+        {/* Caption + secondary embargo signal */}
+        <p className="max-w-3xl text-sm leading-relaxed text-ink-muted">
           A growing inventory of AI-powered efforts across University of Idaho
-          units — some built by IIDS, others led by partner units. Each entry
-          names a{" "}
-          <span className="font-medium text-ui-charcoal">UI home unit</span>{" "}
+          units &mdash; some built by IIDS, others led by partner units. Each
+          entry names a{" "}
+          <span className="font-medium text-brand-black">UI home unit</span>{" "}
           and{" "}
-          <span className="font-medium text-ui-charcoal">
+          <span className="font-medium text-brand-black">
             operational owner
-          </span>{" "}
-          whose work depends on the project — the people accountable for
-          the outcome, not the code.
+          </span>
+          .
+          {embargoedCount > 0 && (
+            <>
+              {" "}
+              <span className="tabular-nums font-medium text-brand-black">
+                {embargoedCount}
+              </span>{" "}
+              entr{embargoedCount === 1 ? "y has" : "ies have"} deployment
+              detail embargoed.
+            </>
+          )}
         </p>
-        <p className="mt-3 text-sm text-gray-500">
-          {allApps.length} projects visible
-          {embargoedCount > 0 &&
-            ` · ${embargoedCount} with deployment detail embargoed`}
-          {blockerCount > 0 &&
-            ` · ${blockerCount} active blocker${blockerCount === 1 ? "" : "s"}`}
-          {" · "}
-          <Link href="/builder-guide" className="text-brand-black hover:underline">
+
+        {/* CTA — gold-bordered, the only Pride Gold moment in the header */}
+        <div>
+          <Link
+            href="/builder-guide"
+            className="unstyled inline-flex items-center gap-1.5 rounded-md border-2 border-ui-gold bg-ui-gold/10 px-3.5 py-1.5 text-sm font-semibold text-brand-black transition-colors hover:bg-ui-gold/25"
+          >
             Submit a new AI project &rarr;
           </Link>
-        </p>
-      </div>
+        </div>
+      </header>
 
       {/* Filter / sort UI */}
       <PortfolioFilters
