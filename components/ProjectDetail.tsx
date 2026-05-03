@@ -1,28 +1,42 @@
 import Link from "next/link";
 import type { ApplicationWithBlockers, Blocker } from "@/lib/work";
 import { blockerCategoryLabels, daysSince } from "@/lib/work";
+import {
+  OPERATIONAL_LABEL,
+  PUBLIC_STAGE_CHIP,
+  PUBLIC_STAGE_LABEL,
+  isProjectStatus,
+  publicStageFromStatus,
+} from "@/lib/lifecycle-display";
 
-const statusStyles: Record<string, string> = {
-  Production: "bg-green-100 text-green-800",
-  Piloting: "bg-blue-100 text-blue-800",
-  Prototype: "bg-amber-100 text-amber-800",
-  Planned: "bg-gray-100 text-gray-700",
-  Tracked: "bg-violet-100 text-violet-800",
-  Archived: "bg-gray-100 text-gray-500",
-};
-
+// Blocker severity is a documented exception to the brand-token rule —
+// the amber/red signals are functional alerting, not status decoration.
+// Mirrors components/PortfolioCard.tsx.
 const severityStyles: Record<"low" | "medium" | "high", string> = {
   low: "border-gray-200 bg-gray-50 text-gray-700",
   medium: "border-amber-200 bg-amber-50 text-amber-900",
   high: "border-red-200 bg-red-50 text-red-900",
 };
 
-function StatusBadge({ status }: { status: string }) {
-  const cls = statusStyles[status] ?? "bg-gray-100 text-gray-700";
+function LifecycleChips({ status }: { status: string }) {
+  const stage = publicStageFromStatus(status);
+  // Suppress the operational chip for `tracked` — the ladder doesn't
+  // apply to externally-owned projects, so the stage chip carries the
+  // whole signal. (See ADR 0001.)
+  const showOperationalChip = isProjectStatus(status) && status !== "tracked";
   return (
-    <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${cls}`}>
-      {status}
-    </span>
+    <>
+      <span
+        className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${PUBLIC_STAGE_CHIP[stage]}`}
+      >
+        {PUBLIC_STAGE_LABEL[stage]}
+      </span>
+      {showOperationalChip && (
+        <span className="inline-flex items-center rounded-full border border-hairline bg-surface-alt px-2 py-0.5 text-xs font-medium text-ink-muted">
+          {OPERATIONAL_LABEL[status as keyof typeof OPERATIONAL_LABEL]}
+        </span>
+      )}
+    </>
   );
 }
 
@@ -158,34 +172,34 @@ export default function ProjectDetail({
       {/* Header */}
       <div>
         <div className="flex flex-wrap items-center gap-2">
-          <StatusBadge status={app.status} />
+          <LifecycleChips status={app.status} />
           {app.ai4raRelationship !== "None" && (
             <span className="rounded-full border border-brand-lupine/30 bg-brand-lupine/10 px-2.5 py-0.5 text-xs font-medium text-brand-lupine">
               AI4RA {app.ai4raRelationship}
             </span>
           )}
           {app.dualDestinyPlanned && (
-            <span className="rounded-full border border-gray-200 px-2.5 py-0.5 text-xs text-gray-600">
+            <span className="rounded-full border border-hairline bg-surface-alt px-2.5 py-0.5 text-xs font-medium text-ink-muted">
               Dual destiny (OSS + UI)
             </span>
           )}
           {app.tags.includes("diffusion") && (
-            <span className="rounded-full border border-blue-200 bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700">
+            <span className="rounded-full border border-hairline bg-surface-alt px-2.5 py-0.5 text-xs font-medium text-ink-muted">
               Capability diffusion
             </span>
           )}
           {app.institutionalReviewStatus === "Under OIT review" && (
-            <span className="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-xs text-amber-800">
+            <span className="rounded-full border border-hairline bg-surface-alt px-2.5 py-0.5 text-xs font-medium text-ink-muted">
               Under OIT review
             </span>
           )}
           {app.trackingOnly && (
-            <span className="rounded-full border border-violet-200 bg-violet-50 px-2.5 py-0.5 text-xs font-medium text-violet-700">
+            <span className="rounded-full border border-hairline bg-surface-alt px-2.5 py-0.5 text-xs font-medium text-ink-muted">
               Tracked — not built by IIDS
             </span>
           )}
           {audience === "internal" && (
-            <span className="rounded-full border border-gray-300 bg-gray-50 px-2.5 py-0.5 text-xs font-medium text-gray-700">
+            <span className="rounded-full border border-hairline bg-surface-alt px-2.5 py-0.5 text-xs font-medium text-ink-muted">
               Visibility: {app.visibilityTier}
             </span>
           )}
@@ -203,11 +217,11 @@ export default function ProjectDetail({
 
       {/* Embargo notice for embargoed visibility (public view) */}
       {audience === "public" && isEmbargoed && (
-        <div className="rounded-xl border border-amber-200 bg-amber-50 p-5">
-          <p className="text-sm font-semibold text-amber-900">
+        <div className="rounded-xl border border-brand-huckleberry/30 bg-brand-huckleberry/10 p-5">
+          <p className="text-sm font-semibold text-brand-huckleberry">
             UI deployment details embargoed
           </p>
-          <p className="mt-1 text-sm text-amber-800">
+          <p className="mt-1 text-sm text-brand-huckleberry/90">
             This project exists in the inventory, but specific details
             about UI&apos;s operational deployment (pilot scope, timelines, or
             configuration) are held back from the public site. Contact the
