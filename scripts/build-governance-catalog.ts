@@ -191,6 +191,11 @@ function buildVocabularies(): VocabularyGroup[] {
               : v.description
                 ? String(v.description)
                 : undefined,
+            verificationRule: v.Verification_Rule
+              ? String(v.Verification_Rule)
+              : v.verification_rule
+                ? String(v.verification_rule)
+                : undefined,
           }))
         : [];
       out.push({

@@ -563,6 +563,273 @@ export const vocabularyGroups: VocabularyGroup[] = [
     ]
   },
   {
+    "domain": "iids-portfolio",
+    "application": "IIDS Portfolio",
+    "group": "InterventionStatus",
+    "description": "Operational ladder for an intervention — the day-to-day status IIDS tracks. Source of truth: lib/portfolio.ts. Each value's Verification_Rule is enforced by lib/portfolio-verification.ts on every PR.",
+    "values": [
+      {
+        "code": "idea",
+        "label": "Idea",
+        "displayOrder": 1,
+        "description": "Named with a unit-of-interest; not yet committed to build.",
+        "verificationRule": "No committed operationalOwner OR no committed iidsSponsor; repoUrl empty or repo has zero commits."
+      },
+      {
+        "code": "approved",
+        "label": "Approved",
+        "displayOrder": 2,
+        "description": "Committed to build with named owner and sponsor; not yet under active development.",
+        "verificationRule": "operationalOwners[0] set AND iidsSponsor set AND non-empty description; no liveUrl; repo (if present) has <10 commits OR no commits in last 14 days."
+      },
+      {
+        "code": "building",
+        "label": "Building",
+        "displayOrder": 3,
+        "description": "Active development. Code exists but not yet for real users.",
+        "verificationRule": "repoUrl set; lastCommitDate within last 60 days; no liveUrl (or liveUrl flagged liveUrlIsStaging:true); pilotCohort empty."
+      },
+      {
+        "code": "prototype",
+        "label": "Prototype",
+        "displayOrder": 4,
+        "description": "Demo-able but quiet — feature-complete or paused.",
+        "verificationRule": "pilotCohort empty; either lastCommitDate older than 30 days OR featureComplete:true."
+      },
+      {
+        "code": "piloting",
+        "label": "Piloting",
+        "displayOrder": 5,
+        "description": "In use by a bounded, named cohort.",
+        "verificationRule": "liveUrl set; pilotCohort populated with size > 0 and a bounded scope."
+      },
+      {
+        "code": "production",
+        "label": "Production",
+        "displayOrder": 6,
+        "description": "In real institutional use beyond the pilot cohort.",
+        "verificationRule": "Publicly-accessible artifact: liveUrl OR a public repoUrl (isPrivateRepo:false) for repo-as-artifact deliverables (infrastructure, scaffolds, appliances). productionScope and supportContact populated."
+      },
+      {
+        "code": "maintained",
+        "label": "Maintained",
+        "displayOrder": 7,
+        "description": "In production but in maintenance-only mode.",
+        "verificationRule": "Inherits production accessibility (liveUrl or public repo); no commits to main in last 90 days; no open feature issues — only bug-, security-, or chore-labeled."
+      },
+      {
+        "code": "sunsetting",
+        "label": "Sunsetting",
+        "displayOrder": 8,
+        "description": "Being wound down with a planned successor.",
+        "verificationRule": "sunsetDate (ISO) set; replacedBy populated — successor intervention slug or the literal 'manual-process'."
+      },
+      {
+        "code": "archived",
+        "label": "Archived",
+        "displayOrder": 9,
+        "description": "Stopped. Record kept for institutional memory.",
+        "verificationRule": "liveUrl returns 404 / is null / domain dead, or (for repo-as-artifact) repoUrl is archived/deleted; service stopped."
+      },
+      {
+        "code": "tracked",
+        "label": "Tracked",
+        "displayOrder": 10,
+        "description": "Externally-owned intervention IIDS observes but does not build.",
+        "verificationRule": "trackingOnly:true; bypasses the operational ladder."
+      }
+    ]
+  },
+  {
+    "domain": "iids-portfolio",
+    "application": "IIDS Portfolio",
+    "group": "PublicStage",
+    "description": "Stakeholder-facing rollup. Computed deterministically from InterventionStatus by lib/portfolio.ts:computePublicStage. The public surfaces (/portfolio cards primary chip, landing stat strip, /explore tile breakdowns) render this axis; operational status is only shown as a secondary detail on cards.",
+    "values": [
+      {
+        "code": "exploring",
+        "label": "Exploring",
+        "displayOrder": 1,
+        "description": "Thinking about it / committed to build.",
+        "verificationRule": "Rolls up from InterventionStatus values: idea, approved."
+      },
+      {
+        "code": "building",
+        "label": "Building",
+        "displayOrder": 2,
+        "description": "Code exists; not yet for real users.",
+        "verificationRule": "Rolls up from InterventionStatus values: building, prototype."
+      },
+      {
+        "code": "live",
+        "label": "Live",
+        "displayOrder": 3,
+        "description": "In use today.",
+        "verificationRule": "Rolls up from InterventionStatus values: piloting, production, maintained."
+      },
+      {
+        "code": "retired",
+        "label": "Retired",
+        "displayOrder": 4,
+        "description": "Done or winding down.",
+        "verificationRule": "Rolls up from InterventionStatus values: sunsetting, archived."
+      },
+      {
+        "code": "tracked",
+        "label": "Tracked",
+        "displayOrder": 5,
+        "description": "Not built by IIDS.",
+        "verificationRule": "Rolls up from InterventionStatus value: tracked. Bypasses the operational ladder."
+      }
+    ]
+  },
+  {
+    "domain": "iids-portfolio",
+    "application": "IIDS Portfolio",
+    "group": "ProductionScope",
+    "description": "Granularity of production reach. Required on InterventionStatus values production and maintained.",
+    "values": [
+      {
+        "code": "home-unit",
+        "label": "Home Unit",
+        "displayOrder": 1,
+        "description": "Accessible to all users in the intervention's home unit."
+      },
+      {
+        "code": "institution-wide",
+        "label": "Institution-Wide",
+        "displayOrder": 2,
+        "description": "Accessible to all UI users."
+      },
+      {
+        "code": "external",
+        "label": "External",
+        "displayOrder": 3,
+        "description": "Deployed beyond UI — partner institutions, open-source distribution, or self-hostable artifact consumed externally."
+      }
+    ]
+  },
+  {
+    "domain": "iids-portfolio",
+    "application": "IIDS Portfolio",
+    "group": "Visibility",
+    "description": "Public-site disclosure level for an intervention's record.",
+    "values": [
+      {
+        "code": "Public",
+        "label": "Public",
+        "displayOrder": 1,
+        "description": "All fields shown publicly."
+      },
+      {
+        "code": "Partial",
+        "label": "Partial",
+        "displayOrder": 2,
+        "description": "Entry acknowledged on the public site; deployment details (scope, timelines, configuration) embargoed."
+      },
+      {
+        "code": "Internal-only",
+        "label": "Internal Only",
+        "displayOrder": 3,
+        "description": "Not shown on the public site."
+      }
+    ]
+  },
+  {
+    "domain": "iids-portfolio",
+    "application": "IIDS Portfolio",
+    "group": "AI4RARelationship",
+    "description": "How an intervention relates to the AI4RA partnership (UI + Southern Utah University NSF GRANTED).",
+    "values": [
+      {
+        "code": "Core",
+        "label": "Core",
+        "displayOrder": 1,
+        "description": "AI4RA OSS project with a UI deployment — dual-destiny."
+      },
+      {
+        "code": "Adjacent",
+        "label": "Adjacent",
+        "displayOrder": 2,
+        "description": "Related to AI4RA but not part of the partnership proper."
+      },
+      {
+        "code": "Reference",
+        "label": "Reference",
+        "displayOrder": 3,
+        "description": "UI deployment consumes an AI4RA spec or tool."
+      },
+      {
+        "code": "UI-parallel",
+        "label": "UI-Parallel",
+        "displayOrder": 4,
+        "description": "UI work running alongside an AI4RA initiative."
+      },
+      {
+        "code": "None",
+        "label": "None",
+        "displayOrder": 5,
+        "description": "No AI4RA relationship."
+      }
+    ]
+  },
+  {
+    "domain": "iids-portfolio",
+    "application": "IIDS Portfolio",
+    "group": "WorkCategory",
+    "description": "By-problem axis for browsing the portfolio. Audience-facing labels written in a Dean's vocabulary (not technical jargon). Source of truth: lib/work-categories.ts. One intervention can sit in 2-3 categories.",
+    "values": [
+      {
+        "code": "documents",
+        "label": "Working with documents",
+        "displayOrder": 1,
+        "description": "Extracting, reviewing, or finding answers in documents — contracts, reports, RFPs, audit findings."
+      },
+      {
+        "code": "process",
+        "label": "Streamlining a process",
+        "displayOrder": 2,
+        "description": "Mapping, automating, or removing bottlenecks from operational workflows."
+      },
+      {
+        "code": "coordination",
+        "label": "Coordinating people and time",
+        "displayOrder": 3,
+        "description": "Calendars, schedules, daily registers, multi-party logistics."
+      },
+      {
+        "code": "reconciliation",
+        "label": "Reconciling accounts and records",
+        "displayOrder": 4,
+        "description": "Financial reviews, audit cycles, matching transactions to source data."
+      },
+      {
+        "code": "executive-analytics",
+        "label": "Executive visibility",
+        "displayOrder": 5,
+        "description": "Dashboards, strategic alignment, portfolio-level rollups for leadership."
+      },
+      {
+        "code": "research-admin",
+        "label": "Research administration",
+        "displayOrder": 6,
+        "description": "Proposal lifecycle, awards, sponsor compliance, ORED operations."
+      },
+      {
+        "code": "knowledge-retrieval",
+        "label": "Searching institutional knowledge",
+        "displayOrder": 7,
+        "description": "Retrieval and Q&A over policies, history, decisions — RAG-style."
+      },
+      {
+        "code": "ai-infrastructure",
+        "label": "AI infrastructure",
+        "displayOrder": 8,
+        "description": "LLM gateways, GPU stacks, agent platforms — the plumbing other interventions run on, not a problem on its own."
+      }
+    ]
+  },
+  {
     "domain": "processmapping",
     "application": "ProcessMapping",
     "group": "ActivityType",
