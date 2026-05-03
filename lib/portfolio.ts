@@ -171,7 +171,9 @@ export const interventions: Intervention[] = [
     visibility: "Partial",
     ai4raRelationship: "None",
     iidsSponsor: "Barrie Robison",
+    liveUrlIsStaging: true,
     repoUrl: "https://github.com/ui-insight/AuditDashboard",
+    liveUrl: "https://auditdashboard.insight.uidaho.edu",
     operationalFunction:
       "Audit observation lifecycle: ingest report PDF → extract observations and action items → assign responsible parties → monitor closure with overdue alerts. Replaces spreadsheet tracking.",
     operationalExcellenceOutcome:
@@ -197,11 +199,11 @@ export const interventions: Intervention[] = [
       { name: "Jodi Walker" },
     ],
     buildParticipants: ["IIDS"],
-    status: "prototype",
+    status: "building",
     visibility: "Public",
     ai4raRelationship: "None",
     iidsSponsor: "Barrie Robison",
-    featureComplete: false,
+    liveUrlIsStaging: true,
     repoUrl: "https://github.com/ui-insight/UCMDailyRegister",
     liveUrl: "https://ucmnews.insight.uidaho.edu",
     operationalFunction:
@@ -216,28 +218,6 @@ export const interventions: Intervention[] = [
   // ============================================================
   // Office of Sponsored Programs (ORED)
   // ============================================================
-  {
-    // Embargoed on the public site. Internal identity (project name,
-    // scope, artifacts) deliberately omitted here — the card, owner,
-    // status, and AI4RA Core relationship are shown; everything else
-    // is placeholder until public release.
-    slug: "embargoed-osp",
-    name: "Embargoed project",
-    tagline: "Details embargoed pending public release.",
-    description:
-      "This intervention is in active development. Its identity, scope, and deployment details are embargoed on the public site until authorized release. The project is an AI4RA Core dual-destiny effort with a named UI operational owner and institutional build participants shown below. Contact the operational owner for authorized access.",
-    homeUnits: ["Office of Sponsored Programs (ORED)"],
-    operationalOwners: [{ name: "Sarah Martonick" }],
-    buildParticipants: ["IIDS"],
-    status: "building",
-    visibility: "Partial",
-    ai4raRelationship: "Core",
-    dualDestinyPlanned: true,
-    iidsSponsor: "Barrie Robison",
-    operationalFunction: "Embargoed.",
-    operationalExcellenceOutcome: "Embargoed.",
-    workCategories: ["research-admin"],
-  },
   {
     slug: "vandalizer",
     name: "Vandalizer",
@@ -266,7 +246,7 @@ export const interventions: Intervention[] = [
     operationalExcellenceOutcome:
       "Staff time savings on document extraction. Higher extraction accuracy. Reusable extraction workflows. Citation-backed Q&A over RA document collections.",
     tech: ["React 19", "Python 3.11+", "FastAPI", "Docker"],
-    relatedSlugs: ["embargoed-osp", "mindrouter", "dgx-stack", "processmapping"],
+    relatedSlugs: ["mindrouter", "dgx-stack", "processmapping"],
     workCategories: ["documents", "research-admin"],
   },
   {
@@ -278,12 +258,12 @@ export const interventions: Intervention[] = [
     homeUnits: ["Office of Sponsored Programs (ORED)"],
     operationalOwners: [{ name: "Barrie Robison" }],
     buildParticipants: ["IIDS"],
-    status: "prototype",
+    status: "building",
     visibility: "Public",
     ai4raRelationship: "Core",
     dualDestinyPlanned: true,
     iidsSponsor: "Barrie Robison",
-    featureComplete: false,
+    liveUrlIsStaging: true,
     repoUrl: "https://github.com/ui-insight/ProcessMapping",
     liveUrl: "https://processmapping.insight.uidaho.edu",
     operationalFunction:
@@ -291,7 +271,7 @@ export const interventions: Intervention[] = [
     operationalExcellenceOutcome:
       "Shared vocabulary and visibility for RA processes. Identifies process/tool coverage gaps. Requirements source for automation. Onboarding and training asset.",
     tech: ["React 19", "TypeScript", "Vite", "FastAPI", "Python 3.11+"],
-    relatedSlugs: ["embargoed-osp", "vandalizer"],
+    relatedSlugs: ["vandalizer"],
     workCategories: ["process", "research-admin"],
   },
 
@@ -315,13 +295,15 @@ export const interventions: Intervention[] = [
     ai4raRelationship: "Core",
     dualDestinyPlanned: true,
     iidsSponsor: "Barrie Robison",
+    liveUrlIsStaging: true,
     repoUrl: "https://github.com/ui-insight/OpenERA",
+    liveUrl: "https://openera.insight.uidaho.edu",
     operationalFunction:
       "Sponsored-research administration: proposal lifecycle, award management, compliance, and reporting for ORED. Anchors the institutional research-admin data layer that Vandalizer, ProcessMapping, and adjacent ORED tools build against.",
     operationalExcellenceOutcome:
       "On-prem, UDM-aligned ERA system with shared data semantics across ORED tooling. Enables AI features (extraction, lookup, classification) on research-admin data without third-party data egress. Reference deployment for AI4RA partners.",
     tech: ["React", "TypeScript", "Tailwind CSS", "FastAPI", "SQLAlchemy 2.0", "PostgreSQL 16"],
-    relatedSlugs: ["vandalizer", "processmapping", "embargoed-osp"],
+    relatedSlugs: ["vandalizer", "processmapping"],
     workCategories: ["research-admin"],
   },
 
@@ -338,13 +320,14 @@ export const interventions: Intervention[] = [
     homeUnits: ["Office of Research and Economic Development", "Office of General Counsel"],
     operationalOwners: [{ name: "Sarah Martonick" }],
     buildParticipants: ["IIDS"],
-    status: "prototype",
+    status: "building",
     visibility: "Partial",
     ai4raRelationship: "None",
     iidsSponsor: "Barrie Robison",
-    featureComplete: false,
+    liveUrlIsStaging: true,
     repoUrl: "https://github.com/ui-insight/ExecOrd",
     isPrivateRepo: true,
+    liveUrl: "https://eocompliance.insight.uidaho.edu",
     operationalFunction:
       "Tracks federal Executive Orders, applicability to UI, required actions, deadlines, responsible parties, and current posture.",
     operationalExcellenceOutcome:
@@ -399,6 +382,7 @@ export const interventions: Intervention[] = [
     iidsSponsor: "Barrie Robison",
     pilotCohort: { size: 12, scope: "CAREER Club cohort" },
     repoUrl: "https://github.com/ui-insight/RFD-career",
+    liveUrl: "https://rfdcareerclub.insight.uidaho.edu",
     operationalFunction:
       "Visualizes CAREER Club cohort and individual-participant progress against workbook rubric milestones.",
     operationalExcellenceOutcome:
@@ -491,7 +475,6 @@ export const interventions: Intervention[] = [
       "sem-experiential",
       "audit-dashboard",
       "stratplan",
-      "embargoed-osp",
       "nexus",
     ],
     workCategories: ["ai-infrastructure"],
@@ -532,12 +515,11 @@ export const interventions: Intervention[] = [
       { name: "Colin Addington" },
     ],
     buildParticipants: ["OIT", "IIDS"],
-    status: "production",
+    status: "tracked",
     visibility: "Public",
     ai4raRelationship: "None",
     iidsSponsor: "Barrie Robison",
-    productionScope: "institution-wide",
-    supportContact: "Kali Armitage",
+    trackingOnly: true,
     tech: ["React", "FastAPI", "OIT managed infrastructure"],
     operationalFunction:
       "Hosts UI application modules on OIT-managed secure infrastructure with a consistent runtime, identity, and security baseline. Target deployment surface for new UI apps that need institutional hosting.",
