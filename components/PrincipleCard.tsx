@@ -24,7 +24,7 @@ export default function PrincipleCard({
         className="flex w-full items-start gap-4 p-6 text-left"
       >
         <div className="flex-1">
-          <span className="inline-block rounded-full bg-ui-gold/15 px-2.5 py-0.5 text-xs font-medium text-ui-gold-dark">
+          <span className="inline-block rounded-full border border-hairline bg-surface-alt px-2.5 py-0.5 text-xs font-medium text-brand-black">
             {category}
           </span>
           <h3 className="mt-2 text-lg font-semibold text-ui-charcoal">

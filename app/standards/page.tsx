@@ -70,7 +70,7 @@ function StandardRow({ item }: { item: StandardsWatchItem }) {
                 href={item.responseUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-ui-gold-dark underline"
+                className="text-brand-black underline"
               >
                 Response artifact
               </a>
@@ -80,7 +80,7 @@ function StandardRow({ item }: { item: StandardsWatchItem }) {
       </div>
 
       <details className="mt-4 group">
-        <summary className="cursor-pointer text-xs font-medium text-gray-500 hover:text-ui-gold-dark">
+        <summary className="cursor-pointer text-xs font-medium text-gray-500 hover:text-brand-black">
           Show requested detail ({item.details.length} sub-items)
         </summary>
         <ul className="mt-3 space-y-2 border-l-2 border-gray-100 pl-4">

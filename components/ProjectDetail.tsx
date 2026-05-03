@@ -38,7 +38,7 @@ export default function ProjectDetail({
         <div className="flex-1">
           <div className="flex flex-wrap items-center gap-3">
             <h3 className="text-lg font-semibold text-ui-charcoal">{name}</h3>
-            <span className="rounded-full bg-ui-gold/15 px-2.5 py-0.5 text-xs font-semibold text-ui-gold-dark">
+            <span className="rounded-full border border-hairline bg-surface-alt px-2.5 py-0.5 text-xs font-semibold text-brand-black">
               {multiplier}
             </span>
           </div>

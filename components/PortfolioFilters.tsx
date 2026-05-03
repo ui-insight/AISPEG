@@ -52,7 +52,7 @@ function Chip({
       href={href}
       className={`unstyled inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
         active
-          ? "border-ui-gold bg-ui-gold/15 text-ui-gold-dark"
+          ? "border-ui-gold bg-ui-gold/15 text-brand-black"
           : "border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50"
       }`}
     >
@@ -60,7 +60,7 @@ function Chip({
       {typeof count === "number" && (
         <span
           className={`rounded-full px-1.5 py-0 text-[10px] font-semibold ${
-            active ? "bg-ui-gold/30 text-ui-gold-dark" : "bg-gray-100 text-gray-500"
+            active ? "bg-brand-black/10 text-brand-black" : "bg-gray-100 text-gray-500"
           }`}
         >
           {count}
@@ -111,7 +111,7 @@ export default function PortfolioFilters({
         {filtersActive && (
           <Link
             href="/portfolio"
-            className="text-xs font-medium text-ui-gold-dark hover:underline"
+            className="text-xs font-medium text-brand-black hover:underline"
           >
             Clear filters &times;
           </Link>

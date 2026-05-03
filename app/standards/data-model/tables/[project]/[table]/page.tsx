@@ -102,7 +102,7 @@ function ColumnRow({
       <td className="py-2 pr-4 font-mono text-xs text-ui-charcoal">
         <span>{column.name}</span>
         {column.primaryKey && (
-          <span className="ml-2 rounded bg-ui-gold/20 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-ui-gold-dark">
+          <span className="ml-2 rounded border border-hairline bg-surface-alt px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-brand-black">
             PK
           </span>
         )}
@@ -310,7 +310,7 @@ export default async function TableDetailPage({
                     {c.name}
                   </span>
                   {c.primaryKey && (
-                    <span className="rounded bg-ui-gold/20 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-ui-gold-dark">
+                    <span className="rounded border border-hairline bg-surface-alt px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-brand-black">
                       PK
                     </span>
                   )}

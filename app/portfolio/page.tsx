@@ -126,7 +126,7 @@ export default async function PortfolioPage({
           {blockerCount > 0 &&
             ` · ${blockerCount} active blocker${blockerCount === 1 ? "" : "s"}`}
           {" · "}
-          <Link href="/builder-guide" className="text-ui-gold-dark hover:underline">
+          <Link href="/builder-guide" className="text-brand-black hover:underline">
             Submit a new AI project &rarr;
           </Link>
         </p>
@@ -154,7 +154,7 @@ export default async function PortfolioPage({
             No interventions match the current filters.{" "}
             <Link
               href="/portfolio"
-              className="text-ui-gold-dark hover:underline"
+              className="text-brand-black hover:underline"
             >
               Clear filters
             </Link>
@@ -200,12 +200,12 @@ export default async function PortfolioPage({
             <strong>UI home unit</strong>. Each card shows the operational
             owner, current status, and any active blockers (with a counter
             of days since the block began). Tags signal relationships:{" "}
-            <span className="inline-block rounded-full border border-ui-gold/30 bg-ui-gold/10 px-2 py-0.5 text-xs font-medium text-ui-gold-dark">
+            <span className="inline-block rounded-full border border-brand-lupine/30 bg-brand-lupine/10 px-2 py-0.5 text-xs font-medium text-brand-lupine">
               AI4RA Core
             </span>{" "}
             means the work is part of the NSF-funded UI+SUU partnership and
             has a dual open-source / UI-implementation identity;{" "}
-            <span className="inline-block rounded-full border border-brand-lupine/30 bg-brand-lupine/10 px-2 py-0.5 text-xs font-medium text-brand-lupine">
+            <span className="inline-block rounded-full border border-brand-clearwater/40 bg-brand-clearwater/10 px-2 py-0.5 text-xs font-medium text-brand-clearwater">
               Capability diffusion
             </span>{" "}
             flags interventions where a non-IIDS UI unit is co-building;{" "}
@@ -230,7 +230,7 @@ export default async function PortfolioPage({
         <p className="mt-2 text-sm">
           <Link
             href="/ai4ra-ecosystem"
-            className="font-medium text-ui-gold-dark hover:underline"
+            className="font-medium text-brand-black hover:underline"
           >
             See the AI4RA ecosystem &rarr;
           </Link>

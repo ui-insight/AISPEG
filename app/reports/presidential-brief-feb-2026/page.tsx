@@ -18,7 +18,7 @@ export default function PresidentialBriefPage() {
     <div className="space-y-10">
       {/* Breadcrumb */}
       <nav className="text-sm text-gray-500">
-        <Link href="/reports" className="hover:text-ui-gold-dark">
+        <Link href="/reports" className="hover:text-brand-black">
           Reports
         </Link>
         <span className="mx-2">/</span>
@@ -27,7 +27,7 @@ export default function PresidentialBriefPage() {
 
       {/* Header */}
       <div>
-        <p className="text-xs font-semibold uppercase tracking-wider text-ui-gold-dark">
+        <p className="text-xs font-semibold uppercase tracking-wider text-brand-silver">
           Brief · February 7, 2026
         </p>
         <h1 className="mt-2 text-3xl font-black tracking-tight text-ui-charcoal">
@@ -140,8 +140,8 @@ export default function PresidentialBriefPage() {
             </tbody>
           </table>
         </div>
-        <div className="mt-4 rounded-lg bg-ui-gold/10 px-4 py-3">
-          <p className="text-sm font-medium text-ui-gold-dark">
+        <div className="mt-4 rounded-lg border border-hairline bg-surface-alt px-4 py-3">
+          <p className="text-sm font-semibold text-brand-black">
             28x increase in daily commit rate from pre-agentic to full team
             adoption.
           </p>
