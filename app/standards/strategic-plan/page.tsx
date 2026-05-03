@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { pillars } from "@/lib/strategic-plan/catalog";
+import { getPillarFraming } from "@/lib/strategic-plan/pillar-framing";
 
 export const metadata = {
   title: "Strategic Plan — Standards",
@@ -27,25 +28,33 @@ export default function StrategicPlanIndexPage() {
       </header>
 
       <section className="grid gap-4 md:grid-cols-2">
-        {pillars.map((p) => (
-          <Link
-            key={p.code}
-            href={`/standards/strategic-plan/pillars/${p.code}`}
-            className="unstyled group block rounded-lg border border-hairline bg-white p-5 transition-colors hover:border-brand-black"
-          >
-            <p className="font-mono text-[11px] font-semibold uppercase tracking-wider text-brand-clearwater">
-              Pillar {p.code}
-            </p>
-            <h3 className="mt-1 text-lg font-bold tracking-tight text-brand-black group-hover:text-brand-clearwater">
-              {p.name}
-            </h3>
-            <p className="mt-3 text-sm text-ink-muted">
-              <span className="font-semibold text-brand-black">
-                {p.priorities.length} {p.priorities.length === 1 ? "priority" : "priorities"}
-              </span>
-            </p>
-          </Link>
-        ))}
+        {pillars.map((p) => {
+          const framing = getPillarFraming(p.code);
+          return (
+            <Link
+              key={p.code}
+              href={`/standards/strategic-plan/pillars/${p.code}`}
+              className="unstyled group block rounded-lg border border-hairline bg-white p-5 transition-colors hover:border-brand-black"
+            >
+              <p className="font-mono text-[11px] font-semibold uppercase tracking-wider text-brand-clearwater">
+                Pillar {p.code}
+              </p>
+              <h3 className="mt-1 text-lg font-bold tracking-tight text-brand-black group-hover:text-brand-clearwater">
+                {p.name}
+              </h3>
+              {framing && (
+                <p className="mt-2 text-sm leading-relaxed text-ink-muted">
+                  {framing}
+                </p>
+              )}
+              <p className="mt-3 text-sm text-ink-muted">
+                <span className="font-semibold text-brand-black">
+                  {p.priorities.length} {p.priorities.length === 1 ? "priority" : "priorities"}
+                </span>
+              </p>
+            </Link>
+          );
+        })}
       </section>
     </div>
   );
