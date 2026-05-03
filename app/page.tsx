@@ -3,8 +3,6 @@ import { getPubliclyVisible } from "@/lib/portfolio";
 import { artifacts, sortedArtifacts } from "@/lib/artifacts";
 import { summary as standardsSummary } from "@/lib/standards-watch";
 
-export const dynamic = "force-dynamic";
-
 // Editorial pick of three featured interventions for the landing's
 // Work tile. Curated by IIDS — rotate when the work changes. There is
 // no automated freshness signal on Intervention yet (no lastUpdated
@@ -29,20 +27,21 @@ export default async function Home() {
         <p className="text-xs font-medium uppercase tracking-wider text-brand-silver">
           Institutional AI Initiative
         </p>
-        <h1 className="mt-2 text-4xl font-black leading-tight">
+        <h1 className="mt-2 text-3xl font-black leading-tight sm:text-4xl">
           AI work at the University of Idaho
         </h1>
         <p className="mt-4 max-w-3xl text-base leading-relaxed text-ink-muted">
-          Coordinated by IIDS, this site tracks the AI work running across UI
-          units &mdash; what&apos;s built, who built it, and what&apos;s next.
+          Coordinated by the Institute for Interdisciplinary Data Sciences
+          (IIDS), this site tracks AI interventions &mdash; the discrete
+          builds, pilots, and integrations &mdash; running across UI units.
         </p>
-        <p className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-muted">
+        <p className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-1 text-sm text-ink-muted">
           <span>
-            <span className="font-semibold text-brand-black">
+            <span className="font-bold tabular-nums text-brand-black">
               {interventionCount}
             </span>{" "}
             interventions across{" "}
-            <span className="font-semibold text-brand-black">
+            <span className="font-bold tabular-nums text-brand-black">
               {homeUnitCount}
             </span>{" "}
             home units
@@ -54,7 +53,7 @@ export default async function Home() {
               </span>
               <span>
                 most recent update{" "}
-                <span className="font-semibold text-brand-black">
+                <span className="font-bold text-brand-black">
                   {mostRecent}
                 </span>
               </span>
