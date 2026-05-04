@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Public_Sans } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
+import ChatWidget from "@/components/ChatWidget";
 
 const publicSans = Public_Sans({
   subsets: ["latin"],
@@ -31,6 +32,7 @@ export default function RootLayout({
             {children}
           </div>
         </main>
+        <ChatWidget />
       </body>
     </html>
   );
