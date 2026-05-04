@@ -9,12 +9,13 @@
 const MINDROUTER_BASE =
   process.env.MINDROUTER_BASE_URL || "https://mindrouter.uidaho.edu";
 const MINDROUTER_KEY = process.env.MINDROUTER_API_KEY || "";
-// Default model picked from the live MindRouter registry on 2026-05-04.
-// Qwen2.5:72b is the strongest Qwen2.5 currently exposed and has well-
-// documented OpenAI-style tool-calling support — required for the
-// conversational agent loop in lib/agent/. Override per environment with
-// MINDROUTER_MODEL.
-const MINDROUTER_MODEL = process.env.MINDROUTER_MODEL || "qwen2.5:72b";
+// Default model. Bumped 2026-05-04 to qwen3.6-27b on Luke Sheneman's
+// (IIDS / MindRouter operator) recommendation — qwen2.5 is "old school";
+// qwen3.6-27b is the current "better" pick on the institutional
+// deployment. Sibling option: qwen/qwen3.6-35b ("faster"); set
+// MINDROUTER_MODEL to override per environment when latency outweighs
+// accuracy.
+const MINDROUTER_MODEL = process.env.MINDROUTER_MODEL || "qwen/qwen3.6-27b";
 
 /** The model identifier requests will be sent to. Used by the agent log. */
 export function currentMindRouterModel(): string {
