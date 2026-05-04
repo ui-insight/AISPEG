@@ -62,6 +62,23 @@ export default async function InternalHome() {
         </Link>
       </section>
 
+      <section className="grid gap-4 md:grid-cols-3">
+        <Link
+          href="/internal/agent-log"
+          className="group rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:border-ui-gold/40 hover:shadow-md md:col-span-2"
+        >
+          <p className="text-xs font-medium uppercase tracking-wider text-ui-gold-dark">
+            Conversational agent
+          </p>
+          <p className="mt-1 text-base font-semibold text-ui-charcoal group-hover:text-ui-gold-dark">
+            Agent traffic &amp; failures &rarr;
+          </p>
+          <p className="mt-2 text-xs text-gray-500">
+            Recent /api/ask queries, tool calls, latency, and errors
+          </p>
+        </Link>
+      </section>
+
       <section className="rounded-xl border border-dashed border-gray-300 bg-white/50 p-6">
         <h2 className="text-base font-semibold text-ui-charcoal">
           Coming in Sprint 3
