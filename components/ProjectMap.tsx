@@ -37,9 +37,16 @@ const PILLAR_CENTROID_R = R * 0.55;
 const PROJECT_HALF_HEIGHT = 330;
 const ARC_LABEL_OFFSET = 10;
 const PILLAR_LABEL_OFFSET = 44;
-const PROJECT_LABEL_OFFSET = 12;
 const NODE_R = 5;
-const PROJECT_NODE_R = 6;
+// Project markers are horizontal pills, not points. The center column
+// connects on TWO sides — priority links anchor at the LEFT edge, work-
+// category links anchor at the RIGHT edge. Width is set to fit the
+// longest project name in the inventory at PROJECT_LABEL_FONT_PX with
+// a little breathing room; if a longer entry lands, bump this. The
+// label sits inside the pill so bundled curves never cross it.
+const PROJECT_BOX_W = 244;
+const PROJECT_BOX_H = 24;
+const PROJECT_LABEL_FONT_PX = 13;
 const BUNDLE_BETA = 0.5;
 const TOOLTIP_OFFSET = 14;
 
@@ -434,6 +441,12 @@ export default function ProjectMap() {
               const proj = projectPos.get(link.project);
               if (!proj) return null;
 
+              // Project markers are pills, so links anchor at their
+              // edges, not their centers. Left links emerge from the
+              // LEFT edge; right links from the RIGHT edge.
+              const projLeft = proj.x - PROJECT_BOX_W / 2;
+              const projRight = proj.x + PROJECT_BOX_W / 2;
+
               if (link.side === "left") {
                 const target = priorityPos.get(link.target);
                 if (!target) return null;
@@ -443,12 +456,12 @@ export default function ProjectMap() {
                   : undefined;
                 const points: Array<[number, number]> = centroid
                   ? [
-                      [proj.x, proj.y],
+                      [projLeft, proj.y],
                       [centroid.x, centroid.y],
                       [target.x, target.y],
                     ]
                   : [
-                      [proj.x, proj.y],
+                      [projLeft, proj.y],
                       [target.x, target.y],
                     ];
                 const d = bundleLine(points) ?? "";
@@ -467,7 +480,7 @@ export default function ProjectMap() {
               const target = categoryPos.get(link.target);
               if (!target) return null;
               const points: Array<[number, number]> = [
-                [proj.x, proj.y],
+                [projRight, proj.y],
                 [target.x, target.y],
               ];
               const d = bundleLine(points) ?? "";
@@ -596,22 +609,26 @@ export default function ProjectMap() {
                     }
                   }}
                 >
-                  <circle
-                    cx={pos.x}
-                    cy={pos.y}
-                    r={PROJECT_NODE_R}
-                    className="fill-brand-black"
+                  {/* Project marker is a pill, not a point — left
+                      links anchor on its left edge, right links on its
+                      right edge. Label sits inside the pill so bundled
+                      curves never cross the project name. */}
+                  <rect
+                    x={pos.x - PROJECT_BOX_W / 2}
+                    y={pos.y - PROJECT_BOX_H / 2}
+                    width={PROJECT_BOX_W}
+                    height={PROJECT_BOX_H}
+                    rx={4}
+                    className="fill-white stroke-brand-black"
+                    strokeWidth={1}
                   />
-                  {/* Project labels render LEFT of the column dot
-                      (text-anchor=end). The right side is occupied by
-                      the category arc + its labels; pushing project
-                      labels left reclaims the gutter. */}
                   <text
-                    x={pos.x - PROJECT_LABEL_OFFSET}
+                    x={pos.x}
                     y={pos.y}
-                    dy="0.32em"
-                    textAnchor="end"
-                    className="fill-brand-black text-[14px] font-semibold"
+                    dy="0.34em"
+                    textAnchor="middle"
+                    className={`fill-brand-black font-semibold`}
+                    fontSize={PROJECT_LABEL_FONT_PX}
                   >
                     {p.name}
                   </text>

@@ -105,15 +105,19 @@ main a[href]:not([class*="bg-"]):not([class*="rounded"]):not(.unstyled):hover {
  * tabbed to, or restored from the URL hash. Connected nodes/edges get
  * [data-focus="connected"]; the focused node itself gets
  * [data-focus="self"]. Unrelated elements dim, but only enough to push
- * them back — they should remain legible context, not vanish. */
+ * them back — they should remain legible context, not vanish.
+ * Selectors cover both the arc nodes (circle markers) and the project
+ * column (rect markers). */
 @media (prefers-reduced-motion: no-preference) {
   .project-map [data-node-key] circle,
+  .project-map [data-node-key] rect,
   .project-map [data-node-key] text,
   .project-map [data-edge-key] {
-    transition: opacity 0.12s ease-out, stroke-opacity 0.12s ease-out, transform 0.12s ease-out;
+    transition: opacity 0.12s ease-out, stroke-opacity 0.12s ease-out, transform 0.12s ease-out, fill 0.12s ease-out, stroke-width 0.12s ease-out;
   }
 }
 .project-map[data-focused] [data-node-key] circle,
+.project-map[data-focused] [data-node-key] rect,
 .project-map[data-focused] [data-node-key] text {
   opacity: 0.32;
 }
@@ -121,6 +125,7 @@ main a[href]:not([class*="bg-"]):not([class*="rounded"]):not(.unstyled):hover {
   stroke-opacity: 0.08;
 }
 .project-map[data-focused] [data-node-key][data-focus] circle,
+.project-map[data-focused] [data-node-key][data-focus] rect,
 .project-map[data-focused] [data-node-key][data-focus] text {
   opacity: 1;
 }
@@ -132,6 +137,14 @@ main a[href]:not([class*="bg-"]):not([class*="rounded"]):not(.unstyled):hover {
   transform-origin: center;
   transform: scale(1.6);
 }
+/* Project pill self-focus: bump stroke and flip fill to Pride Gold —
+ * a pill scaled 1.6× would dwarf neighbors at 240×24, but a stroke +
+ * fill flip stays within bounds while clearly tagging the focused
+ * project. */
+.project-map[data-focused] [data-node-key][data-focus="self"] rect {
+  stroke-width: 2;
+  fill: var(--color-brand-gold);
+}
 .project-map[data-focused] [data-node-key][data-focus="self"] text {
   font-weight: 700;
 }
@@ -140,7 +153,8 @@ main a[href]:not([class*="bg-"]):not([class*="rounded"]):not(.unstyled):hover {
 .project-map [data-node-key]:focus-visible {
   outline: none;
 }
-.project-map [data-node-key]:focus-visible > circle {
+.project-map [data-node-key]:focus-visible > circle,
+.project-map [data-node-key]:focus-visible > rect {
   stroke: var(--color-brand-gold);
   stroke-width: 2.5;
 }
