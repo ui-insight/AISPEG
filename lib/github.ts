@@ -14,6 +14,8 @@ export interface GitHubIssue {
   labels: GitHubLabel[];
   html_url: string;
   created_at: string;
+  /** Body markdown — populated only by fetchIssue(); omitted from list endpoints. */
+  body?: string | null;
   milestone?: {
     title: string;
   } | null;
@@ -56,6 +58,39 @@ export async function fetchIssues(): Promise<GitHubIssue[]> {
   } catch (error) {
     console.error("Failed to fetch GitHub issues:", error);
     return [];
+  }
+}
+
+/**
+ * Fetch a single issue by number, including its body. Used by the
+ * conversational agent's get_issue tool. Same 5-minute ISR cache.
+ */
+export async function fetchIssue(
+  number: number
+): Promise<GitHubIssue | null> {
+  try {
+    const headers: Record<string, string> = {
+      Accept: "application/vnd.github+json",
+    };
+    const token = process.env.GITHUB_TOKEN;
+    if (token) headers.Authorization = `Bearer ${token}`;
+
+    const res = await fetch(`${API}/${number}`, {
+      next: { revalidate: 300 },
+      headers,
+    });
+    if (!res.ok) {
+      if (res.status !== 404) {
+        console.error(`GitHub API error: ${res.status} ${res.statusText}`);
+      }
+      return null;
+    }
+    const data = (await res.json()) as GitHubIssue & { pull_request?: unknown };
+    if ("pull_request" in data && data.pull_request) return null;
+    return data;
+  } catch (error) {
+    console.error(`Failed to fetch GitHub issue #${number}:`, error);
+    return null;
   }
 }
 

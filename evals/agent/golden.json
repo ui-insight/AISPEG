@@ -192,6 +192,69 @@
       "tags": ["meta", "navigation"]
     },
     {
+      "id": "governance-projects-list",
+      "question": "Which projects are part of the AI4RA Unified Data Model?",
+      "expectedToolCalls": ["list_governance_projects"],
+      "expectedCitations": ["/standards/data-model"],
+      "tags": ["governance", "udm"]
+    },
+    {
+      "id": "governance-table-lookup",
+      "question": "What columns are in the AuditReport table from the audit-dashboard project?",
+      "expectedToolCalls": ["lookup_udm_table"],
+      "expectedCitations": ["/standards/data-model/tables/audit-dashboard/AuditReport"],
+      "tags": ["governance", "udm", "table"]
+    },
+    {
+      "id": "governance-vocabulary-search",
+      "question": "What ReportType values are in the audit vocabulary?",
+      "expectedToolCalls": ["search_vocabulary"],
+      "expectedCitations": ["/standards/data-model/vocabularies"],
+      "tags": ["governance", "vocabulary"]
+    },
+    {
+      "id": "strategic-plan-pillar-lookup",
+      "question": "Tell me about Pillar A of the UI Strategic Plan.",
+      "expectedToolCalls": ["lookup_pillar"],
+      "expectedCitations": ["/standards/strategic-plan/pillars/A"],
+      "tags": ["strategic-plan", "pillar"]
+    },
+    {
+      "id": "strategic-plan-priority-lookup",
+      "question": "What does priority A.1 say in the UI Strategic Plan?",
+      "expectedToolCalls": ["lookup_priority"],
+      "expectedCitations": ["/standards/strategic-plan/priorities/A.1"],
+      "tags": ["strategic-plan", "priority"]
+    },
+    {
+      "id": "strategic-plan-projects-for-priority",
+      "question": "Which IIDS projects advance priority D.3?",
+      "expectedToolCalls": ["list_projects_for_priority"],
+      "expectedCitations": ["/standards/strategic-plan/priorities/D.3"],
+      "tags": ["strategic-plan", "priority", "alignment"]
+    },
+    {
+      "id": "github-open-issues",
+      "question": "What's currently open in the AISPEG issue tracker?",
+      "expectedToolCalls": ["list_open_issues"],
+      "expectedCitations": ["https://github.com/ui-insight/AISPEG/issues"],
+      "tags": ["github", "issues"]
+    },
+    {
+      "id": "github-search-conversational-agent",
+      "question": "Are there any open issues about the conversational agent?",
+      "expectedToolCalls": ["search_issues"],
+      "rationale": "search_issues with a query like 'conversational agent' or 'agent' should pull the epic and slices. Citation URL varies, score on tool selection.",
+      "tags": ["github", "issues", "search"]
+    },
+    {
+      "id": "github-issue-detail",
+      "question": "What's in GitHub issue #107?",
+      "expectedToolCalls": ["get_issue"],
+      "expectedCitations": ["https://github.com/ui-insight/AISPEG/issues/107"],
+      "tags": ["github", "issues", "detail"]
+    },
+    {
       "id": "refuse-weather",
       "question": "What's the weather in Moscow Idaho today?",
       "shouldRefuse": true,
