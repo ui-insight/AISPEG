@@ -22,6 +22,11 @@ export default async function Home() {
     .filter((i): i is NonNullable<typeof i> => i !== undefined);
   const standards = standardsSummary();
   const reportCount = artifacts.length;
+  const buildDate = new Date().toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 
   return (
     <div className="space-y-10">
@@ -79,6 +84,9 @@ export default async function Home() {
             ))}
           </p>
         )}
+        <p className="mt-2 text-xs text-ink-subtle">
+          As of {buildDate} (last deploy)
+        </p>
       </section>
 
       <section>
@@ -89,7 +97,7 @@ export default async function Home() {
           <p className="text-xs font-medium uppercase tracking-wider text-brand-silver">
             Projects
           </p>
-          <h2 className="mt-2 text-2xl font-semibold">
+          <h2 className="mt-2 text-2xl">
             {projectCount} AI projects across UI units
           </h2>
           <p className="mt-2 text-sm text-ink-muted">
@@ -133,9 +141,6 @@ export default async function Home() {
           <p className="mt-2 text-sm leading-relaxed text-ink-muted">
             Routes to a named IIDS owner with a 2-business-day SLA.
           </p>
-          <p className="mt-3 text-sm font-medium text-brand-black group-hover:underline">
-            Start &rarr;
-          </p>
         </Link>
 
         <Link
@@ -162,9 +167,6 @@ export default async function Home() {
             </span>{" "}
             published.
           </p>
-          <p className="mt-3 text-sm font-medium text-brand-black group-hover:underline">
-            View &rarr;
-          </p>
         </Link>
 
         <Link
@@ -181,9 +183,6 @@ export default async function Home() {
             <span className="font-semibold text-brand-black">{reportCount}</span>{" "}
             published. Latest:{" "}
             <span className="font-semibold text-brand-black">{mostRecent}</span>.
-          </p>
-          <p className="mt-3 text-sm font-medium text-brand-black group-hover:underline">
-            Browse &rarr;
           </p>
         </Link>
       </section>
