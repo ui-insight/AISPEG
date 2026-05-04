@@ -17,7 +17,8 @@ The site shows what's being built, what's stalled, and where to engage.
 | **Projects** | `/portfolio` | Portfolio of AI projects across UI units. Each entry names a home unit and operational owner. |
 | **Submit a Project** | `/builder-guide` | A 9-step assessment that scopes an AI idea, classifies it into one of four tiers, and connects the submitter to a named owner at IIDS. |
 | **Reports** | `/reports` | Activity reports, briefs, and time-stamped public artifacts. |
-| **Standards** | `/standards` | Public ledger of the institutional software-development and user-experience standards IIDS has formally requested from OIT. The `/standards/data-model` sub-section is an interactive explorer for the AI4RA Unified Data Model and the per-project extensions across the IIDS portfolio. |
+| **Explore** | `/explore` | "By problem" entry point — category tiles built from `lib/work-categories.ts`, complementary to `/portfolio`'s by-home-unit grouping. |
+| **Standards** | `/standards` | Public ledger of the institutional software-development and user-experience standards IIDS has formally requested from OIT. Sub-sections: `/standards/data-model` (Data Governance Explorer for the AI4RA Unified Data Model) and `/standards/strategic-plan` (Strategic Plan Alignment Explorer — pillars, priorities, and the projects advancing each one). |
 
 Plus `/docs` (technical and user documentation) and `/admin/*` (registry +
 submissions admin during the ClickUp transition). Several legacy routes
@@ -93,7 +94,7 @@ lib/                         # Domain logic and data
   mindrouter.ts              # MindRouter LLM client
   db.ts                      # Postgres connection pool
 
-db/migrations/               # SQL migrations (001 → 004)
+db/migrations/               # SQL migrations (001 → 008)
 ```
 
 ## Refactor in progress
@@ -118,6 +119,16 @@ the full plan, sprint sequencing, and decisions:
   (PR #93). The About page predated the sprint and is live at `/about`.
   Remaining `app/docs/*` drift is tracked as
   [#94](https://github.com/ui-insight/AISPEG/issues/94)–[#98](https://github.com/ui-insight/AISPEG/issues/98).
+- **Sprint 5** — *complete (May 2026)*. Data governance integration:
+  `vendor/data-governance/` submodule + drift CI + `iids-portfolio`
+  domain registration (PR #172).
+- **Post-Sprint-5 / May 2026** — Lifecycle taxonomy shipped end-to-end
+  ([ADR 0001](./docs/adr/0001-product-lifecycle-taxonomy.md)) with
+  Migration 007, the `verify:portfolio` CI gate, and two-tier filter
+  UI. Strategic Plan Alignment Explorer shipped
+  ([ADR 0002](./docs/adr/0002-strategic-plan-alignment-explorer.md))
+  with Migration 008, bidirectional alignment, and drift CI. See
+  [`REFACTOR.md`](./REFACTOR.md) for the full timeline.
 
 ## Working on the codebase
 

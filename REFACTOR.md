@@ -327,7 +327,7 @@ similarity-aware review. Status updates flow from manual edits to
 **Output:** old AISPEG-collaborator-era content is fully retired or salvaged.
 Codebase reflects the new architecture without legacy cruft.
 
-### Sprint 5 — Data governance integration
+### Sprint 5 — Data governance integration *(complete, May 2026)*
 
 - Vendored `ui-insight/data-governance` as a git submodule at
   `vendor/data-governance/` and added a `prebuild`/`predev` step
@@ -341,6 +341,95 @@ Codebase reflects the new architecture without legacy cruft.
   `app/standards/data-model/**`, or `scripts/build-governance-catalog.*`.
   Drift output streams into the Actions Step Summary panel; the job fails
   on non-zero exit so registry drift cannot land silently.
+- Registered the AISPEG site as the `iids-portfolio` domain inside
+  `vendor/data-governance/` (PR #172) so the portfolio's typed enums
+  (`ProjectStatus`, `PublicStage`, `Visibility`, `AI4RARelationship`,
+  `WorkCategory`) are catalog-tracked alongside the research-admin
+  vocabularies.
+
+### Post-Sprint-5 — May 2026
+
+The work below was not pre-planned in the May 2026 refactor — it
+emerged once Sprint 5 made the catalog-tracked taxonomy idiom
+practical. Captured here so the timeline stays honest.
+
+#### Lifecycle taxonomy ([ADR 0001](./docs/adr/0001-product-lifecycle-taxonomy.md))
+
+The legacy 6-state status union (`Planned | Prototype | Piloting |
+Production | Tracked | Archived`) failed three real-world ways: it
+collapsed "idea" with "approved-to-build", conflated active
+development with idle demo state, and hid maintenance-mode vs.
+sunsetting under a single `Production`. ADR 0001 replaced it with a
+**two-layer taxonomy** — a 9-state operational ladder plus a 5-bucket
+public-stage rollup — and locked **measurable verification rules** in
+`lib/portfolio-verification.ts` (run via `npm run verify:portfolio`,
+enforced in CI).
+
+Shipped across:
+
+- ADR 0001 (PR #164) — locked the design.
+- Schema + Migration 007 (PR #169) — extended the `Project` interface
+  and re-classified the existing portfolio rows.
+- Verifier + commit-date derivation (PR #170) — `verify:portfolio`,
+  `refresh:commit-dates`, weekly GitHub Action.
+- UI (PR #171) — public-stage chips on cards, two-tier filter on
+  `/portfolio`, public stage on the landing stat strip and `/explore`.
+- Polish (PRs #185, #218) — adopted the lifecycle palette on project
+  detail pages and suppressed the operational chip when its label
+  duplicates the public stage.
+
+#### Strategic Plan Alignment Explorer ([ADR 0002](./docs/adr/0002-strategic-plan-alignment-explorer.md))
+
+Each portfolio project now declares which UI Strategic Plan
+priorities it advances. The explorer at `/standards/strategic-plan`
+renders pillars and priorities; each priority page reverses the
+direction and lists the projects advancing it. Vendored as a git
+submodule (`vendor/strategic-plan/`), built into a typed catalog
+(`lib/strategic-plan/catalog.ts`) by `scripts/build-strategic-plan-catalog.ts`.
+
+Shipped across:
+
+- Tracer slice — vendor catalog + pillars routes (PR #175).
+- Priority detail page (PR #179).
+- Alignment field on portfolio entries + chips on cards (PR #180).
+- Drift CI + submodule-freshness advisory (PR #181).
+- Reverse direction — projects advancing each priority (PR #182).
+- Stakeholder framing per pillar (PR #183).
+- Migration 008 mirrored alignment into Postgres.
+- Backfill (PR #220) — declared alignment for all 14 portfolio
+  projects then in the inventory.
+
+#### Intervention → Project rename (PRs #194-196)
+
+User research surfaced that "Intervention" was IIDS-internal
+vocabulary that read poorly to stakeholders. Renamed across types,
+identifiers, file names, and documentation to "Project". The
+data-governance submodule bumped in lockstep (`InterventionStatus` →
+`ProjectStatus`). One-shot rename, no compat shims.
+
+#### /portfolio IA polish (PRs #207-218)
+
+Pass to make `/portfolio` more scannable for stakeholders:
+
+- "The Work" → "Projects" rename across user-facing surfaces (#207).
+- Quantitative stat-strip lede replacing the prose header (#208).
+- Filter demotion — Home Unit and Category collapsed by default,
+  Sort moved to a `<select>` (#209).
+- Tiered chip vocabulary on cards with inline glossary in tooltips
+  (#210).
+- Color tokens + AI4RA pointer differentiation (#211).
+- Visibility correction — only OpenERA is embargoed; everything else
+  was over-tagged (#219).
+
+#### Inventory growth
+
+- UniVerso added (PR #221) as the first `ui-iids` (RCDS) entry in the
+  portfolio. Brings the inventory to 15 projects.
+
+The site no longer reads as mid-refactor on the user-facing surfaces.
+The remaining open work is `app/docs/*` drift cleanup
+([#94](https://github.com/ui-insight/AISPEG/issues/94)–[#98](https://github.com/ui-insight/AISPEG/issues/98))
+and the Sprint 3b ClickUp wiring (deferred to Colin).
 
 ## v1 cut
 

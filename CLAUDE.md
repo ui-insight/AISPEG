@@ -73,9 +73,10 @@ rule conflicts with something else in this document, the rule wins.
     purpose — see `REFACTOR.md`. Recover from git history only if a
     salvage need is explicitly raised.
 13. **NEVER edit auto-generated files.** `lib/governance/catalog.ts`,
-    `lib/governance/vocabularies.ts`, and `lib/portfolio-meta.ts` are
-    overwritten by their build scripts. Edit the source (the
-    `vendor/data-governance/` JSONs or the `refresh-commit-dates`
+    `lib/governance/vocabularies.ts`, `lib/strategic-plan/catalog.ts`,
+    and `lib/portfolio-meta.ts` are overwritten by their build
+    scripts. Edit the source (the `vendor/data-governance/` JSONs, the
+    `vendor/strategic-plan/` JSON, or the `refresh-commit-dates`
     script) and regenerate.
 
 ### Deployment
@@ -102,6 +103,24 @@ sprint sequencing.
   (PR #93). The About page predated the sprint and is live at `/about`.
   Remaining `app/docs/*` drift is tracked as
   [#94](https://github.com/ui-insight/AISPEG/issues/94)–[#98](https://github.com/ui-insight/AISPEG/issues/98).
+- **Sprint 5** — *complete (May 2026)*. Data governance integration:
+  `vendor/data-governance/` submodule, `lib/governance/*` typed
+  modules, `/standards/data-model` explorer, drift CI, `iids-portfolio`
+  domain registered (PR #172).
+- **Post-Sprint-5 / May 2026** — Lifecycle taxonomy shipped end-to-end
+  per [ADR 0001](./docs/adr/0001-product-lifecycle-taxonomy.md): schema
+  + Migration 007 (PR #169), verifier + commit-date derivation
+  (PR #170), public-stage chips + two-tier filter (PR #171).
+  Strategic Plan Alignment Explorer shipped per
+  [ADR 0002](./docs/adr/0002-strategic-plan-alignment-explorer.md):
+  vendor catalog + pillars routes (PR #175), priority detail (#179),
+  alignment field on portfolio entries (#180), drift CI (#181),
+  reverse-direction (#182), stakeholder framing (#183), Migration 008.
+  Intervention → Project rename across code, types, and docs
+  (PRs #194-196). /portfolio polish: stat-strip lede, filter demotion,
+  rename "The Work" → "Projects" (PRs #207-218). UniVerso added as
+  the first ui-iids portfolio entry (#221). Strategic-plan alignment
+  declared for all 15 portfolio projects (#220).
 
 ## Information architecture
 
@@ -163,32 +182,45 @@ Headings weight 900; body 400; emphasis 600–700. No display serif pairing.
 
 ```
 app/                       # Next.js App Router
-  page.tsx                 # Landing — four-card steering page
+  page.tsx                 # Landing — steering page
   layout.tsx               # Root layout, sidebar, metadata
+  about/                   # About — strategic frame, AI4RA partnership, IIDS operator note
   portfolio/               # Projects
   explore/                 # Explore — "by problem" axis, category-tile entry
   builder-guide/           # Submit a Project (assessment quiz)
+  intake/[token]/          # Submitter-visible status page (Sprint 3a)
   reports/                 # Reports surface
-  standards/               # Standards (sub-nav: ledger + data-model explorer)
-  standards/data-model/    # Data Governance Explorer (UDM catalog + extensions)
+  presentations/           # Legacy redirect → /reports (kept to preserve inbound links)
+  standards/               # Standards (sub-nav: ledger + data-model + strategic-plan)
+    data-model/            # Data Governance Explorer (UDM catalog + extensions)
+    strategic-plan/        # Strategic Plan Alignment Explorer (pillars + priorities)
   ai4ra-ecosystem/         # AI4RA partnership deep-dive (linked from /about)
+  internal/                # Auth-gated views (Basic auth) — same data, sharper detail
   admin/                   # Registry + submissions admin
   api/                     # Next.js API routes
   docs/                    # Technical + user documentation
 
 components/                # Reusable components
   Sidebar.tsx              # Sidebar navigation
+  StandardsSubNav.tsx      # Sub-nav under /standards
   PortfolioCard.tsx        # Project card
+  PortfolioFilters.tsx     # Two-tier public-stage / operational-status filter
+  ProjectDetail.tsx        # Project detail page composition
   IssueCard.tsx            # GitHub issue card
   DocPage.tsx              # Docs layout primitives
+  (plus governance + data-model explorer components)
 
 lib/                       # Domain logic
   portfolio.ts             # Project inventory (typed; seed source for the applications table)
+  portfolio-verification.ts # ADR 0001 verifier — `npm run verify:portfolio`
+  portfolio-meta.ts        # AUTO-GENERATED — derived lastCommitDate per repo (do not edit)
+  lifecycle-display.ts     # Display helpers for public-stage / operational status chips
   work.ts                  # Postgres-backed query module for /portfolio (reads applications + blockers)
-  work-categories.ts       # "By problem" taxonomy — typed slugs + audience-facing labels (drives /explore + the /portfolio category facet)
+  work-categories.ts       # "By problem" taxonomy — typed slugs + audience-facing labels
   standards-watch.ts       # Standards ledger
   artifacts.ts             # Unified Reports timeline — briefs, activity reports, external talks
   builder-guide-data.ts    # Assessment quiz + scoring + tiers
+  intake-config.ts         # Named human + SLA + status labels for Submit-a-Project
   similarity.ts            # Submission ↔ registry overlap engine
   github.ts                # GitHub Issues API
   mindrouter.ts            # MindRouter LLM client
@@ -196,16 +228,34 @@ lib/                       # Domain logic
   governance/              # Data Governance Explorer typed modules
     types.ts               # Shared interfaces (Project, Table, Column, Vocabulary*)
     canonical-udm-tables.ts # Hand-curated canonical-vs-extension tagging (v1)
+    cross-project-fk.ts    # Cross-project foreign-key declarations
+    glossary.ts            # Term glossary surfaced in chip tooltips
+    project-framing.ts     # Per-project framing copy
+    vocabulary-usage.ts    # Reverse index — which projects use which vocab
     catalog.ts             # AUTO-GENERATED — projects + tables (do not edit)
     vocabularies.ts        # AUTO-GENERATED — controlled vocabularies (do not edit)
+  strategic-plan/          # Strategic Plan Alignment Explorer typed modules
+    types.ts               # Pillar / Priority interfaces
+    pillar-framing.ts      # Stakeholder-facing framing per pillar
+    project-alignment.ts   # Reverse lookup — projects advancing each priority
+    catalog.ts             # AUTO-GENERATED — pillars + priorities (do not edit)
 
-db/migrations/             # SQL migrations (001 → 006)
+db/migrations/             # SQL migrations (001 → 008; 007 = lifecycle, 008 = strategic-plan-alignment)
 
 scripts/                   # Node scripts run via tsx
-  build-governance-catalog.ts # Reads vendor/data-governance/ → emits lib/governance/{catalog,vocabularies}.ts
+  build-governance-catalog.ts     # vendor/data-governance/ → lib/governance/{catalog,vocabularies}.ts
+  build-strategic-plan-catalog.ts # vendor/strategic-plan/ → lib/strategic-plan/catalog.ts
+  governance-freshness.ts         # Submodule freshness PR comment
+  governance-pr-summary.ts        # Catalog-diff PR comment
+  strategic-plan-freshness.ts     # Strategic-plan submodule freshness PR comment
+  migrate.ts                      # Postgres migration runner
+  seed-portfolio.ts               # lib/portfolio.ts → applications table
+  verify-portfolio.ts             # ADR 0001 status-rule enforcer
+  refresh-commit-dates.ts         # GitHub API → lib/portfolio-meta.ts (weekly Action)
 
-vendor/                    # Vendored dependencies
-  data-governance/         # Git submodule → ui-insight/data-governance
+vendor/                    # Vendored dependencies (git submodules)
+  data-governance/         # ui-insight/data-governance — UDM + controlled vocabs
+  strategic-plan/          # UI Strategic Plan pillars + priorities
 ```
 
 ## Conventions
@@ -232,7 +282,8 @@ normative version of any of these lives in **Agent Rules** above).
 
 | To add… | Edit | Notes |
 |---|---|---|
-| A project | `lib/portfolio.ts` | Use existing entries as templates. Set `visibility` honestly. Set `status` honestly per the verification rules in [ADR 0001](docs/adr/0001-product-lifecycle-taxonomy.md) — `npm run verify:portfolio` polices it. Tag with `workCategories` from `lib/work-categories.ts`. After editing, re-run `scripts/seed-portfolio.ts` against dev to refresh the `applications` table. |
+| A project | `lib/portfolio.ts` | Use existing entries as templates. Set `visibility` honestly. Set `status` honestly per the verification rules in [ADR 0001](docs/adr/0001-product-lifecycle-taxonomy.md) — `npm run verify:portfolio` polices it. Tag with `workCategories` from `lib/work-categories.ts`. Declare `strategicPlanAlignment` against priority codes from `lib/strategic-plan/catalog.ts` (see [ADR 0002](docs/adr/0002-strategic-plan-alignment-explorer.md)). After editing, re-run `scripts/seed-portfolio.ts` against dev to refresh the `applications` table. |
+| Strategic-plan alignment on a project | `lib/portfolio.ts` (the `strategicPlanAlignment` field on the entry) | Reference priority codes (e.g. `"A.1"`, `"D.3"`) defined in `lib/strategic-plan/catalog.ts`. The drift CI workflow validates references against the upstream `vendor/strategic-plan/` snapshot. Per [ADR 0002](docs/adr/0002-strategic-plan-alignment-explorer.md). |
 | A work category | `lib/work-categories.ts` (constant + label record) + tag relevant projects | Audience-facing labels (a Dean's vocabulary). Header comment in the file documents add/rename/retire/promote mechanics. tsc enforces consistency across consumers. |
 | A standards ledger entry | `lib/standards-watch.ts` | Each is commit-worthy; the git log is the audit trail. |
 | A sub-section under `/standards` | `app/standards/<sub>/page.tsx` + add a row to `subNavItems` in `components/StandardsSubNav.tsx` | The shared eyebrow + sub-nav lives in `app/standards/layout.tsx`. Each sub-page owns its own H1. Sidebar stays at one "Standards" entry — never edit `Sidebar.tsx` for sub-sections. |
@@ -246,11 +297,23 @@ and update `lib/db.ts` only if the connection pool needs new behavior.
 ## Development commands
 
 ```bash
-npm run dev                # Dev server on :3000 (auto-runs build:governance first)
-npm run build              # Production build (auto-runs build:governance first)
-npm run build:governance   # Regenerate lib/governance/{catalog,vocabularies}.ts
-                           # from vendor/data-governance/ submodule
-npm run lint               # ESLint
+npm run dev                    # Dev server on :3000 (predev runs build:governance + build:strategic-plan)
+npm run build                  # Production build (prebuild runs build:governance + build:strategic-plan)
+npm run build:governance       # Regenerate lib/governance/{catalog,vocabularies}.ts
+                               # from vendor/data-governance/ submodule
+npm run build:strategic-plan   # Regenerate lib/strategic-plan/catalog.ts
+                               # from vendor/strategic-plan/ submodule
+npm run lint                   # ESLint
+
+# Portfolio data + ADR 0001 enforcement
+npm run migrate                # Apply pending SQL migrations against $DATABASE_URL
+npm run seed:portfolio         # lib/portfolio.ts → applications table (dev DB)
+npm run verify:portfolio       # ADR 0001 status-rule enforcer (CI runs this)
+npm run refresh:commit-dates   # Hit GitHub API → regenerate lib/portfolio-meta.ts
+
+# Submodule freshness (used by PR-summary workflows)
+npm run governance:freshness        # Renders submodule-staleness comment
+npm run strategic-plan:freshness    # Same, for the strategic-plan submodule
 ```
 
 `npm run build` is the primary verification step. Run it before committing.
@@ -292,7 +355,9 @@ npm run governance:freshness        # needs PINNED_SHA + PINNED_COMMIT_DATE_ISO
 canonical AI4RA Unified Data Model catalog and controlled-vocabulary
 registry. The `prebuild` and `predev` hooks regenerate
 `lib/governance/catalog.ts` and `lib/governance/vocabularies.ts` from
-this submodule, so the typed catalog modules stay in sync.
+this submodule (and `lib/strategic-plan/catalog.ts` from the
+`vendor/strategic-plan/` submodule), so the typed catalog modules stay
+in sync.
 
 When the upstream catalog changes, refresh the submodule:
 

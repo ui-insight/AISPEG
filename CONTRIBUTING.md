@@ -39,25 +39,26 @@ The site runs at <http://localhost:3000>.
 
 > **Tip for agentic tools**: at the start of a session, point your agent at
 > [`CLAUDE.md`](./CLAUDE.md) and [`REFACTOR.md`](./REFACTOR.md). Together
-> they cover project structure, conventions, the four-surface IA, the
+> they cover project structure, conventions, the five-surface IA, the
 > friction-ledger model, and the sprint sequencing.
 
 ---
 
 ## How the site works
 
-### Four primary surfaces
+### Five primary surfaces
 
 | Surface | Route | Source of truth |
 |---|---|---|
-| Projects | `/portfolio` | `lib/portfolio.ts` |
-| Submit a Project | `/builder-guide` | `lib/builder-guide-data.ts` (quiz) + Postgres `submissions` (responses) |
+| Projects | `/portfolio` | Postgres `applications` (read via `lib/work.ts`); `lib/portfolio.ts` is the typed seed source. Two-tier filter (public stage → operational status) per [ADR 0001](./docs/adr/0001-product-lifecycle-taxonomy.md). |
+| Explore | `/explore` | `lib/work-categories.ts` (taxonomy) + `lib/portfolio.ts` (counts) — by-problem axis. |
+| Submit a Project | `/builder-guide` | `lib/builder-guide-data.ts` (quiz) + Postgres `submissions` (responses); status page at `/intake/[token]`. |
 | Reports | `/reports` | `lib/artifacts.ts` (unified timeline) + per-report routes |
-| Standards | `/standards` | `lib/standards-watch.ts` |
+| Standards | `/standards` | `lib/standards-watch.ts`; sub-nav surfaces `/standards/data-model` and `/standards/strategic-plan`. |
 
-Plus `/ai4ra-ecosystem`, `/docs/*`, `/admin/*`. See
-[`CLAUDE.md`](./CLAUDE.md) for the full route inventory and what's been
-archived.
+Plus `/ai4ra-ecosystem`, `/about`, `/internal` (auth-gated),
+`/docs/*`, `/admin/*`. See [`CLAUDE.md`](./CLAUDE.md) for the full
+route inventory and what's been archived.
 
 ### Typed data modules over JSON blobs
 
@@ -123,11 +124,16 @@ array. The shape is defined in the same file. Required fields include
     { name: "Pat Owner", title: "Director of Something" },
   ],
   buildParticipants: ["IIDS"],
-  status: "Piloting",        // see "Status transitions" below
+  status: "piloting",        // ADR 0001 operational state — see below
   visibility: "Public",      // see "Visibility tier" below
   ai4raRelationship: "None", // see "AI4RA relationship" below
   tags: ["diffusion"],       // optional; see "Tag vocabulary" below
-  // ...optional fields: funding, externalDeployments, links, etc.
+  workCategories: ["..."],   // typed category slugs from lib/work-categories.ts
+  iidsSponsor: "Name",       // ADR 0001 — required to claim approved+
+  // ...plus the ADR 0001 status-specific fields (pilotCohort,
+  //    productionScope, supportContact, sunsetDate, replacedBy, etc.)
+  //    and optional: funding, externalDeployments, links,
+  //    strategicPlanAlignment (priority codes per ADR 0002).
 },
 ```
 
@@ -161,21 +167,33 @@ existence of the work is itself sensitive.
 
 #### Status transitions
 
-| Status | Meaning | When to set it |
-|---|---|---|
-| `Planned` | Committed-to but not started | Ownership and home unit assigned, scope discussed, no code yet |
-| `Prototype` | Built but not in operational use | Functional artifact exists; not yet validated by a real user in real work |
-| `Piloting` | In limited operational use | A bounded group of real users is using it for real work; learning phase |
-| `Production` | Routine institutional use | The operational owner depends on it for day-to-day work and would push back if it went away |
-| `Tracked` | Not built by IIDS | In the inventory because IIDS coordinates around it; partner-unit-led |
-| `Archived` | Decommissioned | Excluded from active counts; retained for historical record |
+The status taxonomy is defined and enforced by
+[ADR 0001 — Product Lifecycle Taxonomy](./docs/adr/0001-product-lifecycle-taxonomy.md).
+The lifecycle has two layers:
 
-**The bar for `Piloting` → `Production`**: the operational owner would
-escalate if the tool stopped working tomorrow.
+- **Operational ladder** (9 states + `tracked` meta): `idea`,
+  `approved`, `building`, `prototype`, `piloting`, `production`,
+  `maintained`, `sunsetting`, `archived`, plus `tracked` for
+  partner-unit-led work IIDS coordinates around.
+- **Public stage rollup** (5 buckets) — `exploring`, `building`,
+  `live`, `retired`, `tracked` — derived automatically from the
+  operational state. Stakeholders see the public stage; IIDS sees the
+  operational state as a secondary chip.
 
-**The bar for `Tracked`**: IIDS is aware of the work, the home unit
+Each operational state has a **measurable verification rule** (e.g.
+`production` requires either a public `liveUrl` reachable beyond the
+pilot or a public `repoUrl` where the repo itself is the deliverable,
+plus `productionScope` and `supportContact`). `npm run verify:portfolio`
+enforces the rules in CI; run it locally before pushing.
+
+For the full rule table, the schema fields each state requires, and
+the rationale, read [ADR 0001](./docs/adr/0001-product-lifecycle-taxonomy.md)
+in full before changing a project's `status`.
+
+**The bar for `tracked`**: IIDS is aware of the work, the home unit
 owns it, IIDS may have advised but did not build. Always pair with
-`buildParticipants` that does *not* list IIDS.
+`buildParticipants` that does *not* list IIDS, and set
+`trackingOnly: true`.
 
 #### `homeUnits` vs `buildParticipants`
 
@@ -214,12 +232,13 @@ known active values:
   case: a non-IIDS UI unit is co-building, not just consuming. Renders
   the *"Capability diffusion"* chip on `/portfolio`.
 
-That's it for the active tag vocabulary today. Once the *"By problem"*
-exploration axis ships (epic [#154](https://github.com/ui-insight/AISPEG/issues/154)),
-category tagging migrates to a typed `workCategories` field;
-`tags` retains its current ad-hoc usage for situational flags only.
-**Don't invent new ad-hoc tags** — flag a need in [#154](https://github.com/ui-insight/AISPEG/issues/154)
-or open a new issue.
+Category tagging now lives in a typed `workCategories` field on each
+project (sourced from `lib/work-categories.ts`); the by-problem
+explore axis ([epic #154](https://github.com/ui-insight/AISPEG/issues/154))
+shipped via PRs #158-163. `tags` retains its ad-hoc usage for
+situational flags only. **Don't invent new ad-hoc tags** — promote
+the concept into `workCategories` (with a header-comment-driven
+add/rename/retire flow) or open a new issue.
 
 #### Freshness expectations
 
@@ -271,9 +290,8 @@ artifact:
 
 ### Adding a new top-level route
 
-The IA is intentionally narrow (4 primary surfaces today, 5 once the
-*"By problem"* explore axis ships per [#154](https://github.com/ui-insight/AISPEG/issues/154)).
-Adding a new top-level route should be a deliberate choice — discuss in
+The IA is intentionally narrow (5 primary surfaces). Adding a new
+top-level route should be a deliberate choice — discuss in
 `REFACTOR.md` or open an issue first.
 
 If approved:
@@ -342,9 +360,9 @@ Give your agent the strategic context first. A good opening:
 > Read `REFACTOR.md` and `CLAUDE.md` to understand the project. This is a
 > Next.js 16 site that's the coordination nexus for the University of
 > Idaho's institutional AI initiative, operated by IIDS. We're mid-refactor
-> from a legacy AISPEG-collaboration framing. The IA is four surfaces:
-> Projects, Submit a Project, Reports, Standards. Run `npm run build` to
-> verify changes.
+> from a legacy AISPEG-collaboration framing. The IA is five surfaces:
+> Projects, Explore, Submit a Project, Reports, Standards. Run
+> `npm run build` to verify changes.
 
 ### Effective prompt patterns
 
