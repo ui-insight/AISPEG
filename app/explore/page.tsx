@@ -11,11 +11,13 @@ import {
   WORK_CATEGORY_LABELS,
   type WorkCategory,
 } from "@/lib/work-categories";
+import ExploreViewToggle from "@/components/ExploreViewToggle";
+import ProjectMapView from "@/components/ProjectMapView";
 
 export const metadata = {
   title: "Explore | UI AI Initiative",
   description:
-    "Browse AI projects at the University of Idaho by the kind of operational work they help with.",
+    "Browse AI projects at the University of Idaho by the kind of operational work they help with, or as a network of priorities, projects, and work categories.",
 };
 
 interface CategoryTile {
@@ -46,7 +48,16 @@ function buildTiles(projects: Project[]): CategoryTile[] {
   });
 }
 
-export default function ExplorePage() {
+type View = "tiles" | "map";
+
+export default async function ExplorePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ view?: string }>;
+}) {
+  const params = await searchParams;
+  const view: View = params.view === "map" ? "map" : "tiles";
+
   const projects = getPubliclyVisible();
   const tiles = buildTiles(projects);
 
@@ -57,29 +68,64 @@ export default function ExplorePage() {
           Explore
         </p>
         <h1 className="mt-2 text-3xl font-black leading-tight sm:text-4xl">
-          Browse projects by the kind of work they help with
+          {view === "map"
+            ? "The whole mesh: priorities, projects, and work categories"
+            : "Browse projects by the kind of work they help with"}
         </h1>
         <p className="mt-4 max-w-3xl text-base leading-relaxed text-ink-muted">
-          Find AI work tackling problems like yours &mdash; documents,
-          processes, coordination, reconciliation, and more. Each tile
-          counts the projects tagged with that kind of work and links
-          straight into a filtered view of{" "}
-          <Link href="/portfolio" className="font-medium text-brand-black hover:underline">
-            Projects
-          </Link>
-          .
+          {view === "map" ? (
+            <>
+              Every project, every strategic priority it advances, and
+              every kind of work it supports — drawn as a single network.
+              Sparse seats are signal: they show where the strategic plan
+              has thin coverage today.
+            </>
+          ) : (
+            <>
+              Find AI work tackling problems like yours &mdash; documents,
+              processes, coordination, reconciliation, and more. Each tile
+              counts the projects tagged with that kind of work and links
+              straight into a filtered view of{" "}
+              <Link href="/portfolio" className="font-medium text-brand-black hover:underline">
+                Projects
+              </Link>
+              .
+            </>
+          )}
         </p>
+        <div className="mt-6">
+          <ExploreViewToggle view={view} />
+        </div>
       </section>
 
-      <section
-        aria-label="Categories"
-        className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
-      >
-        {tiles.map((tile) => (
-          <CategoryTileCard key={tile.slug} tile={tile} />
-        ))}
-      </section>
+      {view === "map" ? <MapSection /> : <TilesSection tiles={tiles} />}
     </div>
+  );
+}
+
+function TilesSection({ tiles }: { tiles: CategoryTile[] }) {
+  return (
+    <section
+      aria-label="Categories"
+      className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+    >
+      {tiles.map((tile) => (
+        <CategoryTileCard key={tile.slug} tile={tile} />
+      ))}
+    </section>
+  );
+}
+
+function MapSection() {
+  return (
+    <section aria-label="Project Map" className="space-y-4">
+      <ProjectMapView />
+      <p className="max-w-3xl text-sm text-ink-muted">
+        Each line connects a project to a strategic priority it advances or
+        a kind of work it supports. Hover any node to follow its
+        connections — click to drill in.
+      </p>
+    </section>
   );
 }
 
