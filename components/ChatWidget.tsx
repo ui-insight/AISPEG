@@ -6,12 +6,15 @@
 // in-memory conversation thread (closing the panel preserves it; full
 // page reload drops it — persistence is Slice #111).
 //
-// Streaming, markdown rendering, and richer mobile polish are all
-// explicitly Slice #111 — this widget renders the response as plain
-// text with auto-linked URLs for the inline citations.
+// Streaming and richer mobile polish are still Slice #111. Markdown
+// rendering (tables, bold, lists, code) was originally deferred there
+// too, but the model emits tables in real responses often enough that
+// rendering them properly was a no-brainer pull-forward.
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import ReactMarkdown, { type Components } from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface Citation {
   tool: string;
@@ -47,48 +50,77 @@ function isInternalUrl(url: string): boolean {
   return url.startsWith("/");
 }
 
-// Render the assistant text. The agent already weaves markdown links —
-// `[Label](/url)` — into responses; we parse those and render real
-// anchors so users can click. Plain text passes through unchanged.
+// Markdown link regex — used for inline-link de-duping against citation
+// pills (so a URL the model already wrote inline isn't repeated as a chip).
 const MD_LINK = /\[([^\]]+)\]\(([^)]+)\)/g;
 
-function renderAssistantText(text: string): React.ReactNode {
-  const parts: React.ReactNode[] = [];
-  let lastIndex = 0;
-  let match: RegExpExecArray | null;
-  let keyCounter = 0;
-  while ((match = MD_LINK.exec(text)) !== null) {
-    if (match.index > lastIndex) {
-      parts.push(text.slice(lastIndex, match.index));
-    }
-    const [, label, url] = match;
-    parts.push(
-      isInternalUrl(url!) ? (
+// react-markdown component overrides. Internal routes use next/link so
+// click-through is client-side; external links open in a new tab.
+// Tables and other GFM features come in via remark-gfm.
+const MD_COMPONENTS: Components = {
+  a({ href, children }) {
+    if (!href) return <>{children}</>;
+    if (isInternalUrl(href)) {
+      return (
         <Link
-          key={`md-${keyCounter++}`}
-          href={url!}
+          href={href}
           className="text-brand-clearwater underline decoration-brand-clearwater underline-offset-2 hover:decoration-2"
         >
-          {label}
+          {children}
         </Link>
-      ) : (
-        <a
-          key={`md-${keyCounter++}`}
-          href={url!}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-brand-clearwater underline decoration-brand-clearwater underline-offset-2 hover:decoration-2"
-        >
-          {label}
-        </a>
-      )
+      );
+    }
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-brand-clearwater underline decoration-brand-clearwater underline-offset-2 hover:decoration-2"
+      >
+        {children}
+      </a>
     );
-    lastIndex = match.index + match[0].length;
-  }
-  if (lastIndex < text.length) {
-    parts.push(text.slice(lastIndex));
-  }
-  return parts.length > 0 ? parts : text;
+  },
+  p: ({ children }) => <p className="text-sm leading-relaxed">{children}</p>,
+  strong: ({ children }) => <strong className="font-semibold text-ink">{children}</strong>,
+  em: ({ children }) => <em className="italic">{children}</em>,
+  code: ({ children }) => (
+    <code className="rounded bg-surface-alt px-1 py-0.5 text-[0.85em] font-mono text-ink">
+      {children}
+    </code>
+  ),
+  ul: ({ children }) => <ul className="list-disc space-y-1 pl-5 text-sm">{children}</ul>,
+  ol: ({ children }) => <ol className="list-decimal space-y-1 pl-5 text-sm">{children}</ol>,
+  li: ({ children }) => <li className="leading-snug">{children}</li>,
+  // GFM tables — chat panel is narrow (~380px) so wrap in an overflow-x
+  // scroller and use compact spacing.
+  table: ({ children }) => (
+    <div className="my-1 overflow-x-auto">
+      <table className="min-w-full border-collapse text-xs">{children}</table>
+    </div>
+  ),
+  thead: ({ children }) => <thead className="bg-surface-alt">{children}</thead>,
+  tr: ({ children }) => <tr className="border-b border-hairline last:border-0">{children}</tr>,
+  th: ({ children }) => (
+    <th className="px-2 py-1 text-left font-semibold text-ink">{children}</th>
+  ),
+  td: ({ children }) => <td className="px-2 py-1 align-top text-ink">{children}</td>,
+  hr: () => <hr className="my-2 border-hairline" />,
+  blockquote: ({ children }) => (
+    <blockquote className="border-l-2 border-hairline pl-3 text-ink-muted">
+      {children}
+    </blockquote>
+  ),
+};
+
+function AssistantMarkdown({ text }: { text: string }) {
+  return (
+    <div className="space-y-2">
+      <ReactMarkdown remarkPlugins={[remarkGfm]} components={MD_COMPONENTS}>
+        {text}
+      </ReactMarkdown>
+    </div>
+  );
 }
 
 // Inline citation pill — the agent's citations array often contains the
@@ -321,8 +353,8 @@ export default function ChatWidget() {
                   </li>
                 ) : (
                   <li key={i} className="space-y-2">
-                    <div className="whitespace-pre-wrap text-sm leading-relaxed text-ink">
-                      {renderAssistantText(t.content)}
+                    <div className="text-sm leading-relaxed text-ink">
+                      <AssistantMarkdown text={t.content} />
                     </div>
                     {(() => {
                       const pills = dedupeCitations(t.citations, t.content);
