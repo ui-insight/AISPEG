@@ -8,8 +8,9 @@ import {
   PUBLIC_STAGE_ORDER,
   STAGE_OPERATIONAL_ROLLUP,
   publicStageFromStatus,
-} from "@/lib/lifecycle-display";
-import type { ProjectStatus, PublicStage } from "@/lib/portfolio";
+  type ProjectStatus,
+  type PublicStage,
+} from "@/lib/portfolio";
 
 // Pure URL-state filter chip group. The portfolio page builds the option
 // lists from the unfiltered data and passes them in; clicking a pill

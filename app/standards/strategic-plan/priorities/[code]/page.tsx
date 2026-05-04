@@ -6,7 +6,7 @@ import {
   priorities,
 } from "@/lib/strategic-plan/catalog";
 import { getProjectsForPriority } from "@/lib/strategic-plan/project-alignment";
-import { OPERATIONAL_LABEL } from "@/lib/lifecycle-display";
+import { OPERATIONAL_LABEL } from "@/lib/portfolio";
 
 export function generateStaticParams() {
   return priorities.map((p) => ({ code: p.code }));

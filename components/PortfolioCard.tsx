@@ -11,7 +11,7 @@ import {
   PUBLIC_STAGE_TITLE,
   isProjectStatus,
   publicStageFromStatus,
-} from "@/lib/lifecycle-display";
+} from "@/lib/portfolio";
 
 const severityStyles: Record<"low" | "medium" | "high", string> = {
   low: "border-hairline bg-surface-alt text-ink-muted",
