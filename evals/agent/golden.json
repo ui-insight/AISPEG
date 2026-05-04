@@ -105,6 +105,93 @@
       "tags": ["portfolio", "named-project"]
     },
     {
+      "id": "lookup-openera-detail",
+      "question": "Give me the full description of OpenERA — owners, status, what it does.",
+      "expectedToolCalls": ["lookup_portfolio_entry"],
+      "expectedCitations": ["/portfolio/openera"],
+      "rationale": "Detail-grade question. Should reach for lookup_portfolio_entry (after search_portfolio finds the slug).",
+      "tags": ["portfolio", "named-project", "lookup"]
+    },
+    {
+      "id": "lookup-mindrouter-detail",
+      "question": "Tell me everything about MindRouter — features, technology stack, owner.",
+      "expectedToolCalls": ["lookup_portfolio_entry"],
+      "expectedCitations": ["/portfolio/mindrouter"],
+      "tags": ["portfolio", "named-project", "lookup"]
+    },
+    {
+      "id": "active-blockers-overview",
+      "question": "What's currently blocking IIDS work?",
+      "expectedToolCalls": ["list_active_blockers"],
+      "expectedCitations": ["/portfolio"],
+      "tags": ["blockers", "overview"]
+    },
+    {
+      "id": "blockers-stalled",
+      "question": "Where are we waiting on someone else right now?",
+      "expectedToolCalls": ["list_active_blockers"],
+      "expectedCitations": ["/portfolio"],
+      "rationale": "Either list_active_blockers or search_blockers is fine — the agent should reach for one of them.",
+      "tags": ["blockers", "overview"]
+    },
+    {
+      "id": "standards-overview",
+      "question": "What standards has IIDS requested from OIT?",
+      "expectedToolCalls": ["list_standards"],
+      "expectedCitations": ["/standards"],
+      "tags": ["standards", "overview"]
+    },
+    {
+      "id": "standards-outstanding",
+      "question": "Which IIDS standards requests are still outstanding?",
+      "expectedToolCalls": ["list_standards"],
+      "expectedCitations": ["/standards"],
+      "rationale": "Should filter by status (e.g. requested or acknowledged) — but the eval scores set membership, so list_standards alone is enough to pass.",
+      "tags": ["standards", "filter"]
+    },
+    {
+      "id": "standard-detail",
+      "question": "What does the API & Interface Standards request cover? (Item i-2)",
+      "expectedToolCalls": ["get_standard"],
+      "expectedCitations": ["/standards"],
+      "tags": ["standards", "detail"]
+    },
+    {
+      "id": "reports-latest",
+      "question": "What's the latest IIDS report?",
+      "expectedToolCalls": ["list_reports"],
+      "expectedCitations": ["/reports"],
+      "tags": ["reports", "overview"]
+    },
+    {
+      "id": "reports-briefs",
+      "question": "Show me the executive briefings IIDS has published.",
+      "expectedToolCalls": ["list_reports"],
+      "expectedCitations": ["/reports"],
+      "tags": ["reports", "filter"]
+    },
+    {
+      "id": "report-presidential-brief",
+      "question": "What's in the February 2026 presidential brief?",
+      "expectedToolCalls": ["get_report"],
+      "expectedCitations": ["/reports/presidential-brief-feb-2026"],
+      "tags": ["reports", "detail"]
+    },
+    {
+      "id": "site-areas-overview",
+      "question": "What's on this site? Give me an overview of the sections.",
+      "expectedToolCalls": ["list_site_areas"],
+      "expectedCitations": ["/"],
+      "tags": ["meta", "navigation"]
+    },
+    {
+      "id": "site-areas-where-is-strategic-plan",
+      "question": "Where would I find strategic-plan alignment information?",
+      "expectedToolCalls": ["list_site_areas"],
+      "rationale": "Meta-navigation question. The site-areas tool surfaces the /standards/strategic-plan sub-area. Citation URL is broad, just check tool selection.",
+      "tags": ["meta", "navigation"]
+    },
+    {
       "id": "refuse-weather",
       "question": "What's the weather in Moscow Idaho today?",
       "shouldRefuse": true,

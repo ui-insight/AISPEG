@@ -14,12 +14,28 @@ import "server-only";
 import { chatCompletion, type ChatMessage, type ToolCall } from "@/lib/mindrouter";
 import { SYSTEM_PROMPT } from "./prompts/system";
 import { searchPortfolioTool } from "./tools/search-portfolio";
+import { lookupPortfolioEntryTool } from "./tools/lookup-portfolio-entry";
+import { searchBlockersTool } from "./tools/search-blockers";
+import { listActiveBlockersTool } from "./tools/list-active-blockers";
+import { listStandardsTool } from "./tools/list-standards";
+import { getStandardTool } from "./tools/get-standard";
+import { listReportsTool } from "./tools/list-reports";
+import { getReportTool } from "./tools/get-report";
+import { listSiteAreasTool } from "./tools/list-site-areas";
 import { createRegistry, type Audience, type ToolRegistry } from "./tools/registry";
 
 const MAX_ITERATIONS = 6;
 
 export const publicRegistry: ToolRegistry = createRegistry([
   searchPortfolioTool,
+  lookupPortfolioEntryTool,
+  searchBlockersTool,
+  listActiveBlockersTool,
+  listStandardsTool,
+  getStandardTool,
+  listReportsTool,
+  getReportTool,
+  listSiteAreasTool,
 ]);
 
 export interface Citation {
