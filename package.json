@@ -18,7 +18,8 @@
     "migrate": "tsx --env-file=.env.local scripts/migrate.ts",
     "seed:portfolio": "tsx --env-file=.env.local scripts/seed-portfolio.ts",
     "verify:portfolio": "tsx scripts/verify-portfolio.ts",
-    "refresh:commit-dates": "tsx scripts/refresh-commit-dates.ts"
+    "refresh:commit-dates": "tsx scripts/refresh-commit-dates.ts",
+    "eval:agent": "NODE_OPTIONS='--conditions=react-server' tsx --env-file=.env.local --tsconfig tsconfig.json evals/agent/run.ts"
   },
   "dependencies": {
     "d3-shape": "^3.2.0",
@@ -38,6 +39,7 @@
     "eslint": "^9.39.3",
     "eslint-config-next": "^16.1.6",
     "postcss": "^8.5.6",
+    "server-only": "^0.0.1",
     "tailwindcss": "^4.2.0",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
