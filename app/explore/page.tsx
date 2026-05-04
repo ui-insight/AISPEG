@@ -91,7 +91,10 @@ function CategoryTileCard({ tile }: { tile: CategoryTile }) {
   // it even before something is tagged) without offering a dead link.
   if (isEmpty) {
     return (
-      <div className="flex h-full flex-col rounded-xl border border-hairline bg-white p-5 opacity-70">
+      <div
+        id={`category-${tile.slug}`}
+        className="flex h-full scroll-mt-12 flex-col rounded-xl border border-hairline bg-white p-5 opacity-70"
+      >
         <h2 className="text-base font-semibold text-brand-black">
           {tile.label}
         </h2>
@@ -107,8 +110,9 @@ function CategoryTileCard({ tile }: { tile: CategoryTile }) {
 
   return (
     <Link
+      id={`category-${tile.slug}`}
       href={`/portfolio?category=${tile.slug}`}
-      className="group flex h-full flex-col rounded-xl border border-hairline bg-white p-5 transition-shadow hover:shadow-md"
+      className="group flex h-full scroll-mt-12 flex-col rounded-xl border border-hairline bg-white p-5 transition-shadow hover:shadow-md"
     >
       <h2 className="text-base font-semibold text-brand-black">
         {tile.label}

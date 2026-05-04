@@ -2,18 +2,20 @@
 
 // ============================================================
 // ProjectMap — interactive visualization of the priorities ↔ projects ↔
-// work-categories mesh. Slice 3 (this file): pillar coloring + hierarchical
-// edge bundling on the left arc. Slice 4 layers on interaction; slice 5
-// mounts the component under /explore behind a Tiles | Map toggle.
+// work-categories mesh. Slice 4 (this file): hover/focus highlight,
+// click navigation, hash deep links, keyboard accessibility. Slice 5
+// will mount this component under /explore behind a Tiles | Map toggle.
 //
-// Bundling: each left-side edge (project → priority) routes through its
-// pillar centroid before reaching the priority dot. d3-shape's
-// `curveBundle.beta(0.5)` smooths [project, centroid, priority] into a
-// trunked curve; many edges sharing a centroid produce the visible
-// pillar trunks. Right-side edges (project → category) stay 2-point
-// (essentially straight) — there's no intermediate grouping defined for
-// categories in v1.
+// Interaction model is intentionally NOT React-state-driven. Hover
+// thrash on a state that re-renders 80+ SVG elements is wasteful, so
+// focus is tracked in a ref and applied imperatively: applyFocus walks
+// the DOM and sets data-focus="self"|"connected" on the affected
+// nodes/edges, and the dimming is done by CSS rules in globals.css
+// keyed off `[data-focused]` on the SVG root.
 // ============================================================
+
+import { useEffect, useMemo, useRef } from "react";
+import { useRouter } from "next/navigation";
 
 import { line as d3Line, curveBundle } from "d3-shape";
 
@@ -21,26 +23,26 @@ import {
   buildProjectMapGraph,
   type ProjectMapGraph,
 } from "@/lib/project-map-graph";
+import {
+  WORK_CATEGORY_LABELS,
+  type WorkCategory,
+} from "@/lib/work-categories";
 
 const VIEW_W = 1100;
 const VIEW_H = 900;
 const CX = VIEW_W / 2;
 const CY = VIEW_H / 2;
 const R = 380;
-const PILLAR_CENTROID_R = R * 0.55;     // trunk converges here before fanning
+const PILLAR_CENTROID_R = R * 0.55;
 const PROJECT_HALF_HEIGHT = 320;
 const ARC_LABEL_OFFSET = 8;
-const PILLAR_LABEL_OFFSET = 38;          // pillar code outside the arc labels
+const PILLAR_LABEL_OFFSET = 38;
 const PROJECT_LABEL_OFFSET = 10;
 const NODE_R = 4;
 const PROJECT_NODE_R = 5;
-const BUNDLE_BETA = 0.5;                 // 0 = pure spline, 1 = straight
+const BUNDLE_BETA = 0.5;
+const TOOLTIP_OFFSET = 14;
 
-// Pillar palette — see issue #204. ui-gold is reserved (per .impeccable.md)
-// so no pillar gets it. Keys must match Pillar.code in lib/strategic-plan.
-//
-// Tailwind v4 scans this file for class strings, so the literals here
-// are sufficient to generate the utilities.
 const PILLAR_FILL: Record<string, string> = {
   A: "fill-brand-huckleberry",
   B: "fill-brand-lupine",
@@ -78,15 +80,11 @@ interface Polar {
   angleDeg: number;
 }
 
-// Sweep the left arc top-down. SVG uses y-down, so sin>0 means below
-// center. θ=260° gives sin≈-0.98 (top), θ=100° gives sin≈+0.98
-// (bottom); cos≈-0.17 in both, so x is to the left of center.
 function leftArcAngle(i: number, n: number): number {
   if (n === 1) return 180;
   return 260 - (i / (n - 1)) * 160;
 }
 
-// Right arc: θ=-80° at top (sin≈-0.98), θ=+80° at bottom; cos≈+0.17.
 function rightArcAngle(i: number, n: number): number {
   if (n === 1) return 0;
   return -80 + (i / (n - 1)) * 160;
@@ -108,51 +106,183 @@ function projectY(i: number, n: number): number {
   );
 }
 
-// True for arc labels on the left half — text would render upside-down
-// without a 180° flip.
 function shouldFlipLabel(angleDeg: number): boolean {
   const wrapped = ((angleDeg % 360) + 360) % 360;
   return wrapped > 90 && wrapped < 270;
 }
 
+type NodeKind = "priority" | "project" | "category";
+interface FocusedNode {
+  kind: NodeKind;
+  id: string;
+}
+
+function nodeKey(kind: NodeKind, id: string): string {
+  return `${kind}-${id}`;
+}
+
+function leftEdgeKey(project: string, code: string): string {
+  return `L|${project}|${code}`;
+}
+
+function rightEdgeKey(project: string, slug: string): string {
+  return `R|${project}|${slug}`;
+}
+
+// Hash format: #project-<slug>, #priority-A.1, #category-<slug>.
+// Priority codes contain dots, which are valid in URL fragments and
+// don't need encoding. Slugs are lowercase with hyphens.
+function hashFor(node: FocusedNode | null): string {
+  if (!node) return "";
+  return `#${node.kind}-${node.id}`;
+}
+
+function nodeFromHash(hash: string): FocusedNode | null {
+  if (!hash || hash[0] !== "#") return null;
+  const m = hash.slice(1).match(/^(priority|project|category)-(.+)$/);
+  if (!m) return null;
+  const kind = m[1] as NodeKind;
+  return { kind, id: decodeURIComponent(m[2]) };
+}
+
+interface Adjacency {
+  // For each project: connected priorities, categories, edge keys.
+  byProject: Map<
+    string,
+    { priorities: Set<string>; categories: Set<string>; edgeKeys: Set<string> }
+  >;
+  // For each priority/category: connected projects + edge keys.
+  byPriority: Map<string, { projects: Set<string>; edgeKeys: Set<string> }>;
+  byCategory: Map<string, { projects: Set<string>; edgeKeys: Set<string> }>;
+}
+
+function buildAdjacency(graph: ProjectMapGraph): Adjacency {
+  const byProject: Adjacency["byProject"] = new Map();
+  const byPriority: Adjacency["byPriority"] = new Map();
+  const byCategory: Adjacency["byCategory"] = new Map();
+
+  const ensureProject = (slug: string) => {
+    let entry = byProject.get(slug);
+    if (!entry) {
+      entry = { priorities: new Set(), categories: new Set(), edgeKeys: new Set() };
+      byProject.set(slug, entry);
+    }
+    return entry;
+  };
+  const ensurePriority = (code: string) => {
+    let entry = byPriority.get(code);
+    if (!entry) {
+      entry = { projects: new Set(), edgeKeys: new Set() };
+      byPriority.set(code, entry);
+    }
+    return entry;
+  };
+  const ensureCategory = (slug: string) => {
+    let entry = byCategory.get(slug);
+    if (!entry) {
+      entry = { projects: new Set(), edgeKeys: new Set() };
+      byCategory.set(slug, entry);
+    }
+    return entry;
+  };
+
+  // Seed every node so isolated entries (no links) still have an
+  // adjacency record — keeps later lookups branch-free.
+  graph.projects.forEach((p) => ensureProject(p.slug));
+  graph.priorities.forEach((p) => ensurePriority(p.code));
+  graph.categories.forEach((c) => ensureCategory(c.slug));
+
+  for (const link of graph.links) {
+    if (link.side === "left") {
+      const ek = leftEdgeKey(link.project, link.target);
+      const pr = ensureProject(link.project);
+      const pri = ensurePriority(link.target);
+      pr.priorities.add(link.target);
+      pr.edgeKeys.add(ek);
+      pri.projects.add(link.project);
+      pri.edgeKeys.add(ek);
+    } else {
+      const ek = rightEdgeKey(link.project, link.target);
+      const pr = ensureProject(link.project);
+      const cat = ensureCategory(link.target);
+      pr.categories.add(link.target);
+      pr.edgeKeys.add(ek);
+      cat.projects.add(link.project);
+      cat.edgeKeys.add(ek);
+    }
+  }
+  return { byProject, byPriority, byCategory };
+}
+
+interface ConnectedSets {
+  projects: Set<string>;
+  priorities: Set<string>;
+  categories: Set<string>;
+  edgeKeys: Set<string>;
+}
+
+function connectedFor(node: FocusedNode, adj: Adjacency): ConnectedSets {
+  if (node.kind === "project") {
+    const e = adj.byProject.get(node.id);
+    return {
+      projects: new Set(),
+      priorities: e?.priorities ?? new Set(),
+      categories: e?.categories ?? new Set(),
+      edgeKeys: e?.edgeKeys ?? new Set(),
+    };
+  }
+  if (node.kind === "priority") {
+    const e = adj.byPriority.get(node.id);
+    return {
+      projects: e?.projects ?? new Set(),
+      priorities: new Set(),
+      categories: new Set(),
+      edgeKeys: e?.edgeKeys ?? new Set(),
+    };
+  }
+  const e = adj.byCategory.get(node.id);
+  return {
+    projects: e?.projects ?? new Set(),
+    priorities: new Set(),
+    categories: new Set(),
+    edgeKeys: e?.edgeKeys ?? new Set(),
+  };
+}
+
 export default function ProjectMap() {
   const graph: ProjectMapGraph = buildProjectMapGraph("public");
+  const router = useRouter();
+  const svgRef = useRef<SVGSVGElement>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null);
+  const focusedRef = useRef<FocusedNode | null>(null);
 
-  // Per-priority angle + screen position.
+  const adjacency = useMemo(() => buildAdjacency(graph), [graph]);
+
+  // Position maps. Computed once per render — graph is server-derived
+  // and stable, so this is constant work.
   const priorityPos = new Map<string, Polar>();
   graph.priorities.forEach((p, i) => {
     priorityPos.set(p.code, polar(leftArcAngle(i, graph.priorities.length), R));
   });
 
-  // Pillar centroid: mean angle of the pillar's priorities, projected onto
-  // the trunk radius. All edges entering a pillar pass through this point,
-  // which is what produces the visible bundling.
-  const pillarCentroid = new Map<string, Polar>();
   const pillarMembers = new Map<string, string[]>();
   graph.priorities.forEach((p) => {
     const list = pillarMembers.get(p.pillar) ?? [];
     list.push(p.code);
     pillarMembers.set(p.pillar, list);
   });
-  for (const [pillar, codes] of pillarMembers) {
-    const angles = codes
-      .map((c) => priorityPos.get(c)?.angleDeg)
-      .filter((a): a is number => typeof a === "number");
-    const meanAngle = angles.reduce((a, b) => a + b, 0) / angles.length;
-    pillarCentroid.set(pillar, polar(meanAngle, PILLAR_CENTROID_R));
-  }
 
-  // Pillar code → label anchor (for the small group header outside the arc).
+  const pillarCentroid = new Map<string, Polar>();
   const pillarLabelPos = new Map<string, Polar>();
   for (const [pillar, codes] of pillarMembers) {
     const angles = codes
       .map((c) => priorityPos.get(c)?.angleDeg)
       .filter((a): a is number => typeof a === "number");
     const meanAngle = angles.reduce((a, b) => a + b, 0) / angles.length;
+    pillarCentroid.set(pillar, polar(meanAngle, PILLAR_CENTROID_R));
     pillarLabelPos.set(pillar, polar(meanAngle, R + PILLAR_LABEL_OFFSET));
   }
 
-  // Pillar lookup for any priority code (used by edge coloring).
   const pillarOf = new Map<string, string>();
   graph.priorities.forEach((p) => pillarOf.set(p.code, p.pillar));
 
@@ -172,15 +302,126 @@ export default function ProjectMap() {
     });
   });
 
+  // ---------------- Focus + tooltip imperative core ----------------
+
+  function applyFocus(node: FocusedNode | null) {
+    focusedRef.current = node;
+    const svg = svgRef.current;
+    if (!svg) return;
+    // Clear all existing focus markers.
+    svg
+      .querySelectorAll<HTMLElement>("[data-focus]")
+      .forEach((el) => el.removeAttribute("data-focus"));
+    if (!node) {
+      svg.removeAttribute("data-focused");
+      writeHash("");
+      return;
+    }
+    svg.setAttribute("data-focused", nodeKey(node.kind, node.id));
+    const selfEl = svg.querySelector(
+      `[data-node-key="${nodeKey(node.kind, node.id)}"]`,
+    );
+    if (selfEl) selfEl.setAttribute("data-focus", "self");
+    const sets = connectedFor(node, adjacency);
+    const mark = (selector: string) => {
+      svg.querySelectorAll(selector).forEach((el) => {
+        el.setAttribute("data-focus", "connected");
+      });
+    };
+    sets.projects.forEach((slug) =>
+      mark(`[data-node-key="${nodeKey("project", slug)}"]`),
+    );
+    sets.priorities.forEach((code) =>
+      mark(`[data-node-key="${nodeKey("priority", code)}"]`),
+    );
+    sets.categories.forEach((slug) =>
+      mark(`[data-node-key="${nodeKey("category", slug)}"]`),
+    );
+    sets.edgeKeys.forEach((key) => mark(`[data-edge-key="${key}"]`));
+    writeHash(hashFor(node));
+  }
+
+  function writeHash(newHash: string) {
+    if (typeof window === "undefined") return;
+    if (window.location.hash === newHash) return;
+    if (newHash) {
+      history.replaceState(null, "", newHash);
+    } else {
+      // Clear hash without leaving a trailing `#`.
+      history.replaceState(
+        null,
+        "",
+        window.location.pathname + window.location.search,
+      );
+    }
+  }
+
+  function showTooltip(text: string, clientX: number, clientY: number) {
+    const tt = tooltipRef.current;
+    if (!tt) return;
+    tt.textContent = text;
+    tt.style.transform = `translate(${clientX + TOOLTIP_OFFSET}px, ${clientY + TOOLTIP_OFFSET}px)`;
+    tt.style.opacity = "1";
+  }
+
+  function moveTooltip(clientX: number, clientY: number) {
+    const tt = tooltipRef.current;
+    if (!tt || tt.style.opacity === "0") return;
+    tt.style.transform = `translate(${clientX + TOOLTIP_OFFSET}px, ${clientY + TOOLTIP_OFFSET}px)`;
+  }
+
+  function hideTooltip() {
+    const tt = tooltipRef.current;
+    if (!tt) return;
+    tt.style.opacity = "0";
+  }
+
+  function navigate(node: FocusedNode) {
+    if (node.kind === "project") {
+      router.push(`/portfolio/${node.id}`);
+      return;
+    }
+    if (node.kind === "priority") {
+      router.push(`/standards/strategic-plan/priorities/${node.id}`);
+      return;
+    }
+    router.push(`/explore#category-${node.id}`);
+  }
+
+  // Initial focus from URL hash + global keyboard listener.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const initial = nodeFromHash(window.location.hash);
+    if (initial) applyFocus(initial);
+
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape" && focusedRef.current) {
+        applyFocus(null);
+        hideTooltip();
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+    // applyFocus + hideTooltip are stable closures over refs/router;
+    // re-running on every render would clobber user focus. The graph
+    // is server-derived and doesn't change at runtime, so the empty
+    // dep array is correct.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // ---------------- Render ----------------
+
   return (
     <>
       <div className="hidden md:block">
         <svg
+          ref={svgRef}
           viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
-          className="h-auto w-full"
+          className="project-map h-auto w-full"
           role="img"
-          aria-label="Project Map — strategic priorities on the left grouped by pillar, projects in the middle, work categories on the right; bundled curves trunk through each pillar centroid before fanning to individual priorities."
+          aria-label="Project Map — strategic priorities on the left grouped by pillar, projects in the middle, work categories on the right; bundled curves link each project to its declared alignments. Hover or tab to a node to highlight its connections."
         >
+          {/* Edges */}
           <g fill="none" strokeWidth={0.7}>
             {graph.links.map((link, idx) => {
               const proj = projectPos.get(link.project);
@@ -194,14 +435,22 @@ export default function ProjectMap() {
                   ? pillarCentroid.get(pillar)
                   : undefined;
                 const points: Array<[number, number]> = centroid
-                  ? [[proj.x, proj.y], [centroid.x, centroid.y], [target.x, target.y]]
-                  : [[proj.x, proj.y], [target.x, target.y]];
+                  ? [
+                      [proj.x, proj.y],
+                      [centroid.x, centroid.y],
+                      [target.x, target.y],
+                    ]
+                  : [
+                      [proj.x, proj.y],
+                      [target.x, target.y],
+                    ];
                 const d = bundleLine(points) ?? "";
                 const stroke =
                   (pillar && PILLAR_STROKE[pillar]) || FALLBACK_STROKE;
                 return (
                   <path
                     key={`L|${link.project}|${link.target}|${idx}`}
+                    data-edge-key={leftEdgeKey(link.project, link.target)}
                     d={d}
                     className={stroke}
                   />
@@ -218,6 +467,7 @@ export default function ProjectMap() {
               return (
                 <path
                   key={`R|${link.project}|${link.target}|${idx}`}
+                  data-edge-key={rightEdgeKey(link.project, link.target)}
                   d={d}
                   className="stroke-brand-silver/40"
                 />
@@ -225,6 +475,7 @@ export default function ProjectMap() {
             })}
           </g>
 
+          {/* Priorities */}
           <g>
             {graph.priorities.map((p) => {
               const pos = priorityPos.get(p.code);
@@ -234,8 +485,37 @@ export default function ProjectMap() {
               const rotation = flip ? pos.angleDeg + 180 : pos.angleDeg;
               const fill = PILLAR_FILL[p.pillar] || FALLBACK_FILL;
               const text = PILLAR_TEXT[p.pillar] || FALLBACK_TEXT;
+              const node: FocusedNode = { kind: "priority", id: p.code };
               return (
-                <g key={p.code}>
+                <g
+                  key={p.code}
+                  className="project-map-node cursor-pointer outline-none focus-visible:[&>circle]:stroke-brand-black focus-visible:[&>circle]:stroke-1"
+                  data-node-key={nodeKey("priority", p.code)}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Priority ${p.code}: ${p.text}`}
+                  onMouseEnter={(e) => {
+                    applyFocus(node);
+                    showTooltip(
+                      `${p.code} — ${p.text}`,
+                      e.clientX,
+                      e.clientY,
+                    );
+                  }}
+                  onMouseMove={(e) => moveTooltip(e.clientX, e.clientY)}
+                  onMouseLeave={() => {
+                    applyFocus(null);
+                    hideTooltip();
+                  }}
+                  onFocus={() => applyFocus(node)}
+                  onClick={() => navigate(node)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      navigate(node);
+                    }
+                  }}
+                >
                   <circle cx={pos.x} cy={pos.y} r={NODE_R} className={fill} />
                   <text
                     x={label.x}
@@ -252,7 +532,8 @@ export default function ProjectMap() {
             })}
           </g>
 
-          <g>
+          {/* Pillar group headers — purely decorative, not interactive */}
+          <g aria-hidden="true">
             {Array.from(pillarMembers.keys()).map((pillar) => {
               const pos = pillarLabelPos.get(pillar);
               if (!pos) return null;
@@ -275,6 +556,59 @@ export default function ProjectMap() {
             })}
           </g>
 
+          {/* Projects */}
+          <g>
+            {graph.projects.map((p) => {
+              const pos = projectPos.get(p.slug);
+              if (!pos) return null;
+              const node: FocusedNode = { kind: "project", id: p.slug };
+              const tooltip = p.tagline ? `${p.name} — ${p.tagline}` : p.name;
+              return (
+                <g
+                  key={p.slug}
+                  className="project-map-node cursor-pointer outline-none focus-visible:[&>circle]:stroke-brand-black focus-visible:[&>circle]:stroke-1"
+                  data-node-key={nodeKey("project", p.slug)}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Project ${p.name}${p.tagline ? `: ${p.tagline}` : ""}`}
+                  onMouseEnter={(e) => {
+                    applyFocus(node);
+                    showTooltip(tooltip, e.clientX, e.clientY);
+                  }}
+                  onMouseMove={(e) => moveTooltip(e.clientX, e.clientY)}
+                  onMouseLeave={() => {
+                    applyFocus(null);
+                    hideTooltip();
+                  }}
+                  onFocus={() => applyFocus(node)}
+                  onClick={() => navigate(node)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      navigate(node);
+                    }
+                  }}
+                >
+                  <circle
+                    cx={pos.x}
+                    cy={pos.y}
+                    r={PROJECT_NODE_R}
+                    className="fill-brand-black"
+                  />
+                  <text
+                    x={pos.x + PROJECT_LABEL_OFFSET}
+                    y={pos.y}
+                    dy="0.32em"
+                    className="fill-brand-black text-[10px] font-medium"
+                  >
+                    {p.name}
+                  </text>
+                </g>
+              );
+            })}
+          </g>
+
+          {/* Categories */}
           <g>
             {graph.categories.map((c) => {
               const pos = categoryPos.get(c.slug);
@@ -282,8 +616,37 @@ export default function ProjectMap() {
               const flip = shouldFlipLabel(pos.angleDeg);
               const label = polar(pos.angleDeg, R + ARC_LABEL_OFFSET);
               const rotation = flip ? pos.angleDeg + 180 : pos.angleDeg;
+              const node: FocusedNode = { kind: "category", id: c.slug };
+              const meta = WORK_CATEGORY_LABELS[c.slug as WorkCategory];
+              const tooltip = meta
+                ? `${meta.label} — ${meta.description}`
+                : c.label;
               return (
-                <g key={c.slug}>
+                <g
+                  key={c.slug}
+                  className="project-map-node cursor-pointer outline-none focus-visible:[&>circle]:stroke-brand-black focus-visible:[&>circle]:stroke-1"
+                  data-node-key={nodeKey("category", c.slug)}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Work category: ${c.label}`}
+                  onMouseEnter={(e) => {
+                    applyFocus(node);
+                    showTooltip(tooltip, e.clientX, e.clientY);
+                  }}
+                  onMouseMove={(e) => moveTooltip(e.clientX, e.clientY)}
+                  onMouseLeave={() => {
+                    applyFocus(null);
+                    hideTooltip();
+                  }}
+                  onFocus={() => applyFocus(node)}
+                  onClick={() => navigate(node)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      navigate(node);
+                    }
+                  }}
+                >
                   <circle
                     cx={pos.x}
                     cy={pos.y}
@@ -304,37 +667,24 @@ export default function ProjectMap() {
               );
             })}
           </g>
-
-          <g>
-            {graph.projects.map((p) => {
-              const pos = projectPos.get(p.slug);
-              if (!pos) return null;
-              return (
-                <g key={p.slug}>
-                  <circle
-                    cx={pos.x}
-                    cy={pos.y}
-                    r={PROJECT_NODE_R}
-                    className="fill-brand-black"
-                  />
-                  <text
-                    x={pos.x + PROJECT_LABEL_OFFSET}
-                    y={pos.y}
-                    dy="0.32em"
-                    className="fill-brand-black text-[10px] font-medium"
-                  >
-                    {p.name}
-                  </text>
-                </g>
-              );
-            })}
-          </g>
         </svg>
       </div>
       <p className="block text-sm text-ink-muted md:hidden">
         Interactive map best viewed on a wider screen — switch to Tiles to
         browse on this device.
       </p>
+      {/*
+        Tooltip lives outside the SVG so it can use viewport coordinates
+        and isn't bound by the SVG's painter-order. Updated imperatively
+        on mouse events; React never re-renders it.
+      */}
+      <div
+        ref={tooltipRef}
+        role="tooltip"
+        aria-hidden="true"
+        className="pointer-events-none fixed left-0 top-0 z-50 max-w-xs rounded border border-hairline bg-white px-2.5 py-1.5 text-xs text-brand-black shadow-md transition-opacity duration-150"
+        style={{ opacity: 0 }}
+      />
     </>
   );
 }

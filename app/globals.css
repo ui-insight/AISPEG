@@ -85,3 +85,37 @@ main a[href]:not([class*="bg-"]):not([class*="rounded"]):not(.unstyled):hover {
   color-scheme: dark;
 }
 
+/* Project Map — focus dimming.
+ * The map sets [data-focused] on the SVG root when a node is hovered,
+ * tabbed to, or restored from the URL hash. Connected nodes/edges get
+ * [data-focus="connected"]; the focused node itself gets
+ * [data-focus="self"]. Everything else dims so the highlighted bridge
+ * reads cleanly. Transitions keep it from flickering. */
+.project-map [data-node-key] circle,
+.project-map [data-node-key] text,
+.project-map [data-edge-key] {
+  transition: opacity 0.12s ease-out, stroke-opacity 0.12s ease-out, transform 0.12s ease-out;
+}
+.project-map[data-focused] [data-node-key] circle,
+.project-map[data-focused] [data-node-key] text {
+  opacity: 0.18;
+}
+.project-map[data-focused] [data-edge-key] {
+  stroke-opacity: 0.08;
+}
+.project-map[data-focused] [data-node-key][data-focus] circle,
+.project-map[data-focused] [data-node-key][data-focus] text {
+  opacity: 1;
+}
+.project-map[data-focused] [data-edge-key][data-focus="connected"] {
+  stroke-opacity: 1;
+}
+.project-map[data-focused] [data-node-key][data-focus="self"] circle {
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(1.6);
+}
+.project-map[data-focused] [data-node-key][data-focus="self"] text {
+  font-weight: 700;
+}
+
