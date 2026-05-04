@@ -1,8 +1,11 @@
 import Link from "next/link";
-import { getPubliclyVisible } from "@/lib/portfolio";
+import {
+  getPubliclyVisible,
+  PUBLIC_STAGE_LABEL,
+  stageBreakdown,
+} from "@/lib/portfolio";
 import { artifacts, sortedArtifacts } from "@/lib/artifacts";
 import { summary as standardsSummary } from "@/lib/standards-watch";
-import { PUBLIC_STAGE_LABEL, stageBreakdown } from "@/lib/lifecycle-display";
 
 // Editorial pick of three featured projects for the landing's
 // Work tile. Curated by IIDS — rotate when the work changes. There is

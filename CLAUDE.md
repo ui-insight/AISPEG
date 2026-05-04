@@ -211,10 +211,9 @@ components/                # Reusable components
   (plus governance + data-model explorer components)
 
 lib/                       # Domain logic
-  portfolio.ts             # Project inventory (typed; seed source for the applications table)
+  portfolio.ts             # Project inventory + lifecycle module (types, rollup, labels, colors, type guards)
   portfolio-verification.ts # ADR 0001 verifier — `npm run verify:portfolio`
   portfolio-meta.ts        # AUTO-GENERATED — derived lastCommitDate per repo (do not edit)
-  lifecycle-display.ts     # Display helpers for public-stage / operational status chips
   work.ts                  # Postgres-backed query module for /portfolio (reads applications + blockers)
   work-categories.ts       # "By problem" taxonomy — typed slugs + audience-facing labels
   standards-watch.ts       # Standards ledger

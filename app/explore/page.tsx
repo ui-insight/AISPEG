@@ -1,15 +1,16 @@
 import Link from "next/link";
-import { getPubliclyVisible, type Project } from "@/lib/portfolio";
+import {
+  getPubliclyVisible,
+  PUBLIC_STAGE_LABEL,
+  stageBreakdown,
+  type Project,
+  type PublicStage,
+} from "@/lib/portfolio";
 import {
   WORK_CATEGORIES,
   WORK_CATEGORY_LABELS,
   type WorkCategory,
 } from "@/lib/work-categories";
-import {
-  PUBLIC_STAGE_LABEL,
-  stageBreakdown,
-} from "@/lib/lifecycle-display";
-import type { PublicStage } from "@/lib/portfolio";
 
 export const metadata = {
   title: "Explore | UI AI Initiative",

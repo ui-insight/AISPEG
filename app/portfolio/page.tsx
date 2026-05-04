@@ -18,8 +18,9 @@ import {
   STAGE_OPERATIONAL_ROLLUP,
   isProjectStatus,
   publicStageFromStatus,
-} from "@/lib/lifecycle-display";
-import type { ProjectStatus, PublicStage } from "@/lib/portfolio";
+  type ProjectStatus,
+  type PublicStage,
+} from "@/lib/portfolio";
 
 export const dynamic = "force-dynamic";
 

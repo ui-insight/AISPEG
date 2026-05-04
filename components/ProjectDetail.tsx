@@ -7,7 +7,7 @@ import {
   PUBLIC_STAGE_LABEL,
   isProjectStatus,
   publicStageFromStatus,
-} from "@/lib/lifecycle-display";
+} from "@/lib/portfolio";
 
 // Blocker severity is a documented exception to the brand-token rule —
 // the amber/red signals are functional alerting, not status decoration.
