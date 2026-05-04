@@ -15,6 +15,18 @@
 import "server-only";
 import { query } from "./db";
 import type { WorkCategory } from "./work-categories";
+import type {
+  AI4RARelationship,
+  InstitutionalReviewStatus,
+  OperationalOwner,
+  PilotCohort,
+  ProductionScope,
+  Project,
+  ProjectStatus,
+  Visibility,
+} from "./portfolio";
+
+export type { OperationalOwner } from "./portfolio";
 
 export type VisibilityTier = "public" | "embargoed" | "internal";
 export type BlockerSeverity = "low" | "medium" | "high";
@@ -64,44 +76,37 @@ export interface Blocker {
   resolvedAt: string | null;
 }
 
-export interface OperationalOwner {
-  name: string;
-  title?: string;
-}
-
-export interface Application {
+// DB-only metadata layered on top of the canonical Project shape.
+// `visibility` (Project enum) is derived from `visibilityTier` (DB enum) in
+// toApplication; both stay on Application so consumers can use whichever
+// axis fits the surface (the public site speaks Visibility; admin/internal
+// surfaces speak VisibilityTier).
+export interface ApplicationMeta {
   id: string;
-  slug: string;
-  name: string;
-  tagline: string | null;
-  description: string;
-  homeUnits: string[];
-  operationalOwners: OperationalOwner[];
-  buildParticipants: string[];
-  tags: string[];
   tier: number;
-  status: string;
   visibilityTier: VisibilityTier;
-  ai4raRelationship: string;
-  dualDestinyPlanned: boolean;
-  externalDeployments: string[];
-  institutionalReviewStatus: string | null;
-  repoUrl: string | null;
-  docsUrl: string | null;
-  liveUrl: string | null;
-  isPrivateRepo: boolean;
-  funding: string | null;
-  operationalFunction: string | null;
-  operationalExcellenceOutcome: string | null;
-  features: string[];
-  tech: string[];
-  trackingOnly: boolean;
-  relatedSlugs: string[];
-  workCategories: WorkCategory[];
-  strategicPlanAlignment: string[];
   clickupTaskId: string | null;
   updatedAt: string;
 }
+
+// Project fields the DB always populates (default empty array / false)
+// — narrow them from optional to required on the runtime Application
+// shape so consumers don't have to ?? everywhere.
+type AlwaysPopulated =
+  | "workCategories"
+  | "features"
+  | "tech"
+  | "tags"
+  | "trackingOnly"
+  | "relatedSlugs"
+  | "strategicPlanAlignment"
+  | "externalDeployments"
+  | "isPrivateRepo"
+  | "dualDestinyPlanned";
+
+export type Application = Omit<Project, AlwaysPopulated> &
+  Required<Pick<Project, AlwaysPopulated>> &
+  ApplicationMeta;
 
 export interface ApplicationWithBlockers extends Application {
   activeBlockers: Blocker[];
@@ -137,6 +142,14 @@ interface ApplicationRow {
   related_slugs: string[];
   work_categories: string[];
   strategic_plan_alignment: string[];
+  iids_sponsor: string | null;
+  feature_complete: boolean | null;
+  live_url_is_staging: boolean | null;
+  pilot_cohort: PilotCohort | null;
+  production_scope: string | null;
+  support_contact: string | null;
+  sunset_date: string | null;
+  replaced_by: string | null;
   clickup_task_id: string | null;
   updated_at: string;
 }
@@ -153,39 +166,79 @@ interface BlockerRow {
   resolved_at: string | null;
 }
 
+// Inverse of scripts/seed-portfolio.ts:visibilityTier(). DB is the
+// source-of-truth at runtime, but the canonical Project shape speaks
+// the authoring enum.
+function visibilityFromTier(tier: VisibilityTier): Visibility {
+  switch (tier) {
+    case "public":
+      return "Public";
+    case "embargoed":
+      return "Partial";
+    case "internal":
+      return "Internal-only";
+  }
+}
+
 function toApplication(row: ApplicationRow): Application {
   return {
+    // ApplicationMeta (DB-only)
     id: row.id,
+    tier: row.tier,
+    visibilityTier: row.visibility_tier,
+    clickupTaskId: row.clickup_task_id,
+    updatedAt: row.updated_at,
+
+    // Project — core
     slug: row.slug,
     name: row.name,
-    tagline: row.tagline,
+    tagline: row.tagline ?? "",
     description: row.description,
     homeUnits: row.home_units ?? [],
     operationalOwners: row.operational_owners ?? [],
     buildParticipants: row.build_participants ?? [],
-    tags: row.tags ?? [],
-    tier: row.tier,
-    status: row.status,
-    visibilityTier: row.visibility_tier,
-    ai4raRelationship: row.ai4ra_relationship,
+
+    // Project — status / visibility
+    status: row.status as ProjectStatus,
+    visibility: visibilityFromTier(row.visibility_tier),
+    institutionalReviewStatus:
+      (row.institutional_review_status as InstitutionalReviewStatus | null) ??
+      undefined,
+
+    // Project — lifecycle taxonomy (ADR 0001)
+    iidsSponsor: row.iids_sponsor ?? "",
+    featureComplete: row.feature_complete ?? undefined,
+    liveUrlIsStaging: row.live_url_is_staging ?? undefined,
+    pilotCohort: row.pilot_cohort ?? undefined,
+    productionScope: (row.production_scope as ProductionScope | null) ?? undefined,
+    supportContact: row.support_contact ?? undefined,
+    sunsetDate: row.sunset_date ?? undefined,
+    replacedBy: row.replaced_by ?? undefined,
+
+    // Project — AI4RA
+    ai4raRelationship: row.ai4ra_relationship as AI4RARelationship,
     dualDestinyPlanned: row.dual_destiny_planned,
     externalDeployments: row.external_deployments ?? [],
-    institutionalReviewStatus: row.institutional_review_status,
-    repoUrl: row.repo_url,
-    docsUrl: row.docs_url,
-    liveUrl: row.live_url,
+
+    // Project — artifacts
+    repoUrl: row.repo_url ?? undefined,
+    docsUrl: row.docs_url ?? undefined,
+    liveUrl: row.live_url ?? undefined,
     isPrivateRepo: row.is_private_repo,
-    funding: row.funding,
-    operationalFunction: row.operational_function,
-    operationalExcellenceOutcome: row.operational_excellence_outcome,
+    funding: row.funding ?? undefined,
+
+    // Project — content
+    operationalFunction: row.operational_function ?? "",
+    operationalExcellenceOutcome: row.operational_excellence_outcome ?? "",
     features: row.features ?? [],
     tech: row.tech ?? [],
+
+    // Project — meta
+    tags: row.tags ?? [],
     trackingOnly: row.tracking_only,
     relatedSlugs: row.related_slugs ?? [],
-    workCategories: ((row.work_categories ?? []) as WorkCategory[]),
+    workCategories: (row.work_categories ?? []) as WorkCategory[],
     strategicPlanAlignment: row.strategic_plan_alignment ?? [],
-    clickupTaskId: row.clickup_task_id,
-    updatedAt: row.updated_at,
   };
 }
 
@@ -229,6 +282,9 @@ const APPLICATION_COLUMNS = `
   tracking_only, related_slugs,
   work_categories,
   strategic_plan_alignment,
+  iids_sponsor, feature_complete, live_url_is_staging,
+  pilot_cohort, production_scope, support_contact,
+  sunset_date, replaced_by,
   clickup_task_id, updated_at
 `;
 
