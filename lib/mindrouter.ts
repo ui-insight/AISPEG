@@ -9,11 +9,43 @@
 const MINDROUTER_BASE =
   process.env.MINDROUTER_BASE_URL || "https://mindrouter.uidaho.edu";
 const MINDROUTER_KEY = process.env.MINDROUTER_API_KEY || "";
-const MINDROUTER_MODEL = process.env.MINDROUTER_MODEL || "llama3.2";
+// Default model picked from the live MindRouter registry on 2026-05-04.
+// Qwen2.5:72b is the strongest Qwen2.5 currently exposed and has well-
+// documented OpenAI-style tool-calling support — required for the
+// conversational agent loop in lib/agent/. Override per environment with
+// MINDROUTER_MODEL.
+const MINDROUTER_MODEL = process.env.MINDROUTER_MODEL || "qwen2.5:72b";
 
-export interface ChatMessage {
-  role: "system" | "user" | "assistant";
-  content: string;
+export interface ToolCall {
+  id: string;
+  type: "function";
+  function: {
+    name: string;
+    arguments: string; // JSON-encoded
+  };
+}
+
+export type ChatMessage =
+  | { role: "system"; content: string }
+  | { role: "user"; content: string }
+  | {
+      role: "assistant";
+      content: string | null;
+      tool_calls?: ToolCall[];
+    }
+  | {
+      role: "tool";
+      content: string;
+      tool_call_id: string;
+    };
+
+export interface ToolDefinition {
+  type: "function";
+  function: {
+    name: string;
+    description: string;
+    parameters: Record<string, unknown>; // JSON Schema
+  };
 }
 
 export interface ChatCompletionOptions {
@@ -23,13 +55,20 @@ export interface ChatCompletionOptions {
   stream?: boolean;
   /** When true, asks MindRouter to return valid JSON */
   json_mode?: boolean;
+  /** OpenAI-compatible tool definitions */
+  tools?: ToolDefinition[];
+  tool_choice?: "auto" | "none" | "required";
 }
 
 export interface ChatCompletionResponse {
   id: string;
   choices: {
     index: number;
-    message: { role: string; content: string };
+    message: {
+      role: string;
+      content: string | null;
+      tool_calls?: ToolCall[];
+    };
     finish_reason: string;
   }[];
   usage?: {
@@ -60,6 +99,11 @@ export async function chatCompletion(
 
   if (opts.json_mode) {
     body.response_format = { type: "json_object" };
+  }
+
+  if (opts.tools && opts.tools.length > 0) {
+    body.tools = opts.tools;
+    body.tool_choice = opts.tool_choice ?? "auto";
   }
 
   const res = await fetch(`${MINDROUTER_BASE}/v1/chat/completions`, {
