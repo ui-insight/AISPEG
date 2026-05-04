@@ -16,6 +16,11 @@ const MINDROUTER_KEY = process.env.MINDROUTER_API_KEY || "";
 // MINDROUTER_MODEL.
 const MINDROUTER_MODEL = process.env.MINDROUTER_MODEL || "qwen2.5:72b";
 
+/** The model identifier requests will be sent to. Used by the agent log. */
+export function currentMindRouterModel(): string {
+  return MINDROUTER_MODEL;
+}
+
 export interface ToolCall {
   id: string;
   type: "function";
