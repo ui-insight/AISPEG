@@ -22,6 +22,15 @@ import { getStandardTool } from "./tools/get-standard";
 import { listReportsTool } from "./tools/list-reports";
 import { getReportTool } from "./tools/get-report";
 import { listSiteAreasTool } from "./tools/list-site-areas";
+import { listGovernanceProjectsTool } from "./tools/list-governance-projects";
+import { lookupUdmTableTool } from "./tools/lookup-udm-table";
+import { searchVocabularyTool } from "./tools/search-vocabulary";
+import { lookupPillarTool } from "./tools/lookup-pillar";
+import { lookupPriorityTool } from "./tools/lookup-priority";
+import { listProjectsForPriorityTool } from "./tools/list-projects-for-priority";
+import { listOpenIssuesTool } from "./tools/list-open-issues";
+import { searchIssuesTool } from "./tools/search-issues";
+import { getIssueTool } from "./tools/get-issue";
 import { createRegistry, type Audience, type ToolRegistry } from "./tools/registry";
 
 const MAX_ITERATIONS = 6;
@@ -36,6 +45,15 @@ export const publicRegistry: ToolRegistry = createRegistry([
   listReportsTool,
   getReportTool,
   listSiteAreasTool,
+  listGovernanceProjectsTool,
+  lookupUdmTableTool,
+  searchVocabularyTool,
+  lookupPillarTool,
+  lookupPriorityTool,
+  listProjectsForPriorityTool,
+  listOpenIssuesTool,
+  searchIssuesTool,
+  getIssueTool,
 ]);
 
 export interface Citation {
