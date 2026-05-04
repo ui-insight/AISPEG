@@ -34,40 +34,47 @@ const CX = VIEW_W / 2;
 const CY = VIEW_H / 2;
 const R = 380;
 const PILLAR_CENTROID_R = R * 0.55;
-const PROJECT_HALF_HEIGHT = 320;
-const ARC_LABEL_OFFSET = 8;
-const PILLAR_LABEL_OFFSET = 38;
-const PROJECT_LABEL_OFFSET = 10;
-const NODE_R = 4;
-const PROJECT_NODE_R = 5;
+const PROJECT_HALF_HEIGHT = 330;
+const ARC_LABEL_OFFSET = 10;
+const PILLAR_LABEL_OFFSET = 44;
+const PROJECT_LABEL_OFFSET = 12;
+const NODE_R = 5;
+const PROJECT_NODE_R = 6;
 const BUNDLE_BETA = 0.5;
 const TOOLTIP_OFFSET = 14;
 
+// Categorical pillar palette — Okabe-Ito subset, defined as CSS
+// variables in app/globals.css and exposed as Tailwind utilities. The
+// hue is the encoding; brand restraint is preserved at the chrome
+// layer. See globals.css for the reasoning.
 const PILLAR_FILL: Record<string, string> = {
-  A: "fill-brand-huckleberry",
-  B: "fill-brand-lupine",
-  C: "fill-brand-clearwater",
-  D: "fill-brand-silver",
-  E: "fill-ui-charcoal",
+  A: "fill-pillar-a",
+  B: "fill-pillar-b",
+  C: "fill-pillar-c",
+  D: "fill-pillar-d",
+  E: "fill-pillar-e",
 };
 const PILLAR_TEXT: Record<string, string> = {
-  A: "fill-brand-huckleberry",
-  B: "fill-brand-lupine",
-  C: "fill-brand-clearwater",
-  D: "fill-brand-silver",
-  E: "fill-ui-charcoal",
+  A: "fill-pillar-a",
+  B: "fill-pillar-b",
+  C: "fill-pillar-c",
+  D: "fill-pillar-d",
+  E: "fill-pillar-e",
 };
+// Edges saturate to /60 so the hue actually carries on a 0.7-stroke
+// path. /30-/40 was perceptible only as a wash, not as a categorical
+// signal.
 const PILLAR_STROKE: Record<string, string> = {
-  A: "stroke-brand-huckleberry/40",
-  B: "stroke-brand-lupine/40",
-  C: "stroke-brand-clearwater/40",
-  D: "stroke-brand-silver/40",
-  E: "stroke-ui-charcoal/30",
+  A: "stroke-pillar-a/60",
+  B: "stroke-pillar-b/60",
+  C: "stroke-pillar-c/60",
+  D: "stroke-pillar-d/60",
+  E: "stroke-pillar-e/60",
 };
 
-const FALLBACK_FILL = "fill-brand-silver";
+const FALLBACK_FILL = "fill-ink-muted";
 const FALLBACK_TEXT = "fill-ink-muted";
-const FALLBACK_STROKE = "stroke-brand-silver/40";
+const FALLBACK_STROKE = "stroke-ink-muted/50";
 
 const bundleLine = d3Line<[number, number]>()
   .x((d) => d[0])
@@ -489,7 +496,7 @@ export default function ProjectMap() {
               return (
                 <g
                   key={p.code}
-                  className="project-map-node cursor-pointer outline-none focus-visible:[&>circle]:stroke-brand-black focus-visible:[&>circle]:stroke-1"
+                  className="project-map-node cursor-pointer outline-none"
                   data-node-key={nodeKey("priority", p.code)}
                   role="button"
                   tabIndex={0}
@@ -523,7 +530,7 @@ export default function ProjectMap() {
                     transform={`rotate(${rotation}, ${label.x}, ${label.y})`}
                     textAnchor={flip ? "end" : "start"}
                     dy="0.32em"
-                    className={`text-[9px] ${text}`}
+                    className={`text-[13px] font-semibold ${text}`}
                   >
                     {p.code}
                   </text>
@@ -548,7 +555,7 @@ export default function ProjectMap() {
                   transform={`rotate(${rotation}, ${pos.x}, ${pos.y})`}
                   textAnchor={flip ? "end" : "start"}
                   dy="0.32em"
-                  className={`text-[14px] font-black ${text}`}
+                  className={`text-[22px] font-black ${text}`}
                 >
                   {pillar}
                 </text>
@@ -566,7 +573,7 @@ export default function ProjectMap() {
               return (
                 <g
                   key={p.slug}
-                  className="project-map-node cursor-pointer outline-none focus-visible:[&>circle]:stroke-brand-black focus-visible:[&>circle]:stroke-1"
+                  className="project-map-node cursor-pointer outline-none"
                   data-node-key={nodeKey("project", p.slug)}
                   role="button"
                   tabIndex={0}
@@ -595,11 +602,16 @@ export default function ProjectMap() {
                     r={PROJECT_NODE_R}
                     className="fill-brand-black"
                   />
+                  {/* Project labels render LEFT of the column dot
+                      (text-anchor=end). The right side is occupied by
+                      the category arc + its labels; pushing project
+                      labels left reclaims the gutter. */}
                   <text
-                    x={pos.x + PROJECT_LABEL_OFFSET}
+                    x={pos.x - PROJECT_LABEL_OFFSET}
                     y={pos.y}
                     dy="0.32em"
-                    className="fill-brand-black text-[10px] font-medium"
+                    textAnchor="end"
+                    className="fill-brand-black text-[14px] font-semibold"
                   >
                     {p.name}
                   </text>
@@ -624,7 +636,7 @@ export default function ProjectMap() {
               return (
                 <g
                   key={c.slug}
-                  className="project-map-node cursor-pointer outline-none focus-visible:[&>circle]:stroke-brand-black focus-visible:[&>circle]:stroke-1"
+                  className="project-map-node cursor-pointer outline-none"
                   data-node-key={nodeKey("category", c.slug)}
                   role="button"
                   tabIndex={0}
@@ -659,7 +671,7 @@ export default function ProjectMap() {
                     transform={`rotate(${rotation}, ${label.x}, ${label.y})`}
                     textAnchor={flip ? "end" : "start"}
                     dy="0.32em"
-                    className="fill-ink-muted text-[10px]"
+                    className="fill-ink-muted text-[13px]"
                   >
                     {c.label}
                   </text>

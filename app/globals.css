@@ -41,6 +41,21 @@
   --color-card: #FFFFFF;
   --color-card-dark: #191919;
 
+  /* Categorical palette for the Project Map's pillar grouping.
+   * Brand restraint applies to chrome — sidebars, headings, focus, links.
+   * The chart is a data instrument; its categorical-color channel must
+   * earn its place by maximizing perceptual distance between groups.
+   * This is a 5-color subset of the Okabe-Ito colorblind-safe scheme,
+   * chosen for max separation on white. We avoid orange/yellow because
+   * they collide with Pride Gold (which is reserved for focus state).
+   * If the strategic plan ever grows past 5 pillars, extend with the
+   * remaining Okabe-Ito tones (#E69F00, #F0E442). */
+  --color-pillar-a: #0072B2; /* deep blue */
+  --color-pillar-b: #D55E00; /* vermillion */
+  --color-pillar-c: #009E73; /* bluish green */
+  --color-pillar-d: #CC79A7; /* reddish purple */
+  --color-pillar-e: #56B4E9; /* sky blue */
+
   /* Font token wired from next/font in layout.tsx */
   --font-sans: "Public Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-body: var(--font-sans);
@@ -89,16 +104,18 @@ main a[href]:not([class*="bg-"]):not([class*="rounded"]):not(.unstyled):hover {
  * The map sets [data-focused] on the SVG root when a node is hovered,
  * tabbed to, or restored from the URL hash. Connected nodes/edges get
  * [data-focus="connected"]; the focused node itself gets
- * [data-focus="self"]. Everything else dims so the highlighted bridge
- * reads cleanly. Transitions keep it from flickering. */
-.project-map [data-node-key] circle,
-.project-map [data-node-key] text,
-.project-map [data-edge-key] {
-  transition: opacity 0.12s ease-out, stroke-opacity 0.12s ease-out, transform 0.12s ease-out;
+ * [data-focus="self"]. Unrelated elements dim, but only enough to push
+ * them back — they should remain legible context, not vanish. */
+@media (prefers-reduced-motion: no-preference) {
+  .project-map [data-node-key] circle,
+  .project-map [data-node-key] text,
+  .project-map [data-edge-key] {
+    transition: opacity 0.12s ease-out, stroke-opacity 0.12s ease-out, transform 0.12s ease-out;
+  }
 }
 .project-map[data-focused] [data-node-key] circle,
 .project-map[data-focused] [data-node-key] text {
-  opacity: 0.18;
+  opacity: 0.32;
 }
 .project-map[data-focused] [data-edge-key] {
   stroke-opacity: 0.08;
@@ -117,5 +134,14 @@ main a[href]:not([class*="bg-"]):not([class*="rounded"]):not(.unstyled):hover {
 }
 .project-map[data-focused] [data-node-key][data-focus="self"] text {
   font-weight: 700;
+}
+/* Pride Gold focus ring on keyboard navigation — replaces the
+ * barely-visible 1px brand-black inline focus style. */
+.project-map [data-node-key]:focus-visible {
+  outline: none;
+}
+.project-map [data-node-key]:focus-visible > circle {
+  stroke: var(--color-brand-gold);
+  stroke-width: 2.5;
 }
 
