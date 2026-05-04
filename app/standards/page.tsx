@@ -1,7 +1,6 @@
 import {
   standardsWatch,
   summary,
-  daysSince,
   type StandardsWatchItem,
   type StandardsWatchStatus,
 } from "@/lib/standards-watch";
@@ -30,22 +29,6 @@ function StatusChip({ status }: { status: StandardsWatchStatus }) {
   );
 }
 
-function DayCounter({ since, status }: { since: string; status: StandardsWatchStatus }) {
-  if (status === "published") return null;
-  const days = daysSince(since);
-  const tone =
-    days >= 90
-      ? "text-red-700"
-      : days >= 30
-      ? "text-orange-700"
-      : "text-gray-700";
-  return (
-    <span className={`text-xs font-medium ${tone}`}>
-      Day {days} since requested
-    </span>
-  );
-}
-
 function StandardRow({ item }: { item: StandardsWatchItem }) {
   return (
     <article className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
@@ -61,10 +44,6 @@ function StandardRow({ item }: { item: StandardsWatchItem }) {
           </div>
           <div className="mt-2 flex flex-wrap items-center gap-3 text-xs">
             <StatusChip status={item.status} />
-            <DayCounter since={item.dateRequested} status={item.status} />
-            <span className="text-gray-400">
-              Requested {item.dateRequested}
-            </span>
             {item.responseUrl && (
               <a
                 href={item.responseUrl}
@@ -115,14 +94,12 @@ export default function StandardsWatchPage() {
         </h1>
         <p className="mt-3 max-w-3xl text-base leading-relaxed text-ink-muted">
           The institutional standards IIDS has formally requested from the
-          Office of Information Technology. Each entry shows the date
-          requested and elapsed time since. Entries move to{" "}
+          Office of Information Technology. Entries move to{" "}
           <span className="font-medium text-green-700">Published</span> as
           OIT releases them.
         </p>
         <p className="mt-4 max-w-3xl text-base leading-relaxed text-brand-black">
-          <span className="font-bold">{stats.oldestOutstanding} days</span>{" "}
-          since the oldest of <span className="font-bold">{stats.outstanding}</span>{" "}
+          <span className="font-bold">{stats.outstanding}</span>{" "}
           outstanding asks. <span className="font-bold">{stats.counts.published}</span>{" "}
           published.
         </p>

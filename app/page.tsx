@@ -160,11 +160,7 @@ export default async function Home() {
             <span className="font-semibold text-brand-black">
               {standards.outstanding}
             </span>{" "}
-            outstanding asks. Oldest is{" "}
-            <span className="font-semibold text-brand-black">
-              {standards.oldestOutstanding} days
-            </span>{" "}
-            old.{" "}
+            outstanding asks.{" "}
             <span className="font-semibold text-brand-black">
               {standards.counts.published}
             </span>{" "}

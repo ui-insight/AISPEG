@@ -94,14 +94,18 @@ interface Polar {
   angleDeg: number;
 }
 
+// Arc spans are intentionally narrower than 180° so node positions stay
+// clear of the central project column. Left = 130° (priorities + pillar
+// labels), right = 110° (work categories — tighter because category
+// labels are full phrases, not short codes).
 function leftArcAngle(i: number, n: number): number {
   if (n === 1) return 180;
-  return 260 - (i / (n - 1)) * 160;
+  return 245 - (i / (n - 1)) * 130;
 }
 
 function rightArcAngle(i: number, n: number): number {
   if (n === 1) return 0;
-  return -80 + (i / (n - 1)) * 160;
+  return -55 + (i / (n - 1)) * 110;
 }
 
 function polar(angleDeg: number, radius: number): Polar {
@@ -479,8 +483,13 @@ export default function ProjectMap() {
 
               const target = categoryPos.get(link.target);
               if (!target) return null;
+              // Mirror the left side: insert a control point at a
+              // smaller radius along the same angle as the target so
+              // the link draws as an arc, not a straight chord.
+              const control = polar(target.angleDeg, PILLAR_CENTROID_R);
               const points: Array<[number, number]> = [
                 [projRight, proj.y],
+                [control.x, control.y],
                 [target.x, target.y],
               ];
               const d = bundleLine(points) ?? "";
