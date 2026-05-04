@@ -79,3 +79,4 @@ ADRs are **append-only**. To change a decision:
 | # | Title | Status | Date |
 |---|---|---|---|
 | [0001](./0001-product-lifecycle-taxonomy.md) | Product Lifecycle Taxonomy | Accepted | 2026-05-03 |
+| [0002](./0002-strategic-plan-alignment-explorer.md) | Strategic Plan Alignment Explorer | Accepted | 2026-05-03 |
