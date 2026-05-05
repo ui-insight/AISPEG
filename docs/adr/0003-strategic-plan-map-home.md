@@ -1,6 +1,6 @@
 # ADR 0003 — Strategic-Plan Map Home + `/explore` Retirement
 
-**Status:** Proposed
+**Status:** Accepted
 **Date:** 2026-05-05
 **Deciders:** Barrie Robison (with @ProfessorPolymorphic)
 **Related:** [#251](https://github.com/ui-insight/AISPEG/issues/251) (this ADR), [#250](https://github.com/ui-insight/AISPEG/issues/250) (landing steering page, shipped in [#254](https://github.com/ui-insight/AISPEG/pull/254)), [#252](https://github.com/ui-insight/AISPEG/issues/252) (implementation, blocked by this ADR), [ADR 0002](./0002-strategic-plan-alignment-explorer.md) (the strategic-plan explorer itself)

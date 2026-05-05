@@ -80,4 +80,4 @@ ADRs are **append-only**. To change a decision:
 |---|---|---|---|
 | [0001](./0001-product-lifecycle-taxonomy.md) | Product Lifecycle Taxonomy | Accepted | 2026-05-03 |
 | [0002](./0002-strategic-plan-alignment-explorer.md) | Strategic Plan Alignment Explorer | Accepted | 2026-05-03 |
-| [0003](./0003-strategic-plan-map-home.md) | Strategic-Plan Map Home + `/explore` Retirement | Proposed | 2026-05-05 |
+| [0003](./0003-strategic-plan-map-home.md) | Strategic-Plan Map Home + `/explore` Retirement | Accepted | 2026-05-05 |
