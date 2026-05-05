@@ -256,12 +256,89 @@ export default async function PortfolioPage({
         </div>
       </header>
 
+      {/* Browse-by-problem entry strip — categories are also reachable
+          via filter chips inside PortfolioFilters in spirit, but cold
+          visitors need a discoverable announcement that the by-problem
+          axis exists. ADR 0003 designated /portfolio's chips as the
+          home for this browse; this strip makes the claim visible.
+          Refinement (composing with stage/unit/blockers) lives in the
+          filter component below. Per #260. */}
+      <section aria-labelledby="browse-by-problem-heading">
+        <p
+          id="browse-by-problem-heading"
+          className="text-xs font-medium uppercase tracking-wider text-brand-silver"
+        >
+          Browse by problem
+        </p>
+        <p className="mt-1 max-w-2xl text-sm text-ink-muted">
+          The kinds of operational work AI is helping with at UI &mdash;
+          pick a category to filter the projects below.
+        </p>
+        <div className="mt-3 flex flex-wrap gap-1.5">
+          {(() => {
+            const categoryHref = (cat: string | null) => {
+              const sp = new URLSearchParams();
+              if (selectedUnit) sp.set("unit", selectedUnit);
+              if (selectedStage) sp.set("stage", selectedStage);
+              if (selectedStatus) sp.set("status", selectedStatus);
+              if (cat) sp.set("category", cat);
+              if (blockersOnly) sp.set("blockers", "1");
+              if (sortMode !== "default") sp.set("sort", sortMode);
+              const qs = sp.toString();
+              return qs ? `/portfolio?${qs}` : "/portfolio";
+            };
+            const allActive = !selectedCategory;
+            return (
+              <>
+                <Link
+                  href={categoryHref(null)}
+                  className={`unstyled inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+                    allActive
+                      ? "border-ui-gold bg-ui-gold/15 text-brand-black"
+                      : "border-hairline bg-white text-ink-muted hover:border-brand-silver/40 hover:bg-surface-alt"
+                  }`}
+                >
+                  All categories
+                  <span className="rounded-full bg-surface-alt px-1.5 py-0 text-[10px] font-semibold text-ink-subtle">
+                    {allApps.length}
+                  </span>
+                </Link>
+                {categoryOptions.map((c) => {
+                  const active = selectedCategory === c.value;
+                  return (
+                    <Link
+                      key={c.value}
+                      href={categoryHref(c.value)}
+                      className={`unstyled inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+                        active
+                          ? "border-ui-gold bg-ui-gold/15 text-brand-black"
+                          : "border-hairline bg-white text-ink-muted hover:border-brand-silver/40 hover:bg-surface-alt"
+                      }`}
+                    >
+                      {c.label}
+                      <span
+                        className={`rounded-full px-1.5 py-0 text-[10px] font-semibold ${
+                          active
+                            ? "bg-brand-black/10 text-brand-black"
+                            : "bg-surface-alt text-ink-subtle"
+                        }`}
+                      >
+                        {c.count}
+                      </span>
+                    </Link>
+                  );
+                })}
+              </>
+            );
+          })()}
+        </div>
+      </section>
+
       {/* Filter / sort UI */}
       <PortfolioFilters
         homeUnits={homeUnitOptions}
         stageOptions={stageFilterOptions}
         operationalOptions={operationalFilterOptions}
-        categories={categoryOptions}
         totalCount={allApps.length}
         filteredCount={filtered.length}
         blockerCount={blockerCount}
