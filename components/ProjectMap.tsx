@@ -2,9 +2,9 @@
 
 // ============================================================
 // ProjectMap — interactive visualization of the priorities ↔ projects ↔
-// work-categories mesh. Slice 4 (this file): hover/focus highlight,
-// click navigation, hash deep links, keyboard accessibility. Slice 5
-// will mount this component under /explore behind a Tiles | Map toggle.
+// work-categories mesh. Hover/focus highlight, click navigation, hash
+// deep links, keyboard accessibility. Mounted at
+// /standards/strategic-plan/map per ADR 0003.
 //
 // Interaction model is intentionally NOT React-state-driven. Hover
 // thrash on a state that re-renders 80+ SVG elements is wasteful, so
@@ -403,7 +403,9 @@ export default function ProjectMap() {
       router.push(`/standards/strategic-plan/priorities/${node.id}`);
       return;
     }
-    router.push(`/explore#category-${node.id}`);
+    // Category clicks route into /portfolio's category filter — per
+    // ADR 0003, /portfolio's filter chips own the by-category browse.
+    router.push(`/portfolio?category=${node.id}`);
   }
 
   // Initial focus from URL hash + global keyboard listener.

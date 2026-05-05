@@ -46,15 +46,14 @@ The site runs at <http://localhost:3000>.
 
 ## How the site works
 
-### Five primary surfaces
+### Four primary surfaces
 
 | Surface | Route | Source of truth |
 |---|---|---|
-| Projects | `/portfolio` | Postgres `applications` (read via `lib/work.ts`); `lib/portfolio.ts` is the typed seed source. Two-tier filter (public stage → operational status) per [ADR 0001](./docs/adr/0001-product-lifecycle-taxonomy.md). |
-| Explore | `/explore` | `lib/work-categories.ts` (taxonomy) + `lib/portfolio.ts` (counts) — by-problem axis. |
+| Projects | `/portfolio` | Postgres `applications` (read via `lib/work.ts`); `lib/portfolio.ts` is the typed seed source. Two-tier filter (public stage → operational status) per [ADR 0001](./docs/adr/0001-product-lifecycle-taxonomy.md). The category filter (`lib/work-categories.ts`) is the by-problem entry point. |
 | Submit a Project | `/builder-guide` | `lib/builder-guide-data.ts` (quiz) + Postgres `submissions` (responses); status page at `/intake/[token]`. |
 | Reports | `/reports` | `lib/artifacts.ts` (unified timeline) + per-report routes |
-| Standards | `/standards` | `lib/standards-watch.ts`; sub-nav surfaces `/standards/data-model` and `/standards/strategic-plan`. |
+| Standards | `/standards` | `lib/standards-watch.ts`; sub-nav surfaces `/standards/data-model`, `/standards/strategic-plan`, and `/standards/strategic-plan/map` (per [ADR 0003](./docs/adr/0003-strategic-plan-map-home.md)). |
 
 Plus `/ai4ra-ecosystem`, `/about`, `/internal` (auth-gated),
 `/docs/*`, `/admin/*`. See [`CLAUDE.md`](./CLAUDE.md) for the full

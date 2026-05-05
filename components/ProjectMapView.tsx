@@ -1,9 +1,9 @@
 "use client";
 
 // Client wrapper that dynamic-imports ProjectMap with `ssr: false`.
-// The d3-shape dependency lives in this chunk only — /explore's
-// initial server-rendered HTML doesn't include it, and routes other
-// than /explore?view=map never load it at all.
+// The d3-shape dependency lives in this chunk only — the parent route's
+// initial server-rendered HTML doesn't include it, and routes that don't
+// embed this view never load it at all.
 
 import dynamic from "next/dynamic";
 

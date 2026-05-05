@@ -14,17 +14,16 @@ The site shows what's being built, what's stalled, and where to engage.
 
 | Surface | Route | Job |
 |---|---|---|
-| **Projects** | `/portfolio` | Portfolio of AI projects across UI units. Each entry names a home unit and operational owner. |
+| **Projects** | `/portfolio` | Portfolio of AI projects across UI units. Each entry names a home unit and operational owner. The category filter chips serve the by-problem browse. |
 | **Submit a Project** | `/builder-guide` | A 9-step assessment that scopes an AI idea, classifies it into one of four tiers, and connects the submitter to a named owner at IIDS. |
 | **Reports** | `/reports` | Activity reports, briefs, and time-stamped public artifacts. |
-| **Explore** | `/explore` | "By problem" entry point — category tiles built from `lib/work-categories.ts`, complementary to `/portfolio`'s by-home-unit grouping. |
-| **Standards** | `/standards` | Public ledger of the institutional software-development and user-experience standards IIDS has formally requested from OIT. Sub-sections: `/standards/data-model` (Data Governance Explorer for the AI4RA Unified Data Model) and `/standards/strategic-plan` (Strategic Plan Alignment Explorer — pillars, priorities, and the projects advancing each one). |
+| **Standards** | `/standards` | Public ledger of the institutional software-development and user-experience standards IIDS has formally requested from OIT. Sub-sections: `/standards/data-model` (Data Governance Explorer for the AI4RA Unified Data Model), `/standards/strategic-plan` (Strategic Plan Alignment Explorer — pillars, priorities, and the projects advancing each one), and `/standards/strategic-plan/map` (the strategic-plan coverage map). |
 
 Plus `/docs` (technical and user documentation) and `/admin/*` (registry +
 submissions admin during the ClickUp transition). Several legacy routes
 (`/knowledge`, `/cautionary-tales`, `/roadmap`, `/outreach`,
-`/action-plan`, `/approach`) were cut in the May 2026 refactor; recover
-from git history if needed.
+`/action-plan`, `/approach`, `/explore`) were cut in the May 2026
+refactor; recover from git history if needed.
 
 ## Quick start
 
