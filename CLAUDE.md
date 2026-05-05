@@ -69,9 +69,11 @@ rule conflicts with something else in this document, the rule wins.
     pattern), not as new sidebar items.
 12. **NEVER recreate routes removed in the May 2026 refactor**:
     `/knowledge`, `/cautionary-tales`, `/roadmap`, `/outreach`,
-    `/action-plan`, `/approach`, `/standards/[id]`. They were cut on
-    purpose — see `REFACTOR.md`. Recover from git history only if a
-    salvage need is explicitly raised.
+    `/action-plan`, `/approach`, `/standards/[id]`, `/explore` (retired
+    per [ADR 0003](docs/adr/0003-strategic-plan-map-home.md); the
+    strategic-plan map lives at `/standards/strategic-plan/map`). They
+    were cut on purpose — see `REFACTOR.md`. Recover from git history
+    only if a salvage need is explicitly raised.
 13. **NEVER edit auto-generated files.** `lib/governance/catalog.ts`,
     `lib/governance/vocabularies.ts`, `lib/strategic-plan/catalog.ts`,
     and `lib/portfolio-meta.ts` are overwritten by their build
@@ -124,15 +126,14 @@ sprint sequencing.
 
 ## Information architecture
 
-Five primary surfaces in the sidebar, plus an About link in the footer:
+Four primary surfaces in the sidebar, plus an About link in the footer:
 
 | Surface | Route | Source of truth |
 |---|---|---|
-| Projects | `/portfolio` | Postgres `applications` table (read via `lib/work.ts`); `lib/portfolio.ts` is the TS shadow + seed source for `scripts/seed-portfolio.ts`. Filter UI is two-tier: public stage (rollup) → operational status (drill-in), per [ADR 0001](docs/adr/0001-product-lifecycle-taxonomy.md). |
-| Explore | `/explore` | `lib/work-categories.ts` (taxonomy) + `lib/portfolio.ts` (counts and representative names) — by-problem axis, complementary to `/portfolio`'s by-home-unit grouping |
+| Projects | `/portfolio` | Postgres `applications` table (read via `lib/work.ts`); `lib/portfolio.ts` is the TS shadow + seed source for `scripts/seed-portfolio.ts`. Filter UI is two-tier: public stage (rollup) → operational status (drill-in), per [ADR 0001](docs/adr/0001-product-lifecycle-taxonomy.md). The category filter (chips driven by `lib/work-categories.ts`) is the by-problem entry point. |
 | Submit a Project | `/builder-guide` | `lib/builder-guide-data.ts` (quiz definition); Postgres `submissions` (responses) |
+| Standards | `/standards` | `lib/standards-watch.ts` (ledger entries; commit-worthy). Sub-nav covers Data Model, Strategic Plan, and the strategic-plan coverage Map (per [ADR 0003](docs/adr/0003-strategic-plan-map-home.md)). |
 | Reports | `/reports` | `lib/artifacts.ts` — unified timeline of briefs, activity reports, and external presentations |
-| Standards | `/standards` | `lib/standards-watch.ts` (ledger entries; commit-worthy) |
 
 Plus `/ai4ra-ecosystem` (deep-dive linked from About), `/docs/*`
 (technical and user documentation), `/admin/*` (registry + submissions
@@ -140,8 +141,12 @@ admin during the ClickUp transition).
 
 Routes cut in the May 2026 refactor (`/knowledge`, `/cautionary-tales`,
 `/roadmap`, `/outreach`, `/action-plan`, `/approach`, `/standards/[id]`)
-were removed entirely in Sprint 4. Recover from git history if a salvage
-need arises; check `REFACTOR.md` for the rationale.
+were removed entirely in Sprint 4. `/explore` was retired in May 2026
+per [ADR 0003](docs/adr/0003-strategic-plan-map-home.md); the strategic-plan
+coverage map moved to `/standards/strategic-plan/map`, and the by-problem
+browse role is now served by `/portfolio`'s category filter chips.
+Recover from git history if a salvage need arises; check `REFACTOR.md`
+for the rationale.
 
 ## Design context
 

@@ -32,8 +32,8 @@ export type ProjectStatus =
   | "archived"
   | "tracked";
 
-// Public-stage rollup — what stakeholders see on /portfolio, /explore, and
-// the landing stat strip. Computed from `status` via `computePublicStage`.
+// Public-stage rollup — what stakeholders see on /portfolio and the
+// landing stat strip. Computed from `status` via `computePublicStage`.
 export type PublicStage =
   | "exploring"
   | "building"
@@ -701,7 +701,7 @@ export function groupByHomeUnit(
 // ============================================================
 // Labels, colors, and rollups for the operational ladder and
 // public-stage axes. Imported by PortfolioCard, PortfolioFilters,
-// the landing stat strip, and the /explore tile breakdowns.
+// and the landing stat strip.
 //
 // Color rule (locked in .impeccable.md):
 //   - Public-stage chips carry stage-specific color (silver / huckleberry /
@@ -788,7 +788,7 @@ export const STAGE_OPERATIONAL_ROLLUP: Record<PublicStage, ProjectStatus[]> = {
 };
 
 // Aggregate stage counts across a list of items keyed by status. Used by
-// the landing stat strip and /explore tile breakdowns. Returns the stages
+// the landing stat strip and the /portfolio header. Returns the stages
 // in PUBLIC_STAGE_ORDER, with zero-count stages dropped.
 export function stageBreakdown(
   items: ReadonlyArray<{ status: string }>

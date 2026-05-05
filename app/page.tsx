@@ -67,7 +67,7 @@ export default async function Home() {
 
       <section
         aria-label="Where to go next"
-        className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+        className="grid gap-4 sm:grid-cols-2"
       >
         <Link
           href="/portfolio"
@@ -88,22 +88,6 @@ export default async function Home() {
               {homeUnitCount}
             </span>{" "}
             home units. Operational owners and current status.
-          </p>
-        </Link>
-
-        <Link
-          href="/explore"
-          className="group block rounded-xl border border-hairline bg-white p-5 transition-shadow hover:shadow-md"
-        >
-          <p className="text-xs font-medium uppercase tracking-wider text-brand-silver">
-            Explore
-          </p>
-          <h3 className="mt-1 text-base font-semibold text-brand-black">
-            Browse by the kind of work
-          </h3>
-          <p className="mt-2 text-sm leading-relaxed text-ink-muted">
-            Find projects tackling documents, processes, reconciliation,
-            and more &mdash; or open the strategic-plan coverage map.
           </p>
         </Link>
 

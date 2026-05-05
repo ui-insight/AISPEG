@@ -3,7 +3,7 @@
 // ============================================================
 // Server-side adapter that converts the typed portfolio +
 // strategic-plan + work-categories modules into a graph shape ready
-// for the bundled-network renderer on /explore (Map view).
+// for the bundled-network renderer at /standards/strategic-plan/map.
 //
 // The renderer is dumb: this module is responsible for visibility
 // filtering, stable ordering, and producing every node + link the

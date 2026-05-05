@@ -7,20 +7,37 @@ const subNavItems = [
   { href: "/standards", label: "Standards" },
   { href: "/standards/data-model", label: "Data Model" },
   { href: "/standards/strategic-plan", label: "Strategic Plan" },
+  { href: "/standards/strategic-plan/map", label: "Map" },
 ];
+
+// Pick the longest-prefix match so a more specific entry (e.g. Map under
+// Strategic Plan) wins over its parent's prefix.
+function activeHrefFor(pathname: string): string | null {
+  const ranked = [...subNavItems].sort(
+    (a, b) => b.href.length - a.href.length,
+  );
+  for (const item of ranked) {
+    if (item.href === "/standards") {
+      if (pathname === "/standards") return item.href;
+      continue;
+    }
+    if (pathname === item.href || pathname.startsWith(item.href + "/")) {
+      return item.href;
+    }
+  }
+  return null;
+}
 
 export default function StandardsSubNav() {
   const pathname = usePathname();
+  const activeHref = activeHrefFor(pathname);
   return (
     <nav
       aria-label="Standards sections"
       className="-mb-px flex gap-8 overflow-x-auto"
     >
       {subNavItems.map((item) => {
-        const active =
-          item.href === "/standards"
-            ? pathname === "/standards"
-            : pathname === item.href || pathname.startsWith(item.href + "/");
+        const active = item.href === activeHref;
         return (
           <Link
             key={item.href}
