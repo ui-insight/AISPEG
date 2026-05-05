@@ -17,11 +17,14 @@ import {
 // updates the searchParams via plain anchor navigation, which re-renders
 // the server component with the new filter applied.
 //
-// Layout follows the IA from #209: Stage stays default-visible (it's the
-// most-asked-about facet from ADR 0001). Home Unit and Category collapse
-// behind native <details> disclosures that auto-open whenever a filter
-// inside is active, so the active state is never hidden. Sort moves to a
-// native <select> aligned with the result-count line.
+// Layout follows the IA from #209 (with #260 update): Stage stays
+// default-visible (it's the most-asked-about facet from ADR 0001). Home
+// Unit collapses behind a native <details> disclosure that auto-opens
+// whenever a filter inside is active. Sort moves to a native <select>
+// aligned with the result-count line. Category lives in the dedicated
+// "Browse by problem" strip on the page (above this component) per
+// #260 — it's a discovery axis, not a refinement, so it doesn't belong
+// behind a disclosure here.
 
 interface FilterOption {
   label: string;
@@ -43,7 +46,6 @@ export interface PortfolioFiltersProps {
   homeUnits: FilterOption[];
   stageOptions: StageFilterOption[];
   operationalOptions: OperationalFilterOption[];
-  categories: FilterOption[];
   totalCount: number;
   filteredCount: number;
   blockerCount: number;
@@ -51,6 +53,9 @@ export interface PortfolioFiltersProps {
     unit: string | null;
     stage: PublicStage | null;
     status: ProjectStatus | null;
+    // Category is selected via the page-level "Browse by problem" strip
+    // (per #260). Kept in the prop so this component can preserve it in
+    // hrefs for the other filter chips.
     category: string | null;
     blockers: boolean;
     sort: "default" | "name" | "blockers";
@@ -146,7 +151,6 @@ export default function PortfolioFilters({
   homeUnits,
   stageOptions,
   operationalOptions,
-  categories,
   totalCount,
   filteredCount,
   blockerCount,
@@ -194,11 +198,6 @@ export default function PortfolioFilters({
   const activeUnitLabel =
     selected.unit && homeUnits.find((u) => u.value === selected.unit)?.label
       ? homeUnits.find((u) => u.value === selected.unit)!.label
-      : null;
-  const activeCategoryLabel =
-    selected.category &&
-    categories.find((c) => c.value === selected.category)?.label
-      ? categories.find((c) => c.value === selected.category)!.label
       : null;
 
   const sortOptions: { value: "default" | "name" | "blockers"; label: string }[] = [
@@ -350,28 +349,6 @@ export default function PortfolioFilters({
                 count={u.count}
                 active={selected.unit === u.value}
                 href={buildHref({ ...baseParams, unit: u.value })}
-              />
-            ))}
-          </div>
-        </FilterDisclosure>
-      </div>
-
-      {/* Category (collapsed by default; auto-opens when active) */}
-      <div className="mt-3">
-        <FilterDisclosure label="Category" activeLabel={activeCategoryLabel}>
-          <div className="flex flex-wrap gap-1.5">
-            <Chip
-              label="All"
-              active={!selected.category}
-              href={buildHref({ ...baseParams, category: null })}
-            />
-            {categories.map((c) => (
-              <Chip
-                key={c.value}
-                label={c.label}
-                count={c.count}
-                active={selected.category === c.value}
-                href={buildHref({ ...baseParams, category: c.value })}
               />
             ))}
           </div>
