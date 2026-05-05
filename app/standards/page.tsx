@@ -69,6 +69,27 @@ function StandardRow({ item }: { item: StandardsWatchItem }) {
             </li>
           ))}
         </ul>
+        {item.links && item.links.length > 0 && (
+          <div className="mt-4 border-l-2 border-gray-100 pl-4">
+            <p className="text-xs font-medium uppercase tracking-wider text-brand-silver">
+              References
+            </p>
+            <ul className="mt-2 space-y-1.5">
+              {item.links.map((l) => (
+                <li key={l.href} className="text-sm leading-relaxed">
+                  <a
+                    href={l.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-brand-black underline decoration-brand-clearwater decoration-1 underline-offset-4 hover:decoration-2"
+                  >
+                    {l.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </details>
 
       {item.responseNote && (
@@ -104,6 +125,59 @@ export default function StandardsWatchPage() {
           published.
         </p>
       </header>
+
+      {/* Active sources — resources OIT is currently drafting against
+          that answer (in part or whole) the asks below. As OIT
+          publishes formal policy artifacts, link them per-entry via
+          responseUrl rather than expanding this block. */}
+      <section
+        aria-labelledby="active-sources-heading"
+        className="rounded-xl border border-hairline bg-surface-alt p-5"
+      >
+        <p
+          id="active-sources-heading"
+          className="text-xs font-medium uppercase tracking-wider text-brand-silver"
+        >
+          Active sources
+        </p>
+        <h2 className="mt-2 text-lg font-black tracking-tight text-brand-black">
+          OIT Enterprise AI Development Framework
+        </h2>
+        <p className="mt-2 max-w-3xl text-sm leading-relaxed text-ink-muted">
+          OIT (Kali Armitage) is circulating a discussion draft of the
+          Enterprise AI Development Framework, dated April 2026. It
+          proposes a paved-road model — a catalog of pre-approved tools,
+          patterns, and infrastructure so teams can build within safe
+          boundaries without per-project review — alongside a two-zone
+          hosted environment (OIT-operated platform plus per-team
+          Kubernetes namespace), APM 30.11 data classification, and a
+          required pre-deploy artifact set. Several decisions remain
+          open, including the AI model gateway, model-registry
+          ownership, local AI tooling policy, and long-term application
+          ownership.
+        </p>
+        <p className="mt-3 text-sm">
+          <a
+            href="https://dev.azure.com/uidaho/Development/_wiki/wikis/Development.wiki/19540/Enterprise-AI-Development-Framework"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-brand-black underline decoration-brand-clearwater decoration-1 underline-offset-4 hover:decoration-2"
+          >
+            Read the draft on the Azure DevOps wiki &rarr;
+          </a>
+        </p>
+        <p className="mt-3 text-xs text-ink-subtle">
+          Entries below tagged{" "}
+          <span className="rounded-full bg-blue-100 px-2 py-0.5 font-medium text-blue-800">
+            In draft
+          </span>{" "}
+          or{" "}
+          <span className="rounded-full bg-yellow-100 px-2 py-0.5 font-medium text-yellow-800">
+            Acknowledged
+          </span>{" "}
+          are addressed in part or whole by this source.
+        </p>
+      </section>
 
       {/* Agenda I */}
       <section className="space-y-4">
