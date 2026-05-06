@@ -128,6 +128,12 @@ export interface Project {
   // lib/strategic-plan/catalog.ts; scripts/verify-portfolio.ts fails the
   // build on unknown codes. Ship empty; IIDS fills in over time.
   strategicPlanAlignment?: string[];
+
+  // Optional adoption proxy surfaced on the landing's Use lane. Use only
+  // where defensibly true — e.g. "Used in 3 SLC meetings since March 2026"
+  // or "Tracking 47 active observations." Omit if no honest signal exists.
+  // Renders italic, small, below the owner line.
+  usageNote?: string;
 }
 
 export const projects: Project[] = [
