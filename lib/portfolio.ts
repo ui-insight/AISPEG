@@ -476,7 +476,7 @@ export const projects: Project[] = [
     productionScope: "external",
     supportContact: "Luke Sheneman",
     repoUrl: "https://github.com/ui-insight/MindRouter",
-    liveUrl: "https://mindrouter.ai",
+    liveUrl: "https://mindrouter.uidaho.edu",
     operationalFunction:
       "Shared institutional LLM inference substrate. Every AI app at UI routes through it. Fair-share scheduling, quotas, audit trail, on-prem compute, cost control.",
     operationalExcellenceOutcome:
