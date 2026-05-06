@@ -10,14 +10,15 @@ import { buildProjectMapGraph } from "@/lib/project-map-graph";
 
 export default async function Home() {
   const all = getPubliclyVisible();
-  // Stakeholder-facing live products only. AI infrastructure (MindRouter,
-  // DGX Stack, TEMPLATE-app) is excluded from the Use lane — it's a
-  // backend that powers the tools, not something a Dean or VP "uses."
-  // Surfaces in /portfolio under the ai-infrastructure category.
+  // Use lane requires an openable production URL. Live projects without a
+  // public liveUrl (e.g. dev infrastructure like DGX Stack and TEMPLATE-app)
+  // surface in /portfolio's full inventory but not here — "Use" means
+  // there is something for a stakeholder to click and open.
   const liveProjects = all.filter(
     (p) =>
       computePublicStage(p.status) === "live" &&
-      !p.workCategories?.includes("ai-infrastructure"),
+      !!p.liveUrl &&
+      !p.liveUrlIsStaging,
   );
   const buildingCount = all.filter(
     (p) => computePublicStage(p.status) === "building",
@@ -201,7 +202,6 @@ export default async function Home() {
 }
 
 function UseRow({ project: p }: { project: Project }) {
-  const useLiveUrl = !!p.liveUrl && !p.liveUrlIsStaging;
   const ownerName = p.operationalOwners[0]?.name ?? "IIDS";
   const homeUnit = p.homeUnits[0] ?? "UI";
 
@@ -225,25 +225,14 @@ function UseRow({ project: p }: { project: Project }) {
             </p>
           )}
         </div>
-        <div className="shrink-0">
-          {useLiveUrl ? (
-            <a
-              href={p.liveUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs font-semibold text-brand-clearwater hover:underline"
-            >
-              Open &rarr;
-            </a>
-          ) : (
-            <Link
-              href={`/portfolio#${p.slug}`}
-              className="text-xs font-semibold text-brand-clearwater hover:underline"
-            >
-              View &rarr;
-            </Link>
-          )}
-        </div>
+        <a
+          href={p.liveUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="shrink-0 text-xs font-semibold text-brand-clearwater hover:underline"
+        >
+          Open &rarr;
+        </a>
       </div>
     </li>
   );
