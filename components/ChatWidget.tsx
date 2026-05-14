@@ -12,7 +12,14 @@
 // rendering them properly was a no-brainer pull-forward.
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+
+// Routes that mount their own purpose-built chat assistant and should
+// suppress the global ChatWidget to avoid a floating-button collision
+// in the bottom-right corner. /builder-guide owns the idea-refinement
+// assistant (AiChatPanel) — see #247.
+const ROUTES_WITHOUT_GLOBAL_CHAT = ["/builder-guide"];
 import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -224,6 +231,7 @@ function SendIcon() {
 }
 
 export default function ChatWidget() {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [turns, setTurns] = useState<Turn[]>([]);
   const [draft, setDraft] = useState("");
@@ -231,6 +239,10 @@ export default function ChatWidget() {
   const [error, setError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  const suppressed = ROUTES_WITHOUT_GLOBAL_CHAT.some(
+    (route) => pathname === route || pathname?.startsWith(`${route}/`),
+  );
 
   // Keep the latest turn in view as new messages stream in.
   useEffect(() => {
@@ -296,6 +308,8 @@ export default function ChatWidget() {
       send();
     }
   }
+
+  if (suppressed) return null;
 
   return (
     <>
