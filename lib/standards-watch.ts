@@ -1,16 +1,17 @@
-// Standards Watch — public ledger of standards IIDS has formally requested
-// from OIT, with a per-entry day counter. Each entry is a commit-worthy
-// event; treat this file as the audit trail.
+// Standards ledger — the catalog of institutional IT, data, and AI
+// governance standards surfaced through this portal: drafting status,
+// references, and the artifacts that ratify them. Each entry is a
+// commit-worthy event; treat this file as the audit trail.
 //
 // Current dateRequested values are placeholders set to mid-February 2026,
-// approximating when these items were first surfaced. Replace per-entry
-// with actual request dates as those become canonical.
+// approximating when these items were first surfaced. Refine per-entry
+// as canonical dates become available.
 
 export type StandardsWatchStatus =
-  | "requested"
-  | "acknowledged"
+  | "not-started"
+  | "in-discussion"
   | "in-draft"
-  | "published";
+  | "approved";
 
 export interface StandardsWatchItem {
   id: string;
@@ -69,7 +70,7 @@ export const standardsWatch: StandardsWatchItem[] = [
       "Contract testing expectations",
     ],
     dateRequested: PLACEHOLDER_DATE,
-    status: "acknowledged",
+    status: "in-discussion",
     responseUrl: OIT_FRAMEWORK_URL,
     responseNote:
       "Framework picks FastAPI + Uvicorn as the backend API layer and Microsoft Entra ID (OAuth2/OIDC) for authentication. Pagination/filtering, error-response schemas, rate limiting, OpenAPI documentation, and contract-testing expectations are not yet specified in the draft.",
@@ -88,7 +89,7 @@ export const standardsWatch: StandardsWatchItem[] = [
       "Backup and disaster recovery standards",
     ],
     dateRequested: PLACEHOLDER_DATE,
-    status: "acknowledged",
+    status: "in-discussion",
     responseUrl: OIT_FRAMEWORK_URL,
     responseNote:
       "Framework adopts APM 30.11 (Low / Moderate / High) as the binding classification scheme and specifies PostgreSQL + pgaudit for audit logging. Prompt and completion logs inherit the classification of underlying data. Canonical data models, retention, lineage, and DR standards are not yet specified.",
@@ -143,7 +144,7 @@ export const standardsWatch: StandardsWatchItem[] = [
       "Change management requirements",
     ],
     dateRequested: PLACEHOLDER_DATE,
-    status: "acknowledged",
+    status: "in-discussion",
     responseUrl: OIT_FRAMEWORK_URL,
     responseNote:
       "Framework names the required pre-deploy artifacts (systems architecture diagram, per-module data-flow diagrams, risk assessment, runbook covering deployment/rollback/incident response/alerting/ownership, EAR if new tech, VASA if new vendor). Long-term application ownership and support model is an explicit open question in the draft — options range from full product-team ownership to OIT-assumed long-term support; decision affects how applications are scoped, staffed, and funded.",
@@ -193,7 +194,7 @@ export const standardsWatch: StandardsWatchItem[] = [
       "Communication expectations for breaking changes",
     ],
     dateRequested: PLACEHOLDER_DATE,
-    status: "requested",
+    status: "not-started",
   },
   {
     id: "i-10",
@@ -228,7 +229,7 @@ export const standardsWatch: StandardsWatchItem[] = [
       "Versioning and governance of the design system",
     ],
     dateRequested: PLACEHOLDER_DATE,
-    status: "requested",
+    status: "not-started",
   },
   {
     id: "ii-2",
@@ -241,7 +242,7 @@ export const standardsWatch: StandardsWatchItem[] = [
       "Accessibility of interactive elements (keyboard nav, focus states)",
     ],
     dateRequested: PLACEHOLDER_DATE,
-    status: "requested",
+    status: "not-started",
   },
   {
     id: "ii-3",
@@ -279,7 +280,7 @@ export const standardsWatch: StandardsWatchItem[] = [
       },
     ],
     dateRequested: PLACEHOLDER_DATE,
-    status: "acknowledged",
+    status: "in-discussion",
     responseNote:
       "WCAG 2.1 Level AA confirmed as the binding compliance level for institutional UI applications. The OIT Enterprise AI Development Framework draft does not yet enumerate accessibility-specific testing requirements, ARIA expectations, or per-component checks; this entry tracks the elaboration alongside the WCAG references.",
   },
@@ -296,7 +297,7 @@ export const standardsWatch: StandardsWatchItem[] = [
       "Mobile vs. desktop expectations",
     ],
     dateRequested: PLACEHOLDER_DATE,
-    status: "requested",
+    status: "not-started",
   },
   {
     id: "ii-5",
@@ -310,7 +311,7 @@ export const standardsWatch: StandardsWatchItem[] = [
       "Responsiveness across screen sizes",
     ],
     dateRequested: PLACEHOLDER_DATE,
-    status: "requested",
+    status: "not-started",
   },
   {
     id: "ii-6",
@@ -324,7 +325,7 @@ export const standardsWatch: StandardsWatchItem[] = [
       "Logging vs. user-facing errors separation",
     ],
     dateRequested: PLACEHOLDER_DATE,
-    status: "requested",
+    status: "not-started",
   },
   {
     id: "ii-7",
@@ -338,7 +339,7 @@ export const standardsWatch: StandardsWatchItem[] = [
       "Documentation and in-app guidance expectations",
     ],
     dateRequested: PLACEHOLDER_DATE,
-    status: "requested",
+    status: "not-started",
   },
   {
     id: "ii-8",
@@ -351,7 +352,7 @@ export const standardsWatch: StandardsWatchItem[] = [
       "Iteration expectations based on feedback",
     ],
     dateRequested: PLACEHOLDER_DATE,
-    status: "requested",
+    status: "not-started",
   },
   {
     id: "ii-9",
@@ -364,7 +365,7 @@ export const standardsWatch: StandardsWatchItem[] = [
       "Reporting expectations",
     ],
     dateRequested: PLACEHOLDER_DATE,
-    status: "requested",
+    status: "not-started",
   },
   {
     id: "ii-10",
@@ -377,7 +378,7 @@ export const standardsWatch: StandardsWatchItem[] = [
       "Process for updating standards over time",
     ],
     dateRequested: PLACEHOLDER_DATE,
-    status: "acknowledged",
+    status: "in-discussion",
     responseUrl: OIT_FRAMEWORK_URL,
     responseNote:
       "Framework establishes EAR (Enterprise Architecture Review) as the deviation process for tech-stack exceptions and VASA for vendor exceptions — these cover the engineering side of the decision authority structure. UX-specific ownership and conflict resolution between design / engineering / OIT are not yet specified.",
@@ -393,13 +394,13 @@ export function daysSince(isoDate: string): number {
 
 export function summary(items: StandardsWatchItem[] = standardsWatch) {
   const counts = {
-    requested: 0,
-    acknowledged: 0,
+    "not-started": 0,
+    "in-discussion": 0,
     "in-draft": 0,
-    published: 0,
+    approved: 0,
   } as Record<StandardsWatchStatus, number>;
   for (const item of items) counts[item.status]++;
-  const outstanding = items.filter((i) => i.status !== "published");
+  const outstanding = items.filter((i) => i.status !== "approved");
   const oldestOutstanding = outstanding
     .map((i) => daysSince(i.dateRequested))
     .sort((a, b) => b - a)[0] ?? 0;

@@ -160,8 +160,8 @@ export default async function Home() {
                   Standards
                 </span>
                 <span className="text-xs text-ink-muted">
-                  {standards.counts.published} published &middot;{" "}
-                  {standards.outstanding} drafted
+                  {standards.counts.approved} approved &middot;{" "}
+                  {standards.outstanding} in progress
                 </span>
               </Link>
             </li>
