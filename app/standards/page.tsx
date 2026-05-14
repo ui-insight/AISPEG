@@ -6,17 +6,17 @@ import {
 } from "@/lib/standards-watch";
 
 const STATUS_LABEL: Record<StandardsWatchStatus, string> = {
-  requested: "Requested",
-  acknowledged: "Acknowledged",
+  "not-started": "Not started",
+  "in-discussion": "In discussion",
   "in-draft": "In draft",
-  published: "Published",
+  approved: "Approved",
 };
 
 const STATUS_STYLES: Record<StandardsWatchStatus, string> = {
-  requested: "bg-orange-100 text-orange-800",
-  acknowledged: "bg-yellow-100 text-yellow-800",
+  "not-started": "bg-gray-100 text-gray-700",
+  "in-discussion": "bg-amber-100 text-amber-800",
   "in-draft": "bg-blue-100 text-blue-800",
-  published: "bg-green-100 text-green-800",
+  approved: "bg-green-100 text-green-800",
 };
 
 function StatusChip({ status }: { status: StandardsWatchStatus }) {
@@ -114,15 +114,17 @@ export default function StandardsWatchPage() {
           Software-development and user-experience standards
         </h1>
         <p className="mt-3 max-w-3xl text-base leading-relaxed text-ink-muted">
-          The institutional standards IIDS has formally requested from the
-          Office of Information Technology. Entries move to{" "}
-          <span className="font-medium text-green-700">Published</span> as
-          OIT releases them.
+          The catalog of institutional IT, data, and AI governance
+          standards surfaced through this portal &mdash; drafting status,
+          the artifacts that ratify them, and the references behind each.
+          Entries move to{" "}
+          <span className="font-medium text-green-700">Approved</span> as
+          the Office of Information Technology publishes them.
         </p>
         <p className="mt-4 max-w-3xl text-base leading-relaxed text-brand-black">
           <span className="font-bold">{stats.outstanding}</span>{" "}
-          outstanding asks. <span className="font-bold">{stats.counts.published}</span>{" "}
-          published.
+          in progress. <span className="font-bold">{stats.counts.approved}</span>{" "}
+          approved.
         </p>
       </header>
 
@@ -172,8 +174,8 @@ export default function StandardsWatchPage() {
             In draft
           </span>{" "}
           or{" "}
-          <span className="rounded-full bg-yellow-100 px-2 py-0.5 font-medium text-yellow-800">
-            Acknowledged
+          <span className="rounded-full bg-amber-100 px-2 py-0.5 font-medium text-amber-800">
+            In discussion
           </span>{" "}
           are addressed in part or whole by this source.
         </p>
@@ -186,8 +188,8 @@ export default function StandardsWatchPage() {
             Software Development Standards
           </h2>
           <p className="mt-1 text-sm text-ink-muted">
-            Requested deliverables governing how applications are architected,
-            secured, deployed, and maintained at the University of Idaho.
+            Standards governing how applications are architected, secured,
+            deployed, and maintained at the University of Idaho.
           </p>
         </div>
         <div className="space-y-3">
@@ -204,8 +206,8 @@ export default function StandardsWatchPage() {
             User Experience Standards
           </h2>
           <p className="mt-1 text-sm text-ink-muted">
-            Requested deliverables governing how University of Idaho
-            applications look, behave, and treat the people who use them.
+            Standards governing how University of Idaho applications look,
+            behave, and treat the people who use them.
           </p>
         </div>
         <div className="space-y-3">

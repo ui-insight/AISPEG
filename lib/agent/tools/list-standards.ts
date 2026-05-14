@@ -1,6 +1,6 @@
-// list_standards — the IIDS standards-watch ledger, optionally filtered
-// by status. The /standards page is the canonical surface; everything
-// else links into it.
+// list_standards — the institutional standards ledger, optionally
+// filtered by status. The /standards page is the canonical surface;
+// everything else links into it.
 
 import "server-only";
 import {
@@ -11,10 +11,10 @@ import {
 import type { ToolHandler, ToolResult } from "./registry";
 
 const STATUS_VALUES: StandardsWatchStatus[] = [
-  "requested",
-  "acknowledged",
+  "not-started",
+  "in-discussion",
   "in-draft",
-  "published",
+  "approved",
 ];
 
 function pickString(args: Record<string, unknown>, key: string): string | undefined {
@@ -28,7 +28,7 @@ export const listStandardsTool: ToolHandler = {
     function: {
       name: "list_standards",
       description:
-        "Return the IIDS standards-watch ledger — items IIDS has formally requested from OIT, with their current status and how long they've been outstanding. Use this for questions about institutional software / UX standards, what's been requested, or what's still pending.",
+        "Return the institutional standards ledger — the catalog of IT, data, and AI governance standards surfaced through this portal, each with its current drafting status and how long it has been open. Use this for questions about institutional software / UX standards, what's being drafted, or what's been approved.",
       parameters: {
         type: "object",
         properties: {
@@ -36,7 +36,7 @@ export const listStandardsTool: ToolHandler = {
             type: "string",
             enum: STATUS_VALUES,
             description:
-              "Restrict to one status (requested, acknowledged, in-draft, published). Omit to list everything.",
+              "Restrict to one status (not-started, in-discussion, in-draft, approved). Omit to list everything.",
           },
         },
         additionalProperties: false,

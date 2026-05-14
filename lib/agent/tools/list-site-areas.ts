@@ -47,10 +47,10 @@ const SITE_AREAS: SiteArea[] = [
     name: "Standards",
     url: "/standards",
     purpose:
-      "The standards-watch ledger — software and UX standards IIDS has formally requested from OIT, with day counters per outstanding item.",
+      "The institutional standards ledger — the catalog of IT, data, and AI governance standards surfaced through this portal, with drafting status (not started / in discussion / in draft / approved) per entry.",
     example_questions: [
-      "What standards has IIDS requested?",
-      "What's the oldest outstanding standards request?",
+      "What standards are in draft?",
+      "Which standards have been approved?",
     ],
     sub_areas: [
       {
