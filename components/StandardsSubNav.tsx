@@ -8,6 +8,7 @@ const subNavItems = [
   { href: "/standards/data-model", label: "Data Model" },
   { href: "/standards/strategic-plan", label: "Strategic Plan" },
   { href: "/standards/strategic-plan/map", label: "Map" },
+  { href: "/standards/intake-crosswalk", label: "Intake Crosswalk" },
 ];
 
 // Pick the longest-prefix match so a more specific entry (e.g. Map under
