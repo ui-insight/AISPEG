@@ -593,7 +593,7 @@ export const vocabularyGroups: VocabularyGroup[] = [
         "code": "prototype",
         "label": "Prototype",
         "displayOrder": 4,
-        "description": "Demo-able but quiet — feature-complete or paused.",
+        "description": "Demo-able but quiet — feature-complete or dormant.",
         "verificationRule": "pilotCohort empty; either lastCommitDate older than 30 days OR featureComplete:true."
       },
       {
@@ -618,23 +618,30 @@ export const vocabularyGroups: VocabularyGroup[] = [
         "verificationRule": "Inherits production accessibility (liveUrl or public repo); no commits to main in last 90 days; no open feature issues — only bug-, security-, or chore-labeled."
       },
       {
+        "code": "paused",
+        "label": "Paused",
+        "displayOrder": 8,
+        "description": "Deliberately on hold — not abandoned; expected to resume.",
+        "verificationRule": "Deliberate hold, so no commit-cadence requirement; pilotCohort empty."
+      },
+      {
         "code": "sunsetting",
         "label": "Sunsetting",
-        "displayOrder": 8,
+        "displayOrder": 9,
         "description": "Being wound down with a planned successor.",
         "verificationRule": "sunsetDate (ISO) set; replacedBy populated — successor project slug or the literal 'manual-process'."
       },
       {
         "code": "archived",
         "label": "Archived",
-        "displayOrder": 9,
+        "displayOrder": 10,
         "description": "Stopped. Record kept for institutional memory.",
         "verificationRule": "liveUrl returns 404 / is null / domain dead, or (for repo-as-artifact) repoUrl is archived/deleted; service stopped."
       },
       {
         "code": "tracked",
         "label": "Tracked",
-        "displayOrder": 10,
+        "displayOrder": 11,
         "description": "Externally-owned project IIDS observes but does not build.",
         "verificationRule": "trackingOnly:true; bypasses the operational ladder."
       }
@@ -668,16 +675,23 @@ export const vocabularyGroups: VocabularyGroup[] = [
         "verificationRule": "Rolls up from ProjectStatus values: piloting, production, maintained."
       },
       {
+        "code": "paused",
+        "label": "Paused",
+        "displayOrder": 4,
+        "description": "Deliberately on hold; not abandoned.",
+        "verificationRule": "Rolls up from ProjectStatus value: paused."
+      },
+      {
         "code": "retired",
         "label": "Retired",
-        "displayOrder": 4,
+        "displayOrder": 5,
         "description": "Done or winding down.",
         "verificationRule": "Rolls up from ProjectStatus values: sunsetting, archived."
       },
       {
         "code": "tracked",
         "label": "Tracked",
-        "displayOrder": 5,
+        "displayOrder": 6,
         "description": "Not built by IIDS.",
         "verificationRule": "Rolls up from ProjectStatus value: tracked. Bypasses the operational ladder."
       }
