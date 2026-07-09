@@ -405,12 +405,24 @@ export default async function IntakeCrosswalkPage({
   const profiles = allGovernanceProfiles();
   const coverage = governanceCoverage(profiles);
 
-  // Order profiles by the canonical home-unit sequence. Cards group;
+  // Order profiles by the canonical home-unit sequence, then append any
+  // unit not in HOME_UNIT_GROUP_ORDER so no project is ever silently
+  // dropped. Mirrors groupByHomeUnit in lib/portfolio.ts. Cards group;
   // the matrix flattens the same order into rows.
-  const grouped = HOME_UNIT_GROUP_ORDER.map((unit) => ({
-    unit,
-    items: profiles.filter((p) => p.homeUnits[0] === unit),
-  })).filter((g) => g.items.length > 0);
+  const primaryUnit = (p: ResolvedProfile) => p.homeUnits[0] || "Unclassified";
+  const knownUnits = new Set<string>(HOME_UNIT_GROUP_ORDER);
+  const orderedUnits = [
+    ...HOME_UNIT_GROUP_ORDER,
+    ...Array.from(new Set(profiles.map(primaryUnit))).filter(
+      (u) => !knownUnits.has(u),
+    ),
+  ];
+  const grouped = orderedUnits
+    .map((unit) => ({
+      unit,
+      items: profiles.filter((p) => primaryUnit(p) === unit),
+    }))
+    .filter((g) => g.items.length > 0);
   const ordered = grouped.flatMap((g) => g.items);
 
   const trackedTracks: Array<{ key: keyof typeof coverage.byTrack; label: string }> = [

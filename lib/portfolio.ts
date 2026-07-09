@@ -671,6 +671,7 @@ export const HOME_UNIT_GROUP_ORDER = [
   "Office of Sponsored Programs (ORED)",
   "Office of Research and Economic Development",
   "Research Faculty Development (ORED)",
+  "UI Library",
   "Division of Financial Affairs",
   "Strategic Enrollment Management",
   "University Communications and Marketing",
