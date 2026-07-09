@@ -175,3 +175,34 @@ Five PRs, in order. Each ships independently.
 5. **Governance PR** — add the `iids-portfolio` domain to `vendor/data-governance`, regenerate `lib/governance/*.ts`, drift workflow now polices these vocabularies too. Closes [#159](https://github.com/ui-insight/AISPEG/issues/159).
 
 Roughly 1 → 2 → (3 ‖ 4) → 5. The ADR is load-bearing; the rest is mechanical once rules are locked.
+
+## Amendments
+
+### 2026-07 — `paused` operational status + `Paused` public stage
+
+**Context.** The nine-state ladder had no honest home for a project whose
+development has been *deliberately halted but not abandoned* — work expected
+to resume. Such a project cannot truthfully claim `building` (the verifier's
+60-day commit-cadence rule fails it, and the label implies motion), and
+`sunsetting`/`archived` are wrong (nothing is being retired). Authors were
+forced to either mislabel or let the verifier fail.
+
+**Decision.** Add `paused` to the operational ladder and give it its own
+public stage `Paused`, following the same reasoning that gave `tracked` its
+own bucket (§2): folding a deliberate hold into `Building` or `Retired`
+would obscure a load-bearing distinction a stakeholder needs at a glance.
+
+- **Operational rule** (`lib/portfolio-verification.ts`): a deliberate hold
+  carries **no commit-cadence requirement** — that is the point. Sanity
+  only: `pilotCohort` must be empty.
+- **Public rollup**: `paused → Paused`. Chip color is the caution/amber
+  family (already the codebase signal for blockers), distinct from the
+  brand-accent stages and without borrowing reserved Pride Gold.
+- **No migration.** Per the original decision, `applications.status` carries
+  no DB `CHECK` constraint (the typed module is the source of truth), so the
+  new value needs only a re-seed, not a schema change.
+
+**Follow-up.** The `iids-portfolio` ProjectStatus vocabulary vendored in
+`vendor/data-governance` does not yet list `paused`; update it upstream so
+the Data Model explorer's status vocab stays in sync (does not block the
+build or the drift CI, which does not run on `lib/portfolio.ts` changes).

@@ -249,6 +249,21 @@ const verifyMaintained: Verifier = (i) => {
   return problems;
 };
 
+const verifyPaused: Verifier = (i) => {
+  const problems: VerificationProblem[] = [];
+  // Paused is a deliberate hold, so it carries NO commit-cadence rule —
+  // that's the whole point (it's the honest home for a quiet build that
+  // isn't abandoned). Sanity only: a paused project shouldn't still claim
+  // an active pilot cohort.
+  const rule = "paused: deliberate hold; no cadence requirement; pilotCohort empty.";
+  if (i.pilotCohort) {
+    problems.push(
+      problem(i, rule, "claims `paused` but still has an active pilotCohort — resolve the pilot or move to `piloting`.")
+    );
+  }
+  return problems;
+};
+
 const verifySunsetting: Verifier = (i) => {
   const problems: VerificationProblem[] = [];
   const rule = "sunsetting: sunsetDate (ISO) set; replacedBy (slug or 'manual-process') set.";
@@ -319,6 +334,7 @@ const verifiers: Record<ProjectStatus, Verifier> = {
   piloting: verifyPiloting,
   production: verifyProduction,
   maintained: verifyMaintained,
+  paused: verifyPaused,
   sunsetting: verifySunsetting,
   archived: verifyArchived,
   tracked: verifyTracked,

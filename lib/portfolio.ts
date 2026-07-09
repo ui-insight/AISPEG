@@ -28,6 +28,7 @@ export type ProjectStatus =
   | "piloting"
   | "production"
   | "maintained"
+  | "paused"
   | "sunsetting"
   | "archived"
   | "tracked";
@@ -38,6 +39,7 @@ export type PublicStage =
   | "exploring"
   | "building"
   | "live"
+  | "paused"
   | "retired"
   | "tracked";
 
@@ -180,7 +182,7 @@ export const projects: Project[] = [
     homeUnits: ["Division of Financial Affairs"],
     operationalOwners: [{ name: "Kim Salisbury" }],
     buildParticipants: ["IIDS"],
-    status: "building",
+    status: "paused",
     visibility: "Public",
     ai4raRelationship: "None",
     iidsSponsor: "Barrie Robison",
@@ -343,7 +345,7 @@ export const projects: Project[] = [
     ai4raRelationship: "None",
     iidsSponsor: "Barrie Robison",
     liveUrlIsStaging: true,
-    repoUrl: "https://github.com/ui-insight/ExecOrd",
+    repoUrl: "https://github.com/ui-insight/eo-compliance",
     isPrivateRepo: true,
     liveUrl: "https://eocompliance.insight.uidaho.edu",
     operationalFunction:
@@ -523,7 +525,7 @@ export const projects: Project[] = [
     homeUnits: ["IIDS"],
     operationalOwners: [{ name: "Barrie Robison" }],
     buildParticipants: ["IIDS"],
-    status: "production",
+    status: "paused",
     visibility: "Public",
     institutionalReviewStatus: "Under OIT review",
     ai4raRelationship: "Adjacent",
@@ -616,6 +618,8 @@ export function computePublicStage(status: ProjectStatus): PublicStage {
     case "production":
     case "maintained":
       return "live";
+    case "paused":
+      return "paused";
     case "sunsetting":
     case "archived":
       return "retired";
@@ -632,6 +636,7 @@ const STATUSES: ReadonlyArray<ProjectStatus> = [
   "piloting",
   "production",
   "maintained",
+  "paused",
   "sunsetting",
   "archived",
   "tracked",
@@ -721,6 +726,7 @@ export const PUBLIC_STAGE_LABEL: Record<PublicStage, string> = {
   exploring: "Exploring",
   building: "Building",
   live: "Live",
+  paused: "Paused",
   retired: "Retired",
   tracked: "Tracked",
 };
@@ -731,6 +737,10 @@ export const PUBLIC_STAGE_CHIP: Record<PublicStage, string> = {
   exploring: "border-brand-silver/40 bg-brand-silver/10 text-brand-silver",
   building: "border-brand-huckleberry/30 bg-brand-huckleberry/10 text-brand-huckleberry",
   live: "border-brand-clearwater/40 bg-brand-clearwater/10 text-brand-clearwater",
+  // Paused uses the caution/amber family (already the codebase signal for
+  // blockers) — a deliberate hold reads distinctly from the brand-accent
+  // stages without borrowing reserved Pride Gold.
+  paused: "border-amber-300 bg-amber-50 text-amber-700",
   retired: "border-gray-200 bg-gray-50 text-gray-500",
   tracked: "border-brand-huckleberry/30 bg-brand-huckleberry/10 text-brand-huckleberry",
 };
@@ -742,6 +752,7 @@ export const PUBLIC_STAGE_ORDER: PublicStage[] = [
   "exploring",
   "building",
   "live",
+  "paused",
   "retired",
   "tracked",
 ];
@@ -754,6 +765,7 @@ export const OPERATIONAL_LABEL: Record<ProjectStatus, string> = {
   piloting: "Piloting",
   production: "Production",
   maintained: "Maintained",
+  paused: "Paused",
   sunsetting: "Sunsetting",
   archived: "Archived",
   tracked: "Tracked",
@@ -766,6 +778,7 @@ export const PUBLIC_STAGE_TITLE: Record<PublicStage, string> = {
   exploring: "Exploring — idea or approval phase; not yet being built.",
   building: "Building — actively being built or prototyped by IIDS.",
   live: "Live — piloting, in production, or maintained.",
+  paused: "Paused — deliberately on hold; not abandoned, may resume.",
   retired: "Retired — sunsetting or archived.",
   tracked: "Tracked — in the inventory but not built by IIDS.",
 };
@@ -778,6 +791,7 @@ export const OPERATIONAL_TITLE: Record<ProjectStatus, string> = {
   piloting: "Piloting — limited user base validating the build.",
   production: "Production — broadly deployed and in use.",
   maintained: "Maintained — production with ongoing support.",
+  paused: "Paused — active development deliberately halted; expected to resume.",
   sunsetting: "Sunsetting — being phased out.",
   archived: "Archived — fully retired.",
   tracked: "Tracked — externally owned, in inventory only.",
@@ -790,6 +804,7 @@ export const STAGE_OPERATIONAL_ROLLUP: Record<PublicStage, ProjectStatus[]> = {
   exploring: ["idea", "approved"],
   building: ["building", "prototype"],
   live: ["piloting", "production", "maintained"],
+  paused: ["paused"],
   retired: ["sunsetting", "archived"],
   tracked: ["tracked"],
 };

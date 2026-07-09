@@ -7,7 +7,7 @@ import Link from "next/link";
 // Lifecycle taxonomy from ADR 0001 — see lib/portfolio.ts ProjectStatus.
 const STATUS_OPTIONS = [
   "idea", "approved", "building", "prototype", "piloting",
-  "production", "maintained", "sunsetting", "archived", "tracked",
+  "production", "maintained", "paused", "sunsetting", "archived", "tracked",
 ];
 
 const VISIBILITY_OPTIONS = ["public", "embargoed", "internal"] as const;
