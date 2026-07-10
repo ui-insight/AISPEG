@@ -270,7 +270,7 @@ export const PROJECT_NOTES_CUSTOM_ITEM_ID = 1007;
 /** Fields read from each project list's "Project Notes" task. */
 export const PROJECT_FIELDS = {
   roiFte: "cf9b0bf9-32fb-4a93-a5aa-3f6c51f1e166",
-  roiExplanation: "36e11677-6f75-4dce-8cbb-fbd4538c4ac8",
+  roiExplanation: "36e11677-c07a-44df-8c16-a63f52e8110c",
   leads: "24af91a5-9373-4d48-afa2-e6f3f9bddeef",
   pocs: "8afcbe58-f717-4b09-8270-1038a575f8e9",
   stakeholders: "e080713b-6508-4602-9897-4dff1688bfba",
