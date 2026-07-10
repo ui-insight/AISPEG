@@ -5,6 +5,7 @@ import {
   getRelatedApplications,
   listSlugs,
 } from "@/lib/work";
+import { getProjectStatusBySlug } from "@/lib/clickup-data";
 
 export const dynamic = "force-dynamic";
 
@@ -44,7 +45,10 @@ export default async function ProjectDetailPage({
   const app = await getApplicationBySlug(slug, { audience: "public" });
   if (!app) notFound();
 
-  const related = await getRelatedApplications(app, { audience: "public" });
+  const [related, clickup] = await Promise.all([
+    getRelatedApplications(app, { audience: "public" }),
+    getProjectStatusBySlug(slug),
+  ]);
 
   return (
     <ProjectDetail
@@ -52,6 +56,7 @@ export default async function ProjectDetailPage({
       related={related}
       audience="public"
       basePath="/portfolio"
+      clickup={clickup}
     />
   );
 }

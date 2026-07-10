@@ -53,10 +53,14 @@ export default function PortfolioCard({
   app,
   audience = "public",
   basePath = "/portfolio",
+  latestUpdate,
 }: {
   app: ApplicationWithBlockers;
   audience?: "public" | "internal";
   basePath?: string;
+  // Most recent ClickUp status update (ADR 0003); omitted for projects
+  // without a mapped ClickUp list.
+  latestUpdate?: { postedAt: string; body: string } | null;
 }) {
   const owners = app.operationalOwners
     .map((o) => o.name)
@@ -127,6 +131,21 @@ export default function PortfolioCard({
       {app.tagline && (
         <p className="mt-3 text-sm leading-relaxed text-ink-muted">
           {app.tagline}
+        </p>
+      )}
+
+      {latestUpdate && (
+        <p className="mt-3 line-clamp-2 text-xs leading-snug text-ink-subtle">
+          <span className="font-semibold text-ink-muted">
+            Update{" "}
+            {new Date(latestUpdate.postedAt).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            })}
+            :
+          </span>{" "}
+          {firstLine(latestUpdate.body)}
         </p>
       )}
 
@@ -221,6 +240,12 @@ export default function PortfolioCard({
       )}
     </article>
   );
+}
+
+// Status-update bodies are multi-paragraph; the card shows only the first
+// substantive line (the detail page has the full timeline).
+function firstLine(body: string): string {
+  return body.split("\n").find((l) => l.trim() !== "")?.trim() ?? body;
 }
 
 function hostnameOf(url: string): string | null {

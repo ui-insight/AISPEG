@@ -1,6 +1,8 @@
 import Link from "next/link";
 import type { ApplicationWithBlockers, Blocker } from "@/lib/work";
 import { blockerCategoryLabels, daysSince } from "@/lib/work";
+import type { ClickUpProjectStatus } from "@/lib/clickup-data";
+import SyncFreshness, { formatSyncDate } from "@/components/SyncFreshness";
 import {
   OPERATIONAL_LABEL,
   PUBLIC_STAGE_CHIP,
@@ -120,6 +122,9 @@ export interface ProjectDetailProps {
   related: RelatedApp[];
   audience: "public" | "internal";
   basePath: string; // "/portfolio" or "/internal/portfolio"
+  // ClickUp-synced status narrative + ROI (ADR 0003). Null/undefined when
+  // the project has no mapped ClickUp list or sync hasn't run.
+  clickup?: ClickUpProjectStatus | null;
 }
 
 export default function ProjectDetail({
@@ -127,6 +132,7 @@ export default function ProjectDetail({
   related,
   audience,
   basePath,
+  clickup,
 }: ProjectDetailProps) {
   const isEmbargoed = app.visibilityTier === "embargoed";
   const isInternal = app.visibilityTier === "internal";
@@ -283,12 +289,29 @@ export default function ProjectDetail({
           blockers are supporting context. The single gold left-rule on
           the outcome is the page's emotional center; per .impeccable.md,
           gold is reserved for rare emphasis. */}
-      {app.operationalExcellenceOutcome && (
+      {(app.operationalExcellenceOutcome || clickup?.roiExplanation) && (
         <section className="border-l-4 border-ui-gold pl-6">
           <SectionEyebrow>Why this matters</SectionEyebrow>
-          <p className="mt-2 max-w-3xl text-lg leading-relaxed text-ui-charcoal">
-            {app.operationalExcellenceOutcome}
-          </p>
+          {app.operationalExcellenceOutcome && (
+            <p className="mt-2 max-w-3xl text-lg leading-relaxed text-ui-charcoal">
+              {app.operationalExcellenceOutcome}
+            </p>
+          )}
+          {clickup?.roiExplanation && (
+            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-ink-muted">
+              {clickup.roiFte != null && clickup.roiFte > 0 ? (
+                <>
+                  Estimated capacity returned:{" "}
+                  <span className="font-semibold text-ui-charcoal">
+                    {clickup.roiFte} FTE
+                  </span>{" "}
+                  — {clickup.roiExplanation}
+                </>
+              ) : (
+                <>Estimated return: {clickup.roiExplanation}</>
+              )}
+            </p>
+          )}
         </section>
       )}
 
@@ -306,6 +329,36 @@ export default function ProjectDetail({
               contact history) lives on the internal view.
             </p>
           )}
+        </section>
+      )}
+
+      {clickup && clickup.updates.length > 0 && (
+        <section>
+          <SectionEyebrow>Status updates</SectionEyebrow>
+          <ol className="mt-3 max-w-3xl space-y-5">
+            {clickup.updates.map((u) => (
+              <li
+                key={u.commentId}
+                className="border-l-2 border-hairline pl-4"
+              >
+                <p className="text-sm font-semibold text-brand-black">
+                  {formatSyncDate(u.postedAt)}
+                  {u.author && (
+                    <span className="font-normal text-ink-muted">
+                      {" "}
+                      · {u.author}
+                    </span>
+                  )}
+                </p>
+                <p className="mt-1 whitespace-pre-line text-sm leading-relaxed text-ui-charcoal">
+                  {u.body}
+                </p>
+              </li>
+            ))}
+          </ol>
+          <div className="mt-4">
+            <SyncFreshness syncedAt={clickup.syncedAt} />
+          </div>
         </section>
       )}
 
