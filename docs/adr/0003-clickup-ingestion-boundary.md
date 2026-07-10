@@ -23,7 +23,7 @@ The site should publish three things from that system: current status of active 
 | From ClickUp | Into | Surfaced at |
 |---|---|---|
 | "Project Notes" task fields per project list: ROI-FTE, ROI-Explanation, Lead(s), POC(s), Stakeholders, repo link, projected completion, scope, business unit | `clickup_projects` | Project detail pages (ROI line), internal views |
-| Comments on each "Project Notes" task | `clickup_status_updates` | "Status updates" timeline on project detail pages; latest-update line on portfolio cards |
+| Comments on each "Project Notes" task | `clickup_status_updates` | **Public:** a generated summary (`clickup_projects.status_summary`) on detail pages and cards. **Internal:** the full dated timeline. See "Accepted risk" below — amended July 2026. |
 | Backlog request tasks: name, status, description, unit, submitter, category, feasibility, 11 rubric values, weighted score | `clickup_requests` | `/portfolio/pipeline` |
 
 ### What does not flow
@@ -61,11 +61,15 @@ The Postgres instance lives on the on-prem docker host; GitHub runners can't rea
 
 Both triggers call the same `runSync()` in `lib/clickup-sync.ts`.
 
-## Accepted risk: internal-voice comments become public copy
+## Accepted risk: internal-voice comments become public copy — *amended July 2026*
 
-Status-update comments were written in ClickUp as internal notes. Publishing them verbatim is the point (evidence-forward, owner-named) but carries tone/content risk.
+Status-update comments were written in ClickUp as internal notes. The original decision published them verbatim; Colin revised it: **the public site never renders the comment corpus.** Instead:
 
-**Launch gate:** a one-time read-through of the synced comment corpus with Colin before the first production sync. **Ongoing:** the site is a projection of ClickUp — comment hygiene in ClickUp is now a public-facing practice (this extends the "ClickUp data hygiene" risk REFACTOR.md already names).
+- The sync generates a 2–4 sentence public summary per project via MindRouter (migration 011: `status_summary`, `status_summary_at`, `status_summary_source`), regenerated only when the comment stream changes. The prompt forbids email addresses, meeting links, and internal asides, and forbids inventing details.
+- The full dated timeline renders only on the auth-gated `/internal` view.
+- If MindRouter is unavailable, the previous summary is kept (stale beats missing) and the sync run records a warning; a project with no summary yet simply shows nothing publicly.
+
+**Ongoing:** the site remains a projection of ClickUp — comment hygiene still matters because the summarizer can only be as accurate as its inputs, and `/internal` shows the notes verbatim (this extends the "ClickUp data hygiene" risk REFACTOR.md already names). Spot-checking generated summaries after significant comment activity is part of the sync-review habit.
 
 ## Consequences
 

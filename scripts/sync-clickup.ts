@@ -6,9 +6,12 @@
 // keyed by ClickUp ids so re-runs are idempotent. See ADR 0003.
 //
 // Env:
-//   DATABASE_URL       — required
-//   CLICKUP_API_TOKEN  — required (personal token with read access to the
-//                        IIDS-AI4UI space)
+//   DATABASE_URL        — required
+//   CLICKUP_API_TOKEN   — required (personal token with read access to the
+//                         IIDS-AI4UI space)
+//   MINDROUTER_API_KEY  — optional; generates the public status summaries
+//                         (without it, sync still runs and summaries keep
+//                         their previous value, with a warning per project)
 //
 // Usage:
 //   npm run sync:clickup

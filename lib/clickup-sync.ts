@@ -15,6 +15,7 @@
 // task are warned about and skipped, never a hard failure.
 
 import { query, queryOne } from "./db";
+import { chatCompletion } from "./mindrouter";
 import {
   CLICKUP_BACKLOG_LIST_ID,
   CLICKUP_PROJECT_LISTS,
@@ -34,6 +35,7 @@ import {
   PROJECT_FIELDS,
   PROJECT_NOTES_CUSTOM_ITEM_ID,
   RUBRIC_FIELDS,
+  type ClickUpComment,
   type ClickUpTask,
 } from "./clickup";
 
@@ -133,7 +135,77 @@ async function syncProjectList(
     [listId, seenCommentIds]
   );
 
+  await refreshStatusSummary(listId, listName, comments, warnings);
+
   return { updates: seenCommentIds.length, synced: true };
+}
+
+/**
+ * Public status summary (ADR 0003, amended July 2026): the raw comments
+ * are internal notes, so the public site renders a short MindRouter-
+ * generated summary instead of the corpus. Regenerated only when the
+ * comment stream changed since the last summarization; on MindRouter
+ * failure the previous summary is kept (stale beats missing) and a
+ * warning is surfaced in the run summary.
+ */
+async function refreshStatusSummary(
+  listId: string,
+  listName: string,
+  comments: ClickUpComment[],
+  warnings: string[]
+): Promise<void> {
+  if (comments.length === 0) return;
+
+  // Comments arrive newest-first; the newest id fingerprints the stream.
+  const newestId = comments[0]!.id;
+  const existing = await queryOne<{ status_summary_source: string | null }>(
+    `SELECT status_summary_source FROM clickup_projects WHERE clickup_list_id = $1`,
+    [listId]
+  );
+  if (existing?.status_summary_source === newestId) return; // unchanged
+
+  const recent = comments.slice(0, 12);
+  const corpus = recent
+    .map((c) => {
+      const date = new Date(Number(c.date)).toISOString().slice(0, 10);
+      const body = commentBodyText(c);
+      return `[${date}] ${body}`;
+    })
+    .join("\n\n")
+    .slice(0, 8000);
+
+  const systemPrompt =
+    "You write status summaries for a University of Idaho public website about institutional AI projects. Given internal status-update notes, write 2-4 plain sentences describing where the project stands: current state, recent progress, and the next step if one is stated. Factual, no hype. Each note is prefixed with its date; if the newest note is months old, describe it as the last reported state (e.g. \"As of March 2026, ...\") rather than implying it is current. Do not include email addresses, meeting links, scheduling chatter, or anything that reads as an internal aside. Do not invent details that are not in the notes. Output only the summary text.";
+  const userPrompt = `Today is ${new Date().toISOString().slice(0, 10)}.\nProject: ${listName}\n\nInternal status-update notes, newest first:\n\n${corpus}\n\nWrite the public status summary now.`;
+
+  try {
+    let summary = "";
+    // qwen3.6 is a thinking model: with a small max_tokens the reasoning
+    // stream can exhaust the budget before any visible content is
+    // emitted, yielding empty content with finish_reason "length". Give
+    // it room, and retry once on an empty result.
+    for (let attempt = 0; attempt < 2 && !summary; attempt++) {
+      const res = await chatCompletion({
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+        max_tokens: 8192,
+      });
+      summary = (res.choices[0]?.message?.content ?? "").trim();
+    }
+    if (!summary) throw new Error("empty summary returned");
+    await query(
+      `UPDATE clickup_projects
+       SET status_summary = $2, status_summary_at = now(), status_summary_source = $3
+       WHERE clickup_list_id = $1`,
+      [listId, summary, newestId]
+    );
+  } catch (err) {
+    warnings.push(
+      `${listName} (${listId}): status summary not refreshed (${err instanceof Error ? err.message : String(err)}) — keeping previous summary`
+    );
+  }
 }
 
 async function syncBacklog(warnings: string[]): Promise<number> {
