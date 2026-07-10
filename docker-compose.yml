@@ -42,6 +42,7 @@ services:
         condition: service_healthy
     environment:
       GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+      CLICKUP_API_TOKEN: ${CLICKUP_API_TOKEN:-}
       DATABASE_URL: postgresql://${POSTGRES_USER:-aispeg}:${POSTGRES_PASSWORD:-aispeg_secret}@10.10.9.10:5432/${POSTGRES_DB:-aispeg}
       MINDROUTER_API_KEY: ${MINDROUTER_API_KEY:-}
       MINDROUTER_BASE_URL: ${MINDROUTER_BASE_URL:-https://mindrouter.uidaho.edu}
@@ -90,6 +91,7 @@ services:
         condition: service_healthy
     environment:
       GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+      CLICKUP_API_TOKEN: ${CLICKUP_API_TOKEN:-}
       DATABASE_URL: postgresql://${POSTGRES_USER:-aispeg}:${POSTGRES_PASSWORD:-aispeg_secret}@10.10.9.11:5432/${POSTGRES_DB:-aispeg_dev}
       MINDROUTER_API_KEY: ${MINDROUTER_API_KEY:-}
       MINDROUTER_BASE_URL: ${MINDROUTER_BASE_URL:-https://mindrouter.uidaho.edu}

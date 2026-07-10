@@ -224,6 +224,9 @@ lib/                       # Domain logic
   github.ts                # GitHub Issues API
   mindrouter.ts            # MindRouter LLM client
   db.ts                    # Postgres connection pool
+  clickup.ts               # ClickUp REST client + typed custom-field extraction (ADR 0003)
+  clickup-map.ts           # IIDS-AI4UI list ids ↔ portfolio slugs (typed map)
+  clickup-sync.ts          # ClickUp → Postgres sync engine (script + /internal/sync share it)
   governance/              # Data Governance Explorer typed modules
     types.ts               # Shared interfaces (Project, Table, Column, Vocabulary*)
     canonical-udm-tables.ts # Hand-curated canonical-vs-extension tagging (v1)
@@ -239,7 +242,7 @@ lib/                       # Domain logic
     project-alignment.ts   # Reverse lookup — projects advancing each priority
     catalog.ts             # AUTO-GENERATED — pillars + priorities (do not edit)
 
-db/migrations/             # SQL migrations (001 → 008; 007 = lifecycle, 008 = strategic-plan-alignment)
+db/migrations/             # SQL migrations (001 → 010; 007 = lifecycle, 008 = strategic-plan-alignment, 010 = clickup ingestion)
 
 scripts/                   # Node scripts run via tsx
   build-governance-catalog.ts     # vendor/data-governance/ → lib/governance/{catalog,vocabularies}.ts
@@ -251,6 +254,7 @@ scripts/                   # Node scripts run via tsx
   seed-portfolio.ts               # lib/portfolio.ts → applications table
   verify-portfolio.ts             # ADR 0001 status-rule enforcer
   refresh-commit-dates.ts         # GitHub API → lib/portfolio-meta.ts (weekly Action)
+  sync-clickup.ts                 # ClickUp IIDS-AI4UI space → clickup_* tables (ADR 0003)
 
 vendor/                    # Vendored dependencies (git submodules)
   data-governance/         # ui-insight/data-governance — UDM + controlled vocabs
@@ -309,6 +313,10 @@ npm run migrate                # Apply pending SQL migrations against $DATABASE_
 npm run seed:portfolio         # lib/portfolio.ts → applications table (dev DB)
 npm run verify:portfolio       # ADR 0001 status-rule enforcer (CI runs this)
 npm run refresh:commit-dates   # Hit GitHub API → regenerate lib/portfolio-meta.ts
+
+# ClickUp ingestion (ADR 0003; needs CLICKUP_API_TOKEN)
+npm run sync:clickup           # IIDS-AI4UI space → clickup_* tables (status, ROI, rubric)
+                               # Prod runs the same engine via POST /internal/sync (host cron)
 
 # Submodule freshness (used by PR-summary workflows)
 npm run governance:freshness        # Renders submodule-staleness comment
