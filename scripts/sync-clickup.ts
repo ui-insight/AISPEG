@@ -3,7 +3,7 @@
 // Pulls the IIDS-AI4UI ClickUp space into Postgres: per-project status
 // updates + ROI (clickup_projects, clickup_status_updates) and the scored
 // intake backlog (clickup_requests). Read-only against ClickUp; upserts
-// keyed by ClickUp ids so re-runs are idempotent. See ADR 0003.
+// keyed by ClickUp ids so re-runs are idempotent. See ADR 0004.
 //
 // Env:
 //   DATABASE_URL        — required
@@ -17,7 +17,7 @@
 //   npm run sync:clickup
 //
 // In production the same engine runs via POST /internal/sync (Basic auth),
-// which the host cron curls — see ADR 0003.
+// which the host cron curls — see ADR 0004.
 
 import { pool } from "../lib/db.js";
 import { runSync } from "../lib/clickup-sync.js";

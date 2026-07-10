@@ -1,6 +1,6 @@
 -- Migration 010: ClickUp ingestion (IIDS-AI4UI space)
 --
--- Read-side of the Sprint 3b ClickUp wiring (see ADR 0003). Stores data
+-- Read-side of the Sprint 3b ClickUp wiring (see ADR 0004). Stores data
 -- synced from the IIDS-AI4UI ClickUp space: per-project status narrative
 -- and ROI (from each project list's "Project Notes" task), and the scored
 -- intake backlog (from the "AI4UI New Project Requests" list).

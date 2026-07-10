@@ -2,7 +2,7 @@
 //
 // Minimal typed client for the ClickUp REST API (v2), scoped to what the
 // ingestion sync needs: list tasks (with custom fields) and task comments.
-// Pull-only — this module never writes to ClickUp. See ADR 0003.
+// Pull-only — this module never writes to ClickUp. See ADR 0004.
 //
 // Auth: CLICKUP_API_TOKEN env var (a personal API token with read access
 // to the IIDS-AI4UI space). Field ids below were captured from the live

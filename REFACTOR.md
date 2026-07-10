@@ -290,7 +290,7 @@ ClickUp-independent. Reads from Postgres directly; ClickUp later replaces
 
 - ClickUp custom fields setup (in person with Colin).
 - ClickUp API integration: **read-side shipped** per
-  [ADR 0003](./docs/adr/0003-clickup-ingestion-boundary.md) — the
+  [ADR 0004](./docs/adr/0004-clickup-ingestion-boundary.md) — the
   IIDS-AI4UI space (project status-update comments, ROI fields, and the
   scored request backlog) syncs into `clickup_*` tables (Migration 010)
   via `npm run sync:clickup` or `POST /internal/sync`. Write-side (new

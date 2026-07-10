@@ -1,6 +1,6 @@
 // lib/clickup-sync.ts
 //
-// The ClickUp → Postgres sync engine (read side of Sprint 3b, ADR 0003).
+// The ClickUp → Postgres sync engine (read side of Sprint 3b, ADR 0004).
 // Shared by scripts/sync-clickup.ts (cron/local) and the /internal/sync
 // route handler ("Sync now" button), so both triggers exercise the same
 // code path.
@@ -141,7 +141,7 @@ async function syncProjectList(
 }
 
 /**
- * Public status summary (ADR 0003, amended July 2026): the raw comments
+ * Public status summary (ADR 0004, amended July 2026): the raw comments
  * are internal notes, so the public site renders a short MindRouter-
  * generated summary instead of the corpus. Regenerated only when the
  * comment stream changed since the last summarization; on MindRouter

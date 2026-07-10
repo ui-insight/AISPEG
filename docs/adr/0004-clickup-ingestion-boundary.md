@@ -1,4 +1,4 @@
-# ADR 0003 — ClickUp Ingestion Boundary
+# ADR 0004 — ClickUp Ingestion Boundary
 
 **Status:** Accepted
 **Date:** 2026-07-10

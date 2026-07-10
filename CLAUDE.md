@@ -224,7 +224,7 @@ lib/                       # Domain logic
   github.ts                # GitHub Issues API
   mindrouter.ts            # MindRouter LLM client
   db.ts                    # Postgres connection pool
-  clickup.ts               # ClickUp REST client + typed custom-field extraction (ADR 0003)
+  clickup.ts               # ClickUp REST client + typed custom-field extraction (ADR 0004)
   clickup-map.ts           # IIDS-AI4UI list ids ↔ portfolio slugs (typed map)
   clickup-sync.ts          # ClickUp → Postgres sync engine (script + /internal/sync share it)
   governance/              # Data Governance Explorer typed modules
@@ -254,7 +254,7 @@ scripts/                   # Node scripts run via tsx
   seed-portfolio.ts               # lib/portfolio.ts → applications table
   verify-portfolio.ts             # ADR 0001 status-rule enforcer
   refresh-commit-dates.ts         # GitHub API → lib/portfolio-meta.ts (weekly Action)
-  sync-clickup.ts                 # ClickUp IIDS-AI4UI space → clickup_* tables (ADR 0003)
+  sync-clickup.ts                 # ClickUp IIDS-AI4UI space → clickup_* tables (ADR 0004)
 
 vendor/                    # Vendored dependencies (git submodules)
   data-governance/         # ui-insight/data-governance — UDM + controlled vocabs
@@ -314,7 +314,7 @@ npm run seed:portfolio         # lib/portfolio.ts → applications table (dev DB
 npm run verify:portfolio       # ADR 0001 status-rule enforcer (CI runs this)
 npm run refresh:commit-dates   # Hit GitHub API → regenerate lib/portfolio-meta.ts
 
-# ClickUp ingestion (ADR 0003; needs CLICKUP_API_TOKEN)
+# ClickUp ingestion (ADR 0004; needs CLICKUP_API_TOKEN)
 npm run sync:clickup           # IIDS-AI4UI space → clickup_* tables (status, ROI, rubric)
                                # Prod runs the same engine via POST /internal/sync (host cron)
 
