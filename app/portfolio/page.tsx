@@ -7,7 +7,7 @@ import {
   groupByHomeUnit,
   type ApplicationWithBlockers,
 } from "@/lib/work";
-import { getLatestUpdates } from "@/lib/clickup-data";
+import { getCardStatusLines } from "@/lib/clickup-data";
 import {
   WORK_CATEGORIES,
   WORK_CATEGORY_LABELS,
@@ -97,7 +97,7 @@ export default async function PortfolioPage({
 
   const [allApps, latestUpdates] = await Promise.all([
     listApplications({ audience: "public" }),
-    getLatestUpdates(),
+    getCardStatusLines(),
   ]);
 
   // Build filter option lists from the unfiltered set so users see what's

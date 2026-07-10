@@ -332,10 +332,37 @@ export default function ProjectDetail({
         </section>
       )}
 
-      {clickup && clickup.updates.length > 0 && (
+      {/* Public: the generated summary only — the verbatim comment corpus
+          is internal notes and never renders publicly (ADR 0003, amended). */}
+      {audience === "public" && clickup?.statusSummary && (
+        <section>
+          <SectionEyebrow>Current status</SectionEyebrow>
+          <p className="mt-2 max-w-3xl text-base leading-relaxed text-ui-charcoal">
+            {clickup.statusSummary}
+          </p>
+          <p className="mt-3 text-xs text-brand-silver">
+            Summarized from {clickup.updates.length} project update
+            {clickup.updates.length === 1 ? "" : "s"}
+            {clickup.updates[0] &&
+              ` (latest ${formatSyncDate(clickup.updates[0].postedAt)})`}
+            . Status data from ClickUp, synced{" "}
+            {formatSyncDate(clickup.syncedAt)}.
+          </p>
+        </section>
+      )}
+
+      {/* Internal: the public summary for reference, then the full
+          verbatim timeline. */}
+      {audience === "internal" && clickup && clickup.updates.length > 0 && (
         <section>
           <SectionEyebrow>Status updates</SectionEyebrow>
-          <ol className="mt-3 max-w-3xl space-y-5">
+          {clickup.statusSummary && (
+            <p className="mt-2 max-w-3xl rounded-md border border-hairline bg-surface-alt px-4 py-3 text-sm leading-relaxed text-ui-charcoal">
+              <span className="font-semibold">Public summary:</span>{" "}
+              {clickup.statusSummary}
+            </p>
+          )}
+          <ol className="mt-4 max-w-3xl space-y-5">
             {clickup.updates.map((u) => (
               <li
                 key={u.commentId}

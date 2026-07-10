@@ -32,6 +32,11 @@ export interface ClickUpProjectStatus {
   projectedCompletion: string | null; // ISO date
   scope: string | null;
   businessUnit: string | null;
+  // Public-safe generated summary of the status narrative (ADR 0003,
+  // amended July 2026). Null until the first summarization succeeds.
+  statusSummary: string | null;
+  statusSummaryAt: string | null; // ISO 8601
+  // Verbatim comment timeline — internal-only rendering.
   updates: StatusUpdate[];
   syncedAt: string; // ISO 8601
 }
@@ -88,6 +93,8 @@ interface ProjectRow {
   projected_completion: Date | string | null;
   scope: string | null;
   business_unit: string | null;
+  status_summary: string | null;
+  status_summary_at: Date | null;
   synced_at: Date;
 }
 
@@ -177,7 +184,7 @@ export async function getProjectStatusBySlug(
   const row = await queryOne<ProjectRow>(
     `SELECT clickup_list_id, roi_fte, roi_explanation, leads, pocs,
             stakeholders, repo_url, projected_completion, scope,
-            business_unit, synced_at
+            business_unit, status_summary, status_summary_at, synced_at
      FROM clickup_projects WHERE clickup_list_id = $1`,
     [listId]
   );
@@ -205,26 +212,47 @@ export async function getProjectStatusBySlug(
     projectedCompletion: toIsoDate(row.projected_completion),
     scope: row.scope,
     businessUnit: row.business_unit,
+    statusSummary: row.status_summary,
+    statusSummaryAt: row.status_summary_at
+      ? row.status_summary_at.toISOString()
+      : null,
     updates: updates.map(toUpdate),
     syncedAt: row.synced_at.toISOString(),
   };
 }
 
 /**
- * Latest status update per mapped portfolio slug — one query, for the
- * /portfolio card grid.
+ * Public status line per mapped portfolio slug — one query, for the
+ * /portfolio card grid. Body is the generated public summary (never the
+ * verbatim comments — ADR 0003 amended); the date is when the newest
+ * underlying update was posted.
  */
-export async function getLatestUpdates(): Promise<Map<string, StatusUpdate>> {
-  const rows = await query<UpdateRow>(
-    `SELECT DISTINCT ON (clickup_list_id)
-            comment_id, clickup_list_id, author, posted_at, body_text
-     FROM clickup_status_updates
-     ORDER BY clickup_list_id, posted_at DESC`
+export interface CardStatusLine {
+  postedAt: string; // ISO 8601 — newest underlying update
+  body: string; // generated public summary
+}
+
+export async function getCardStatusLines(): Promise<Map<string, CardStatusLine>> {
+  const rows = await query<{
+    clickup_list_id: string;
+    status_summary: string;
+    latest_posted_at: Date;
+  }>(
+    `SELECT p.clickup_list_id, p.status_summary, max(u.posted_at) AS latest_posted_at
+     FROM clickup_projects p
+     JOIN clickup_status_updates u ON u.clickup_list_id = p.clickup_list_id
+     WHERE p.status_summary IS NOT NULL
+     GROUP BY p.clickup_list_id, p.status_summary`
   );
-  const bySlug = new Map<string, StatusUpdate>();
+  const bySlug = new Map<string, CardStatusLine>();
   for (const row of rows) {
     const slug = slugForListId(row.clickup_list_id);
-    if (slug) bySlug.set(slug, toUpdate(row));
+    if (slug) {
+      bySlug.set(slug, {
+        postedAt: row.latest_posted_at.toISOString(),
+        body: row.status_summary,
+      });
+    }
   }
   return bySlug;
 }

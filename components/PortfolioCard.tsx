@@ -137,7 +137,7 @@ export default function PortfolioCard({
       {latestUpdate && (
         <p className="mt-3 line-clamp-2 text-xs leading-snug text-ink-subtle">
           <span className="font-semibold text-ink-muted">
-            Update{" "}
+            Status as of{" "}
             {new Date(latestUpdate.postedAt).toLocaleDateString("en-US", {
               month: "short",
               day: "numeric",
