@@ -286,11 +286,15 @@ ClickUp-independent. Reads from Postgres directly; ClickUp later replaces
   engine actually finds matches. Heuristic mapping per slug; refine in
   the seed script or via the admin registry.
 
-#### Sprint 3b — ClickUp wiring *(deferred to Colin)*
+#### Sprint 3b — ClickUp wiring *(read side shipped July 2026; write side still open)*
 
 - ClickUp custom fields setup (in person with Colin).
-- ClickUp API integration: read-side (sync blocker/status data Postgres
-  ← ClickUp on cron), then write-side (new submissions create CU tasks).
+- ClickUp API integration: **read-side shipped** per
+  [ADR 0004](./docs/adr/0004-clickup-ingestion-boundary.md) — the
+  IIDS-AI4UI space (project status-update comments, ROI fields, and the
+  scored request backlog) syncs into `clickup_*` tables (Migration 010)
+  via `npm run sync:clickup` or `POST /internal/sync`. Write-side (new
+  submissions create CU tasks) remains future work.
 - Once ClickUp wiring is solid, retire `/admin/submissions`.
 
 **Sprint 3a output:** intake portal materially better than TDX in

@@ -19,6 +19,7 @@
     "seed:portfolio": "tsx --env-file=.env.local scripts/seed-portfolio.ts",
     "verify:portfolio": "tsx scripts/verify-portfolio.ts",
     "refresh:commit-dates": "tsx scripts/refresh-commit-dates.ts",
+    "sync:clickup": "tsx --env-file=.env.local scripts/sync-clickup.ts",
     "eval:agent": "NODE_OPTIONS='--conditions=react-server' tsx --env-file=.env.local --tsconfig tsconfig.json evals/agent/run.ts"
   },
   "dependencies": {
