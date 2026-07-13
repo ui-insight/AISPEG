@@ -7,6 +7,7 @@ import {
   groupByHomeUnit,
   type ApplicationWithBlockers,
 } from "@/lib/work";
+import { getCardStatusLines } from "@/lib/clickup-data";
 import {
   WORK_CATEGORIES,
   WORK_CATEGORY_LABELS,
@@ -94,7 +95,10 @@ export default async function PortfolioPage({
   const blockersOnly = params.blockers === "1";
   const sortMode: SortMode = isSortMode(params.sort) ? params.sort : "default";
 
-  const allApps = await listApplications({ audience: "public" });
+  const [allApps, latestUpdates] = await Promise.all([
+    listApplications({ audience: "public" }),
+    getCardStatusLines(),
+  ]);
 
   // Build filter option lists from the unfiltered set so users see what's
   // available to filter by even after they've applied something.
@@ -372,7 +376,12 @@ export default async function PortfolioPage({
       {flatSorted && flatSorted.length > 0 && (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {flatSorted.map((app) => (
-            <PortfolioCard key={app.id} app={app} audience="public" />
+            <PortfolioCard
+              key={app.id}
+              app={app}
+              audience="public"
+              latestUpdate={latestUpdates.get(app.slug) ?? null}
+            />
           ))}
         </div>
       )}
@@ -391,7 +400,12 @@ export default async function PortfolioPage({
             </div>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {items.map((app) => (
-                <PortfolioCard key={app.id} app={app} audience="public" />
+                <PortfolioCard
+                  key={app.id}
+                  app={app}
+                  audience="public"
+                  latestUpdate={latestUpdates.get(app.slug) ?? null}
+                />
               ))}
             </div>
           </section>

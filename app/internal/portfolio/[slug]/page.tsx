@@ -4,6 +4,7 @@ import {
   getApplicationBySlug,
   getRelatedApplications,
 } from "@/lib/work";
+import { getProjectStatusBySlug } from "@/lib/clickup-data";
 
 export const dynamic = "force-dynamic";
 
@@ -30,7 +31,10 @@ export default async function InternalProjectDetailPage({
   const app = await getApplicationBySlug(slug, { audience: "internal" });
   if (!app) notFound();
 
-  const related = await getRelatedApplications(app, { audience: "internal" });
+  const [related, clickup] = await Promise.all([
+    getRelatedApplications(app, { audience: "internal" }),
+    getProjectStatusBySlug(slug),
+  ]);
 
   return (
     <ProjectDetail
@@ -38,6 +42,7 @@ export default async function InternalProjectDetailPage({
       related={related}
       audience="internal"
       basePath="/internal/portfolio"
+      clickup={clickup}
     />
   );
 }
