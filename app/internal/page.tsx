@@ -1,10 +1,15 @@
 import Link from "next/link";
 import { listApplications } from "@/lib/work";
+import { getLastSync } from "@/lib/clickup-data";
+import SyncNowButton from "@/components/SyncNowButton";
 
 export const dynamic = "force-dynamic";
 
 export default async function InternalHome() {
-  const apps = await listApplications({ audience: "internal" });
+  const [apps, lastSync] = await Promise.all([
+    listApplications({ audience: "internal" }),
+    getLastSync(),
+  ]);
   const blockerCount = apps.reduce((sum, a) => sum + a.activeBlockers.length, 0);
   const internalOnly = apps.filter((a) => a.visibilityTier === "internal").length;
   const embargoed = apps.filter((a) => a.visibilityTier === "embargoed").length;
@@ -79,12 +84,26 @@ export default async function InternalHome() {
         </Link>
       </section>
 
+      <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+        <h2 className="text-base font-semibold text-ui-charcoal">
+          ClickUp sync
+        </h2>
+        <p className="mt-1 text-sm text-gray-600">
+          Pulls project status updates, ROI, and the scored request backlog
+          from the IIDS-AI4UI space (ADR 0004). Runs on a host cron;
+          trigger manually after editing in ClickUp.
+        </p>
+        <div className="mt-4">
+          <SyncNowButton lastSyncedAt={lastSync?.finishedAt ?? null} />
+        </div>
+      </section>
+
       <section className="rounded-xl border border-dashed border-gray-300 bg-white/50 p-6">
         <h2 className="text-base font-semibold text-ui-charcoal">
           Coming in Sprint 3
         </h2>
         <ul className="mt-3 space-y-1 text-sm text-gray-600">
-          <li>&bull; ClickUp wiring — status and blocker data sync from ClickUp tasks</li>
+          <li>&bull; ClickUp write-side — new submissions create ClickUp tasks</li>
           <li>&bull; Submitter status pages (<code>/intake/[token]</code>)</li>
           <li>&bull; Submission similarity surfaced live during the assessment</li>
           <li>&bull; Named-SLA acknowledgment email on intake</li>
