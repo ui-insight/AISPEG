@@ -7,7 +7,7 @@ import {
   groupByHomeUnit,
   type ApplicationWithBlockers,
 } from "@/lib/work";
-import { getCardStatusLines } from "@/lib/clickup-data";
+import { getCardStatusLines, countPendingRequests } from "@/lib/clickup-data";
 import {
   WORK_CATEGORIES,
   WORK_CATEGORY_LABELS,
@@ -95,9 +95,10 @@ export default async function PortfolioPage({
   const blockersOnly = params.blockers === "1";
   const sortMode: SortMode = isSortMode(params.sort) ? params.sort : "default";
 
-  const [allApps, latestUpdates] = await Promise.all([
+  const [allApps, latestUpdates, pendingRequestCount] = await Promise.all([
     listApplications({ audience: "public" }),
     getCardStatusLines(),
+    countPendingRequests(),
   ]);
 
   // Build filter option lists from the unfiltered set so users see what's
@@ -221,6 +222,22 @@ export default async function PortfolioPage({
                 <span className="ml-1.5 text-amber-700">
                   active blocker{blockerCount === 1 ? "" : "s"}
                 </span>
+              </span>
+            )}
+            {pendingRequestCount > 0 && (
+              <span className="inline-flex items-baseline">
+                <span aria-hidden className="mr-2 text-brand-silver">
+                  ·
+                </span>
+                <span className="tabular-nums font-semibold text-brand-black">
+                  {pendingRequestCount}
+                </span>
+                <Link
+                  href="/portfolio/pipeline"
+                  className="ml-1.5 underline decoration-hairline underline-offset-2 hover:text-brand-black"
+                >
+                  request{pendingRequestCount === 1 ? "" : "s"} in review
+                </Link>
               </span>
             )}
           </p>
