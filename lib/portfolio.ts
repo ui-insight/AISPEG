@@ -168,6 +168,30 @@ export const projects: Project[] = [
     workCategories: ["executive-analytics"],
     strategicPlanAlignment: ["E.4"],
   },
+  {
+    slug: "water-law-database",
+    name: "Water Law Database",
+    tagline:
+      "AI-enabled Idaho water law repository — SRBA decisions, records, and settlements.",
+    description:
+      "Tiered repository of Idaho water law centered on the Snake River Basin Adjudication (SRBA): judicial decisions, historical records, and key settlements, ingested from the existing system and from paper documents via large-scale OCR on IIDS's on-prem GPU cluster. A web interface supports natural-language queries and visualizations such as diversion maps, giving legislators, water managers, and rights holders fast, verified answers instead of relitigating past disputes.",
+    homeUnits: ["Office of the President"],
+    operationalOwners: [{ name: "Luke Sheneman" }],
+    buildParticipants: ["IIDS"],
+    status: "building",
+    visibility: "Public",
+    ai4raRelationship: "None",
+    iidsSponsor: "Luke Sheneman",
+    repoUrl: "https://github.com/northwest-knowledge-network/water-rights",
+    isPrivateRepo: true,
+    operationalFunction:
+      "Ingests SRBA decisions, historical paper records (OCR), and settlements into a unified database; answers natural-language questions and renders visualizations (e.g. diversion maps) over the corpus.",
+    operationalExcellenceOutcome:
+      "Reduces water-law inquiry and search time from archival research to a verified lookup. Preserves institutional memory of settled disputes for the state's water stakeholders.",
+    relatedSlugs: ["mindrouter", "dgx-stack"],
+    workCategories: ["knowledge-retrieval", "documents"],
+    strategicPlanAlignment: ["D.4", "E.2"],
+  },
 
   // ============================================================
   // Division of Financial Affairs
@@ -198,6 +222,177 @@ export const projects: Project[] = [
     workCategories: ["documents", "reconciliation"],
     strategicPlanAlignment: ["E.2", "E.4"],
   },
+  {
+    slug: "invoice-processing",
+    name: "Invoice Processing",
+    tagline:
+      "AI extraction and validation for Accounts Payable vendor invoices.",
+    description:
+      "Automates the front of the AP invoice pipeline: emailed invoices are captured, invoices without a PO number are auto-rejected back to the submitter, and the rest have key fields extracted (PO number, dates, invoice number, amount, remit-to address) and compared against PO data in Banner. AP staff work a review queue in a dashboard — correcting low-confidence extractions, requesting fixes from submitters, and marking invoices processed.",
+    homeUnits: ["Division of Financial Affairs"],
+    operationalOwners: [
+      { name: "Daniele Ramona Bodden", title: "AP team lead" },
+      { name: "Jake Milleson", title: "Purchasing lead" },
+    ],
+    buildParticipants: ["IIDS"],
+    status: "building",
+    visibility: "Public",
+    ai4raRelationship: "None",
+    iidsSponsor: "Colin Addington",
+    repoUrl: "https://github.com/ui-iids/ai4ui-integrated-dashboard",
+    isPrivateRepo: true,
+    operationalFunction:
+      "Invoice intake for AP processors and departmental requesters: automated rejection of non-PO invoices, field extraction from PDFs and images, Banner PO matching, and a human-review queue with edit / request-correction / mark-processed actions.",
+    operationalExcellenceOutcome:
+      "Cuts manual capture and re-keying on a daily, continuous workload (20,000+ invoice entries since 2022). Estimated 0.7 FTE of AP capacity returned by automating rejections and extraction.",
+    relatedSlugs: ["mindrouter", "retroactive-payment-requests"],
+    workCategories: ["documents", "process"],
+    strategicPlanAlignment: ["E.2"],
+  },
+  {
+    slug: "historical-contracts",
+    name: "Historical Contracts",
+    tagline:
+      "Bulk extraction of ~1,400 legacy contracts for the State Transparency Database.",
+    description:
+      "Extraction effort over the university's legacy contract pool (~1,400 documents): pull the fields the State of Idaho's Transparency Database requires and produce a clean upload for the state portal. The SIGGY contracts database serves as ground truth for validating extracted data. Approved and scoped; extraction begins once the same tooling proves itself on the smaller ongoing-contracts stream.",
+    homeUnits: ["Division of Financial Affairs"],
+    operationalOwners: [{ name: "Jake Milleson", title: "Purchasing lead" }],
+    buildParticipants: ["IIDS"],
+    status: "approved",
+    visibility: "Public",
+    ai4raRelationship: "None",
+    iidsSponsor: "Colin Addington",
+    operationalFunction:
+      "Batch field extraction from legacy contract documents, validated against the SIGGY contracts database, producing compliant State Transparency Database uploads and searchable contract records.",
+    operationalExcellenceOutcome:
+      "Turns days per contract into minutes per contract across a 1,400-document backlog — an estimated 5.2 FTE of one-time effort avoided, while bringing UI into compliance with state transparency requirements.",
+    relatedSlugs: ["ongoing-contracts"],
+    workCategories: ["documents", "reconciliation"],
+    strategicPlanAlignment: ["D.4", "E.2"],
+  },
+  {
+    slug: "ongoing-contracts",
+    name: "Ongoing Contracts",
+    tagline:
+      "Field extraction from current contracts for the State Transparency Database.",
+    description:
+      "Companion to the Historical Contracts effort, covering the stream of new and active contracts: extract the required fields and build clean uploads for the State of Idaho's Transparency Database. Runs on the ArchAI contract-extraction tooling; currently paused while requested improvements to that application are prioritized and implemented.",
+    homeUnits: ["Division of Financial Affairs"],
+    operationalOwners: [{ name: "Jake Milleson", title: "Purchasing lead" }],
+    buildParticipants: ["IIDS"],
+    status: "paused",
+    visibility: "Public",
+    ai4raRelationship: "None",
+    iidsSponsor: "Colin Addington",
+    operationalFunction:
+      "Extracts State-Transparency-Database fields from current contracts as they arrive, keeping the state portal upload clean and contract records searchable.",
+    operationalExcellenceOutcome:
+      "Turns days per contract into minutes per contract on the ongoing stream — an estimated 0.6 FTE returned — and keeps state-portal compliance current instead of batch-remediated.",
+    relatedSlugs: ["historical-contracts"],
+    workCategories: ["documents", "reconciliation"],
+    strategicPlanAlignment: ["D.4", "E.2"],
+  },
+  {
+    slug: "out-of-state-tax-tracking",
+    name: "Out-of-State Tax Tracking",
+    tagline:
+      "Multi-state payroll withholding tracking for out-of-state employees.",
+    description:
+      "Tracks state tax withholdings for UI employees working outside Idaho — including international W-4 cases routed through Payroll — and gets them remitted to the right state authorities. Automates the data transfer across systems that Payroll previously reconciled by hand.",
+    homeUnits: ["Division of Financial Affairs"],
+    operationalOwners: [
+      { name: "Cretia Bunney" },
+      { name: "Lisa Davis" },
+    ],
+    buildParticipants: ["IIDS"],
+    status: "prototype",
+    visibility: "Public",
+    ai4raRelationship: "None",
+    iidsSponsor: "Colin Addington",
+    featureComplete: true,
+    operationalFunction:
+      "Tracks multi-state withholding obligations per employee and prepares correct remittances for state tax authorities, replacing manual cross-system data transfer.",
+    operationalExcellenceOutcome:
+      "Compliance with multi-state withholding requirements with less manual risk — an estimated 0.2 FTE of Payroll capacity returned.",
+    workCategories: ["reconciliation", "process"],
+    strategicPlanAlignment: ["E.2"],
+  },
+  {
+    slug: "retroactive-payment-requests",
+    name: "Retroactive Payment Requests",
+    tagline:
+      "Electronic retro-pay intake and payroll analyst dashboard.",
+    description:
+      "Replaces the paper/email retroactive payment request process with a validated electronic submission flow plus a dashboard for payroll analysts. Submissions are checked for completeness and verified against Banner data before they reach an analyst, so corrections happen at intake instead of mid-process.",
+    homeUnits: ["Division of Financial Affairs"],
+    operationalOwners: [
+      { name: "Lisa Davis" },
+      { name: "Cretia Bunney" },
+    ],
+    buildParticipants: ["IIDS"],
+    status: "building",
+    visibility: "Public",
+    ai4raRelationship: "None",
+    iidsSponsor: "Colin Addington",
+    repoUrl: "https://github.com/ui-insight/reactfast",
+    isPrivateRepo: true,
+    operationalFunction:
+      "Validated intake for retroactive pay requests (completeness checks, Banner verification) feeding a payroll-analyst dashboard for processing late or missed hours.",
+    operationalExcellenceOutcome:
+      "Employees are paid correctly with less back-and-forth: an estimated 0.3 FTE returned by shortening the process and catching incomplete submissions at intake.",
+    relatedSlugs: ["invoice-processing"],
+    workCategories: ["process", "reconciliation"],
+    strategicPlanAlignment: ["E.2"],
+  },
+  {
+    slug: "bid-waiver-document-review",
+    name: "Bid Waiver Document Review",
+    tagline:
+      "AI review of quotes and bid-waiver justifications for procurement compliance.",
+    description:
+      "A Vandalizer module that verifies three-quote compliance on purchases and reviews bid-waiver justifications against procurement rules, giving purchasing approvers and auditors a transparent rationale trail for sourcing decisions.",
+    homeUnits: ["Division of Financial Affairs"],
+    operationalOwners: [{ name: "Jake Milleson", title: "Purchasing lead" }],
+    buildParticipants: ["IIDS"],
+    status: "approved",
+    visibility: "Public",
+    ai4raRelationship: "Reference",
+    iidsSponsor: "Colin Addington",
+    operationalFunction:
+      "Checks purchase documentation for three-quote compliance and evaluates bid-waiver justifications, surfacing the rationale for approvers and auditors.",
+    operationalExcellenceOutcome:
+      "Faster waiver approvals with a transparent, auditable rationale — lawful sourcing with less manual document review.",
+    relatedSlugs: ["vandalizer"],
+    workCategories: ["documents", "process"],
+    strategicPlanAlignment: ["E.2"],
+  },
+
+  // ============================================================
+  // Human Resources
+  // ============================================================
+  {
+    slug: "bls-cupa-code-prediction",
+    name: "BLS Code Prediction",
+    tagline:
+      "Automated BLS occupation-code suggestions from job descriptions.",
+    description:
+      "A Vandalizer module that suggests Bureau of Labor Statistics occupation codes from a job description, replacing manual code identification in HR's classification workflow. Originally scoped to cover CUPA codes as well; narrowed to BLS for the first delivery.",
+    homeUnits: ["Human Resources"],
+    operationalOwners: [{ name: "Brooke Dahmen" }],
+    buildParticipants: ["IIDS"],
+    status: "approved",
+    visibility: "Public",
+    ai4raRelationship: "Reference",
+    iidsSponsor: "Colin Addington",
+    operationalFunction:
+      "Reads a job description and proposes candidate BLS occupation codes for HR classification staff to confirm.",
+    operationalExcellenceOutcome:
+      "Replaces manual code lookup — an estimated 0.5 FTE of HR classification effort returned, with more consistent coding across positions.",
+    relatedSlugs: ["vandalizer"],
+    workCategories: ["process"],
+    strategicPlanAlignment: ["E.2"],
+  },
 
   // ============================================================
   // University Communications and Marketing
@@ -215,7 +410,7 @@ export const projects: Project[] = [
       { name: "Jodi Walker" },
     ],
     buildParticipants: ["IIDS"],
-    status: "building",
+    status: "prototype",
     visibility: "Public",
     ai4raRelationship: "None",
     iidsSponsor: "Barrie Robison",
@@ -340,7 +535,7 @@ export const projects: Project[] = [
     homeUnits: ["Office of Research and Economic Development", "Office of General Counsel"],
     operationalOwners: [{ name: "Sarah Martonick" }],
     buildParticipants: ["IIDS"],
-    status: "building",
+    status: "prototype",
     visibility: "Public",
     ai4raRelationship: "None",
     iidsSponsor: "Barrie Robison",
@@ -514,6 +709,31 @@ export const projects: Project[] = [
     relatedSlugs: ["mindrouter", "audit-dashboard", "vandalizer"],
     workCategories: ["ai-infrastructure"],
     strategicPlanAlignment: ["D.2", "E.2"],
+  },
+  {
+    slug: "data-infrastructure-pilot",
+    name: "Data Infrastructure Pilot",
+    tagline:
+      "Institutional data lakehouse pilot aligning the data behind AI4UI applications.",
+    description:
+      "Pilot connecting institutional structured and unstructured data sources to a shared data lakehouse, starting with Banner plus at least one other system — fully documented with a data dictionary. The longer vision expands the lake to include ArchAI contract data, targeted core documents from proposals, and other sources the AI4UI application family draws on.",
+    homeUnits: ["IIDS"],
+    operationalOwners: [
+      { name: "Arpan Pal" },
+      { name: "Nathan Layman" },
+    ],
+    buildParticipants: ["IIDS"],
+    status: "approved",
+    visibility: "Public",
+    ai4raRelationship: "Adjacent",
+    iidsSponsor: "Colin Addington",
+    operationalFunction:
+      "Establishes governed lakehouse access to institutional data sources, with documentation and data dictionaries, as the shared substrate for AI4UI applications.",
+    operationalExcellenceOutcome:
+      "Aligns the data used and created by AI4UI applications on one governed foundation instead of per-project extracts — the E.1 data-warehouse priority made concrete.",
+    relatedSlugs: ["dgx-stack", "nexus"],
+    workCategories: ["ai-infrastructure"],
+    strategicPlanAlignment: ["E.1", "E.2"],
   },
   {
     slug: "template-app",
