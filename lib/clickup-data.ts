@@ -320,4 +320,38 @@ export async function countPendingRequests(): Promise<number> {
   return row ? Number(row.count) : 0;
 }
 
+export interface ClickUpRoi {
+  roiFte: number | null;
+  roiExplanation: string | null;
+}
+
+/**
+ * ClickUp-sourced ROI per portfolio slug — the project team's estimate
+ * (FTE returned + basis), distinct from the CADSO office's formal ROI
+ * rubric. One query for the whole Intake Crosswalk grid; only rows that
+ * carry an ROI value are returned, so callers can fall back cleanly.
+ */
+export async function getRoiBySlug(): Promise<Map<string, ClickUpRoi>> {
+  const rows = await query<{
+    clickup_list_id: string;
+    roi_fte: string | null;
+    roi_explanation: string | null;
+  }>(
+    `SELECT clickup_list_id, roi_fte, roi_explanation
+     FROM clickup_projects
+     WHERE roi_fte IS NOT NULL OR roi_explanation IS NOT NULL`
+  );
+  const bySlug = new Map<string, ClickUpRoi>();
+  for (const row of rows) {
+    const slug = slugForListId(row.clickup_list_id);
+    if (slug) {
+      bySlug.set(slug, {
+        roiFte: toNumber(row.roi_fte),
+        roiExplanation: row.roi_explanation,
+      });
+    }
+  }
+  return bySlug;
+}
+
 export { CLICKUP_PROJECT_LISTS };

@@ -16,6 +16,14 @@ import {
   PUBLIC_STAGE_LABEL,
 } from "@/lib/portfolio";
 import { ROI_RUBRIC_READY } from "@/lib/roi-rubric";
+import { getRoiBySlug, type ClickUpRoi } from "@/lib/clickup-data";
+
+// Reads ClickUp-synced ROI from Postgres at request time.
+export const dynamic = "force-dynamic";
+
+// A governance profile enriched with the ClickUp ROI estimate for its
+// slug (null when the project has no mapped ClickUp list or no ROI synced).
+type ProfileWithRoi = ResolvedProfile & { clickupRoi: ClickUpRoi | null };
 
 export const metadata = {
   title: "Intake Crosswalk — Standards",
@@ -39,6 +47,45 @@ function Dash({ note }: { note: string }) {
   return (
     <span className="text-ink-subtle" title={`Pending — ${note}`}>
       &mdash;
+    </span>
+  );
+}
+
+// ClickUp-sourced ROI estimate, shown where the office's formal rubric
+// score isn't in yet. Labelled as an estimate so it's never mistaken for
+// the office's own ROI call. Full form for the cards view.
+function ClickUpRoiValue({ roi }: { roi: ClickUpRoi }) {
+  return (
+    <span>
+      {roi.roiFte != null && roi.roiFte > 0 ? (
+        <>
+          Estimated capacity returned:{" "}
+          <span className="font-semibold">{roi.roiFte} FTE</span>
+          {roi.roiExplanation ? ` — ${roi.roiExplanation}` : ""}
+        </>
+      ) : (
+        <>Estimated return: {roi.roiExplanation}</>
+      )}
+      <span className="mt-0.5 block text-[11px] not-italic text-ink-subtle">
+        Estimated from ClickUp &middot; formal rubric pending
+      </span>
+    </span>
+  );
+}
+
+// Compact ClickUp ROI for the dense matrix cell; detail rides in the title.
+function ClickUpRoiCell({ roi }: { roi: ClickUpRoi }) {
+  const label =
+    roi.roiFte != null && roi.roiFte > 0 ? `${roi.roiFte} FTE` : "Est.";
+  const title = `Estimated from ClickUp — formal rubric pending${
+    roi.roiExplanation ? ` — ${roi.roiExplanation}` : ""
+  }`;
+  return (
+    <span className="text-ink-muted" title={title}>
+      {label}
+      <span className="ml-1 text-[10px] uppercase tracking-wide text-ink-subtle">
+        est.
+      </span>
     </span>
   );
 }
@@ -114,7 +161,7 @@ function ViewToggle({ active }: { active: ViewMode }) {
 
 // ---- Cards view -------------------------------------------------------
 
-function ProfileCard({ p }: { p: ResolvedProfile }) {
+function ProfileCard({ p }: { p: ProfileWithRoi }) {
   return (
     <article className="rounded-lg border border-hairline bg-white p-6">
       <header className="flex flex-wrap items-start justify-between gap-3 border-b border-hairline pb-4">
@@ -252,6 +299,9 @@ function ProfileCard({ p }: { p: ResolvedProfile }) {
                 </span>
               )}
             </span>
+          ) : p.clickupRoi &&
+            (p.clickupRoi.roiFte != null || p.clickupRoi.roiExplanation) ? (
+            <ClickUpRoiValue roi={p.clickupRoi} />
           ) : (
             <Pending note="ROI rubric in development" />
           )}
@@ -264,7 +314,7 @@ function ProfileCard({ p }: { p: ResolvedProfile }) {
 function CardsView({
   grouped,
 }: {
-  grouped: { unit: string; items: ResolvedProfile[] }[];
+  grouped: { unit: string; items: ProfileWithRoi[] }[];
 }) {
   return (
     <>
@@ -311,7 +361,7 @@ function Td({
   );
 }
 
-function MatrixView({ profiles }: { profiles: ResolvedProfile[] }) {
+function MatrixView({ profiles }: { profiles: ProfileWithRoi[] }) {
   return (
     <div className="overflow-x-auto rounded-lg border border-hairline">
       <table className="w-full border-collapse text-left">
@@ -380,6 +430,10 @@ function MatrixView({ profiles }: { profiles: ResolvedProfile[] }) {
                   ) : (
                     p.roi.summary
                   )
+                ) : p.clickupRoi &&
+                  (p.clickupRoi.roiFte != null ||
+                    p.clickupRoi.roiExplanation) ? (
+                  <ClickUpRoiCell roi={p.clickupRoi} />
                 ) : (
                   <Dash note="ROI rubric in development" />
                 )}
@@ -402,8 +456,23 @@ export default async function IntakeCrosswalkPage({
   const params = await searchParams;
   const view: ViewMode = params.view === "matrix" ? "matrix" : "cards";
 
-  const profiles = allGovernanceProfiles();
-  const coverage = governanceCoverage(profiles);
+  const baseProfiles = allGovernanceProfiles();
+  const coverage = governanceCoverage(baseProfiles);
+
+  // Overlay the ClickUp-synced ROI estimate onto each profile. Where the
+  // office's formal rubric score isn't in yet, the crosswalk shows this
+  // estimate (labelled as such) instead of a bare "pending".
+  const roiBySlug = await getRoiBySlug();
+  const profiles: ProfileWithRoi[] = baseProfiles.map((p) => ({
+    ...p,
+    clickupRoi: roiBySlug.get(p.slug) ?? null,
+  }));
+  const clickupRoiShown = profiles.filter(
+    (p) =>
+      !p.roi &&
+      p.clickupRoi &&
+      (p.clickupRoi.roiFte != null || p.clickupRoi.roiExplanation),
+  ).length;
 
   // Order profiles by the canonical home-unit sequence, then append any
   // unit not in HOME_UNIT_GROUP_ORDER so no project is ever silently
@@ -469,7 +538,11 @@ export default async function IntakeCrosswalkPage({
           {coverage.aiRiskPending}.{" "}
           {ROI_RUBRIC_READY
             ? `ROI scored on ${coverage.total - coverage.roiPending}.`
-            : "ROI rubric in development — scores land once the office supplies it."}
+            : clickupRoiShown > 0
+              ? `Estimated ROI shown for ${clickupRoiShown} project${
+                  clickupRoiShown === 1 ? "" : "s"
+                } (from ClickUp); the office's formal rubric scores land once it supplies them.`
+              : "ROI rubric in development — scores land once the office supplies it."}
         </p>
       </section>
 
