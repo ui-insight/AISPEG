@@ -1,4 +1,4 @@
-// Muted provenance line for ClickUp-synced content (ADR 0003). Every
+// Muted provenance line for ClickUp-synced content (ADR 0004). Every
 // surface rendering synced data shows when it was last pulled, so a
 // stalled sync reads as stale instead of current.
 

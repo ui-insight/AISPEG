@@ -1,7 +1,7 @@
 // lib/clickup-data.ts
 //
 // Server-only read layer over the ClickUp-synced tables (migration 010,
-// ADR 0003). Deliberately separate from lib/work.ts: that module reads
+// ADR 0004). Deliberately separate from lib/work.ts: that module reads
 // the applications registry (seeded, canonical identity); this one reads
 // a projection of ClickUp with its own freshness model. Rows are keyed
 // by ClickUp ids and joined to portfolio slugs here, at read time, via
@@ -32,7 +32,7 @@ export interface ClickUpProjectStatus {
   projectedCompletion: string | null; // ISO date
   scope: string | null;
   businessUnit: string | null;
-  // Public-safe generated summary of the status narrative (ADR 0003,
+  // Public-safe generated summary of the status narrative (ADR 0004,
   // amended July 2026). Null until the first summarization succeeds.
   statusSummary: string | null;
   statusSummaryAt: string | null; // ISO 8601
@@ -224,7 +224,7 @@ export async function getProjectStatusBySlug(
 /**
  * Public status line per mapped portfolio slug — one query, for the
  * /portfolio card grid. Body is the generated public summary (never the
- * verbatim comments — ADR 0003 amended); the date is when the newest
+ * verbatim comments — ADR 0004 amended); the date is when the newest
  * underlying update was posted.
  */
 export interface CardStatusLine {

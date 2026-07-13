@@ -58,7 +58,7 @@ export default function PortfolioCard({
   app: ApplicationWithBlockers;
   audience?: "public" | "internal";
   basePath?: string;
-  // Most recent ClickUp status update (ADR 0003); omitted for projects
+  // Most recent ClickUp status update (ADR 0004); omitted for projects
   // without a mapped ClickUp list.
   latestUpdate?: { postedAt: string; body: string } | null;
 }) {

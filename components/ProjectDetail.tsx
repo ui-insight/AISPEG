@@ -122,7 +122,7 @@ export interface ProjectDetailProps {
   related: RelatedApp[];
   audience: "public" | "internal";
   basePath: string; // "/portfolio" or "/internal/portfolio"
-  // ClickUp-synced status narrative + ROI (ADR 0003). Null/undefined when
+  // ClickUp-synced status narrative + ROI (ADR 0004). Null/undefined when
   // the project has no mapped ClickUp list or sync hasn't run.
   clickup?: ClickUpProjectStatus | null;
 }
@@ -333,7 +333,7 @@ export default function ProjectDetail({
       )}
 
       {/* Public: the generated summary only — the verbatim comment corpus
-          is internal notes and never renders publicly (ADR 0003, amended). */}
+          is internal notes and never renders publicly (ADR 0004, amended). */}
       {audience === "public" && clickup?.statusSummary && (
         <section>
           <SectionEyebrow>Current status</SectionEyebrow>
