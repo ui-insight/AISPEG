@@ -1,5 +1,10 @@
 import Link from "next/link";
-import type { SurveyAudience, SurveyClusterKey, SurveyResponse } from "@/lib/surveys/types";
+import type {
+  CandidateProject,
+  SurveyAudience,
+  SurveyClusterKey,
+  SurveyResponse,
+} from "@/lib/surveys/types";
 import {
   OPERATIONAL_EXCELLENCE_META,
   clustersFor,
@@ -10,6 +15,13 @@ import {
   allResponses,
   totalResponseCount,
 } from "@/lib/surveys/operational-excellence";
+import {
+  candidateProjectsByCoverage,
+  candidatesForCluster,
+  CANDIDATE_COVERAGE_LABEL,
+} from "@/lib/surveys/candidate-projects";
+import { getWorkCategoryLabel } from "@/lib/work-categories";
+import { getProjectBySlug } from "@/lib/portfolio";
 
 export const metadata = {
   title: "Operational Excellence Survey — Standards",
@@ -18,7 +30,7 @@ export const metadata = {
 };
 
 const BASE = "/standards/operational-excellence";
-type ViewMode = "themes" | "explore";
+type ViewMode = "themes" | "explore" | "candidates";
 
 // ── URL param handling ───────────────────────────────────────
 interface Params {
@@ -32,7 +44,8 @@ function normalize(
   raw: { view?: string; audience?: string; cluster?: string; q?: string },
 ): Params {
   const audience: SurveyAudience = raw.audience === "student" ? "student" : "faculty";
-  const view: ViewMode = raw.view === "explore" ? "explore" : "themes";
+  const view: ViewMode =
+    raw.view === "explore" ? "explore" : raw.view === "candidates" ? "candidates" : "themes";
   const q = (raw.q ?? "").trim();
   // A cluster is only valid within its audience.
   const cluster =
@@ -152,6 +165,24 @@ function ThemesView({ audience }: { audience: SurveyAudience }) {
                 Read all {total} {c.label.toLowerCase()} responses &rarr;
               </Link>
             </p>
+
+            {(() => {
+              const candidates = candidatesForCluster(audience, c.key);
+              if (candidates.length === 0) return null;
+              return (
+                <p className="mt-1 text-sm text-ink-subtle">
+                  Feeds:{" "}
+                  {candidates.map((cp, i) => (
+                    <span key={cp.id}>
+                      {i > 0 && ", "}
+                      <Link href={`${href({ view: "candidates" })}#${cp.id}`}>
+                        {cp.title}
+                      </Link>
+                    </span>
+                  ))}
+                </p>
+              );
+            })()}
           </article>
         );
       })}
@@ -246,7 +277,8 @@ function ExploreView({
           return (
             <li
               key={r.id}
-              className="rounded-md border border-hairline bg-white p-4"
+              id={r.id}
+              className="scroll-mt-24 rounded-md border border-hairline bg-white p-4 target:border-ui-gold target:bg-ui-gold/5"
             >
               <div className="mb-1.5 flex flex-wrap items-center gap-2">
                 <span className="text-xs font-semibold uppercase tracking-wide text-brand-silver">
@@ -270,6 +302,144 @@ function ExploreView({
           <Link href={href({ view: "explore", audience, cluster })}>clear the search</Link>.
         </p>
       )}
+    </div>
+  );
+}
+
+// ── Candidate projects view ──────────────────────────────────
+const AUDIENCE_LABEL: Record<SurveyAudience, string> = {
+  faculty: "Faculty & staff",
+  student: "Students",
+};
+
+function CoverageChip({ coverage }: { coverage: CandidateProject["coverage"] }) {
+  const styles: Record<CandidateProject["coverage"], string> = {
+    gap: "border-hairline bg-surface-alt text-ink-muted",
+    partial: "border-brand-huckleberry/30 bg-brand-huckleberry/5 text-brand-huckleberry",
+    covered: "border-brand-clearwater/30 bg-brand-clearwater/5 text-brand-clearwater",
+  };
+  return (
+    <span
+      className={`whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-semibold ${styles[coverage]}`}
+    >
+      {CANDIDATE_COVERAGE_LABEL[coverage]}
+    </span>
+  );
+}
+
+function CandidateCard({ c }: { c: CandidateProject }) {
+  const related = (c.relatedProjectSlugs ?? [])
+    .map((s) => getProjectBySlug(s))
+    .filter((p): p is NonNullable<typeof p> => Boolean(p));
+  return (
+    <article
+      id={c.id}
+      className="scroll-mt-24 rounded-lg border border-hairline bg-white p-6 target:border-ui-gold"
+    >
+      <header className="flex flex-wrap items-start justify-between gap-3">
+        <h3 className="text-xl font-black tracking-tight text-brand-black">
+          {c.title}
+        </h3>
+        <CoverageChip coverage={c.coverage} />
+      </header>
+
+      <div className="mt-2 flex flex-wrap items-center gap-2">
+        <span className="rounded-full border border-hairline bg-surface-alt px-2.5 py-0.5 text-xs font-medium text-ink-muted">
+          {getWorkCategoryLabel(c.workCategory)}
+        </span>
+        <span className="text-xs font-semibold uppercase tracking-wide text-brand-silver">
+          {c.audiences.map((a) => AUDIENCE_LABEL[a]).join(" · ")}
+        </span>
+      </div>
+
+      <p className="mt-4 max-w-3xl text-base text-brand-black">{c.problem}</p>
+      <p className="mt-2 max-w-3xl text-sm text-ink-muted">{c.shape}</p>
+      {c.note && (
+        <p className="mt-2 max-w-3xl text-sm italic text-ink-subtle">{c.note}</p>
+      )}
+
+      <div className="mt-5 flex flex-col gap-4 border-t border-hairline pt-4 sm:flex-row sm:gap-10">
+        {related.length > 0 && (
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-brand-silver">
+              Related projects
+            </p>
+            <p className="mt-1 text-sm">
+              {related.map((p, i) => (
+                <span key={p.slug}>
+                  {i > 0 && " · "}
+                  <Link href={`/portfolio/${p.slug}`}>{p.name}</Link>
+                </span>
+              ))}
+            </p>
+          </div>
+        )}
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wider text-brand-silver">
+            Evidence
+          </p>
+          <p className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-sm">
+            {c.clusters.map((cl) => {
+              const cluster = getCluster(cl.audience, cl.cluster);
+              const anchor = (c.evidenceResponseIds ?? []).find(
+                (id) => id.startsWith(cl.audience[0]) && id.endsWith(`-${cl.cluster}`),
+              );
+              const to =
+                href({ view: "explore", audience: cl.audience, cluster: cl.cluster }) +
+                (anchor ? `#${anchor}` : "");
+              return (
+                <Link key={`${cl.audience}-${cl.cluster}`} href={to}>
+                  {AUDIENCE_LABEL[cl.audience]}: {cluster?.label} &rarr;
+                </Link>
+              );
+            })}
+          </p>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function CandidatesView() {
+  const items = candidateProjectsByCoverage();
+  const groups: { coverage: CandidateProject["coverage"]; heading: string }[] = [
+    { coverage: "gap", heading: "Gaps — no current project" },
+    { coverage: "partial", heading: "Partially covered by existing work" },
+    { coverage: "covered", heading: "Already addressed" },
+  ];
+  const count = (cov: CandidateProject["coverage"]) =>
+    items.filter((c) => c.coverage === cov).length;
+
+  return (
+    <div className="space-y-8">
+      <section className="rounded-lg border border-hairline bg-surface-alt p-5">
+        <p className="max-w-3xl text-sm text-ink-muted">
+          Where the survey&rsquo;s demand signal points, cross-referenced against
+          what the portfolio already runs. These are proposals for the Chief AI
+          &amp; Data Science Officer&rsquo;s office and IIDS to triage &mdash;
+          grounded in the responses, not commitments. No owners, dates, or ROI are
+          asserted here; those are decided in intake.
+        </p>
+        <p className="mt-3 border-t border-hairline pt-3 text-sm font-semibold text-brand-black">
+          {count("gap")} gaps · {count("partial")} partially covered ·{" "}
+          {count("covered")} already addressed
+        </p>
+      </section>
+
+      {groups.map((g) => {
+        const inGroup = items.filter((c) => c.coverage === g.coverage);
+        if (inGroup.length === 0) return null;
+        return (
+          <section key={g.coverage} className="space-y-4">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-brand-silver">
+              {g.heading}
+            </h2>
+            {inGroup.map((c) => (
+              <CandidateCard key={c.id} c={c} />
+            ))}
+          </section>
+        );
+      })}
     </div>
   );
 }
@@ -327,39 +497,45 @@ export default async function OperationalExcellenceSurveyPage({
 
       {/* View + audience controls */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <SegToggle
-          ariaLabel="Audience"
-          options={audienceOptions}
-        />
+        {view === "candidates" ? (
+          <span aria-hidden className="hidden sm:block" />
+        ) : (
+          <SegToggle ariaLabel="Audience" options={audienceOptions} />
+        )}
         <SegToggle
           ariaLabel="View"
           options={[
             { label: "Themes", to: href({ view: "themes", audience }), active: view === "themes" },
             { label: "Explore responses", to: href({ view: "explore", audience }), active: view === "explore" },
+            { label: "Candidate projects", to: href({ view: "candidates" }), active: view === "candidates" },
           ]}
         />
       </div>
 
       {view === "themes" ? (
         <ThemesView audience={audience} />
-      ) : (
+      ) : view === "explore" ? (
         <ExploreView audience={audience} cluster={cluster} q={q} />
+      ) : (
+        <CandidatesView />
       )}
 
-      {/* Phase-2 framing */}
-      <section className="rounded-lg border border-hairline bg-white p-5">
-        <p className="text-xs font-semibold uppercase tracking-wider text-brand-silver">
-          What happens next
-        </p>
-        <p className="mt-2 max-w-3xl text-sm text-ink-muted">
-          These themes are demand signal, not yet a project list. Promising
-          patterns become candidate projects in the University&rsquo;s
-          potential-projects inventory &mdash; that mapping is in progress and
-          will link back to the{" "}
-          <Link href="/standards/intake-crosswalk">intake crosswalk</Link> and{" "}
-          <Link href="/portfolio">project inventory</Link>.
-        </p>
-      </section>
+      {/* Pointer to the candidate-projects inventory */}
+      {view !== "candidates" && (
+        <section className="rounded-lg border border-hairline bg-white p-5">
+          <p className="text-xs font-semibold uppercase tracking-wider text-brand-silver">
+            From signal to projects
+          </p>
+          <p className="mt-2 max-w-3xl text-sm text-ink-muted">
+            These themes are demand signal. The{" "}
+            <Link href={href({ view: "candidates" })}>Candidate projects</Link>{" "}
+            view turns the strongest patterns into proposals &mdash;
+            cross-referenced against what is already running &mdash; for the{" "}
+            <Link href="/standards/intake-crosswalk">intake crosswalk</Link> and{" "}
+            <Link href="/portfolio">project inventory</Link> to triage.
+          </p>
+        </section>
+      )}
     </div>
   );
 }

@@ -5,6 +5,8 @@
 // Typed so a second survey can reuse the same explorer surface.
 // ============================================================
 
+import type { WorkCategory } from "../work-categories";
+
 /** Who answered. Faculty export also includes staff respondents. */
 export type SurveyAudience = "faculty" | "student";
 
@@ -46,15 +48,35 @@ export interface SubTheme {
   description: string;
 }
 
+/** How well the current portfolio already answers a demand signal. */
+export type CandidateCoverage = "gap" | "partial" | "covered";
+
 /**
- * Phase-2 hook (deferred): once a cluster or sub-theme is promoted into
- * the potential/requested-projects inventory, link it here. Left unset
- * until the ingest-into-projects work lands.
+ * A potential/requested project derived from the survey's demand signal
+ * (phase 2). Evidence-forward: each one names the survey clusters (and a
+ * few illustrative verbatims) that motivate it, and is honest about what
+ * the current portfolio already covers. These are proposals for triage,
+ * not commitments — so no owners, dates, or ROI are asserted.
  */
-export interface CandidateProjectLink {
-  /** Portfolio slug or intake reference this demand signal maps to. */
-  ref: string;
-  label: string;
+export interface CandidateProject {
+  id: string;
+  title: string;
+  /** The demand it answers, in plain operational language. */
+  problem: string;
+  /** What the project would be — one or two sentences, no hype. */
+  shape: string;
+  audiences: SurveyAudience[];
+  /** Survey clusters that evidence this demand. */
+  clusters: { audience: SurveyAudience; cluster: SurveyClusterKey }[];
+  /** A few illustrative response ids (deep-linked on the surface). */
+  evidenceResponseIds?: string[];
+  /** The "by problem" category this would sit under, per work-categories. */
+  workCategory: WorkCategory;
+  coverage: CandidateCoverage;
+  /** Existing portfolio slugs this relates to (covers / partially covers). */
+  relatedProjectSlugs?: string[];
+  /** Honest scope, feasibility, or sensitivity caveat. */
+  note?: string;
 }
 
 /** A question-cluster: the question asked plus its summarized themes. */
@@ -68,8 +90,6 @@ export interface SurveyCluster {
   /** One- or two-sentence stakeholder-facing summary of the cluster. */
   summary: string;
   subThemes: SubTheme[];
-  /** Deferred phase-2 links; empty for now. */
-  candidateProjects?: CandidateProjectLink[];
 }
 
 /** Survey-level metadata for the explorer header. */
