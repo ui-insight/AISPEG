@@ -13,17 +13,8 @@ export interface PortfolioMetaEntry {
 }
 
 export const portfolioMeta: Record<string, PortfolioMetaEntry> = {
-  "audit-dashboard": { lastCommitDate: "2026-05-30T23:24:10Z", fetchedAt: "2026-07-09T20:33:00.770Z" },
-  "dgx-stack": { lastCommitDate: "2026-04-15T21:50:03Z", fetchedAt: "2026-07-09T20:33:00.770Z" },
-  "execord": { lastCommitDate: "2026-06-12T15:25:21Z", fetchedAt: "2026-07-09T20:33:00.770Z" },
-  "mindrouter": { lastCommitDate: "2026-06-14T04:24:40Z", fetchedAt: "2026-07-09T20:33:00.770Z" },
-  "openera": { lastCommitDate: "2026-07-09T20:10:34Z", fetchedAt: "2026-07-09T20:33:00.770Z" },
-  "processmapping": { lastCommitDate: "2026-06-30T06:54:37Z", fetchedAt: "2026-07-09T20:33:00.770Z" },
-  "rfd-career": { lastCommitDate: "2026-06-09T22:52:23Z", fetchedAt: "2026-07-09T20:33:00.770Z" },
-  "sem-experiential": { lastCommitDate: "2026-06-30T14:55:27Z", fetchedAt: "2026-07-09T20:33:00.770Z" },
-  "stratplan": { lastCommitDate: "2026-05-05T09:35:03Z", fetchedAt: "2026-07-09T20:33:00.770Z" },
-  "template-app": { lastCommitDate: "2026-05-05T20:06:00Z", fetchedAt: "2026-07-09T20:33:00.770Z" },
-  "ucm-daily-register": { lastCommitDate: "2026-05-11T22:58:35Z", fetchedAt: "2026-07-09T20:33:00.770Z" },
-  "universo": { lastCommitDate: "2026-07-08T22:07:30Z", fetchedAt: "2026-07-09T20:33:00.770Z" },
-  "vandalizer": { lastCommitDate: "2026-07-09T20:01:41Z", fetchedAt: "2026-07-09T20:33:00.770Z" },
+  "dgx-stack": { lastCommitDate: "2026-07-19T12:58:57Z", fetchedAt: "2026-07-20T10:45:06.658Z" },
+  "mindrouter": { lastCommitDate: "2026-07-19T14:55:44Z", fetchedAt: "2026-07-20T10:45:06.658Z" },
+  "ucm-daily-register": { lastCommitDate: "2026-07-18T16:51:28Z", fetchedAt: "2026-07-20T10:45:06.658Z" },
+  "vandalizer": { lastCommitDate: "2026-07-19T15:02:16Z", fetchedAt: "2026-07-20T10:45:06.658Z" },
 };
