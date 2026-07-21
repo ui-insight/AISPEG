@@ -276,6 +276,7 @@ async function seedProject(i: Project): Promise<{ id: string; blockers: number }
   const home_unit_primary = i.homeUnits[0] ?? null;
   const owner_primary = i.operationalOwners[0] ?? null;
   const wizard = wizardShapeBySlug[i.slug] ?? EMPTY_SHAPE;
+  const replacement = i.enterpriseSystemReplacement;
 
   const insert = await pool.query<{ id: string }>(
     `INSERT INTO applications (
@@ -296,7 +297,12 @@ async function seedProject(i: Project): Promise<{ id: string; blockers: number }
        strategic_plan_alignment,
        iids_sponsor, feature_complete, live_url_is_staging,
        pilot_cohort, production_scope, support_contact,
-       sunset_date, replaced_by
+       sunset_date, replaced_by,
+       proposed_deployment_environment,
+       enterprise_replacement_status,
+       existing_enterprise_system_name,
+       existing_enterprise_system_annual_cost_usd,
+       existing_enterprise_system_renewal_date
      )
      VALUES (
        $1, $2, $3, $4,
@@ -316,7 +322,8 @@ async function seedProject(i: Project): Promise<{ id: string; blockers: number }
        $38,
        $39, $40, $41,
        $42::jsonb, $43, $44,
-       $45, $46
+       $45, $46,
+       $47, $48, $49, $50, $51
      )
      RETURNING id`,
     [
@@ -366,6 +373,11 @@ async function seedProject(i: Project): Promise<{ id: string; blockers: number }
       i.supportContact ?? null,
       i.sunsetDate ?? null,
       i.replacedBy ?? null,
+      i.proposedDeploymentEnvironment,
+      replacement.status,
+      replacement.status === "yes" ? replacement.systemName : null,
+      replacement.status === "yes" ? replacement.annualCostUsd : null,
+      replacement.status === "yes" ? replacement.renewalDate ?? null : null,
     ]
   );
 

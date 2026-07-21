@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { query, queryOne } from "@/lib/db";
+import {
+  isDeploymentEnvironment,
+  isEnterpriseReplacementStatus,
+} from "@/lib/project-governance";
 
 // All applications columns the registry detail page reads. Stays in lockstep
-// with the schema added in db/migrations/005_friction_ledger.sql.
+// with the registry schema through db/migrations/012_project_governance_tracking.sql.
 const READ_COLUMNS = `
   id, slug, name, tagline, description,
   owner_name, owner_email, department,
@@ -12,6 +16,11 @@ const READ_COLUMNS = `
   integrations, data_sources, university_systems, output_types,
   ai4ra_relationship, dual_destiny_planned, external_deployments,
   institutional_review_status,
+  proposed_deployment_environment,
+  enterprise_replacement_status,
+  existing_enterprise_system_name,
+  existing_enterprise_system_annual_cost_usd,
+  existing_enterprise_system_renewal_date,
   repo_url, docs_url, live_url, is_private_repo,
   funding,
   operational_function, operational_excellence_outcome,
@@ -56,6 +65,10 @@ const SCALAR_COLUMNS: string[] = [
   "integrations", "data_sources", "university_systems", "output_types",
   "ai4ra_relationship", "dual_destiny_planned", "external_deployments",
   "institutional_review_status",
+  "proposed_deployment_environment", "enterprise_replacement_status",
+  "existing_enterprise_system_name",
+  "existing_enterprise_system_annual_cost_usd",
+  "existing_enterprise_system_renewal_date",
   "repo_url", "docs_url", "live_url", "is_private_repo",
   "funding",
   "operational_function", "operational_excellence_outcome",
@@ -73,7 +86,110 @@ export async function PATCH(
 ) {
   try {
     const { id } = await params;
-    const body = await request.json();
+    const body = (await request.json()) as Record<string, unknown>;
+
+    if (
+      "proposed_deployment_environment" in body &&
+      !isDeploymentEnvironment(body.proposed_deployment_environment)
+    ) {
+      return NextResponse.json(
+        { error: "Invalid proposed deployment environment" },
+        { status: 400 }
+      );
+    }
+
+    const replacementFields = [
+      "enterprise_replacement_status",
+      "existing_enterprise_system_name",
+      "existing_enterprise_system_annual_cost_usd",
+      "existing_enterprise_system_renewal_date",
+    ];
+    if (replacementFields.some((field) => field in body)) {
+      const current = await queryOne<{
+        enterprise_replacement_status: string;
+        existing_enterprise_system_name: string | null;
+        existing_enterprise_system_annual_cost_usd: string | number | null;
+        existing_enterprise_system_renewal_date: unknown;
+      }>(
+        `SELECT enterprise_replacement_status,
+                existing_enterprise_system_name,
+                existing_enterprise_system_annual_cost_usd,
+                existing_enterprise_system_renewal_date
+         FROM applications
+         WHERE id = $1`,
+        [id]
+      );
+
+      if (!current) {
+        return NextResponse.json({ error: "Not found" }, { status: 404 });
+      }
+
+      const replacementStatus = "enterprise_replacement_status" in body
+        ? body.enterprise_replacement_status
+        : current.enterprise_replacement_status;
+      if (!isEnterpriseReplacementStatus(replacementStatus)) {
+        return NextResponse.json(
+          { error: "Invalid enterprise replacement status" },
+          { status: 400 }
+        );
+      }
+
+      if (replacementStatus === "yes") {
+        const rawName = "existing_enterprise_system_name" in body
+          ? body.existing_enterprise_system_name
+          : current.existing_enterprise_system_name;
+        const systemName =
+          typeof rawName === "string" ? rawName.trim() : "";
+        const rawCost = "existing_enterprise_system_annual_cost_usd" in body
+          ? body.existing_enterprise_system_annual_cost_usd
+          : current.existing_enterprise_system_annual_cost_usd;
+        const annualCost = Number(rawCost);
+        const rawRenewalDateValue =
+          "existing_enterprise_system_renewal_date" in body
+            ? body.existing_enterprise_system_renewal_date
+            : current.existing_enterprise_system_renewal_date;
+        const rawRenewalDate =
+          rawRenewalDateValue instanceof Date
+            ? rawRenewalDateValue.toISOString().slice(0, 10)
+            : rawRenewalDateValue;
+
+        if (
+          !systemName ||
+          rawCost === null ||
+          rawCost === "" ||
+          !Number.isFinite(annualCost) ||
+          annualCost < 0
+        ) {
+          return NextResponse.json(
+            {
+              error:
+                "A replacement project requires the existing system name and a non-negative annual cost",
+            },
+            { status: 400 }
+          );
+        }
+        if (
+          rawRenewalDate &&
+          (typeof rawRenewalDate !== "string" ||
+            !/^\d{4}-\d{2}-\d{2}$/.test(rawRenewalDate))
+        ) {
+          return NextResponse.json(
+            { error: "Renewal date must use YYYY-MM-DD" },
+            { status: 400 }
+          );
+        }
+
+        body.existing_enterprise_system_name = systemName;
+        body.existing_enterprise_system_annual_cost_usd = annualCost;
+        body.existing_enterprise_system_renewal_date = rawRenewalDate || null;
+      } else {
+        // Avoid leaving stale incumbent-system facts behind when an admin
+        // changes the replacement decision to no or to-be-determined.
+        body.existing_enterprise_system_name = null;
+        body.existing_enterprise_system_annual_cost_usd = null;
+        body.existing_enterprise_system_renewal_date = null;
+      }
+    }
 
     const sets: string[] = [];
     const values: unknown[] = [];

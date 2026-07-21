@@ -18,6 +18,7 @@
 
 import type { Project, ProjectStatus } from "./portfolio";
 import { portfolioMeta } from "./portfolio-meta";
+import { isDeploymentEnvironment } from "./project-governance";
 
 export interface VerificationProblem {
   slug: string;
@@ -322,6 +323,61 @@ const verifyUniversal: Verifier = (i) => {
         "iidsSponsor is empty — every entry needs a named IIDS sponsor (the person at IIDS who owns awareness of this project)."
       )
     );
+  }
+
+  if (!isDeploymentEnvironment(i.proposedDeploymentEnvironment)) {
+    problems.push(
+      problem(
+        i,
+        "every project requires a valid proposed deployment environment",
+        "proposedDeploymentEnvironment is missing or is not in the governance vocabulary."
+      )
+    );
+  }
+
+  const replacement = i.enterpriseSystemReplacement;
+  if (!replacement) {
+    problems.push(
+      problem(
+        i,
+        "every project requires an enterprise-system replacement status",
+        "enterpriseSystemReplacement is missing — record yes, no, or to-be-determined."
+      )
+    );
+  } else if (replacement.status === "yes") {
+    if (!replacement.systemName.trim()) {
+      problems.push(
+        problem(
+          i,
+          "replacement=yes requires the incumbent system name and annual cost",
+          "enterpriseSystemReplacement.systemName is empty."
+        )
+      );
+    }
+    if (
+      !Number.isFinite(replacement.annualCostUsd) ||
+      replacement.annualCostUsd < 0
+    ) {
+      problems.push(
+        problem(
+          i,
+          "replacement=yes requires the incumbent system name and annual cost",
+          "enterpriseSystemReplacement.annualCostUsd must be a non-negative number."
+        )
+      );
+    }
+    if (
+      replacement.renewalDate &&
+      !/^\d{4}-\d{2}-\d{2}$/.test(replacement.renewalDate)
+    ) {
+      problems.push(
+        problem(
+          i,
+          "replacement renewal dates use ISO YYYY-MM-DD",
+          "enterpriseSystemReplacement.renewalDate is not an ISO date."
+        )
+      );
+    }
   }
   return problems;
 };

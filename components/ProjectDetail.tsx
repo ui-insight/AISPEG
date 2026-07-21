@@ -10,6 +10,11 @@ import {
   isProjectStatus,
   publicStageFromStatus,
 } from "@/lib/portfolio";
+import {
+  DEPLOYMENT_ENVIRONMENT_DESCRIPTIONS,
+  DEPLOYMENT_ENVIRONMENT_LABELS,
+  type EnterpriseSystemReplacement,
+} from "@/lib/project-governance";
 
 // Blocker severity is a documented exception to the brand-token rule —
 // the amber/red signals are functional alerting, not status decoration.
@@ -48,6 +53,46 @@ function SectionEyebrow({ children }: { children: React.ReactNode }) {
       {children}
     </p>
   );
+}
+
+const usd = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  maximumFractionDigits: 0,
+});
+
+function replacementSummary(replacement: EnterpriseSystemReplacement) {
+  if (replacement.status === "no") {
+    return {
+      headline: "No enterprise software replacement planned",
+      detail: "This project is not currently intended to displace a licensed enterprise system.",
+    };
+  }
+  if (replacement.status === "to-be-determined") {
+    return {
+      headline: "To be determined",
+      detail:
+        "The project team has not yet confirmed whether this work will replace an existing enterprise system.",
+    };
+  }
+
+  const renewal = replacement.renewalDate
+    ? new Date(`${replacement.renewalDate}T00:00:00Z`).toLocaleDateString(
+        "en-US",
+        {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+          timeZone: "UTC",
+        }
+      )
+    : null;
+  return {
+    headline: `Replaces ${replacement.systemName}`,
+    detail: `${usd.format(replacement.annualCostUsd)} per year${
+      renewal ? ` · current agreement renews ${renewal}` : ""
+    }`,
+  };
 }
 
 function GitHubIcon() {
@@ -147,6 +192,7 @@ export default function ProjectDetail({
   // noise to the owner-line without adding signal.
   const showBuildSegment =
     buildParticipantsLabel && buildParticipantsLabel !== homeUnitLabel;
+  const replacement = replacementSummary(app.enterpriseSystemReplacement);
 
   return (
     <div className="space-y-12">
@@ -284,6 +330,38 @@ export default function ProjectDetail({
           </p>
         </section>
       )}
+
+      <section>
+        <SectionEyebrow>Deployment &amp; replacement</SectionEyebrow>
+        <dl className="mt-3 grid max-w-3xl gap-3 sm:grid-cols-2">
+          <div className="rounded-lg border border-hairline bg-white p-4">
+            <dt className="text-xs font-medium uppercase tracking-wider text-brand-silver">
+              Proposed environment
+            </dt>
+            <dd className="mt-1 text-sm font-semibold text-brand-black">
+              {DEPLOYMENT_ENVIRONMENT_LABELS[
+                app.proposedDeploymentEnvironment
+              ]}
+            </dd>
+            <dd className="mt-1 text-xs leading-relaxed text-ink-muted">
+              {DEPLOYMENT_ENVIRONMENT_DESCRIPTIONS[
+                app.proposedDeploymentEnvironment
+              ]}
+            </dd>
+          </div>
+          <div className="rounded-lg border border-hairline bg-white p-4">
+            <dt className="text-xs font-medium uppercase tracking-wider text-brand-silver">
+              Enterprise system replacement
+            </dt>
+            <dd className="mt-1 text-sm font-semibold text-brand-black">
+              {replacement.headline}
+            </dd>
+            <dd className="mt-1 text-xs leading-relaxed text-ink-muted">
+              {replacement.detail}
+            </dd>
+          </div>
+        </dl>
+      </section>
 
       {/* Beat 2 — Why does it matter? Outcome is the lede; function and
           blockers are supporting context. The single gold left-rule on

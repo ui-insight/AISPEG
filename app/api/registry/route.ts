@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { query, queryOne } from "@/lib/db";
+import {
+  isDeploymentEnvironment,
+  isEnterpriseReplacementStatus,
+} from "@/lib/project-governance";
 
 // GET /api/registry — list all applications
 export async function GET() {
@@ -11,6 +15,11 @@ export async function GET() {
               sensitivity, complexity, userbase, auth_level,
               integrations, data_sources, university_systems, output_types,
               ai4ra_relationship, tracking_only, clickup_task_id,
+              proposed_deployment_environment,
+              enterprise_replacement_status,
+              existing_enterprise_system_name,
+              existing_enterprise_system_annual_cost_usd,
+              existing_enterprise_system_renewal_date,
               submission_id, created_at, updated_at
        FROM applications
        ORDER BY
@@ -82,6 +91,11 @@ export async function POST(request: NextRequest) {
       external_deployments,
       institutional_review_status,
       tracking_only,
+      proposed_deployment_environment,
+      enterprise_replacement_status,
+      existing_enterprise_system_name,
+      existing_enterprise_system_annual_cost_usd,
+      existing_enterprise_system_renewal_date,
       // Content
       funding,
       operational_function,
@@ -109,6 +123,61 @@ export async function POST(request: NextRequest) {
         ? operational_owners
         : JSON.stringify(operational_owners);
 
+    const deploymentEnvironment =
+      proposed_deployment_environment ?? "to-be-determined";
+    const replacementStatus =
+      enterprise_replacement_status ?? "to-be-determined";
+
+    if (!isDeploymentEnvironment(deploymentEnvironment)) {
+      return NextResponse.json(
+        { error: "Invalid proposed deployment environment" },
+        { status: 400 }
+      );
+    }
+    if (!isEnterpriseReplacementStatus(replacementStatus)) {
+      return NextResponse.json(
+        { error: "Invalid enterprise replacement status" },
+        { status: 400 }
+      );
+    }
+
+    const existingSystemName =
+      typeof existing_enterprise_system_name === "string"
+        ? existing_enterprise_system_name.trim()
+        : "";
+    const hasAnnualCost =
+      existing_enterprise_system_annual_cost_usd !== null &&
+      existing_enterprise_system_annual_cost_usd !== undefined &&
+      existing_enterprise_system_annual_cost_usd !== "";
+    const annualCost = Number(existing_enterprise_system_annual_cost_usd);
+    const renewalDate =
+      typeof existing_enterprise_system_renewal_date === "string" &&
+      existing_enterprise_system_renewal_date !== ""
+        ? existing_enterprise_system_renewal_date
+        : null;
+
+    if (
+      replacementStatus === "yes" &&
+      (!existingSystemName ||
+        !hasAnnualCost ||
+        !Number.isFinite(annualCost) ||
+        annualCost < 0)
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            "A replacement project requires the existing system name and a non-negative annual cost",
+        },
+        { status: 400 }
+      );
+    }
+    if (renewalDate && !/^\d{4}-\d{2}-\d{2}$/.test(renewalDate)) {
+      return NextResponse.json(
+        { error: "Renewal date must use YYYY-MM-DD" },
+        { status: 400 }
+      );
+    }
+
     const app = await queryOne<{ id: string }>(
       `INSERT INTO applications
          (name, slug, tagline, description,
@@ -124,7 +193,12 @@ export async function POST(request: NextRequest) {
           funding, operational_function, operational_excellence_outcome,
           features, tech,
           related_slugs, clickup_task_id,
-          submission_id)
+          submission_id,
+          proposed_deployment_environment,
+          enterprise_replacement_status,
+          existing_enterprise_system_name,
+          existing_enterprise_system_annual_cost_usd,
+          existing_enterprise_system_renewal_date)
        VALUES ($1,$2,$3,$4,
                $5,$6,$7,
                $8,$9::jsonb,$10,
@@ -138,7 +212,8 @@ export async function POST(request: NextRequest) {
                $34,$35,$36,
                $37,$38,
                $39,$40,
-               $41)
+               $41,
+               $42,$43,$44,$45,$46)
        RETURNING id`,
       [
         name,
@@ -182,6 +257,11 @@ export async function POST(request: NextRequest) {
         toArray(related_slugs),
         clickup_task_id || null,
         submission_id || null,
+        deploymentEnvironment,
+        replacementStatus,
+        replacementStatus === "yes" ? existingSystemName : null,
+        replacementStatus === "yes" ? annualCost : null,
+        replacementStatus === "yes" ? renewalDate : null,
       ]
     );
 
