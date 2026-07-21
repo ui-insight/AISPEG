@@ -11,6 +11,10 @@
 // ============================================================
 
 import type { WorkCategory } from "./work-categories";
+import type {
+  DeploymentEnvironment,
+  EnterpriseSystemReplacement,
+} from "./project-governance";
 
 export type Visibility =
   | "Public"       // Everything about this entry can be shown publicly
@@ -84,6 +88,12 @@ export interface Project {
   visibility: Visibility;
   institutionalReviewStatus?: InstitutionalReviewStatus;
 
+  // Governance intake — deployment target and incumbent-system economics.
+  // Every project records an explicit value; use `to-be-determined` rather
+  // than omitting facts that still need confirmation.
+  proposedDeploymentEnvironment: DeploymentEnvironment;
+  enterpriseSystemReplacement: EnterpriseSystemReplacement;
+
   // Lifecycle taxonomy — see docs/adr/0001-product-lifecycle-taxonomy.md.
   // Required transitively by the verification rules for certain statuses
   // (e.g. `production` requires `productionScope` + `supportContact`,
@@ -154,6 +164,8 @@ export const projects: Project[] = [
     buildParticipants: ["IIDS"],
     status: "production",
     visibility: "Public",
+    proposedDeploymentEnvironment: "to-be-determined",
+    enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "None",
     iidsSponsor: "Barrie Robison",
     productionScope: "institution-wide",
@@ -180,6 +192,8 @@ export const projects: Project[] = [
     buildParticipants: ["IIDS"],
     status: "building",
     visibility: "Public",
+    proposedDeploymentEnvironment: "to-be-determined",
+    enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "None",
     iidsSponsor: "Luke Sheneman",
     repoUrl: "https://github.com/northwest-knowledge-network/water-rights",
@@ -208,6 +222,8 @@ export const projects: Project[] = [
     buildParticipants: ["IIDS"],
     status: "paused",
     visibility: "Public",
+    proposedDeploymentEnvironment: "to-be-determined",
+    enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "None",
     iidsSponsor: "Barrie Robison",
     liveUrlIsStaging: true,
@@ -237,6 +253,8 @@ export const projects: Project[] = [
     buildParticipants: ["IIDS"],
     status: "building",
     visibility: "Public",
+    proposedDeploymentEnvironment: "to-be-determined",
+    enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "None",
     iidsSponsor: "Colin Addington",
     repoUrl: "https://github.com/ui-iids/ai4ui-integrated-dashboard",
@@ -261,6 +279,8 @@ export const projects: Project[] = [
     buildParticipants: ["IIDS"],
     status: "approved",
     visibility: "Public",
+    proposedDeploymentEnvironment: "to-be-determined",
+    enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "None",
     iidsSponsor: "Colin Addington",
     operationalFunction:
@@ -283,6 +303,8 @@ export const projects: Project[] = [
     buildParticipants: ["IIDS"],
     status: "paused",
     visibility: "Public",
+    proposedDeploymentEnvironment: "to-be-determined",
+    enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "None",
     iidsSponsor: "Colin Addington",
     operationalFunction:
@@ -308,6 +330,8 @@ export const projects: Project[] = [
     buildParticipants: ["IIDS"],
     status: "prototype",
     visibility: "Public",
+    proposedDeploymentEnvironment: "to-be-determined",
+    enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "None",
     iidsSponsor: "Colin Addington",
     featureComplete: true,
@@ -333,6 +357,8 @@ export const projects: Project[] = [
     buildParticipants: ["IIDS"],
     status: "building",
     visibility: "Public",
+    proposedDeploymentEnvironment: "to-be-determined",
+    enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "None",
     iidsSponsor: "Colin Addington",
     repoUrl: "https://github.com/ui-insight/reactfast",
@@ -357,6 +383,8 @@ export const projects: Project[] = [
     buildParticipants: ["IIDS"],
     status: "approved",
     visibility: "Public",
+    proposedDeploymentEnvironment: "to-be-determined",
+    enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "Reference",
     iidsSponsor: "Colin Addington",
     operationalFunction:
@@ -383,6 +411,8 @@ export const projects: Project[] = [
     buildParticipants: ["IIDS"],
     status: "approved",
     visibility: "Public",
+    proposedDeploymentEnvironment: "to-be-determined",
+    enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "Reference",
     iidsSponsor: "Colin Addington",
     operationalFunction:
@@ -412,6 +442,8 @@ export const projects: Project[] = [
     buildParticipants: ["IIDS"],
     status: "prototype",
     visibility: "Public",
+    proposedDeploymentEnvironment: "oit-hosted",
+    enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "None",
     iidsSponsor: "Barrie Robison",
     liveUrlIsStaging: true,
@@ -444,6 +476,8 @@ export const projects: Project[] = [
     buildParticipants: ["IIDS"],
     status: "production",
     visibility: "Public",
+    proposedDeploymentEnvironment: "to-be-determined",
+    enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "Core",
     dualDestinyPlanned: true,
     externalDeployments: ["Southern Utah University"],
@@ -473,6 +507,8 @@ export const projects: Project[] = [
     buildParticipants: ["IIDS"],
     status: "building",
     visibility: "Public",
+    proposedDeploymentEnvironment: "to-be-determined",
+    enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "Core",
     dualDestinyPlanned: true,
     iidsSponsor: "Barrie Robison",
@@ -506,6 +542,13 @@ export const projects: Project[] = [
     buildParticipants: ["IIDS"],
     status: "building",
     visibility: "Partial",
+    proposedDeploymentEnvironment: "oit-hosted",
+    enterpriseSystemReplacement: {
+      status: "yes",
+      systemName: "VERAS",
+      annualCostUsd: 150_000,
+      renewalDate: "2027-03-31",
+    },
     ai4raRelationship: "Core",
     dualDestinyPlanned: true,
     iidsSponsor: "Barrie Robison",
@@ -537,6 +580,8 @@ export const projects: Project[] = [
     buildParticipants: ["IIDS"],
     status: "prototype",
     visibility: "Public",
+    proposedDeploymentEnvironment: "to-be-determined",
+    enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "None",
     iidsSponsor: "Barrie Robison",
     liveUrlIsStaging: true,
@@ -568,6 +613,8 @@ export const projects: Project[] = [
     buildParticipants: ["IIDS", "SEM"],
     status: "building",
     visibility: "Public",
+    proposedDeploymentEnvironment: "to-be-determined",
+    enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "None",
     iidsSponsor: "Barrie Robison",
     repoUrl: "https://github.com/ui-insight/SEM-experiential",
@@ -595,6 +642,8 @@ export const projects: Project[] = [
     buildParticipants: ["IIDS"],
     status: "piloting",
     visibility: "Public",
+    proposedDeploymentEnvironment: "to-be-determined",
+    enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "Adjacent",
     iidsSponsor: "Barrie Robison",
     pilotCohort: { size: 12, scope: "CAREER Club cohort" },
@@ -626,6 +675,8 @@ export const projects: Project[] = [
     buildParticipants: ["IIDS"],
     status: "piloting",
     visibility: "Public",
+    proposedDeploymentEnvironment: "to-be-determined",
+    enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "None",
     iidsSponsor: "Barrie Robison",
     pilotCohort: { size: 10, scope: "UI Library and IIDS staff" },
@@ -667,6 +718,8 @@ export const projects: Project[] = [
     buildParticipants: ["IIDS"],
     status: "production",
     visibility: "Public",
+    proposedDeploymentEnvironment: "iids-hosted",
+    enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "Core",
     dualDestinyPlanned: true,
     iidsSponsor: "Luke Sheneman",
@@ -695,6 +748,8 @@ export const projects: Project[] = [
     buildParticipants: ["IIDS"],
     status: "production",
     visibility: "Public",
+    proposedDeploymentEnvironment: "iids-hosted",
+    enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "Adjacent",
     externalDeployments: ["Southern Utah University"],
     iidsSponsor: "Luke Sheneman",
@@ -725,6 +780,8 @@ export const projects: Project[] = [
     buildParticipants: ["IIDS"],
     status: "approved",
     visibility: "Public",
+    proposedDeploymentEnvironment: "to-be-determined",
+    enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "Adjacent",
     iidsSponsor: "Colin Addington",
     operationalFunction:
@@ -747,6 +804,8 @@ export const projects: Project[] = [
     buildParticipants: ["IIDS"],
     status: "paused",
     visibility: "Public",
+    proposedDeploymentEnvironment: "not-applicable",
+    enterpriseSystemReplacement: { status: "no" },
     institutionalReviewStatus: "Under OIT review",
     ai4raRelationship: "Adjacent",
     iidsSponsor: "Luke Sheneman",
@@ -783,6 +842,8 @@ export const projects: Project[] = [
     buildParticipants: ["OIT", "Huron Consulting"],
     status: "tracked",
     visibility: "Public",
+    proposedDeploymentEnvironment: "to-be-determined",
+    enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "None",
     iidsSponsor: "Barrie Robison",
     operationalFunction:
@@ -807,6 +868,8 @@ export const projects: Project[] = [
     buildParticipants: ["OIT", "IIDS"],
     status: "tracked",
     visibility: "Public",
+    proposedDeploymentEnvironment: "oit-hosted",
+    enterpriseSystemReplacement: { status: "no" },
     ai4raRelationship: "None",
     iidsSponsor: "Barrie Robison",
     trackingOnly: true,

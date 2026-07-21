@@ -36,7 +36,7 @@ export const searchPortfolioTool: ToolHandler = {
     function: {
       name: "search_portfolio",
       description:
-        "Search the live IIDS portfolio of AI projects. Returns projects with their owners, home units, status, and a link to the public project page. Use this for any question about which projects exist, who owns what, what state a project is in, or what IIDS is building.",
+        "Search the live IIDS portfolio of AI projects. Returns projects with owners, home units, status, proposed deployment environment, enterprise-system replacement facts, and a link to the public project page. Use this for questions about which projects exist, who owns what, deployment plans, replacement costs, lifecycle state, or what IIDS is building.",
       parameters: {
         type: "object",
         properties: {
@@ -98,6 +98,8 @@ export const searchPortfolioTool: ToolHandler = {
       status: a.status,
       iidsSponsor: a.iidsSponsor || null,
       ai4raRelationship: a.ai4raRelationship,
+      proposedDeploymentEnvironment: a.proposedDeploymentEnvironment,
+      enterpriseSystemReplacement: a.enterpriseSystemReplacement,
       url: `/portfolio/${a.slug}`,
       activeBlockerCount: a.activeBlockers.length,
     }));

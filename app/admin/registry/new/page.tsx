@@ -3,6 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import {
+  DEPLOYMENT_ENVIRONMENTS,
+  ENTERPRISE_REPLACEMENT_STATUSES,
+  type DeploymentEnvironment,
+  type EnterpriseReplacementStatus,
+} from "@/lib/project-governance";
 
 // Lifecycle taxonomy from ADR 0001 — see lib/portfolio.ts ProjectStatus.
 const STATUS_OPTIONS = [
@@ -37,6 +43,13 @@ export default function NewRegistryEntryPage() {
     visibility_tier: "internal" as "public" | "embargoed" | "internal",
     tracking_only: false,
     ai4ra_relationship: "None",
+    // Governance
+    proposed_deployment_environment: "to-be-determined" as DeploymentEnvironment,
+    enterprise_replacement_status:
+      "to-be-determined" as EnterpriseReplacementStatus,
+    existing_enterprise_system_name: "",
+    existing_enterprise_system_annual_cost_usd: "",
+    existing_enterprise_system_renewal_date: "",
     // Links
     github_repo: "",
     repo_url: "",
@@ -47,6 +60,16 @@ export default function NewRegistryEntryPage() {
     e.preventDefault();
     if (!form.name.trim()) {
       setError("Name is required");
+      return;
+    }
+    if (
+      form.enterprise_replacement_status === "yes" &&
+      (!form.existing_enterprise_system_name.trim() ||
+        form.existing_enterprise_system_annual_cost_usd === "")
+    ) {
+      setError(
+        "Replacement projects require the existing system name and annual cost"
+      );
       return;
     }
 
@@ -82,6 +105,22 @@ export default function NewRegistryEntryPage() {
         visibility_tier: form.visibility_tier,
         tracking_only: form.tracking_only,
         ai4ra_relationship: form.ai4ra_relationship,
+        proposed_deployment_environment:
+          form.proposed_deployment_environment,
+        enterprise_replacement_status:
+          form.enterprise_replacement_status,
+        existing_enterprise_system_name:
+          form.enterprise_replacement_status === "yes"
+            ? form.existing_enterprise_system_name.trim()
+            : null,
+        existing_enterprise_system_annual_cost_usd:
+          form.enterprise_replacement_status === "yes"
+            ? Number(form.existing_enterprise_system_annual_cost_usd)
+            : null,
+        existing_enterprise_system_renewal_date:
+          form.enterprise_replacement_status === "yes"
+            ? form.existing_enterprise_system_renewal_date || null
+            : null,
         github_repo: form.github_repo.trim() || null,
         repo_url: form.repo_url.trim() || null,
         live_url: form.live_url.trim() || null,
@@ -271,6 +310,114 @@ export default function NewRegistryEntryPage() {
             </select>
           </div>
         </div>
+
+        {/* Governance & deployment */}
+        <fieldset className="space-y-4 border-t border-gray-200 pt-5">
+          <legend className="pr-3 text-sm font-semibold uppercase tracking-wide text-gray-500">
+            Governance &amp; deployment
+          </legend>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div>
+              <label className={labelCls}>Proposed deployment environment</label>
+              <select
+                value={form.proposed_deployment_environment}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    proposed_deployment_environment: e.target
+                      .value as DeploymentEnvironment,
+                  })
+                }
+                className={inputCls}
+              >
+                {DEPLOYMENT_ENVIRONMENTS.map((environment) => (
+                  <option key={environment.value} value={environment.value}>
+                    {environment.label}
+                  </option>
+                ))}
+              </select>
+              <p className="mt-1 text-xs text-gray-400">
+                OIT-hosted targets can stay platform-TBD until Azure, OCI OKE,
+                or on-prem Kubernetes is selected.
+              </p>
+            </div>
+            <div>
+              <label className={labelCls}>Replaces enterprise software?</label>
+              <select
+                value={form.enterprise_replacement_status}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    enterprise_replacement_status: e.target
+                      .value as EnterpriseReplacementStatus,
+                  })
+                }
+                className={inputCls}
+              >
+                {ENTERPRISE_REPLACEMENT_STATUSES.map((status) => (
+                  <option key={status} value={status}>
+                    {status === "yes"
+                      ? "Yes"
+                      : status === "no"
+                        ? "No"
+                        : "To be determined"}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          {form.enterprise_replacement_status === "yes" && (
+            <div className="grid gap-4 md:grid-cols-3">
+              <div>
+                <label className={labelCls}>Existing system name *</label>
+                <input
+                  type="text"
+                  value={form.existing_enterprise_system_name}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      existing_enterprise_system_name: e.target.value,
+                    })
+                  }
+                  className={inputCls}
+                  placeholder="VERAS"
+                />
+              </div>
+              <div>
+                <label className={labelCls}>Current annual cost (USD) *</label>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={form.existing_enterprise_system_annual_cost_usd}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      existing_enterprise_system_annual_cost_usd:
+                        e.target.value,
+                    })
+                  }
+                  className={inputCls}
+                  placeholder="150000"
+                />
+              </div>
+              <div>
+                <label className={labelCls}>Renewal date</label>
+                <input
+                  type="date"
+                  value={form.existing_enterprise_system_renewal_date}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      existing_enterprise_system_renewal_date: e.target.value,
+                    })
+                  }
+                  className={inputCls}
+                />
+              </div>
+            </div>
+          )}
+        </fieldset>
 
         {/* Ownership */}
         <div className="grid gap-4 md:grid-cols-2">

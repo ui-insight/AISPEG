@@ -1,5 +1,10 @@
 import Link from "next/link";
 import { query } from "@/lib/db";
+import {
+  DEPLOYMENT_ENVIRONMENT_LABELS,
+  type DeploymentEnvironment,
+  type EnterpriseReplacementStatus,
+} from "@/lib/project-governance";
 
 export const dynamic = "force-dynamic";
 
@@ -31,6 +36,12 @@ const statusColors: Record<string, string> = {
   Tracked: "bg-violet-100 text-violet-700",
 };
 
+const usd = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  maximumFractionDigits: 0,
+});
+
 interface AppRow {
   id: string;
   slug: string | null;
@@ -42,6 +53,10 @@ interface AppRow {
   tier: number;
   status: string;
   visibility_tier: "public" | "embargoed" | "internal";
+  proposed_deployment_environment: DeploymentEnvironment;
+  enterprise_replacement_status: EnterpriseReplacementStatus;
+  existing_enterprise_system_name: string | null;
+  existing_enterprise_system_annual_cost_usd: string | null;
   active_blocker_count: string; // bigint comes back as a string from pg
   updated_at: string;
 }
@@ -54,6 +69,10 @@ export default async function AdminRegistryPage() {
     apps = await query<AppRow>(
       `SELECT a.id, a.slug, a.name, a.owner_name, a.department, a.home_units,
               a.github_repo, a.tier, a.status, a.visibility_tier, a.updated_at,
+              a.proposed_deployment_environment,
+              a.enterprise_replacement_status,
+              a.existing_enterprise_system_name,
+              a.existing_enterprise_system_annual_cost_usd,
               COUNT(b.id) FILTER (WHERE b.resolved_at IS NULL) AS active_blocker_count
        FROM applications a
        LEFT JOIN blockers b ON b.application_id = a.id
@@ -161,6 +180,8 @@ export default async function AdminRegistryPage() {
                 <th className="px-4 py-3">Home unit</th>
                 <th className="px-4 py-3">Status</th>
                 <th className="px-4 py-3">Visibility</th>
+                <th className="px-4 py-3">Deployment</th>
+                <th className="px-4 py-3">Replacement</th>
                 <th className="px-4 py-3">Tier</th>
                 <th className="px-4 py-3">Blockers</th>
                 <th className="px-4 py-3">Updated</th>
@@ -202,6 +223,34 @@ export default async function AdminRegistryPage() {
                       >
                         {app.status}
                       </span>
+                    </td>
+                    <td className="max-w-56 px-4 py-3 text-xs text-gray-600">
+                      {DEPLOYMENT_ENVIRONMENT_LABELS[
+                        app.proposed_deployment_environment
+                      ]}
+                    </td>
+                    <td className="whitespace-nowrap px-4 py-3 text-xs text-gray-600">
+                      {app.enterprise_replacement_status === "yes" ? (
+                        <>
+                          <span className="font-semibold text-ui-charcoal">
+                            {app.existing_enterprise_system_name}
+                          </span>
+                          {app.existing_enterprise_system_annual_cost_usd && (
+                            <span className="block text-gray-400">
+                              {usd.format(
+                                Number(
+                                  app.existing_enterprise_system_annual_cost_usd
+                                )
+                              )}
+                              /year
+                            </span>
+                          )}
+                        </>
+                      ) : app.enterprise_replacement_status === "no" ? (
+                        "No"
+                      ) : (
+                        "TBD"
+                      )}
                     </td>
                     <td className="whitespace-nowrap px-4 py-3">
                       <span

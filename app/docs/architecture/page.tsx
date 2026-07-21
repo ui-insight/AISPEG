@@ -95,6 +95,13 @@ url               TEXT           -- Production URL
 tier              INTEGER        -- 1-4
 status            TEXT           -- idea | approved | in-development |
                                  -- staging | production | retired
+proposed_deployment_environment TEXT
+                                 -- OIT-hosted/Azure/OCI/on-prem, IIDS,
+                                 -- external, not-applicable, or TBD
+enterprise_replacement_status TEXT -- yes | no | to-be-determined
+existing_enterprise_system_name TEXT
+existing_enterprise_system_annual_cost_usd NUMERIC(14,2)
+existing_enterprise_system_renewal_date DATE
 sensitivity       TEXT[]         -- Same dimensions as submission_details
 complexity        TEXT
 userbase          TEXT

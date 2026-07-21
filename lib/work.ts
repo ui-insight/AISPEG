@@ -25,6 +25,11 @@ import type {
   ProjectStatus,
   Visibility,
 } from "./portfolio";
+import type {
+  DeploymentEnvironment,
+  EnterpriseReplacementStatus,
+  EnterpriseSystemReplacement,
+} from "./project-governance";
 
 export type { OperationalOwner } from "./portfolio";
 
@@ -129,6 +134,11 @@ interface ApplicationRow {
   dual_destiny_planned: boolean;
   external_deployments: string[];
   institutional_review_status: string | null;
+  proposed_deployment_environment: DeploymentEnvironment;
+  enterprise_replacement_status: EnterpriseReplacementStatus;
+  existing_enterprise_system_name: string | null;
+  existing_enterprise_system_annual_cost_usd: string | number | null;
+  existing_enterprise_system_renewal_date: unknown;
   repo_url: string | null;
   docs_url: string | null;
   live_url: string | null;
@@ -204,6 +214,8 @@ function toApplication(row: ApplicationRow): Application {
     institutionalReviewStatus:
       (row.institutional_review_status as InstitutionalReviewStatus | null) ??
       undefined,
+    proposedDeploymentEnvironment: row.proposed_deployment_environment,
+    enterpriseSystemReplacement: toEnterpriseSystemReplacement(row),
 
     // Project — lifecycle taxonomy (ADR 0001)
     iidsSponsor: row.iids_sponsor ?? "",
@@ -255,6 +267,23 @@ function toIsoDate(value: unknown): string {
   return String(value);
 }
 
+function toEnterpriseSystemReplacement(
+  row: ApplicationRow
+): EnterpriseSystemReplacement {
+  if (row.enterprise_replacement_status !== "yes") {
+    return { status: row.enterprise_replacement_status };
+  }
+
+  return {
+    status: "yes",
+    systemName: row.existing_enterprise_system_name ?? "",
+    annualCostUsd: Number(row.existing_enterprise_system_annual_cost_usd),
+    renewalDate: row.existing_enterprise_system_renewal_date
+      ? toIsoDate(row.existing_enterprise_system_renewal_date)
+      : undefined,
+  };
+}
+
 function toBlocker(row: BlockerRow): Blocker {
   return {
     id: row.id,
@@ -275,6 +304,11 @@ const APPLICATION_COLUMNS = `
   tier, status, visibility_tier,
   ai4ra_relationship, dual_destiny_planned, external_deployments,
   institutional_review_status,
+  proposed_deployment_environment,
+  enterprise_replacement_status,
+  existing_enterprise_system_name,
+  existing_enterprise_system_annual_cost_usd,
+  existing_enterprise_system_renewal_date,
   repo_url, docs_url, live_url, is_private_repo,
   funding,
   operational_function, operational_excellence_outcome,
