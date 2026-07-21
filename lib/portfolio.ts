@@ -629,6 +629,44 @@ export const projects: Project[] = [
   },
 
   // ============================================================
+  // Athletics
+  // ============================================================
+  {
+    slug: "sidearm-pipeline",
+    name: "Vandals Stats Pipeline",
+    tagline:
+      "Trusted athletics data warehouse and exploratory workspace for Sports Information Directors.",
+    description:
+      "Internal athletics data warehouse that ingests public Sidearm boxscores and season statistics, normalizes game and player history in PostgreSQL, preserves source provenance and coverage windows, and gives Sports Information Directors an evidence-backed workspace for record-book research, notable-achievement review, and downstream website-ready data. Release 1 is internal-SID-first; public website integration is deferred.",
+    homeUnits: ["Athletics"],
+    operationalOwners: [],
+    buildParticipants: ["IIDS"],
+    status: "building",
+    visibility: "Public",
+    proposedDeploymentEnvironment: "oit-hosted",
+    enterpriseSystemReplacement: { status: "no" },
+    ai4raRelationship: "None",
+    iidsSponsor: "Barrie Robison",
+    repoUrl: "https://github.com/ui-insight/sidearm-pipeline",
+    operationalFunction:
+      "Ingests and normalizes Sidearm boxscores and cumulative season statistics; maintains a provenance-aware athletics record book; and supports SID review, comparison, export, achievement suggestions, and governed natural-language questions over verified warehouse facts.",
+    operationalExcellenceOutcome:
+      "Turns fragmented public athletics statistics into a durable institutional record, reduces manual record-book research, and gives Athletics staff faster access to evidence they can confidently use in coverage and website publishing.",
+    tech: [
+      "React 19",
+      "TypeScript",
+      "Tailwind CSS",
+      "FastAPI",
+      "SQLAlchemy 2.0",
+      "PostgreSQL 16",
+      "Docker",
+    ],
+    relatedSlugs: ["template-app", "mindrouter", "nexus"],
+    workCategories: ["knowledge-retrieval", "process"],
+    strategicPlanAlignment: ["E.1", "E.2"],
+  },
+
+  // ============================================================
   // Research Faculty Development (ORED)
   // ============================================================
   {
@@ -962,6 +1000,7 @@ export const HOME_UNIT_GROUP_ORDER = [
   "UI Library",
   "Division of Financial Affairs",
   "Strategic Enrollment Management",
+  "Athletics",
   "University Communications and Marketing",
   "Office of General Counsel",
   "Office of Information Technology",
