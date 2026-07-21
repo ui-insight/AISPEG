@@ -14,6 +14,13 @@
 //   - AI-Assisted Builder Guide — the PROCESS for builders outside OIT
 //     (six-stage lifecycle with gates, enterprise tooling from day one,
 //     six binding rules). Modeled here.
+//
+// The hosted environment these documents describe is what the project
+// inventory tracks as Nexus (lib/portfolio.ts, slug "nexus") — the
+// OIT-managed application platform built collaboratively by OIT and
+// IIDS. The wiki drafts describe the platform without using the name;
+// this module makes the connection explicit so the pathway page can
+// link the standards to the inventory entry.
 
 export interface OitSourceDoc {
   title: string;
@@ -188,9 +195,9 @@ export const PATHWAY_PROJECTS: PathwayProject[] = [
     slug: "openera",
     name: "OpenERA",
     scopeTrigger:
-      "The Builder Guide names OpenERA as an out-of-scope example while it runs open-source off OIT infrastructure. Pursuing OIT-hosted deployment flips that: the project enters the framework at Stage 1, and the existing codebase is reviewed at the Stage 3 security gate.",
+      "The Builder Guide names OpenERA as an out-of-scope example while it runs open-source off OIT infrastructure. Pursuing deployment onto Nexus flips that: the project enters the framework at Stage 1, and the existing codebase is reviewed at the Stage 3 security gate.",
     position:
-      "Entering Stage 1 — Idea & Scoping. Existing code will be reviewed at the Stage 3 security gate per the guide's scope-change rule.",
+      "Entering Stage 1 — Idea & Scoping, targeting Nexus deployment. Existing code will be reviewed at the Stage 3 security gate per the guide's scope-change rule.",
     standingFacts: [
       "Built on FastAPI, React, TypeScript, SQLAlchemy 2.0, and PostgreSQL 16 — the core of the framework's approved stack",
       "Named UI implementation owner: Sarah Martonick (Office of Research and Economic Development)",
@@ -208,8 +215,8 @@ export const PATHWAY_PROJECTS: PathwayProject[] = [
     slug: "ucm-daily-register",
     name: "UCM Daily Register",
     scopeTrigger:
-      "Seeking deployment to OIT-managed infrastructure for daily use by University Communications and Marketing staff — the framework's first scope trigger.",
-    position: "Entering Stage 1 — Idea & Scoping.",
+      "Seeking deployment onto Nexus for daily use by University Communications and Marketing staff — OIT-managed infrastructure used by staff is the framework's first scope trigger.",
+    position: "Entering Stage 1 — Idea & Scoping, targeting Nexus deployment.",
     standingFacts: [
       "Built on React, FastAPI, and SQLAlchemy 2.0, with AI editing routed through MindRouter — aligned with the framework's approved stack and its named gateway candidate",
       "Named operational owners: Joy Bauer, Leigh Cooper, and Jodi Walker (University Communications and Marketing)",

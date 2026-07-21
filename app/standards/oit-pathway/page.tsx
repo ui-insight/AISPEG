@@ -79,8 +79,11 @@ export default function OitPathwayPage() {
           </span>{" "}
           sets the process for teams outside OIT who want their applications
           hosted, supported, and maintained on OIT-managed infrastructure.
-          This page covers the second track: the lifecycle, the gates, the
-          rules, and where our projects stand in it.
+          The platform both documents describe is what our inventory tracks
+          as <Link href="/portfolio/nexus">Nexus</Link> — the OIT-managed
+          application platform built collaboratively by OIT and IIDS. This
+          page covers the second track: the lifecycle, the gates, the rules,
+          and where our projects stand in it.
         </p>
       </header>
 
@@ -235,9 +238,9 @@ export default function OitPathwayPage() {
           </h2>
           <p className="mt-1 text-sm text-ink-muted">
             Two IIDS-built applications are moving from IIDS staging toward
-            OIT-hosted deployment. For each: why it is in scope, where it
-            stands, what is already true of it, and what the intake and
-            security gates will examine.
+            deployment on <Link href="/portfolio/nexus">Nexus</Link>. For
+            each: why it is in scope, where it stands, what is already true
+            of it, and what the intake and security gates will examine.
           </p>
         </div>
         <div className="grid gap-4">
