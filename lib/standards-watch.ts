@@ -29,11 +29,16 @@ export interface StandardsWatchItem {
   responseNote?: string;
 }
 
-// Shared response URL for items addressed by the OIT Enterprise AI
-// Development Framework discussion draft (April 2026). Per-item
-// responseNote captures what the draft provides for each ask.
+// Shared response URLs for items addressed by the OIT "AI for UI"
+// documents. The Enterprise AI Development Framework (discussion draft
+// April 2026, wiki page last updated June 10, 2026) carries the tech
+// standards; the AI-Assisted Builder Guide (May 2026) carries the
+// lifecycle/process standards for teams outside OIT. Per-item
+// responseNote captures what each draft provides for the ask.
 const OIT_FRAMEWORK_URL =
   "https://dev.azure.com/uidaho/Development/_wiki/wikis/Development.wiki/19540/Enterprise-AI-Development-Framework";
+const OIT_BUILDER_GUIDE_URL =
+  "https://dev.azure.com/uidaho/Development/_wiki/wikis/Development.wiki/19581/AI-Assisted-Builder-Guide";
 
 const PLACEHOLDER_DATE = "2026-02-15"; // mid-February — when these items first surfaced; refine per-entry as needed
 
@@ -55,7 +60,7 @@ export const standardsWatch: StandardsWatchItem[] = [
     status: "in-draft",
     responseUrl: OIT_FRAMEWORK_URL,
     responseNote:
-      "OIT Enterprise AI Development Framework (Apr 2026 discussion draft) defines a two-zone hosted environment (OIT-operated platform + per-team K8s namespace on OCI OKE / on-prem), API-first design via FastAPI, identity through Microsoft Entra ID, and a binding approved tech stack. Architecture-diagram and data-flow-diagram artifacts are required pre-deploy.",
+      "OIT Enterprise AI Development Framework (discussion draft; wiki updated Jun 2026) defines a two-zone hosted environment (OIT-operated platform + per-team K8s namespace on OCI OKE / on-prem), API-first design via FastAPI, identity through Microsoft Entra ID, and a binding approved tech stack. MindRouter is now listed in the stack table as the AI model gateway candidate (others TBD; approved-models list TBD). Architecture-diagram and data-flow-diagram artifacts are required pre-deploy.",
   },
   {
     id: "i-2",
@@ -92,7 +97,7 @@ export const standardsWatch: StandardsWatchItem[] = [
     status: "in-discussion",
     responseUrl: OIT_FRAMEWORK_URL,
     responseNote:
-      "Framework adopts APM 30.11 (Low / Moderate / High) as the binding classification scheme and specifies PostgreSQL + pgaudit for audit logging. Prompt and completion logs inherit the classification of underlying data. Canonical data models, retention, lineage, and DR standards are not yet specified.",
+      "Framework adopts APM 30.11 (Low / Moderate / High) as the binding classification scheme and specifies PostgreSQL with pgvector, pgaudit, and pgsodium (containerized, per application) — pgaudit covering audit logging. Prompt and completion logs inherit the classification of underlying data. The draft notes dev and test environments currently house production data. Canonical data models, retention, lineage, and DR standards are not yet specified.",
   },
   {
     id: "i-4",
@@ -129,7 +134,7 @@ export const standardsWatch: StandardsWatchItem[] = [
     status: "in-draft",
     responseUrl: OIT_FRAMEWORK_URL,
     responseNote:
-      "Framework defines OCI OKE + on-prem Kubernetes as the approved hosting environments, Azure Pipelines as the CI/CD pipeline (GitHub Actions under review), ArgoCD + Kustomize for GitOps deployment, and per-team K8s namespaces with no direct cluster access in test/prod. Each team gets a starter deployment repository. Specific environment-structure rules and IaC standards beyond Kustomize are not yet specified.",
+      "Framework defines OCI OKE + on-prem Kubernetes as the approved hosting environments (the Builder Guide adds Azure for production deployment), Azure Pipelines as the CI/CD pipeline (GitHub Actions under review), ADO as source control (GitHub Enterprise under review), ArgoCD + Kustomize for GitOps deployment, and per-team K8s namespaces with no direct cluster access in test/prod. Each team gets a starter deployment repository. Specific environment-structure rules and IaC standards beyond Kustomize are not yet specified.",
   },
   {
     id: "i-6",
@@ -144,10 +149,10 @@ export const standardsWatch: StandardsWatchItem[] = [
       "Change management requirements",
     ],
     dateRequested: PLACEHOLDER_DATE,
-    status: "in-discussion",
-    responseUrl: OIT_FRAMEWORK_URL,
+    status: "in-draft",
+    responseUrl: OIT_BUILDER_GUIDE_URL,
     responseNote:
-      "Framework names the required pre-deploy artifacts (systems architecture diagram, per-module data-flow diagrams, risk assessment, runbook covering deployment/rollback/incident response/alerting/ownership, EAR if new tech, VASA if new vendor). Long-term application ownership and support model is an explicit open question in the draft — options range from full product-team ownership to OIT-assumed long-term support; decision affects how applications are scoped, staffed, and funded.",
+      "The AI-Assisted Builder Guide (May 2026) now drafts the lifecycle end-to-end: a six-stage pathway with gates at stages 1, 3, 4, and 5, a hard security gate with no bypass, named-individual ownership (a department is not sufficient), and a runbook + documented decommission path on file before go-live, plus an annual ownership confirmation. The Framework separately names the pre-deploy artifact set (architecture diagram, data-flow diagrams, risk assessment, runbook, EAR, VASA). Long-term support responsibility remains an explicit open question — options range from full product-team ownership to OIT-assumed support.",
   },
   {
     id: "i-7",
@@ -194,7 +199,10 @@ export const standardsWatch: StandardsWatchItem[] = [
       "Communication expectations for breaking changes",
     ],
     dateRequested: PLACEHOLDER_DATE,
-    status: "not-started",
+    status: "in-discussion",
+    responseUrl: OIT_BUILDER_GUIDE_URL,
+    responseNote:
+      "The AI-Assisted Builder Guide's Stage 6 (Operate & Maintain) starts on this: builders notify OIT before any change, all updates follow the same review process as the original build, AI-vendor API deprecation remediation is the builder's responsibility, and an annual review confirms compliance, ownership, and continued need. Version-upgrade cadence, backward-compatibility rules, and breaking-change communication are not yet specified.",
   },
   {
     id: "i-10",
