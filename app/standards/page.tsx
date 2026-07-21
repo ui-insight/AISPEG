@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   standardsWatch,
   summary,
@@ -143,30 +144,51 @@ export default function StandardsWatchPage() {
           Active sources
         </p>
         <h2 className="mt-2 text-lg font-black tracking-tight text-brand-black">
-          OIT Enterprise AI Development Framework
+          OIT&rsquo;s AI governance runs on two tracks
         </h2>
         <p className="mt-2 max-w-3xl text-sm leading-relaxed text-ink-muted">
-          OIT (Kali Armitage) is circulating a discussion draft of the
-          Enterprise AI Development Framework, dated April 2026. It
-          proposes a paved-road model — a catalog of pre-approved tools,
-          patterns, and infrastructure so teams can build within safe
-          boundaries without per-project review — alongside a two-zone
-          hosted environment (OIT-operated platform plus per-team
-          Kubernetes namespace), APM 30.11 data classification, and a
-          required pre-deploy artifact set. Several decisions remain
-          open, including the AI model gateway, model-registry
-          ownership, local AI tooling policy, and long-term application
-          ownership.
+          The joint IIDS/OIT &ldquo;AI for UI&rdquo; effort (OIT delivery
+          lead: Kali Armitage) is drafting two companion documents. The{" "}
+          <span className="font-semibold text-brand-black">
+            Enterprise AI Development Framework
+          </span>{" "}
+          (discussion draft, updated June 2026) sets the technology
+          standards — a paved road of pre-approved tools, a two-zone
+          hosted environment, APM 30.11 data classification, and a
+          required pre-deploy artifact set. The{" "}
+          <span className="font-semibold text-brand-black">
+            AI-Assisted Builder Guide
+          </span>{" "}
+          (May 2026) sets the process for teams outside OIT deploying on
+          OIT infrastructure — a six-stage lifecycle with gates and six
+          rules for every in-scope application. Open decisions include
+          the AI model gateway (MindRouter is the named candidate),
+          model-registry ownership, local AI tooling policy, and
+          long-term application ownership.
         </p>
-        <p className="mt-3 text-sm">
+        <p className="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-sm">
           <a
             href="https://dev.azure.com/uidaho/Development/_wiki/wikis/Development.wiki/19540/Enterprise-AI-Development-Framework"
             target="_blank"
             rel="noopener noreferrer"
             className="font-medium text-brand-black underline decoration-brand-clearwater decoration-1 underline-offset-4 hover:decoration-2"
           >
-            Read the draft on the Azure DevOps wiki &rarr;
+            Framework draft &rarr;
           </a>
+          <a
+            href="https://dev.azure.com/uidaho/Development/_wiki/wikis/Development.wiki/19581/AI-Assisted-Builder-Guide"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-brand-black underline decoration-brand-clearwater decoration-1 underline-offset-4 hover:decoration-2"
+          >
+            Builder Guide &rarr;
+          </a>
+          <Link
+            href="/standards/oit-pathway"
+            className="font-medium text-brand-black underline decoration-brand-clearwater decoration-1 underline-offset-4 hover:decoration-2"
+          >
+            The pathway, and where our projects sit &rarr;
+          </Link>
         </p>
         <p className="mt-3 text-xs text-ink-subtle">
           Entries below tagged{" "}
@@ -177,7 +199,7 @@ export default function StandardsWatchPage() {
           <span className="rounded-full bg-amber-100 px-2 py-0.5 font-medium text-amber-800">
             In discussion
           </span>{" "}
-          are addressed in part or whole by this source.
+          are addressed in part or whole by these sources.
         </p>
       </section>
 

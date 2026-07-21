@@ -422,7 +422,7 @@ export const projects: Project[] = [
     operationalExcellenceOutcome:
       "Faster newsletter turnaround. Enforces AP + UI style consistently across issues. Reduces manual editorial burden per issue.",
     tech: ["React 19", "FastAPI", "SQLAlchemy 2.0", "MindRouter"],
-    relatedSlugs: ["mindrouter"],
+    relatedSlugs: ["mindrouter", "nexus"],
     workCategories: ["documents", "process"],
     strategicPlanAlignment: ["E.2"],
   },
@@ -517,7 +517,7 @@ export const projects: Project[] = [
     operationalExcellenceOutcome:
       "On-prem, UDM-aligned ERA system with shared data semantics across ORED tooling. Enables AI features (extraction, lookup, classification) on research-admin data without third-party data egress. Reference deployment for AI4RA partners.",
     tech: ["React", "TypeScript", "Tailwind CSS", "FastAPI", "SQLAlchemy 2.0", "PostgreSQL 16"],
-    relatedSlugs: ["vandalizer", "processmapping"],
+    relatedSlugs: ["vandalizer", "processmapping", "nexus"],
     workCategories: ["research-admin"],
     strategicPlanAlignment: ["D.2", "E.2"],
   },
@@ -798,7 +798,7 @@ export const projects: Project[] = [
     tagline:
       "OIT-managed application platform where UI application modules are deployed.",
     description:
-      "React + FastAPI application platform running on OIT-managed secure infrastructure, built collaboratively by OIT and IIDS. Nexus is the institutional template where University of Idaho application modules are deployed, providing a shared, audited, and security-hardened runtime for AI-enabled and traditional unit-level apps. Complements TEMPLATE-app: where TEMPLATE-app is the development scaffold, Nexus is the production landing zone.",
+      "React + FastAPI application platform running on OIT-managed secure infrastructure, built collaboratively by OIT and IIDS. Nexus is the institutional template where University of Idaho application modules are deployed, providing a shared, audited, and security-hardened runtime for AI-enabled and traditional unit-level apps. Complements TEMPLATE-app: where TEMPLATE-app is the development scaffold, Nexus is the production landing zone. Governed by OIT's Enterprise AI Development Framework (the approved tech stack) and AI-Assisted Builder Guide (the six-stage pathway for teams outside OIT); OpenERA and UCM Daily Register are the first IIDS-built applications entering that pathway.",
     homeUnits: ["Office of Information Technology"],
     operationalOwners: [
       { name: "Kali Armitage" },
@@ -815,7 +815,7 @@ export const projects: Project[] = [
       "Hosts UI application modules on OIT-managed secure infrastructure with a consistent runtime, identity, and security baseline. Target deployment surface for new UI apps that need institutional hosting.",
     operationalExcellenceOutcome:
       "Standardizes where institutional application modules live. Shared security posture, audit trail, and operational footprint across UI units. Reduces per-app hosting overhead and fragmentation.",
-    relatedSlugs: ["template-app"],
+    relatedSlugs: ["template-app", "openera", "ucm-daily-register"],
     workCategories: ["ai-infrastructure"],
     strategicPlanAlignment: ["E.1", "E.4"],
   },

@@ -9,6 +9,7 @@ const subNavItems = [
   { href: "/standards/strategic-plan", label: "Strategic Plan" },
   { href: "/standards/strategic-plan/map", label: "Map" },
   { href: "/standards/intake-crosswalk", label: "Intake Crosswalk" },
+  { href: "/standards/oit-pathway", label: "OIT Pathway" },
   { href: "/standards/operational-excellence", label: "Op Excellence Survey" },
 ];
 
