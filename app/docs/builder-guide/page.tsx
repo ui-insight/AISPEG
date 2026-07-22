@@ -115,6 +115,18 @@ export default function BuilderGuideDocsPage() {
         <li>Connect you with the right resources to get started building</li>
       </ul>
 
+      <InfoBox type="info" title="OIT-bound repository milestone">
+        If OIT-managed deployment is accepted as the target, the application&apos;s
+        deployment repository is created in or transferred to the{" "}
+        <a href="https://github.com/ui-AI4UI" target="_blank" rel="noopener noreferrer">
+          ui-AI4UI GitHub organization
+        </a>{" "}
+        during Stage 2, no later than the pre-review handoff. That milestone records
+        deployment intent and shared custody; it does not replace the security,
+        staging, or production gates. See the{" "}
+        <Link href="/standards/oit-pathway">OIT deployment pathway</Link>.
+      </InfoBox>
+
       <InfoBox type="info" title="Your submission is not a commitment">
         Submitting an idea through the assessment doesn&apos;t commit you to anything. It&apos;s a
         way to get guidance and start a conversation with the IIDS team about your needs.
