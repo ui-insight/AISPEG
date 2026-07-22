@@ -65,6 +65,21 @@ export interface PathwayStage {
   gate?: string;
 }
 
+// Concrete operating decisions that make the still-evolving source process
+// actionable. These are local IIDS/OIT milestones layered onto the published
+// draft lifecycle; they do not imply that the source wiki has been revised.
+export interface PathwayMilestone {
+  id: string;
+  stage: number;
+  name: string;
+  ledBy: StageLead;
+  href?: string;
+  summary: string;
+  completeWhen: string[];
+  boundary: string;
+  openQuestions?: string[];
+}
+
 export const PATHWAY_STAGES: PathwayStage[] = [
   {
     number: 1,
@@ -79,8 +94,8 @@ export const PATHWAY_STAGES: PathwayStage[] = [
     name: "Design & Build",
     ledBy: "Collaborative",
     summary:
-      "Builders lead development and engage OIT at defined milestones: intake, a design check-in before significant investment, and a pre-review handoff. Enterprise tooling (university-licensed Claude or GitHub Copilot, GitHub Enterprise) from day one; synthetic or anonymized test data only.",
-    gate: "Checkpoint: documentation and a working demo before requesting security review.",
+      "Builders lead development and engage OIT at defined milestones: intake, a design check-in before significant investment, and a pre-review handoff. Enterprise tooling (university-licensed Claude or GitHub Copilot, GitHub Enterprise) from day one; synthetic or anonymized test data only. The OIT deployment repository is established in ui-AI4UI no later than the pre-review handoff.",
+    gate: "Checkpoint: the repository-placement milestone, documentation, and a working demo are complete before requesting security review.",
   },
   {
     number: 3,
@@ -116,6 +131,31 @@ export const PATHWAY_STAGES: PathwayStage[] = [
   },
 ];
 
+export const PATHWAY_MILESTONES: PathwayMilestone[] = [
+  {
+    id: "oit-deployment-repository",
+    stage: 2,
+    name: "Establish the OIT deployment repository in ui-AI4UI",
+    ledBy: "Collaborative",
+    href: "https://github.com/ui-AI4UI",
+    summary:
+      "Once OIT-managed deployment is the accepted target, create the application's deployment repository in—or transfer it to—the ui-AI4UI GitHub organization. New projects should start there; existing projects complete the move no later than the Stage 2 pre-review handoff.",
+    completeWhen: [
+      "The deployment-bound repository exists under github.com/ui-AI4UI.",
+      "Named builder and OIT collaborators can access the repository for review and handoff work.",
+      "The repository URL is recorded in the project inventory and the OIT intake or handoff record.",
+    ],
+    boundary:
+      "Repository placement records deployment intent and shared custody. It is not security approval, support acceptance, or authorization to deploy; Stages 3 through 5 still apply.",
+    openQuestions: [
+      "Whether ui-AI4UI is the authoritative application repository or a deployment repository when an upstream or open-source repository also exists.",
+      "Which OIT and IIDS teams administer organization membership, repository creation, CODEOWNERS, and branch protections.",
+      "Whether GitHub Actions, Azure Pipelines, or both provide the binding CI/CD and required checks.",
+      "Who performs an existing-repository transfer and how issues, history, secrets, and external links are preserved.",
+    ],
+  },
+];
+
 // ---- Six rules for every in-scope application -------------------------
 
 export interface PathwayRule {
@@ -127,7 +167,7 @@ export const PATHWAY_RULES: PathwayRule[] = [
   {
     title: "Enterprise tooling from day one",
     detail:
-      "University-licensed Claude or GitHub Copilot plus GitHub Enterprise, with university guardrails, from the first line of code. Personal accounts and free tiers are not permitted for in-scope projects.",
+      "University-licensed Claude or GitHub Copilot plus GitHub Enterprise, with university guardrails, from the first line of code. For OIT-bound applications, the deployment repository is placed in ui-AI4UI as the Stage 2 operating milestone. Personal accounts and free tiers are not permitted for in-scope projects.",
   },
   {
     title: "Data classification first",
@@ -207,7 +247,7 @@ export const PATHWAY_PROJECTS: PathwayProject[] = [
     gateQuestions: [
       "Data classification under APM 30.11 — sponsored-research administration data spans multiple regulated types",
       "Authentication path to university SSO (Entra ID)",
-      "Source-control and CI/CD placement — the framework lists ADO with GitHub Enterprise and GitHub Actions under review",
+      "Repository and CI/CD handoff — establish the OIT deployment repository in ui-AI4UI at Stage 2; define its relationship to the AI4RA upstream plus branch, workflow, and release controls",
       "Observability stack (OpenTelemetry, Prometheus, Jaeger, Splunk) and pre-deploy artifact set",
     ],
   },
@@ -226,6 +266,7 @@ export const PATHWAY_PROJECTS: PathwayProject[] = [
       "Data classification under APM 30.11 — editorial submissions are institutional content; classification review will confirm the tier",
       "Authentication path to university SSO (Entra ID)",
       "AI API posture — MindRouter is on-prem and named in the framework's stack table; the approved-models list is still TBD",
+      "Repository and CI/CD handoff — establish the OIT deployment repository in ui-AI4UI by the Stage 2 pre-review handoff; define branch, workflow, and release controls",
       "Named individual owner for the Stage 5 go-live requirement (runbook and decommission path on file)",
     ],
   },

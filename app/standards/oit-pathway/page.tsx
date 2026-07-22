@@ -2,11 +2,13 @@ import Link from "next/link";
 import {
   OIT_SOURCE_DOCS,
   PATHWAY_STAGES,
+  PATHWAY_MILESTONES,
   PATHWAY_RULES,
   IN_SCOPE_TRIGGERS,
   OUT_OF_SCOPE_EXAMPLES,
   PATHWAY_PROJECTS,
   type PathwayStage,
+  type PathwayMilestone,
   type StageLead,
 } from "@/lib/oit-pathway";
 
@@ -32,7 +34,64 @@ function LeadChip({ lead }: { lead: StageLead }) {
   );
 }
 
+function MilestoneCard({ milestone }: { milestone: PathwayMilestone }) {
+  return (
+    <div className="mt-3 rounded-lg border border-brand-lupine/30 bg-brand-lupine/5 p-4">
+      <div className="flex flex-wrap items-center gap-2.5">
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-brand-huckleberry">
+          Operating milestone
+        </p>
+        <LeadChip lead={milestone.ledBy} />
+      </div>
+      <h4 className="mt-2 text-sm font-bold tracking-tight text-brand-black">
+        {milestone.href ? (
+          <a href={milestone.href} target="_blank" rel="noopener noreferrer">
+            {milestone.name}
+          </a>
+        ) : (
+          milestone.name
+        )}
+      </h4>
+      <p className="mt-1.5 text-sm leading-relaxed text-ink-muted">
+        {milestone.summary}
+      </p>
+      <p className="mt-3 text-xs font-semibold uppercase tracking-wider text-brand-silver">
+        Complete when
+      </p>
+      <ul className="mt-1.5 space-y-1">
+        {milestone.completeWhen.map((item) => (
+          <li key={item} className="text-sm leading-relaxed text-brand-black">
+            {item}
+          </li>
+        ))}
+      </ul>
+      <p className="mt-3 border-t border-brand-lupine/20 pt-3 text-xs leading-relaxed text-ink-subtle">
+        <span className="font-semibold text-brand-black">Boundary.</span>{" "}
+        {milestone.boundary}
+      </p>
+      {milestone.openQuestions && milestone.openQuestions.length > 0 && (
+        <div className="mt-3 border-t border-brand-lupine/20 pt-3">
+          <p className="text-xs font-semibold uppercase tracking-wider text-brand-silver">
+            Still to define
+          </p>
+          <ul className="mt-1.5 space-y-1">
+            {milestone.openQuestions.map((item) => (
+              <li key={item} className="text-xs leading-relaxed text-ink-muted">
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function StageRow({ stage }: { stage: PathwayStage }) {
+  const milestones = PATHWAY_MILESTONES.filter(
+    (milestone) => milestone.stage === stage.number
+  );
+
   return (
     <li className="relative pl-12">
       <span
@@ -55,6 +114,9 @@ function StageRow({ stage }: { stage: PathwayStage }) {
           <span className="font-semibold">Gate.</span> {stage.gate}
         </p>
       )}
+      {milestones.map((milestone) => (
+        <MilestoneCard key={milestone.id} milestone={milestone} />
+      ))}
     </li>
   );
 }
