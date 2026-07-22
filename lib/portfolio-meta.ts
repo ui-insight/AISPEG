@@ -20,6 +20,7 @@ export const portfolioMeta: Record<string, PortfolioMetaEntry> = {
   "openera": { lastCommitDate: "2026-07-09T20:10:34Z", fetchedAt: "2026-07-09T20:33:00.770Z" },
   "processmapping": { lastCommitDate: "2026-06-30T06:54:37Z", fetchedAt: "2026-07-09T20:33:00.770Z" },
   "rfd-career": { lastCommitDate: "2026-06-09T22:52:23Z", fetchedAt: "2026-07-09T20:33:00.770Z" },
+  "rfd-companion": { lastCommitDate: "2026-07-14T22:40:44Z", fetchedAt: "2026-07-22T14:20:03.000Z" },
   "sem-experiential": { lastCommitDate: "2026-06-30T14:55:27Z", fetchedAt: "2026-07-09T20:33:00.770Z" },
   "sidearm-pipeline": { lastCommitDate: "2026-07-17T21:03:11Z", fetchedAt: "2026-07-21T19:51:04.000Z" },
   "stratplan": { lastCommitDate: "2026-05-05T09:35:03Z", fetchedAt: "2026-07-09T20:33:00.770Z" },
