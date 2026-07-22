@@ -670,6 +670,52 @@ export const projects: Project[] = [
   // Research Faculty Development (ORED)
   // ============================================================
   {
+    slug: "rfd-companion",
+    name: "RFD Companion",
+    tagline:
+      "One accountable workspace for Research and Faculty Development operations.",
+    description:
+      "Standalone operational workspace for proposal-development support, faculty-development programs, internal competitions, events, reviews, shared calendars, and staff and faculty next actions. RFD Companion integrates with OpenERA through explicit least-privilege APIs, is intended to replace RFD's InfoReady workflows after parity and migration validation, and will replace TDX for proposal-development operations after a controlled cutover.",
+    homeUnits: ["Research Faculty Development (ORED)"],
+    operationalOwners: [
+      {
+        name: "Carly Cummings",
+        title: "Director of Research and Faculty Development",
+      },
+    ],
+    buildParticipants: ["IIDS", "Research and Faculty Development"],
+    status: "building",
+    visibility: "Public",
+    proposedDeploymentEnvironment: "to-be-determined",
+    enterpriseSystemReplacement: {
+      status: "yes",
+      systemName: "InfoReady",
+      annualCostUsd: 17_000,
+      renewalDate: "2026-11-06",
+    },
+    ai4raRelationship: "Adjacent",
+    iidsSponsor: "Barrie Robison",
+    repoUrl: "https://github.com/ui-insight/RFDModule",
+    isPrivateRepo: true,
+    operationalFunction:
+      "Coordinates RFD service requests, proposal checklists and task schedules, faculty-development programs and cohorts, competitions, events, reviews, shared deadlines, and role-scoped next actions while exchanging authoritative proposal and award data with OpenERA.",
+    operationalExcellenceOutcome:
+      "Replaces fragmented spreadsheets and vendor-shaped workflows with one RFD-owned operating model, reduces duplicate entry across research-administration systems, and positions RFD to retire the approximately $17,000-per-year InfoReady contract after validated parity and migration.",
+    tech: [
+      "React",
+      "TypeScript",
+      "FastAPI",
+      "SQLAlchemy 2.0",
+      "PostgreSQL 16",
+      "Redis",
+      "arq",
+      "Docker",
+    ],
+    relatedSlugs: ["openera", "rfd-career"],
+    workCategories: ["research-admin", "process", "coordination"],
+    strategicPlanAlignment: ["D.2", "E.2", "E.4"],
+  },
+  {
     slug: "rfd-career",
     name: "RFD CAREER Dashboard",
     tagline: "Cohort progress dashboard for the CAREER Club program.",
