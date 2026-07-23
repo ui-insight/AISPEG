@@ -244,7 +244,7 @@ export const projects: Project[] = [
     tagline:
       "AI extraction and validation for Accounts Payable vendor invoices.",
     description:
-      "Automates the front of the AP invoice pipeline: emailed invoices are captured, invoices without a PO number are auto-rejected back to the submitter, and the rest have key fields extracted (PO number, dates, invoice number, amount, remit-to address) and compared against PO data in Banner. AP staff work a review queue in a dashboard — correcting low-confidence extractions, requesting fixes from submitters, and marking invoices processed.",
+      "Automates the front of the AP invoice pipeline: emailed invoices are captured, invoices without a PO number are auto-rejected back to the submitter, and the rest have key fields extracted (PO number, dates, invoice number, amount, remit-to address) and compared against PO data in Banner. AP staff work a review queue in a dashboard — correcting low-confidence extractions, requesting fixes from submitters, and marking invoices processed. User testing with Accounts Payable resumed in July 2026.",
     homeUnits: ["Division of Financial Affairs"],
     operationalOwners: [
       { name: "Daniele Ramona Bodden", title: "AP team lead" },
@@ -321,14 +321,14 @@ export const projects: Project[] = [
     tagline:
       "Multi-state payroll withholding tracking for out-of-state employees.",
     description:
-      "Tracks state tax withholdings for UI employees working outside Idaho — including international W-4 cases routed through Payroll — and gets them remitted to the right state authorities. Automates the data transfer across systems that Payroll previously reconciled by hand.",
+      "Tracks state tax withholdings for UI employees working outside Idaho — including international W-4 cases routed through Payroll — and gets them remitted to the right state authorities. Automates the data transfer across systems that Payroll previously reconciled by hand. The project is paused until the Core4 dashboard is ready to accept additional modules.",
     homeUnits: ["Division of Financial Affairs"],
     operationalOwners: [
       { name: "Cretia Bunney" },
       { name: "Lisa Davis" },
     ],
     buildParticipants: ["IIDS"],
-    status: "prototype",
+    status: "paused",
     visibility: "Public",
     proposedDeploymentEnvironment: "to-be-determined",
     enterpriseSystemReplacement: { status: "to-be-determined" },
@@ -880,21 +880,18 @@ export const projects: Project[] = [
     slug: "template-app",
     name: "TEMPLATE-app",
     tagline:
-      "Production-ready scaffold for new UI business applications (under OIT review).",
+      "Archived reference scaffold for earlier UI business applications.",
     description:
-      "Opinionated starting point for building University business applications with agentic AI development. Bakes in UI's tech stack, documentation standards, data governance classification, security standards (JWT, RBAC, dependency scanning), CI/CD, and agent guidance from day one. Available for use by any UI unit; currently under OIT review for institutional-standards endorsement.",
+      "Archived scaffold that established an opinionated starting point for University business applications built with agentic AI development. It combined UI's technology stack, documentation standards, data-governance classification, security controls (JWT, RBAC, dependency scanning), CI/CD, and agent guidance. The record is retained as a reference for applications that adopted its patterns.",
     homeUnits: ["IIDS"],
     operationalOwners: [{ name: "Barrie Robison" }],
     buildParticipants: ["IIDS"],
-    status: "paused",
+    status: "archived",
     visibility: "Public",
     proposedDeploymentEnvironment: "not-applicable",
     enterpriseSystemReplacement: { status: "no" },
-    institutionalReviewStatus: "Under OIT review",
     ai4raRelationship: "Adjacent",
     iidsSponsor: "Luke Sheneman",
-    productionScope: "institution-wide",
-    supportContact: "Barrie Robison",
     repoUrl: "https://github.com/ui-insight/TEMPLATE-app",
     operationalFunction:
       "Standardizes how new UI business apps start. Enforces data governance, security, documentation, CI/CD, and agentic-development norms from day one. Consumed by SEM-experiential, Audit Dashboard, StratPlanTactics.",
