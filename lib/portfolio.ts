@@ -491,6 +491,38 @@ export const projects: Project[] = [
     workCategories: ["documents", "process"],
     strategicPlanAlignment: ["E.2"],
   },
+  {
+    slug: "mindrouter-video-storyboard",
+    name: "MindRouter Video Storyboard",
+    tagline:
+      "On-prem text- and image-to-video storyboarding for rapid advertising mockups.",
+    description:
+      "Video previsualization workflow requested by University Communications and Marketing to mock up an advertisement before filming. IIDS added a model-agnostic video-generation endpoint to MindRouter, currently backed by the open-weight LTX-Video 2.3 model on a dedicated NVIDIA H200, with integrated voice support and a limited MindRouter interface. A separate web application is now being built with Melissa Hartley to generate clips from text or reference photos, arrange them into a storyboard, and stitch them into an editable video sequence.",
+    homeUnits: ["University Communications and Marketing"],
+    operationalOwners: [{ name: "Melissa Hartley" }],
+    buildParticipants: ["IIDS"],
+    status: "building",
+    visibility: "Public",
+    proposedDeploymentEnvironment: "iids-hosted",
+    enterpriseSystemReplacement: { status: "no" },
+    ai4raRelationship: "None",
+    iidsSponsor: "Luke Sheneman",
+    repoUrl: "https://github.com/ui-insight/MindRouter",
+    operationalFunction:
+      "Generates short video clips from prompts or reference images, adds generated voice or audio, sequences clips on a storyboard, and stitches them into a draft that UCM can refine in its existing editing workflow.",
+    operationalExcellenceOutcome:
+      "Compresses ad concept development from a filming-first process to rapid visual iteration, gives stakeholders a concrete mockup before production resources are committed, and avoids per-clip commercial generation credits during early creative development.",
+    features: [
+      "Text-to-video clip generation",
+      "Image-to-video clip generation",
+      "Integrated voice and audio generation",
+      "Storyboard sequencing and clip stitching",
+    ],
+    tech: ["MindRouter", "LTX-Video 2.3", "NVIDIA H200"],
+    relatedSlugs: ["mindrouter", "dgx-stack", "ucm-daily-register"],
+    workCategories: ["process"],
+    strategicPlanAlignment: ["E.2"],
+  },
 
   // ============================================================
   // Office of Sponsored Programs (ORED)
