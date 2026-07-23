@@ -3,6 +3,8 @@ import type { ApplicationWithBlockers, Blocker } from "@/lib/work";
 import { blockerCategoryLabels, daysSince } from "@/lib/work";
 import { WORK_CATEGORY_LABELS } from "@/lib/work-categories";
 import { getPriority } from "@/lib/strategic-plan/catalog";
+import type { ClickUpRoi } from "@/lib/clickup-data";
+import { projectValueEvidence } from "@/lib/project-value";
 import {
   OPERATIONAL_LABEL,
   OPERATIONAL_TITLE,
@@ -54,6 +56,7 @@ export default function PortfolioCard({
   audience = "public",
   basePath = "/portfolio",
   latestUpdate,
+  roi,
 }: {
   app: ApplicationWithBlockers;
   audience?: "public" | "internal";
@@ -61,6 +64,9 @@ export default function PortfolioCard({
   // Most recent ClickUp status update (ADR 0004); omitted for projects
   // without a mapped ClickUp list.
   latestUpdate?: { postedAt: string; body: string } | null;
+  // Quantified return estimate from the ClickUp projection. Enterprise
+  // replacement economics live on `app` itself.
+  roi?: ClickUpRoi | null;
 }) {
   const owners = app.operationalOwners
     .map((o) => o.name)
@@ -90,6 +96,9 @@ export default function PortfolioCard({
     app.ai4raRelationship === "Adjacent" ||
     app.ai4raRelationship === "Reference";
   const isCapabilityDiffusion = app.tags.includes("diffusion");
+  const quantifiedReturns = projectValueEvidence(app, roi ?? null).filter(
+    (item) => item.lens === "direct-cost" || item.lens === "staff-capacity"
+  );
 
   return (
     <article className="group relative flex h-full flex-col rounded-xl border border-hairline bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
@@ -132,6 +141,28 @@ export default function PortfolioCard({
         <p className="mt-3 text-sm leading-relaxed text-ink-muted">
           {app.tagline}
         </p>
+      )}
+
+      {quantifiedReturns.length > 0 && (
+        <div className="mt-4 border-y border-hairline py-3">
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-brand-silver">
+            Potential return
+          </p>
+          <dl className="mt-1.5 space-y-1.5">
+            {quantifiedReturns.map((item) => (
+              <div key={item.lens} className="flex items-baseline gap-2 text-xs">
+                <dt className="font-bold tabular-nums text-brand-black">
+                  {item.summary}
+                </dt>
+                <dd className="text-ink-muted">
+                  {item.lens === "direct-cost"
+                    ? "annual software cost potentially displaced"
+                    : "estimated staff capacity returned"}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
       )}
 
       {latestUpdate && (

@@ -7,7 +7,18 @@ import {
   groupByHomeUnit,
   type ApplicationWithBlockers,
 } from "@/lib/work";
-import { getCardStatusLines, countPendingRequests } from "@/lib/clickup-data";
+import {
+  getCardStatusLines,
+  countPendingRequests,
+  getRoiBySlug,
+} from "@/lib/clickup-data";
+import {
+  PROJECT_VALUE_LENSES,
+  evidenceForLens,
+  isProjectValueLens,
+  projectValueEvidence,
+  type ProjectValueLens,
+} from "@/lib/project-value";
 import {
   WORK_CATEGORIES,
   WORK_CATEGORY_LABELS,
@@ -32,6 +43,7 @@ interface PortfolioSearchParams {
   stage?: string;
   status?: string;
   category?: string;
+  value?: string;
   blockers?: string;
   sort?: string;
 }
@@ -92,14 +104,43 @@ export default async function PortfolioPage({
   )
     ? (params.category!.trim() as WorkCategory)
     : null;
+  const selectedValue: ProjectValueLens | null = isProjectValueLens(
+    params.value?.trim()
+  )
+    ? (params.value!.trim() as ProjectValueLens)
+    : null;
   const blockersOnly = params.blockers === "1";
   const sortMode: SortMode = isSortMode(params.sort) ? params.sort : "default";
 
-  const [allApps, latestUpdates, pendingRequestCount] = await Promise.all([
+  const [allApps, latestUpdates, pendingRequestCount, roiBySlug] = await Promise.all([
     listApplications({ audience: "public" }),
     getCardStatusLines(),
     countPendingRequests(),
+    getRoiBySlug(),
   ]);
+
+  const valueEvidenceBySlug = new Map(
+    allApps.map((app) => [
+      app.slug,
+      projectValueEvidence(app, roiBySlug.get(app.slug) ?? null),
+    ])
+  );
+  const valueCounts = new Map<ProjectValueLens, number>();
+  for (const evidence of valueEvidenceBySlug.values()) {
+    for (const item of evidence) {
+      valueCounts.set(item.lens, (valueCounts.get(item.lens) ?? 0) + 1);
+    }
+  }
+  const annualSoftwareCostPotential = allApps.reduce((sum, app) => {
+    const replacement = app.enterpriseSystemReplacement;
+    return replacement.status === "yes"
+      ? sum + replacement.annualCostUsd
+      : sum;
+  }, 0);
+  const staffCapacityPotential = allApps.reduce((sum, app) => {
+    const roiFte = roiBySlug.get(app.slug)?.roiFte;
+    return sum + (roiFte && roiFte > 0 ? roiFte : 0);
+  }, 0);
 
   // Build filter option lists from the unfiltered set so users see what's
   // available to filter by even after they've applied something.
@@ -154,6 +195,11 @@ export default async function PortfolioPage({
       if (!rollup.includes(app.status)) return false;
     }
     if (selectedCategory && !app.workCategories.includes(selectedCategory))
+      return false;
+    if (
+      selectedValue &&
+      !evidenceForLens(valueEvidenceBySlug.get(app.slug) ?? [], selectedValue)
+    )
       return false;
     if (blockersOnly && app.activeBlockers.length === 0) return false;
     return true;
@@ -266,16 +312,133 @@ export default async function PortfolioPage({
           )}
         </p>
 
-        {/* CTA — gold-bordered, the only Pride Gold moment in the header */}
-        <div>
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
           <Link
             href="/builder-guide"
             className="unstyled inline-flex items-center gap-1.5 rounded-md border-2 border-ui-gold bg-ui-gold/10 px-3.5 py-1.5 text-sm font-semibold text-brand-black transition-colors hover:bg-ui-gold/25"
           >
             Submit a new AI project &rarr;
           </Link>
+          <Link
+            href="/portfolio/pipeline"
+            className="text-sm font-semibold text-brand-black"
+          >
+            Browse requested projects &rarr;
+          </Link>
         </div>
       </header>
+
+      <section aria-labelledby="browse-by-value-heading">
+        <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
+          <div>
+            <p
+              id="browse-by-value-heading"
+              className="text-xs font-medium uppercase tracking-wider text-brand-silver"
+            >
+              Browse by return
+            </p>
+            <p className="mt-1 max-w-3xl text-sm text-ink-muted">
+              Compare direct financial potential with capacity, strategic,
+              reach, and reuse signals. These are estimates and declared
+              outcomes, not realized net savings.
+            </p>
+          </div>
+          {(annualSoftwareCostPotential > 0 || staffCapacityPotential > 0) && (
+            <p className="text-xs text-ink-muted">
+              {annualSoftwareCostPotential > 0 && (
+                <>
+                  <span className="font-bold tabular-nums text-brand-black">
+                    {new Intl.NumberFormat("en-US", {
+                      style: "currency",
+                      currency: "USD",
+                      maximumFractionDigits: 0,
+                    }).format(annualSoftwareCostPotential)}
+                    /year
+                  </span>{" "}
+                  in software cost potentially displaced
+                </>
+              )}
+              {annualSoftwareCostPotential > 0 && staffCapacityPotential > 0 && (
+                <span className="mx-2 text-brand-silver">·</span>
+              )}
+              {staffCapacityPotential > 0 && (
+                <>
+                  <span className="font-bold tabular-nums text-brand-black">
+                    {new Intl.NumberFormat("en-US", {
+                      maximumFractionDigits: 2,
+                    }).format(staffCapacityPotential)}{" "}
+                    FTE
+                  </span>{" "}
+                  estimated capacity
+                </>
+              )}
+            </p>
+          )}
+        </div>
+        <div className="mt-3 flex flex-wrap gap-1.5">
+          {(() => {
+            const valueHref = (value: ProjectValueLens | null) => {
+              const sp = new URLSearchParams();
+              if (selectedUnit) sp.set("unit", selectedUnit);
+              if (selectedStage) sp.set("stage", selectedStage);
+              if (selectedStatus) sp.set("status", selectedStatus);
+              if (selectedCategory) sp.set("category", selectedCategory);
+              if (value) sp.set("value", value);
+              if (blockersOnly) sp.set("blockers", "1");
+              if (sortMode !== "default") sp.set("sort", sortMode);
+              const qs = sp.toString();
+              return qs ? `/portfolio?${qs}` : "/portfolio";
+            };
+            return (
+              <>
+                <Link
+                  href={valueHref(null)}
+                  aria-current={!selectedValue ? "page" : undefined}
+                  className={`unstyled inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+                    !selectedValue
+                      ? "border-ui-gold bg-ui-gold/15 text-brand-black"
+                      : "border-hairline bg-white text-ink-muted hover:border-brand-silver/40 hover:bg-surface-alt"
+                  }`}
+                >
+                  All return types
+                  <span className="rounded-full bg-surface-alt px-1.5 py-0 text-[10px] font-semibold text-ink-subtle">
+                    {allApps.length}
+                  </span>
+                </Link>
+                {PROJECT_VALUE_LENSES.map((lens) => {
+                  const count = valueCounts.get(lens.value) ?? 0;
+                  if (count === 0) return null;
+                  const active = selectedValue === lens.value;
+                  return (
+                    <Link
+                      key={lens.value}
+                      href={valueHref(lens.value)}
+                      aria-current={active ? "page" : undefined}
+                      title={lens.description}
+                      className={`unstyled inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+                        active
+                          ? "border-ui-gold bg-ui-gold/15 text-brand-black"
+                          : "border-hairline bg-white text-ink-muted hover:border-brand-silver/40 hover:bg-surface-alt"
+                      }`}
+                    >
+                      {lens.label}
+                      <span
+                        className={`rounded-full px-1.5 py-0 text-[10px] font-semibold ${
+                          active
+                            ? "bg-brand-black/10 text-brand-black"
+                            : "bg-surface-alt text-ink-subtle"
+                        }`}
+                      >
+                        {count}
+                      </span>
+                    </Link>
+                  );
+                })}
+              </>
+            );
+          })()}
+        </div>
+      </section>
 
       {/* Browse-by-problem entry strip — categories are also reachable
           via filter chips inside PortfolioFilters in spirit, but cold
@@ -303,6 +466,7 @@ export default async function PortfolioPage({
               if (selectedStage) sp.set("stage", selectedStage);
               if (selectedStatus) sp.set("status", selectedStatus);
               if (cat) sp.set("category", cat);
+              if (selectedValue) sp.set("value", selectedValue);
               if (blockersOnly) sp.set("blockers", "1");
               if (sortMode !== "default") sp.set("sort", sortMode);
               const qs = sp.toString();
@@ -368,6 +532,7 @@ export default async function PortfolioPage({
           stage: selectedStage,
           status: selectedStatus,
           category: selectedCategory,
+          value: selectedValue,
           blockers: blockersOnly,
           sort: sortMode,
         }}
@@ -398,6 +563,7 @@ export default async function PortfolioPage({
               app={app}
               audience="public"
               latestUpdate={latestUpdates.get(app.slug) ?? null}
+              roi={roiBySlug.get(app.slug) ?? null}
             />
           ))}
         </div>
@@ -422,6 +588,7 @@ export default async function PortfolioPage({
                   app={app}
                   audience="public"
                   latestUpdate={latestUpdates.get(app.slug) ?? null}
+                  roi={roiBySlug.get(app.slug) ?? null}
                 />
               ))}
             </div>
