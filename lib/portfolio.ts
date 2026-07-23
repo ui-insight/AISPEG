@@ -348,7 +348,7 @@ export const projects: Project[] = [
     tagline:
       "Electronic retro-pay intake and payroll analyst dashboard.",
     description:
-      "Replaces the paper/email retroactive payment request process with a validated electronic submission flow plus a dashboard for payroll analysts. Submissions are checked for completeness and verified against Banner data before they reach an analyst, so corrections happen at intake instead of mid-process.",
+      "Replaces the paper/email retroactive payment request process with a validated electronic submission flow plus a dashboard for payroll analysts. Submissions are checked for completeness and verified against Banner data before they reach an analyst, so corrections happen at intake instead of mid-process. As of July 2026, several pull requests are ready for testing and temporary reactivation of the test environment has been requested.",
     homeUnits: ["Division of Financial Affairs"],
     operationalOwners: [
       { name: "Lisa Davis" },
@@ -534,7 +534,7 @@ export const projects: Project[] = [
     tagline:
       "Open electronic research administration system — canonical UDM implementor for sponsored research.",
     description:
-      "Institutional sponsored-research administration system, operated by IIDS for the Office of Research and Economic Development. The canonical implementor of the AI4RA Unified Data Model in research administration: 32 tables spanning 20 canonical UDM tables and 12 project-specific extensions. AI4RA Core dual-destiny project; designed to be deployable beyond UI as the partnership matures.",
+      "Institutional sponsored-research administration system, operated by IIDS for the Office of Research and Economic Development. The canonical implementor of the AI4RA Unified Data Model in research administration: 32 tables spanning 20 canonical UDM tables and 12 project-specific extensions. AI4RA Core dual-destiny project; designed to be deployable beyond UI as the partnership matures. As of July 2026, the team has outlined the VERAS-replacement MVP and the required dual-operation period, with three to four developers contributing. The renamed OSP module is in development, with its sub-module access structure awaiting Microsoft Entra group creation; transfer of the repository to the new UI AI for UI GitHub organization is also pending.",
     homeUnits: ["Office of Research and Economic Development"],
     operationalOwners: [
       { name: "Sarah Martonick", title: "UI implementation owner" },
@@ -940,7 +940,7 @@ export const projects: Project[] = [
     tagline:
       "OIT-managed application platform where UI application modules are deployed.",
     description:
-      "React + FastAPI application platform running on OIT-managed secure infrastructure, built collaboratively by OIT and IIDS. Nexus is the institutional template where University of Idaho application modules are deployed, providing a shared, audited, and security-hardened runtime for AI-enabled and traditional unit-level apps. Complements TEMPLATE-app: where TEMPLATE-app is the development scaffold, Nexus is the production landing zone. Governed by OIT's Enterprise AI Development Framework (the approved tech stack) and AI-Assisted Builder Guide (the six-stage pathway for teams outside OIT); OpenERA and UCM Daily Register are the first IIDS-built applications entering that pathway.",
+      "React + FastAPI application platform running on OIT-managed secure infrastructure, built collaboratively by OIT and IIDS. Nexus is the institutional template where University of Idaho application modules are deployed, providing a shared, audited, and security-hardened runtime for AI-enabled and traditional unit-level apps. Complements TEMPLATE-app: where TEMPLATE-app is the development scaffold, Nexus is the production landing zone. Governed by OIT's Enterprise AI Development Framework (the approved tech stack) and AI-Assisted Builder Guide (the six-stage pathway for teams outside OIT); OpenERA and UCM Daily Register are the first IIDS-built applications entering that pathway. Nexus continues to receive regular updates; recurring security-review tickets and approval steps on pull requests are the main reported delivery friction.",
     homeUnits: ["Office of Information Technology"],
     operationalOwners: [
       { name: "Kali Armitage" },
