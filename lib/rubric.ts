@@ -38,6 +38,54 @@ export interface RubricGroup {
   description: string;
 }
 
+export const REQUEST_VALUE_LENSES = [
+  {
+    value: "financial",
+    label: "Financial impact",
+    rubricKey: "a2",
+    description: "Potential annual savings, revenue, or grant value.",
+  },
+  {
+    value: "strategic",
+    label: "Strategic alignment",
+    rubricKey: "a1",
+    description: "Direct support for a university strategic priority.",
+  },
+  {
+    value: "reach",
+    label: "Breadth of impact",
+    rubricKey: "a3",
+    description: "How many users, departments, or divisions benefit.",
+  },
+  {
+    value: "visibility",
+    label: "Reputation",
+    rubricKey: "a4",
+    description: "Institutional visibility and leadership potential.",
+  },
+  {
+    value: "time-returned",
+    label: "Time returned",
+    rubricKey: "c2",
+    description: "How much work the project could remove for each user.",
+  },
+  {
+    value: "urgency",
+    label: "Risk and urgency",
+    rubricKey: "c1",
+    description: "Severity of the compliance, security, or operational need.",
+  },
+] as const;
+
+export type RequestValueLens =
+  (typeof REQUEST_VALUE_LENSES)[number]["value"];
+
+export function isRequestValueLens(
+  value: string | undefined
+): value is RequestValueLens {
+  return REQUEST_VALUE_LENSES.some((lens) => lens.value === value);
+}
+
 export const RUBRIC_GROUPS: readonly RubricGroup[] = [
   {
     code: "A",

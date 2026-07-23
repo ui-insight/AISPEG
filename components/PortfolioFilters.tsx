@@ -11,6 +11,7 @@ import {
   type ProjectStatus,
   type PublicStage,
 } from "@/lib/portfolio";
+import type { ProjectValueLens } from "@/lib/project-value";
 
 // Pure URL-state filter chip group. The portfolio page builds the option
 // lists from the unfiltered data and passes them in; clicking a pill
@@ -57,6 +58,9 @@ export interface PortfolioFiltersProps {
     // (per #260). Kept in the prop so this component can preserve it in
     // hrefs for the other filter chips.
     category: string | null;
+    // Selected in the page-level return lens strip. Preserved here when
+    // changing stage, unit, blocker, or sort controls.
+    value: ProjectValueLens | null;
     blockers: boolean;
     sort: "default" | "name" | "blockers";
   };
@@ -163,6 +167,7 @@ export default function PortfolioFilters({
     !!selected.stage ||
     !!selected.status ||
     !!selected.category ||
+    !!selected.value ||
     selected.blockers ||
     selected.sort !== "default";
 
@@ -172,6 +177,7 @@ export default function PortfolioFilters({
     stage: selected.stage,
     status: selected.status,
     category: selected.category,
+    value: selected.value,
     blockers: selected.blockers ? "1" : null,
     sort: selected.sort === "default" ? null : selected.sort,
   };

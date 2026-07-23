@@ -123,10 +123,7 @@ export default async function Home() {
 
       {/* BUILD + EVALUATE — secondary lanes, side-by-side at desktop */}
       <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <Link
-          href="/builder-guide"
-          className="group block rounded-xl border border-hairline bg-white p-6 transition-shadow hover:shadow-md"
-        >
+        <div className="rounded-xl border border-hairline bg-white p-6">
           <p className="text-xs font-medium uppercase tracking-wider text-brand-silver">
             Build
           </p>
@@ -138,10 +135,15 @@ export default async function Home() {
             a 2-business-day SLA. We tell you whether it&rsquo;s a candidate,
             what&rsquo;s already adjacent, and what comes next.
           </p>
-          <p className="mt-4 inline-flex items-center text-sm font-semibold text-brand-clearwater group-hover:underline">
-            Submit a project &rarr;
-          </p>
-        </Link>
+          <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-semibold">
+            <Link href="/builder-guide" className="text-brand-clearwater">
+              Submit a project &rarr;
+            </Link>
+            <Link href="/portfolio/pipeline" className="text-brand-black">
+              Browse requested projects &rarr;
+            </Link>
+          </div>
+        </div>
 
         <div className="rounded-xl border border-hairline bg-white p-6">
           <p className="text-xs font-medium uppercase tracking-wider text-brand-silver">
