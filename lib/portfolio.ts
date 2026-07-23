@@ -186,11 +186,11 @@ export const projects: Project[] = [
     tagline:
       "AI-enabled Idaho water law repository — SRBA decisions, records, and settlements.",
     description:
-      "Tiered repository of Idaho water law centered on the Snake River Basin Adjudication (SRBA): judicial decisions, historical records, and key settlements, ingested from the existing system and from paper documents via large-scale OCR on IIDS's on-prem GPU cluster. A web interface supports natural-language queries and visualizations such as diversion maps, giving legislators, water managers, and rights holders fast, verified answers instead of relitigating past disputes.",
+      "Tiered repository of Idaho water law centered on the Snake River Basin Adjudication (SRBA): judicial decisions, historical records, and key settlements, ingested from the existing system and from paper documents via large-scale OCR on IIDS's on-prem GPU cluster. A web interface supports natural-language queries and visualizations such as diversion maps, giving legislators, water managers, and rights holders fast, verified answers instead of relitigating past disputes. Stakeholder feedback sessions are being scheduled to validate needs and priorities for the next phase.",
     homeUnits: ["Office of the President"],
     operationalOwners: [{ name: "Luke Sheneman" }],
     buildParticipants: ["IIDS"],
-    status: "building",
+    status: "approved",
     visibility: "Public",
     proposedDeploymentEnvironment: "to-be-determined",
     enterpriseSystemReplacement: { status: "to-be-determined" },
@@ -244,7 +244,7 @@ export const projects: Project[] = [
     tagline:
       "AI extraction and validation for Accounts Payable vendor invoices.",
     description:
-      "Automates the front of the AP invoice pipeline: emailed invoices are captured, invoices without a PO number are auto-rejected back to the submitter, and the rest have key fields extracted (PO number, dates, invoice number, amount, remit-to address) and compared against PO data in Banner. AP staff work a review queue in a dashboard — correcting low-confidence extractions, requesting fixes from submitters, and marking invoices processed.",
+      "Automates the front of the AP invoice pipeline: emailed invoices are captured, invoices without a PO number are auto-rejected back to the submitter, and the rest have key fields extracted (PO number, dates, invoice number, amount, remit-to address) and compared against PO data in Banner. AP staff work a review queue in a dashboard — correcting low-confidence extractions, requesting fixes from submitters, and marking invoices processed. User testing with Accounts Payable resumed in July 2026.",
     homeUnits: ["Division of Financial Affairs"],
     operationalOwners: [
       { name: "Daniele Ramona Bodden", title: "AP team lead" },
@@ -321,14 +321,14 @@ export const projects: Project[] = [
     tagline:
       "Multi-state payroll withholding tracking for out-of-state employees.",
     description:
-      "Tracks state tax withholdings for UI employees working outside Idaho — including international W-4 cases routed through Payroll — and gets them remitted to the right state authorities. Automates the data transfer across systems that Payroll previously reconciled by hand.",
+      "Tracks state tax withholdings for UI employees working outside Idaho — including international W-4 cases routed through Payroll — and gets them remitted to the right state authorities. Automates the data transfer across systems that Payroll previously reconciled by hand. The project is paused until the Core4 dashboard is ready to accept additional modules.",
     homeUnits: ["Division of Financial Affairs"],
     operationalOwners: [
       { name: "Cretia Bunney" },
       { name: "Lisa Davis" },
     ],
     buildParticipants: ["IIDS"],
-    status: "prototype",
+    status: "paused",
     visibility: "Public",
     proposedDeploymentEnvironment: "to-be-determined",
     enterpriseSystemReplacement: { status: "to-be-determined" },
@@ -348,7 +348,7 @@ export const projects: Project[] = [
     tagline:
       "Electronic retro-pay intake and payroll analyst dashboard.",
     description:
-      "Replaces the paper/email retroactive payment request process with a validated electronic submission flow plus a dashboard for payroll analysts. Submissions are checked for completeness and verified against Banner data before they reach an analyst, so corrections happen at intake instead of mid-process.",
+      "Replaces the paper/email retroactive payment request process with a validated electronic submission flow plus a dashboard for payroll analysts. Submissions are checked for completeness and verified against Banner data before they reach an analyst, so corrections happen at intake instead of mid-process. As of July 2026, several pull requests are ready for testing and temporary reactivation of the test environment has been requested.",
     homeUnits: ["Division of Financial Affairs"],
     operationalOwners: [
       { name: "Lisa Davis" },
@@ -432,7 +432,7 @@ export const projects: Project[] = [
     name: "UCM Daily Register",
     tagline: "AI-assisted newsletter production pipeline for UCM.",
     description:
-      "Editorial pipeline for The Daily Register and My UI. Submission intake, AI-assisted style editing (Claude or OpenAI via MindRouter, with AP + UI style enforcement), word-level diff review, section-organized auto-assembly, and branded .docx export.",
+      "Editorial pipeline for The Daily Register and My UI. Submission intake, AI-assisted style editing (Claude or OpenAI via MindRouter, with AP + UI style enforcement), word-level diff review, section-organized auto-assembly, and branded .docx export. The application is in advanced user testing with the UCM newsletter team and is ready for repository migration to ui-AI4UI.",
     homeUnits: ["University Communications and Marketing"],
     operationalOwners: [
       { name: "Joy Bauer" },
@@ -440,13 +440,18 @@ export const projects: Project[] = [
       { name: "Jodi Walker" },
     ],
     buildParticipants: ["IIDS"],
-    status: "prototype",
+    status: "piloting",
     visibility: "Public",
     proposedDeploymentEnvironment: "oit-hosted",
     enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "None",
     iidsSponsor: "Barrie Robison",
     liveUrlIsStaging: true,
+    pilotCohort: {
+      size: 3,
+      scope: "University Communications and Marketing newsletter team",
+      namedUsers: ["Joy Bauer", "Leigh Cooper", "Jodi Walker"],
+    },
     repoUrl: "https://github.com/ui-insight/UCMDailyRegister",
     liveUrl: "https://ucmnews.insight.uidaho.edu",
     operationalFunction:
@@ -534,7 +539,7 @@ export const projects: Project[] = [
     tagline:
       "Open electronic research administration system — canonical UDM implementor for sponsored research.",
     description:
-      "Institutional sponsored-research administration system, operated by IIDS for the Office of Research and Economic Development. The canonical implementor of the AI4RA Unified Data Model in research administration: 32 tables spanning 20 canonical UDM tables and 12 project-specific extensions. AI4RA Core dual-destiny project; designed to be deployable beyond UI as the partnership matures.",
+      "Institutional sponsored-research administration system, operated by IIDS for the Office of Research and Economic Development. The canonical implementor of the AI4RA Unified Data Model in research administration: 32 tables spanning 20 canonical UDM tables and 12 project-specific extensions. AI4RA Core dual-destiny project; designed to be deployable beyond UI as the partnership matures. As of July 2026, the team has outlined the VERAS-replacement MVP and the required dual-operation period, with three to four developers contributing. The renamed OSP module is in development, with its sub-module access structure awaiting Microsoft Entra group creation; transfer of the repository to the new UI AI for UI GitHub organization is also pending.",
     homeUnits: ["Office of Research and Economic Development"],
     operationalOwners: [
       { name: "Sarah Martonick", title: "UI implementation owner" },
@@ -880,21 +885,18 @@ export const projects: Project[] = [
     slug: "template-app",
     name: "TEMPLATE-app",
     tagline:
-      "Production-ready scaffold for new UI business applications (under OIT review).",
+      "Archived reference scaffold for earlier UI business applications.",
     description:
-      "Opinionated starting point for building University business applications with agentic AI development. Bakes in UI's tech stack, documentation standards, data governance classification, security standards (JWT, RBAC, dependency scanning), CI/CD, and agent guidance from day one. Available for use by any UI unit; currently under OIT review for institutional-standards endorsement.",
+      "Archived scaffold that established an opinionated starting point for University business applications built with agentic AI development. It combined UI's technology stack, documentation standards, data-governance classification, security controls (JWT, RBAC, dependency scanning), CI/CD, and agent guidance. The record is retained as a reference for applications that adopted its patterns.",
     homeUnits: ["IIDS"],
     operationalOwners: [{ name: "Barrie Robison" }],
     buildParticipants: ["IIDS"],
-    status: "paused",
+    status: "archived",
     visibility: "Public",
     proposedDeploymentEnvironment: "not-applicable",
     enterpriseSystemReplacement: { status: "no" },
-    institutionalReviewStatus: "Under OIT review",
     ai4raRelationship: "Adjacent",
     iidsSponsor: "Luke Sheneman",
-    productionScope: "institution-wide",
-    supportContact: "Barrie Robison",
     repoUrl: "https://github.com/ui-insight/TEMPLATE-app",
     operationalFunction:
       "Standardizes how new UI business apps start. Enforces data governance, security, documentation, CI/CD, and agentic-development norms from day one. Consumed by SEM-experiential, Audit Dashboard, StratPlanTactics.",
@@ -943,7 +945,7 @@ export const projects: Project[] = [
     tagline:
       "OIT-managed application platform where UI application modules are deployed.",
     description:
-      "React + FastAPI application platform running on OIT-managed secure infrastructure, built collaboratively by OIT and IIDS. Nexus is the institutional template where University of Idaho application modules are deployed, providing a shared, audited, and security-hardened runtime for AI-enabled and traditional unit-level apps. Complements TEMPLATE-app: where TEMPLATE-app is the development scaffold, Nexus is the production landing zone. Governed by OIT's Enterprise AI Development Framework (the approved tech stack) and AI-Assisted Builder Guide (the six-stage pathway for teams outside OIT); OpenERA and UCM Daily Register are the first IIDS-built applications entering that pathway.",
+      "React + FastAPI application platform running on OIT-managed secure infrastructure, built collaboratively by OIT and IIDS. Nexus is the institutional template where University of Idaho application modules are deployed, providing a shared, audited, and security-hardened runtime for AI-enabled and traditional unit-level apps. Complements TEMPLATE-app: where TEMPLATE-app is the development scaffold, Nexus is the production landing zone. Governed by OIT's Enterprise AI Development Framework (the approved tech stack) and AI-Assisted Builder Guide (the six-stage pathway for teams outside OIT); OpenERA and UCM Daily Register are the first IIDS-built applications entering that pathway. Nexus continues to receive regular updates; recurring security-review tickets and approval steps on pull requests are the main reported delivery friction.",
     homeUnits: ["Office of Information Technology"],
     operationalOwners: [
       { name: "Kali Armitage" },
