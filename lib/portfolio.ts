@@ -186,11 +186,11 @@ export const projects: Project[] = [
     tagline:
       "AI-enabled Idaho water law repository — SRBA decisions, records, and settlements.",
     description:
-      "Tiered repository of Idaho water law centered on the Snake River Basin Adjudication (SRBA): judicial decisions, historical records, and key settlements, ingested from the existing system and from paper documents via large-scale OCR on IIDS's on-prem GPU cluster. A web interface supports natural-language queries and visualizations such as diversion maps, giving legislators, water managers, and rights holders fast, verified answers instead of relitigating past disputes.",
+      "Tiered repository of Idaho water law centered on the Snake River Basin Adjudication (SRBA): judicial decisions, historical records, and key settlements, ingested from the existing system and from paper documents via large-scale OCR on IIDS's on-prem GPU cluster. A web interface supports natural-language queries and visualizations such as diversion maps, giving legislators, water managers, and rights holders fast, verified answers instead of relitigating past disputes. Stakeholder feedback sessions are being scheduled to validate needs and priorities for the next phase.",
     homeUnits: ["Office of the President"],
     operationalOwners: [{ name: "Luke Sheneman" }],
     buildParticipants: ["IIDS"],
-    status: "building",
+    status: "approved",
     visibility: "Public",
     proposedDeploymentEnvironment: "to-be-determined",
     enterpriseSystemReplacement: { status: "to-be-determined" },
@@ -432,7 +432,7 @@ export const projects: Project[] = [
     name: "UCM Daily Register",
     tagline: "AI-assisted newsletter production pipeline for UCM.",
     description:
-      "Editorial pipeline for The Daily Register and My UI. Submission intake, AI-assisted style editing (Claude or OpenAI via MindRouter, with AP + UI style enforcement), word-level diff review, section-organized auto-assembly, and branded .docx export.",
+      "Editorial pipeline for The Daily Register and My UI. Submission intake, AI-assisted style editing (Claude or OpenAI via MindRouter, with AP + UI style enforcement), word-level diff review, section-organized auto-assembly, and branded .docx export. The application is in advanced user testing with the UCM newsletter team and is ready for repository migration to ui-AI4UI.",
     homeUnits: ["University Communications and Marketing"],
     operationalOwners: [
       { name: "Joy Bauer" },
@@ -440,13 +440,18 @@ export const projects: Project[] = [
       { name: "Jodi Walker" },
     ],
     buildParticipants: ["IIDS"],
-    status: "prototype",
+    status: "piloting",
     visibility: "Public",
     proposedDeploymentEnvironment: "oit-hosted",
     enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "None",
     iidsSponsor: "Barrie Robison",
     liveUrlIsStaging: true,
+    pilotCohort: {
+      size: 3,
+      scope: "University Communications and Marketing newsletter team",
+      namedUsers: ["Joy Bauer", "Leigh Cooper", "Jodi Walker"],
+    },
     repoUrl: "https://github.com/ui-insight/UCMDailyRegister",
     liveUrl: "https://ucmnews.insight.uidaho.edu",
     operationalFunction:
