@@ -395,6 +395,34 @@ export const projects: Project[] = [
     workCategories: ["documents", "process"],
     strategicPlanAlignment: ["E.2"],
   },
+  {
+    slug: "financial-planning-suite",
+    name: "Financial Planning Suite (Axiom Replacement)",
+    tagline:
+      "In-house capital planning, budgeting, and tuition planning to replace Syntellis Axiom before the contract ends in 2027.",
+    description:
+      "Phased replacement of the Syntellis/Strata Axiom financial planning suite, whose contract runs through the end of calendar 2027 (~$200K/year to continue beyond that). Of the licensed modules, only Capital Planning is in production use; Strategic Financial Planning is signed off but unused, and the Budget & Forecasting and Tuition Planning implementations are stalled. Phase 1 delivers a capital planning solution before the contract ends so UI can exit Axiom without losing its one working module; later phases take up Budget & Forecasting, Tuition Planning, and Strategic Financial Planning — the modules the Budget Office originally wanted most.",
+    homeUnits: ["Division of Financial Affairs"],
+    operationalOwners: [{ name: "Kim Salisbury" }],
+    buildParticipants: ["IIDS"],
+    status: "approved",
+    visibility: "Partial",
+    proposedDeploymentEnvironment: "to-be-determined",
+    enterpriseSystemReplacement: {
+      status: "yes",
+      systemName: "Syntellis/Strata Axiom",
+      annualCostUsd: 200000,
+      renewalDate: "2028-01-01",
+    },
+    ai4raRelationship: "None",
+    iidsSponsor: "Barrie Robison",
+    operationalFunction:
+      "Phase 1: capital planning — project intake, scoring, and multi-year capital budget development for the Budget Office. Later phases: annual budget development and forecasting, tuition and fee revenue modeling, and long-range strategic financial planning.",
+    operationalExcellenceOutcome:
+      "Avoids ~$200K/year in vendor fees from 2028 onward and replaces stalled vendor-module implementations with tools the Budget Office actually uses. Phase 1 protects the one Axiom module in production before the contract lapses.",
+    relatedSlugs: ["audit-dashboard"],
+    workCategories: ["executive-analytics", "process"],
+  },
 
   // ============================================================
   // Human Resources
