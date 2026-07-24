@@ -55,6 +55,42 @@ export async function POST(request: NextRequest) {
       ]
     );
 
+    // File the submission into the UTR request registry (tech_requests,
+    // ADR 0005) so it joins the unified queue alongside ClickUp and
+    // (later) TDX requests. Best-effort: registry failure must not
+    // break the submitter's confirmation flow.
+    try {
+      const registryRow = await queryOne<{ id: string }>(
+        `INSERT INTO tech_requests (
+           origin, submission_id, requestor_name, requestor_email,
+           requestor_unit, title, need_statement, disposition, received_at
+         ) VALUES ('site-submission',$1,$2,$3,$4,$5,$6,'open',now())
+         ON CONFLICT (submission_id) WHERE submission_id IS NOT NULL
+         DO NOTHING
+         RETURNING id`,
+        [
+          submission.id,
+          submitter_name || null,
+          submitter_email || null,
+          department || null,
+          String(idea_text).split("\n")[0].slice(0, 200),
+          idea_text,
+        ]
+      );
+      if (registryRow) {
+        await query(
+          `INSERT INTO tech_request_events (request_id, actor, event_type, note)
+           VALUES ($1, 'site', 'received', 'Submitted through the Submit-a-Project assessment.')`,
+          [registryRow.id]
+        );
+      }
+    } catch (registryError) {
+      console.error(
+        "POST /api/submissions: UTR registry insert failed (submission saved):",
+        registryError
+      );
+    }
+
     return NextResponse.json({ id: submission.id }, { status: 201 });
   } catch (error) {
     console.error("POST /api/submissions error:", error);

@@ -39,6 +39,8 @@ import {
   type ClickUpTask,
 } from "./clickup";
 
+import type { RequestDisposition } from "./utr";
+
 export interface SyncSummary {
   runId: number;
   startedAt: string;
@@ -47,6 +49,24 @@ export interface SyncSummary {
   statusUpdates: number;
   requests: number;
   warnings: string[];
+}
+
+// Raw ClickUp backlog status → registry disposition (ADR 0005). Unknown
+// upstream statuses land as 'open' so a rename degrades loudly in the
+// queue rather than silently hiding a request.
+function dispositionForClickUpStatus(status: string): RequestDisposition {
+  switch (status.toLowerCase()) {
+    case "to be reviewed":
+      return "open";
+    case "active":
+      return "approved";
+    case "rejected":
+      return "denied";
+    case "complete":
+      return "converted-to-project";
+    default:
+      return "open";
+  }
 }
 
 function msEpochToIso(ms: string): string {
@@ -287,8 +307,46 @@ async function syncBacklog(warnings: string[]): Promise<number> {
         msEpochToIso(task.date_updated),
       ]
     );
+
+    // Mirror into the UTR registry (tech_requests, ADR 0005). ClickUp
+    // is authoritative for the sync-owned fields below; site-owned
+    // routing state (track, stage, links, claims) is never touched.
+    // A 'received' audit event is written once, on first appearance.
+    const registryRow = await queryOne<{ id: string; inserted: boolean }>(
+      `INSERT INTO tech_requests (
+         origin, clickup_task_id, requestor_name, requestor_unit,
+         title, need_statement, disposition, received_at
+       ) VALUES ('clickup',$1,$2,$3,$4,$5,$6,$7)
+       ON CONFLICT (clickup_task_id) WHERE clickup_task_id IS NOT NULL
+       DO UPDATE SET
+         requestor_name = EXCLUDED.requestor_name,
+         requestor_unit = EXCLUDED.requestor_unit,
+         title = EXCLUDED.title,
+         need_statement = EXCLUDED.need_statement,
+         disposition = EXCLUDED.disposition,
+         received_at = EXCLUDED.received_at
+       RETURNING id, (xmax = 0) AS inserted`,
+      [
+        task.id,
+        getTextField(task, RUBRIC_FIELDS.submitter),
+        getTextField(task, RUBRIC_FIELDS.unit),
+        task.name,
+        task.text_content?.trim() || null,
+        dispositionForClickUpStatus(task.status.status),
+        msEpochToIso(task.date_created),
+      ]
+    );
+    if (registryRow?.inserted) {
+      await query(
+        `INSERT INTO tech_request_events (request_id, at, actor, event_type, note)
+         VALUES ($1, $2, 'clickup-sync', 'received', 'Synced from the ClickUp intake backlog.')`,
+        [registryRow.id, msEpochToIso(task.date_created)]
+      );
+    }
   }
 
+  // Projection rows mirror ClickUp deletions; registry rows persist —
+  // the registry is memory, not a mirror (ADR 0005).
   await query(
     `DELETE FROM clickup_requests WHERE NOT (clickup_task_id = ANY($1::text[]))`,
     [seenTaskIds]
