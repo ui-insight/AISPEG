@@ -5,6 +5,7 @@
 
 import "server-only";
 import { getApplicationBySlug } from "@/lib/work";
+import { publicStageFromStatus } from "@/lib/portfolio";
 import type { ToolHandler, ToolResult } from "./registry";
 
 function pickString(args: Record<string, unknown>, key: string): string | undefined {
@@ -18,7 +19,7 @@ export const lookupPortfolioEntryTool: ToolHandler = {
     function: {
       name: "lookup_portfolio_entry",
       description:
-        "Fetch the full record for a single project by its slug. Returns description, features, owners, status detail, repo/docs/live URLs, and currently active blockers (public-tier text only). Use this when the user asks about a specific project by name and search_portfolio returned the slug.",
+        "Fetch the full record for a single project by its slug. Returns description, features, owners, status detail, deployment plan, enterprise-system-replacement facts (the hard-dollar bottom-line ROI: incumbent system, annual cost, renewal date), repo/docs/live URLs, and currently active blockers (public-tier text only). Use this when the user asks about a specific project by name and search_portfolio returned the slug.",
       parameters: {
         type: "object",
         properties: {
@@ -59,6 +60,9 @@ export const lookupPortfolioEntryTool: ToolHandler = {
         operationalOwners: app.operationalOwners,
         buildParticipants: app.buildParticipants,
         status: app.status,
+        publicStage: publicStageFromStatus(app.status),
+        proposedDeploymentEnvironment: app.proposedDeploymentEnvironment,
+        enterpriseSystemReplacement: app.enterpriseSystemReplacement,
         iidsSponsor: app.iidsSponsor || null,
         institutionalReviewStatus: app.institutionalReviewStatus ?? null,
         productionScope: app.productionScope ?? null,

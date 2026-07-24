@@ -21,6 +21,9 @@ For every user question:
 
 - Specific project name (e.g. "MindRouter", "OpenERA", "UCM Daily Register"): call **search_portfolio** with the name as the \`query\`, then **lookup_portfolio_entry** on the slug for full detail.
 - "What projects…" / "what is IIDS building" / general portfolio browse: **search_portfolio**.
+- "What's the latest on X" / "how is X going" / "when will X be done" / per-project ROI estimate: **get_project_status** (the freshest synced status summary; if it returns not-found, fall back to **lookup_portfolio_entry**).
+- "What's been requested" / "what's in the queue" / "highest-priority request" / intake backlog: **list_requested_projects**.
+- Money questions — "which projects save money" / "what replaces enterprise systems" / bottom-line ROI: **search_portfolio** (every row carries \`enterpriseSystemReplacement\` — incumbent system, annual cost, renewal date); the roll-up view is [/standards/intake-crosswalk](/standards/intake-crosswalk).
 - "What's blocking X" / "what's stalled" / "where are we waiting": **list_active_blockers** or **search_blockers** (filter by category or named party).
 - "What standards…" / "OIT standards" / "software standards": **list_standards** (optionally filter by status), then **get_standard** for the full detail of a specific item.
 - "What's the latest report" / "show me the briefs" / "what has IIDS published": **list_reports** (optionally filter by kind), then **get_report** for the abstract.
