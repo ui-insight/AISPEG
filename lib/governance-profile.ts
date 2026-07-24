@@ -32,7 +32,11 @@ import {
   computePublicStage,
 } from "./portfolio";
 import { projects as governanceCatalog } from "./governance/catalog";
-import type { RoiAssessment } from "./roi-rubric";
+import {
+  bottomLineFromReplacement,
+  type BottomLineRoi,
+  type RoiAssessment,
+} from "./roi-rubric";
 
 // ---- Intake vocabulary (mirrors the Unified Technology Request) -------
 
@@ -201,6 +205,15 @@ export interface ResolvedProfile {
   fundingSource: string | null;
   strategicPlanAlignment: string[];
   roi: RoiAssessment | null;
+  /**
+   * Hard-dollar savings from replacing an incumbent system — the UTR
+   * working group's bottom-line ROI. Derived from the project's declared
+   * enterprise-system replacement facts; null when no replacement is
+   * declared ("yes" with facts → a claim, "no"/"to-be-determined" → null,
+   * distinguished via `enterpriseReplacementStatus`).
+   */
+  bottomLineRoi: BottomLineRoi | null;
+  enterpriseReplacementStatus: "yes" | "no" | "to-be-determined";
   /** Slug in the Data Model catalog, if this project has a schema page. */
   dataModelSlug: string | null;
 }
@@ -229,6 +242,8 @@ export function resolveGovernanceProfile(project: Project): ResolvedProfile {
     fundingSource: o.fundingSource ?? project.funding ?? null,
     strategicPlanAlignment: project.strategicPlanAlignment ?? [],
     roi: o.roi ?? null,
+    bottomLineRoi: bottomLineFromReplacement(project.enterpriseSystemReplacement),
+    enterpriseReplacementStatus: project.enterpriseSystemReplacement.status,
     dataModelSlug: dataModelSlugs.has(project.slug) ? project.slug : null,
   };
 }
@@ -247,6 +262,10 @@ export interface GovernanceCoverage {
   classificationPending: number;
   aiRiskPending: number;
   roiPending: number;
+  /** Projects with a declared enterprise-system replacement. */
+  bottomLineCount: number;
+  /** Summed annual hard-dollar savings across those projects. */
+  bottomLineTotalUsd: number;
 }
 
 export function governanceCoverage(
@@ -262,11 +281,17 @@ export function governanceCoverage(
   let classificationPending = 0;
   let aiRiskPending = 0;
   let roiPending = 0;
+  let bottomLineCount = 0;
+  let bottomLineTotalUsd = 0;
   for (const p of profiles) {
     byTrack[p.intakeTrack] += 1;
     if (!p.dataClassification) classificationPending += 1;
     if (!p.aiRiskTier) aiRiskPending += 1;
     if (!p.roi) roiPending += 1;
+    if (p.bottomLineRoi) {
+      bottomLineCount += 1;
+      bottomLineTotalUsd += p.bottomLineRoi.annualUsd;
+    }
   }
   return {
     total: profiles.length,
@@ -274,6 +299,8 @@ export function governanceCoverage(
     classificationPending,
     aiRiskPending,
     roiPending,
+    bottomLineCount,
+    bottomLineTotalUsd,
   };
 }
 

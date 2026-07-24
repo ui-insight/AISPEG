@@ -15,7 +15,13 @@ import {
   PUBLIC_STAGE_CHIP,
   PUBLIC_STAGE_LABEL,
 } from "@/lib/portfolio";
-import { ROI_RUBRIC_READY } from "@/lib/roi-rubric";
+import {
+  ROI_RUBRIC_READY,
+  formatAnnualUsd,
+  formatAnnualUsdCompact,
+  formatRenewalDate,
+  type BottomLineRoi,
+} from "@/lib/roi-rubric";
 import { getRoiBySlug, type ClickUpRoi } from "@/lib/clickup-data";
 
 // Reads ClickUp-synced ROI from Postgres at request time.
@@ -69,6 +75,35 @@ function ClickUpRoiValue({ roi }: { roi: ClickUpRoi }) {
       <span className="mt-0.5 block text-[11px] not-italic text-ink-subtle">
         Estimated from ClickUp &middot; formal rubric pending
       </span>
+    </span>
+  );
+}
+
+// Bottom-line ROI — hard-dollar savings from retiring the named incumbent
+// contract. Full form for the cards view; every dollar names its contract.
+function BottomLineValue({ roi }: { roi: BottomLineRoi }) {
+  return (
+    <span>
+      <span className="font-semibold">{formatAnnualUsd(roi.annualUsd)}</span>{" "}
+      &mdash; replaces {roi.systemName}
+      {roi.renewalDate
+        ? ` (contract renews ${formatRenewalDate(roi.renewalDate)})`
+        : ""}
+    </span>
+  );
+}
+
+// Compact bottom-line ROI for the dense matrix cell; incumbent + renewal
+// ride in the title.
+function BottomLineCell({ roi }: { roi: BottomLineRoi }) {
+  const title = `Replaces ${roi.systemName}${
+    roi.renewalDate
+      ? ` — contract renews ${formatRenewalDate(roi.renewalDate)}`
+      : ""
+  }`;
+  return (
+    <span className="font-semibold" title={title}>
+      {formatAnnualUsdCompact(roi.annualUsd)}
     </span>
   );
 }
@@ -287,6 +322,21 @@ function ProfileCard({ p }: { p: ProfileWithRoi }) {
           )}
         </Field>
 
+        <Field label="Bottom-line ROI">
+          {p.bottomLineRoi ? (
+            <BottomLineValue roi={p.bottomLineRoi} />
+          ) : p.enterpriseReplacementStatus === "no" ? (
+            <span
+              className="italic text-ink-subtle"
+              title="This project does not replace an existing enterprise system, so it carries no hard-dollar contract savings."
+            >
+              None &mdash; not an enterprise-system replacement
+            </span>
+          ) : (
+            <Pending note="replacement status not yet documented" />
+          )}
+        </Field>
+
         <Field label="ROI">
           {p.roi?.summary ? (
             <span>
@@ -375,6 +425,7 @@ function MatrixView({ profiles }: { profiles: ProfileWithRoi[] }) {
             <Th>Data classification</Th>
             <Th>AI risk</Th>
             <Th>Funding</Th>
+            <Th>Bottom-line ROI</Th>
             <Th>ROI</Th>
           </tr>
         </thead>
@@ -422,6 +473,20 @@ function MatrixView({ profiles }: { profiles: ProfileWithRoi[] }) {
               </Td>
               <Td className="text-ink-muted">
                 {p.fundingSource ?? <Dash note="funding not specified" />}
+              </Td>
+              <Td>
+                {p.bottomLineRoi ? (
+                  <BottomLineCell roi={p.bottomLineRoi} />
+                ) : p.enterpriseReplacementStatus === "no" ? (
+                  <span
+                    className="text-ink-subtle"
+                    title="Not an enterprise-system replacement"
+                  >
+                    None
+                  </span>
+                ) : (
+                  <Dash note="replacement status not yet documented" />
+                )}
               </Td>
               <Td>
                 {p.roi?.summary ? (
@@ -532,6 +597,17 @@ export default async function IntakeCrosswalkPage({
             .map((t) => `${coverage.byTrack[t.key]} ${t.label}`)
             .join(" · ")}
         </p>
+        {coverage.bottomLineCount > 0 && (
+          <p className="mt-2 text-sm text-brand-black">
+            Bottom-line ROI identified:{" "}
+            <span className="font-semibold">
+              {formatAnnualUsd(coverage.bottomLineTotalUsd)}
+            </span>{" "}
+            across {coverage.bottomLineCount} enterprise-system replacements
+            &mdash; hard-dollar savings from retiring existing software
+            contracts.
+          </p>
+        )}
         <p className="mt-3 border-t border-hairline pt-3 text-xs text-ink-subtle">
           Awaiting the office&rsquo;s review: data classification pending on{" "}
           {coverage.classificationPending}, AI-risk posture pending on{" "}

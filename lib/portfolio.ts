@@ -968,6 +968,34 @@ export const projects: Project[] = [
     strategicPlanAlignment: ["E.1"],
   },
   {
+    slug: "ir-reporting-modernization",
+    name: "IR Reporting Modernization (SAS Replacement)",
+    tagline:
+      "OIT-led replacement of the SAS platform behind Institutional Research's reporting dashboards.",
+    description:
+      "OIT is replacing SAS, the platform behind Institutional Research's reporting dashboards, with modern reporting tooling. Retiring the SAS contract is projected to save $80,000–$100,000 annually (per OIT, July 2026; recorded conservatively at the low end). Tracked here as part of the AI projects inventory; detail will be added as OIT shares scope and timeline.",
+    homeUnits: ["Office of Information Technology"],
+    operationalOwners: [
+      { name: "Dan Ewart", title: "Vice President for Information Technology" },
+    ],
+    buildParticipants: ["OIT"],
+    status: "tracked",
+    visibility: "Public",
+    proposedDeploymentEnvironment: "to-be-determined",
+    enterpriseSystemReplacement: {
+      status: "yes",
+      systemName: "SAS (Institutional Research reporting)",
+      annualCostUsd: 80_000,
+    },
+    ai4raRelationship: "None",
+    iidsSponsor: "Barrie Robison",
+    operationalFunction:
+      "Replaces the SAS-based reporting dashboards Institutional Research runs today with modern, OIT-supported tooling. Scope to be confirmed.",
+    operationalExcellenceOutcome:
+      "Retires the SAS contract — $80,000–$100,000 per year in hard-dollar savings — and moves institutional reporting onto supported tooling.",
+    trackingOnly: true,
+  },
+  {
     slug: "nexus",
     name: "Nexus",
     tagline:
