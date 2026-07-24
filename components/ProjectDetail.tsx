@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ApplicationWithBlockers, Blocker } from "@/lib/work";
 import { blockerCategoryLabels, daysSince } from "@/lib/work";
 import type { ClickUpProjectStatus } from "@/lib/clickup-data";
+import { fiscalYearLabel } from "@/lib/roi-rubric";
 import SyncFreshness, { formatSyncDate } from "@/components/SyncFreshness";
 import {
   OPERATIONAL_LABEL,
@@ -90,7 +91,9 @@ function replacementSummary(replacement: EnterpriseSystemReplacement) {
   return {
     headline: `Replaces ${replacement.systemName}`,
     detail: `${usd.format(replacement.annualCostUsd)} per year${
-      renewal ? ` · current agreement renews ${renewal}` : ""
+      renewal && replacement.renewalDate
+        ? ` · current agreement renews ${renewal} — savings bank in ${fiscalYearLabel(replacement.renewalDate)}`
+        : ""
     }`,
   };
 }

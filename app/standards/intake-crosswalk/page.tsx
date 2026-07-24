@@ -17,6 +17,7 @@ import {
 } from "@/lib/portfolio";
 import {
   ROI_RUBRIC_READY,
+  fiscalYearLabel,
   formatAnnualUsd,
   formatAnnualUsdCompact,
   formatRenewalDate,
@@ -87,7 +88,7 @@ function BottomLineValue({ roi }: { roi: BottomLineRoi }) {
       <span className="font-semibold">{formatAnnualUsd(roi.annualUsd)}</span>{" "}
       &mdash; replaces {roi.systemName}
       {roi.renewalDate
-        ? ` (contract renews ${formatRenewalDate(roi.renewalDate)})`
+        ? ` (contract renews ${formatRenewalDate(roi.renewalDate)} — savings bank in ${fiscalYearLabel(roi.renewalDate)})`
         : ""}
     </span>
   );
@@ -98,7 +99,7 @@ function BottomLineValue({ roi }: { roi: BottomLineRoi }) {
 function BottomLineCell({ roi }: { roi: BottomLineRoi }) {
   const title = `Replaces ${roi.systemName}${
     roi.renewalDate
-      ? ` — contract renews ${formatRenewalDate(roi.renewalDate)}`
+      ? ` — contract renews ${formatRenewalDate(roi.renewalDate)} (savings bank in ${fiscalYearLabel(roi.renewalDate)})`
       : ""
   }`;
   return (
@@ -605,7 +606,9 @@ export default async function IntakeCrosswalkPage({
             </span>{" "}
             across {coverage.bottomLineCount} enterprise-system replacements
             &mdash; hard-dollar savings from retiring existing software
-            contracts.
+            contracts. UI&rsquo;s fiscal year runs July&nbsp;1 &ndash;
+            June&nbsp;30; each contract&rsquo;s savings bank in the fiscal
+            year its renewal lapses, not on approval.
           </p>
         )}
         <p className="mt-3 border-t border-hairline pt-3 text-xs text-ink-subtle">
