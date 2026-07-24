@@ -171,7 +171,12 @@ function deriveBuildType(project: Project): BuildType {
 function deriveIntakeTrack(project: Project, buildType: BuildType): IntakeTrack {
   if (project.status === "tracked") return "external";
   if (buildType === "bought") return "track-a";
-  if (project.status === "idea" || project.status === "approved") return "track-c";
+  if (
+    project.status === "idea" ||
+    project.status === "scoping" ||
+    project.status === "approved"
+  )
+    return "track-c";
   return "track-b";
 }
 

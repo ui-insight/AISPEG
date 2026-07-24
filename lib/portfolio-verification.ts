@@ -92,6 +92,28 @@ const verifyIdea: Verifier = (i) => {
   return problems;
 };
 
+const verifyScoping: Verifier = (i) => {
+  const problems: VerificationProblem[] = [];
+  const rule =
+    "scoping: a named operationalOwner or iidsSponsor engaged; no liveUrl; pilotCohort empty.";
+  if (!i.operationalOwners[0]?.name && !i.iidsSponsor) {
+    problems.push(
+      problem(
+        i,
+        rule,
+        "claims `scoping` but has neither an operationalOwner nor an iidsSponsor — should be `idea`."
+      )
+    );
+  }
+  if (i.liveUrl) {
+    problems.push(problem(i, rule, "claims `scoping` but has a liveUrl — should be `building` or further."));
+  }
+  if (i.pilotCohort) {
+    problems.push(problem(i, rule, "claims `scoping` but has a pilotCohort."));
+  }
+  return problems;
+};
+
 const verifyApproved: Verifier = (i) => {
   const problems: VerificationProblem[] = [];
   const rule = "approved: operationalOwner + iidsSponsor + non-empty description; no liveUrl; repo (if any) <10 commits or quiet 14d.";
@@ -384,6 +406,7 @@ const verifyUniversal: Verifier = (i) => {
 
 const verifiers: Record<ProjectStatus, Verifier> = {
   idea: verifyIdea,
+  scoping: verifyScoping,
   approved: verifyApproved,
   building: verifyBuilding,
   prototype: verifyPrototype,

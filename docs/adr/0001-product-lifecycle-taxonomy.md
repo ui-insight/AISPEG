@@ -206,3 +206,31 @@ would obscure a load-bearing distinction a stakeholder needs at a glance.
 `vendor/data-governance` does not yet list `paused`; update it upstream so
 the Data Model explorer's status vocab stays in sync (does not block the
 build or the drift CI, which does not run on `lib/portfolio.ts` changes).
+
+### 2026-07-24 — `scoping` operational status
+
+**Context.** The ladder jumps from `idea` (verifier: **no** committed
+owner/sponsor pair) straight to `approved` (a go decision made). It had no
+honest rung for a project with named humans engaged and feasibility work
+underway but **no formal approval** — the state the portfolio owner
+declined to label `approved` for the Financial Planning Suite (Axiom
+replacement), and the state the Unified Technology Request process names
+explicitly (Track C's "Feasibility & scoping" stage; see ADR 0005).
+Authors were forced to either overclaim `approved` or strip real owner
+names to satisfy `idea`.
+
+**Decision.** Add `scoping` to the operational ladder between `idea` and
+`approved`.
+
+- **Operational rule** (`lib/portfolio-verification.ts`): a named
+  `operationalOwners[0]` **or** `iidsSponsor` is engaged (having neither
+  means it is still `idea`); no `liveUrl`; `pilotCohort` empty. No
+  repo-cadence requirement — scoping produces framing and feasibility
+  work, not necessarily commits.
+- **Public rollup**: `scoping → Exploring` (no new public stage; the
+  stakeholder-facing signal "not yet being built" is unchanged).
+- **No migration.** As with `paused`, `applications.status` carries no DB
+  `CHECK`; the new value needs only a re-seed.
+
+**Follow-up.** Same as `paused`: add `scoping` to the vendored
+`iids-portfolio` ProjectStatus vocabulary upstream.
