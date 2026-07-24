@@ -22,10 +22,11 @@ export type Visibility =
   | "Internal-only"; // Not shown on the public site at all
 
 // Operational ladder — see docs/adr/0001-product-lifecycle-taxonomy.md.
-// 9 lifecycle states + 1 meta state (`tracked`). Verification rules for
-// each are spec'd in the ADR; the verifier itself lands in a follow-up PR.
+// 11 lifecycle states + 1 meta state (`tracked`). Verification rules for
+// each are spec'd in the ADR and enforced by lib/portfolio-verification.ts.
 export type ProjectStatus =
   | "idea"
+  | "scoping"
   | "approved"
   | "building"
   | "prototype"
@@ -405,7 +406,7 @@ export const projects: Project[] = [
     homeUnits: ["Division of Financial Affairs"],
     operationalOwners: [{ name: "Kim Salisbury" }],
     buildParticipants: ["IIDS"],
-    status: "approved",
+    status: "scoping",
     visibility: "Partial",
     proposedDeploymentEnvironment: "to-be-determined",
     enterpriseSystemReplacement: {
@@ -497,7 +498,7 @@ export const projects: Project[] = [
     tagline:
       "On-prem text- and image-to-video storyboarding for rapid advertising mockups.",
     description:
-      "Video previsualization workflow requested by University Communications and Marketing to mock up an advertisement before filming. IIDS added a model-agnostic video-generation endpoint to MindRouter, currently backed by the open-weight LTX-Video 2.3 model on a dedicated NVIDIA H200, with integrated voice support and a limited MindRouter interface. A separate web application is now being built with Melissa Hartley to generate clips from text or reference photos, arrange them into a storyboard, and stitch them into an editable video sequence.",
+      "Video previsualization workflow requested by University Communications and Marketing to mock up an advertisement before filming. IIDS added a model-agnostic video-generation endpoint to MindRouter, currently backed by the open-weight LTX-Video 2.3 model on a dedicated NVIDIA H200, with integrated voice support. The standalone storyboard web application generates clips from text prompts, generated images, or uploaded keyframes; arranges them on a storyboard with an app-aware AI chatbot guide; and stitches them into a draft video that can be exported and downloaded. Delivered to Melissa Hartley's team in July 2026 for hands-on evaluation and iterative refinement — an example storyboard concept was produced with the tool in about an hour.",
     homeUnits: ["University Communications and Marketing"],
     operationalOwners: [{ name: "Melissa Hartley" }],
     buildParticipants: ["IIDS"],
@@ -508,16 +509,22 @@ export const projects: Project[] = [
     ai4raRelationship: "None",
     iidsSponsor: "Luke Sheneman",
     repoUrl: "https://github.com/ui-insight/MindRouter",
+    liveUrl: "https://storyboard.insight.uidaho.edu",
+    liveUrlIsStaging: true,
     operationalFunction:
-      "Generates short video clips from prompts or reference images, adds generated voice or audio, sequences clips on a storyboard, and stitches them into a draft that UCM can refine in its existing editing workflow.",
+      "Generates short video clips from prompts, generated images, or uploaded keyframes; adds generated voice or audio; sequences clips on a storyboard with an integrated app-aware AI guide; and stitches them into an exportable draft that UCM can refine in its existing editing workflow.",
     operationalExcellenceOutcome:
       "Compresses ad concept development from a filming-first process to rapid visual iteration, gives stakeholders a concrete mockup before production resources are committed, and avoids per-clip commercial generation credits during early creative development.",
     features: [
       "Text-to-video clip generation",
-      "Image-to-video clip generation",
+      "Image-to-video clip generation with generated or uploaded keyframes",
       "Integrated voice and audio generation",
       "Storyboard sequencing and clip stitching",
+      "App-aware AI chatbot guide",
+      "Export and download of assembled draft videos",
     ],
+    usageNote:
+      "Delivered to UCM's creative team for evaluation in July 2026.",
     tech: ["MindRouter", "LTX-Video 2.3", "NVIDIA H200"],
     relatedSlugs: ["mindrouter", "dgx-stack", "ucm-daily-register"],
     workCategories: ["process"],
@@ -1066,6 +1073,7 @@ export const projects: Project[] = [
 export function computePublicStage(status: ProjectStatus): PublicStage {
   switch (status) {
     case "idea":
+    case "scoping":
     case "approved":
       return "exploring";
     case "building":
@@ -1087,6 +1095,7 @@ export function computePublicStage(status: ProjectStatus): PublicStage {
 
 const STATUSES: ReadonlyArray<ProjectStatus> = [
   "idea",
+  "scoping",
   "approved",
   "building",
   "prototype",
@@ -1105,7 +1114,7 @@ export function isProjectStatus(s: string): s is ProjectStatus {
 
 // String-input version of computePublicStage. Postgres-sourced rows
 // carry status as a plain string; if a row has a status outside the
-// canonical 10-value union (drift, legacy data, etc.), bucket it as
+// canonical union (drift, legacy data, etc.), bucket it as
 // `exploring` so the UI never crashes.
 export function publicStageFromStatus(status: string): PublicStage {
   if (isProjectStatus(status)) return computePublicStage(status);
@@ -1217,6 +1226,7 @@ export const PUBLIC_STAGE_ORDER: PublicStage[] = [
 
 export const OPERATIONAL_LABEL: Record<ProjectStatus, string> = {
   idea: "Idea",
+  scoping: "Scoping",
   approved: "Approved",
   building: "Building",
   prototype: "Prototype",
@@ -1233,7 +1243,7 @@ export const OPERATIONAL_LABEL: Record<ProjectStatus, string> = {
 // string is short enough to read in a native `title` tooltip; together
 // they replace the bottom-of-page "How to read this inventory" callout.
 export const PUBLIC_STAGE_TITLE: Record<PublicStage, string> = {
-  exploring: "Exploring — idea or approval phase; not yet being built.",
+  exploring: "Exploring — idea, scoping, or approval phase; not yet being built.",
   building: "Building — actively being built or prototyped by IIDS.",
   live: "Live — piloting, in production, or maintained.",
   paused: "Paused — deliberately on hold; not abandoned, may resume.",
@@ -1243,6 +1253,8 @@ export const PUBLIC_STAGE_TITLE: Record<PublicStage, string> = {
 
 export const OPERATIONAL_TITLE: Record<ProjectStatus, string> = {
   idea: "Idea — proposal not yet evaluated.",
+  scoping:
+    "Scoping — named owner engaged; feasibility and shape being worked out before a go decision.",
   approved: "Approved — green-lit but not yet started.",
   building: "Building — under active development.",
   prototype: "Prototype — early build, not yet user-tested.",
@@ -1259,7 +1271,7 @@ export const OPERATIONAL_TITLE: Record<ProjectStatus, string> = {
 // Lists the 1-N operational states that roll up into each public stage,
 // in approximate ladder order.
 export const STAGE_OPERATIONAL_ROLLUP: Record<PublicStage, ProjectStatus[]> = {
-  exploring: ["idea", "approved"],
+  exploring: ["idea", "scoping", "approved"],
   building: ["building", "prototype"],
   live: ["piloting", "production", "maintained"],
   paused: ["paused"],

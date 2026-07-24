@@ -12,7 +12,7 @@ import {
 
 // Lifecycle taxonomy from ADR 0001 — see lib/portfolio.ts ProjectStatus.
 const STATUS_OPTIONS = [
-  "idea", "approved", "building", "prototype", "piloting",
+  "idea", "scoping", "approved", "building", "prototype", "piloting",
   "production", "maintained", "paused", "sunsetting", "archived", "tracked",
 ];
 
