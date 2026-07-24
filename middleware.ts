@@ -7,6 +7,15 @@ import { NextRequest, NextResponse } from "next/server";
 // the route through without authentication.
 
 export function middleware(req: NextRequest) {
+  // /internal/requests went public at /portfolio/pipeline (ADR 0005
+  // amendment, 2026-07-24) — redirect before the auth gate so old links
+  // land on the public queue without a credential prompt.
+  if (req.nextUrl.pathname.startsWith("/internal/requests")) {
+    return NextResponse.redirect(
+      new URL("/portfolio/pipeline", req.nextUrl.origin)
+    );
+  }
+
   const user = process.env.BASIC_AUTH_USER;
   const pass = process.env.BASIC_AUTH_PASS;
 

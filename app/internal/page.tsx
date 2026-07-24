@@ -69,7 +69,7 @@ export default async function InternalHome() {
 
       <section className="grid gap-4 md:grid-cols-3">
         <Link
-          href="/internal/requests"
+          href="/portfolio/pipeline"
           className="group rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:border-ui-gold/40 hover:shadow-md"
         >
           <p className="text-xs font-medium uppercase tracking-wider text-ui-gold-dark">
@@ -79,7 +79,7 @@ export default async function InternalHome() {
             Unified request queue &rarr;
           </p>
           <p className="mt-2 text-xs text-gray-500">
-            Every request from every origin — ClickUp, site, TDX (soon)
+            Now public at /portfolio/pipeline — every origin, one story
           </p>
         </Link>
         <Link

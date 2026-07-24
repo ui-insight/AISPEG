@@ -6,6 +6,13 @@ import {
   type ScoredRequest,
 } from "@/lib/clickup-data";
 import { listIdForSlug, CLICKUP_PROJECT_LISTS } from "@/lib/clickup-map";
+import { listTechRequests, type TechRequest } from "@/lib/requests";
+import {
+  INTAKE_TRACK_SHORT,
+  INTAKE_TRACK_TITLE,
+  REQUEST_ORIGIN_LABEL,
+  isIntakeTrack,
+} from "@/lib/utr";
 import { listApplications } from "@/lib/work";
 import {
   RUBRIC_CRITERIA,
@@ -21,11 +28,19 @@ export const dynamic = "force-dynamic";
 export const metadata = {
   title: "Requested Projects · UI AI Portfolio",
   description:
-    "Explore requested AI projects by financial impact, strategic value, reach, urgency, and other prioritization evidence.",
+    "The unified technology request queue — every requested and suggested AI project from every origin, scored where reviewed, awaiting a start decision.",
 };
 
 interface PipelineSearchParams {
   value?: string;
+}
+
+// A registry row paired with its ClickUp rubric enrichment when the
+// request originated in the intake backlog. The registry is the truth
+// for state (origin, disposition, track); ClickUp supplies the scores.
+interface QueueItem {
+  req: TechRequest;
+  clickup: ScoredRequest | null;
 }
 
 function scoreCell(value: number | null): string {
@@ -121,6 +136,41 @@ function requestDate(value: string | null): string | null {
   });
 }
 
+function excerpt(text: string, title: string, max = 360): string {
+  // Some need statements open by repeating the request title on its own
+  // line (the hand-seeded submissions do); drop that line only when it
+  // matches, keeping the problem statement intact otherwise.
+  const firstBreak = text.indexOf("\n\n");
+  const firstLine = (firstBreak === -1 ? text : text.slice(0, firstBreak)).trim();
+  const body =
+    firstBreak !== -1 && firstLine.toLowerCase() === title.toLowerCase()
+      ? text.slice(firstBreak + 2)
+      : text;
+  const flat = body.replace(/\s+/g, " ").trim();
+  if (flat.length <= max) return flat;
+  return `${flat.slice(0, flat.lastIndexOf(" ", max))}…`;
+}
+
+function OriginChip({ req }: { req: TechRequest }) {
+  return (
+    <span className="rounded-full border border-hairline bg-white px-2.5 py-0.5 text-xs text-ink-muted">
+      {REQUEST_ORIGIN_LABEL[req.origin]}
+    </span>
+  );
+}
+
+function TrackChip({ track }: { track: string }) {
+  if (!isIntakeTrack(track)) return null;
+  return (
+    <span
+      title={INTAKE_TRACK_TITLE[track]}
+      className="rounded-full border border-ui-gold/50 bg-ui-gold/10 px-2.5 py-0.5 text-xs font-medium text-brand-black"
+    >
+      Track {INTAKE_TRACK_SHORT[track]}
+    </span>
+  );
+}
+
 function scoreForLens(
   request: ScoredRequest,
   lens: (typeof REQUEST_VALUE_LENSES)[number]
@@ -179,7 +229,12 @@ function PendingExplorer({
                   {request.name}
                 </h3>
                 <p className="text-xs text-ink-subtle">
-                  {[request.unit, request.category, requestDate(request.dateCreated)]
+                  {[
+                    "ClickUp intake",
+                    request.unit,
+                    request.category,
+                    requestDate(request.dateCreated),
+                  ]
                     .filter(Boolean)
                     .join(" · ")}
                 </p>
@@ -230,20 +285,87 @@ function PendingExplorer({
   );
 }
 
+// Open requests that have not yet been rubric-scored — site submissions,
+// direct entries, and survey-derived candidates. The registry knows
+// them; triage scoring is what they are waiting on.
+function UnscoredList({ items }: { items: QueueItem[] }) {
+  return (
+    <ul className="divide-y divide-hairline border-y border-hairline">
+      {items.map(({ req }) => (
+        <li
+          key={req.id}
+          className="grid gap-4 py-5 md:grid-cols-[minmax(0,1fr)_9rem]"
+        >
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+              <h3 className="text-base font-bold text-brand-black">
+                {req.title}
+              </h3>
+              <p className="text-xs text-ink-subtle">
+                {[
+                  req.requestorName,
+                  req.requestorUnit,
+                  requestDate(req.receivedAt),
+                ]
+                  .filter(Boolean)
+                  .join(" · ")}
+              </p>
+            </div>
+            {req.needStatement && (
+              <p className="mt-2 max-w-3xl text-sm leading-relaxed text-ink-muted">
+                {excerpt(req.needStatement, req.title)}
+              </p>
+            )}
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              <OriginChip req={req} />
+              {req.track && <TrackChip track={req.track} />}
+              {req.submissionTier !== null && (
+                <span
+                  title="Submit-a-Project assessment tier (1–4)"
+                  className="rounded-full border border-hairline bg-surface-alt px-2.5 py-0.5 text-xs font-medium text-brand-black"
+                >
+                  Assessment tier {req.submissionTier}
+                </span>
+              )}
+              {req.submissionId && (
+                <Link
+                  href={`/intake/${req.submissionId}`}
+                  className="rounded-full border border-hairline bg-white px-2.5 py-0.5 text-xs text-ink-muted hover:border-brand-silver/40 hover:text-brand-black"
+                >
+                  View submission →
+                </Link>
+              )}
+            </div>
+          </div>
+          <div className="md:text-right">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-brand-silver">
+              Priority score
+            </p>
+            <p className="mt-1 text-sm font-semibold text-ink-muted">
+              Awaiting triage scoring
+            </p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 function CompactRequestList({
-  requests,
+  items,
   slugByName,
 }: {
-  requests: ScoredRequest[];
+  items: QueueItem[];
   slugByName: Map<string, string>;
 }) {
   return (
     <ul className="space-y-1.5">
-      {requests.map((r) => {
-        const slug = slugByName.get(r.name.toLowerCase());
+      {items.map(({ req, clickup }) => {
+        const slug = slugByName.get(req.title.toLowerCase());
+        const unit = clickup?.unit ?? req.requestorUnit;
         return (
           <li
-            key={r.taskId}
+            key={req.id}
             className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5 text-sm"
           >
             <span className="text-ui-charcoal">
@@ -252,18 +374,18 @@ function CompactRequestList({
                   href={`/portfolio/${slug}`}
                   className="font-medium text-brand-black hover:underline"
                 >
-                  {r.name}
+                  {req.title}
                 </Link>
               ) : (
-                r.name
+                req.title
               )}
-              {r.unit && (
-                <span className="text-xs text-ink-subtle"> · {r.unit}</span>
+              {unit && (
+                <span className="text-xs text-ink-subtle"> · {unit}</span>
               )}
             </span>
-            {r.weightedScore !== null && (
+            {req.weightedScore !== null && (
               <span className="text-xs tabular-nums text-ink-muted">
-                scored {Math.round(r.weightedScore * 10) / 10}
+                scored {Math.round(req.weightedScore * 10) / 10}
               </span>
             )}
           </li>
@@ -286,20 +408,43 @@ export default async function PipelinePage({
     : null;
   const selectedLens =
     REQUEST_VALUE_LENSES.find((lens) => lens.value === selectedValue) ?? null;
-  const [requests, lastSync, apps] = await Promise.all([
+  const [techRequests, scored, lastSync, apps] = await Promise.all([
+    listTechRequests(),
     listScoredRequests(),
     getLastSync(),
     listApplications({ audience: "public" }).catch(() => []),
   ]);
 
-  const pending = requests.filter((r) => r.status === "pending");
-  const promoted = requests.filter((r) => r.status === "active");
-  const notPursued = requests.filter((r) => r.status === "rejected");
-  const completed = requests.filter((r) => r.status === "complete");
-  const sortedPending = sortPending(pending, selectedLens);
-  const financialPotentialCount = pending.filter(
-    (request) => (request.rubric.a2 ?? 0) >= 3
+  const scoredByTask = new Map(scored.map((r) => [r.taskId, r]));
+  const queue: QueueItem[] = techRequests.map((req) => ({
+    req,
+    clickup: req.clickupTaskId
+      ? (scoredByTask.get(req.clickupTaskId) ?? null)
+      : null,
+  }));
+
+  const inReview = queue.filter(({ req }) => req.disposition === "open");
+  const promoted = queue.filter(({ req }) => req.disposition === "approved");
+  const became = queue.filter(
+    ({ req }) => req.disposition === "converted-to-project"
+  );
+  const routed = queue.filter(
+    ({ req }) => req.disposition === "routed-to-existing"
+  );
+  const notPursued = queue.filter(({ req }) =>
+    ["denied", "withdrawn", "closed", "merged"].includes(req.disposition)
+  );
+
+  const scoredOpen = inReview.filter((item) => item.clickup !== null);
+  const unscoredOpen = inReview.filter((item) => item.clickup === null);
+  const sortedScoredOpen = sortPending(
+    scoredOpen.map((item) => item.clickup!),
+    selectedLens
+  );
+  const financialPotentialCount = scoredOpen.filter(
+    (item) => (item.clickup!.rubric.a2 ?? 0) >= 3
   ).length;
+  const originCount = new Set(techRequests.map(({ origin }) => origin)).size;
 
   // Best-effort link from a promoted request to its portfolio entry: the
   // request name rarely matches the project name exactly, so map through
@@ -330,17 +475,32 @@ export default async function PipelinePage({
           Requested projects awaiting a start decision
         </h1>
         <p className="mt-4 max-w-3xl text-base leading-relaxed text-ink-muted">
-          Every AI project request submitted to IIDS is scored by Colin
-          Addington on an 11-criterion rubric: strategic impact (A1–A4),
-          feasibility and effort (B1–B4), and urgency and buy-in (C1–C3),
-          then prioritized by weighted score. This is the live review queue,
-          synced from the IIDS-AI4UI workspace.
+          Every technology request the registry knows about, from every
+          origin — the ClickUp intake backlog, Submit-a-Project
+          assessments, requests captured directly from working sessions
+          and email, and TDX once OIT wiring lands — in one queue per the
+          Unified Technology Request process (ADR 0005). Requests from
+          the intake backlog carry an 11-criterion prioritization score
+          from Colin Addington: strategic impact (A1–A4), feasibility and
+          effort (B1–B4), and urgency and buy-in (C1–C3). Newer arrivals
+          hold in the queue unscored until triage. This page is the
+          record — there is no separate internal copy.
         </p>
-        {requests.length > 0 && (
+        {techRequests.length > 0 && (
           <p className="mt-5 flex flex-wrap items-baseline gap-x-2 text-sm text-ink-muted">
             <span>
               <span className="font-bold tabular-nums text-brand-black">
-                {pending.length}
+                {techRequests.length}
+              </span>{" "}
+              registered across {originCount} origin
+              {originCount === 1 ? "" : "s"}
+            </span>
+            <span aria-hidden className="text-brand-silver">
+              ·
+            </span>
+            <span>
+              <span className="font-bold tabular-nums text-brand-black">
+                {inReview.length}
               </span>{" "}
               in review
             </span>
@@ -370,11 +530,12 @@ export default async function PipelinePage({
         )}
       </header>
 
-      {requests.length === 0 ? (
+      {techRequests.length === 0 ? (
         <div className="rounded-xl border border-hairline bg-surface-alt p-8 text-center">
           <p className="text-sm font-medium text-ink-muted">
-            No requested-project data has been synced yet. This view remains
-            the permanent home for intake requests before work starts.
+            No requests are registered yet. This view is the permanent
+            home for intake requests before work starts — run Migration
+            018 and a ClickUp sync to backfill the existing backlog.
           </p>
         </div>
       ) : (
@@ -385,7 +546,7 @@ export default async function PipelinePage({
                 Explore by value
               </p>
               <h2 className="mt-1 text-xl font-black tracking-tight text-brand-black">
-                In review
+                In review — scored
               </h2>
               <p className="mt-1 max-w-3xl text-sm leading-relaxed text-ink-muted">
                 Start with overall priority, or rank the queue by a particular
@@ -406,12 +567,12 @@ export default async function PipelinePage({
               >
                 Overall priority
                 <span className="rounded-full bg-surface-alt px-1.5 py-0 text-[10px] font-semibold text-ink-subtle">
-                  {pending.length}
+                  {scoredOpen.length}
                 </span>
               </Link>
               {REQUEST_VALUE_LENSES.map((lens) => {
-                const count = pending.filter(
-                  (request) => scoreForLens(request, lens) !== null
+                const count = scoredOpen.filter(
+                  (item) => scoreForLens(item.clickup!, lens) !== null
                 ).length;
                 const active = selectedLens?.value === lens.value;
                 return (
@@ -440,7 +601,7 @@ export default async function PipelinePage({
                 );
               })}
             </div>
-            {pending.length > 0 ? (
+            {scoredOpen.length > 0 ? (
               <>
                 <p className="text-xs font-medium text-ink-subtle">
                   {selectedLens
@@ -448,7 +609,7 @@ export default async function PipelinePage({
                     : "Sorted by overall priority score."}
                 </p>
                 <PendingExplorer
-                  requests={sortedPending}
+                  requests={sortedScoredOpen}
                   selectedLens={selectedLens}
                 />
                 <details className="group pt-2">
@@ -456,7 +617,7 @@ export default async function PipelinePage({
                     Show the complete 11-criterion score table
                   </summary>
                   <div className="mt-4">
-                    <DetailedScoreTable requests={sortedPending} />
+                    <DetailedScoreTable requests={sortedScoredOpen} />
                   </div>
                 </details>
                 <p className="text-xs text-ink-subtle">
@@ -467,10 +628,37 @@ export default async function PipelinePage({
               </>
             ) : (
               <p className="border-y border-hairline py-6 text-sm text-ink-muted">
-                No requests are currently awaiting review.
+                No scored requests are currently awaiting review.
               </p>
             )}
           </section>
+
+          {unscoredOpen.length > 0 && (
+            <section className="space-y-3">
+              <div>
+                <h2 className="text-xl font-black tracking-tight text-brand-black">
+                  In review — awaiting scoring
+                </h2>
+                <p className="mt-1 max-w-3xl text-sm leading-relaxed text-ink-muted">
+                  Registered requests and suggestions that have not yet
+                  been through rubric scoring — site submissions, direct
+                  entries, and candidate projects derived from the{" "}
+                  <Link
+                    href="/standards/operational-excellence"
+                    className="font-medium text-brand-black hover:underline"
+                  >
+                    Operational Excellence survey
+                  </Link>
+                  . Triage assigns each a track and a score.
+                </p>
+              </div>
+              <UnscoredList
+                items={[...unscoredOpen].sort((a, b) =>
+                  b.req.receivedAt.localeCompare(a.req.receivedAt)
+                )}
+              />
+            </section>
+          )}
 
           <section className="space-y-4">
             <div>
@@ -538,21 +726,31 @@ export default async function PipelinePage({
                   {promoted.length}
                 </span>
               </div>
-              <CompactRequestList requests={promoted} slugByName={slugByName} />
+              <CompactRequestList items={promoted} slugByName={slugByName} />
             </section>
           )}
 
-          {completed.length > 0 && (
+          {became.length > 0 && (
             <section className="space-y-3">
               <div className="flex items-baseline gap-3">
                 <h2 className="text-xl font-black tracking-tight text-brand-black">
                   Completed
                 </h2>
-                <span className="text-sm text-ink-subtle">
-                  {completed.length}
-                </span>
+                <span className="text-sm text-ink-subtle">{became.length}</span>
               </div>
-              <CompactRequestList requests={completed} slugByName={slugByName} />
+              <CompactRequestList items={became} slugByName={slugByName} />
+            </section>
+          )}
+
+          {routed.length > 0 && (
+            <section className="space-y-3">
+              <div className="flex items-baseline gap-3">
+                <h2 className="text-xl font-black tracking-tight text-brand-black">
+                  Routed to an existing solution
+                </h2>
+                <span className="text-sm text-ink-subtle">{routed.length}</span>
+              </div>
+              <CompactRequestList items={routed} slugByName={slugByName} />
             </section>
           )}
 
@@ -566,10 +764,7 @@ export default async function PipelinePage({
                   {notPursued.length}
                 </span>
               </div>
-              <CompactRequestList
-                requests={notPursued}
-                slugByName={slugByName}
-              />
+              <CompactRequestList items={notPursued} slugByName={slugByName} />
             </section>
           )}
         </>
@@ -578,7 +773,9 @@ export default async function PipelinePage({
       <footer className="space-y-2 border-t border-hairline pt-6">
         {lastSync && <SyncFreshness syncedAt={lastSync.finishedAt} />}
         <p className="text-xs text-brand-silver">
-          Have a process that could use this treatment?{" "}
+          Site submissions and direct entries register immediately; the
+          ClickUp intake backlog refreshes on sync. Have a process that
+          could use this treatment?{" "}
           <Link
             href="/builder-guide"
             className="font-medium text-brand-silver hover:text-brand-black"
