@@ -74,6 +74,19 @@ export function formatAnnualUsdCompact(amount: number): string {
   return `$${thousands.toLocaleString("en-US")}k/yr`;
 }
 
+/**
+ * "FY27" — the UI fiscal year a date falls in. UI fiscal years run
+ * July 1 – June 30 and are named for the ending calendar year
+ * (Jul 1 2026 – Jun 30 2027 = FY27). Savings from a contract
+ * retirement land in the fiscal year containing its renewal date, so
+ * renewal labels carry the FY to keep ROI timing honest.
+ */
+export function fiscalYearLabel(isoDate: string): string {
+  const [year, month] = isoDate.split("-").map(Number);
+  const fyEndYear = month >= 7 ? year + 1 : year;
+  return `FY${String(fyEndYear % 100).padStart(2, "0")}`;
+}
+
 /** "Mar 31, 2027" — renewal dates in running text. */
 export function formatRenewalDate(isoDate: string): string {
   const [year, month, day] = isoDate.split("-").map(Number);

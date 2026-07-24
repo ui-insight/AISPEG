@@ -50,8 +50,13 @@ function hasPubliclyAccessibleArtifact(i: Project): boolean {
   // ADR sub-decision #4: production-grade accessibility is satisfied by
   // either a liveUrl OR a public repoUrl (the repo IS the deliverable
   // for infrastructure / scaffolds / self-hostable appliances).
+  // ADR sub-decision #5 (2026-07-24 amendment): production operated on
+  // an OIT-managed environment (`oit-*`) also satisfies it — internal
+  // enterprise apps (e.g. Nexus modules) are SSO-gated with no anonymous
+  // URL; the operated platform is the artifact.
   if (i.liveUrl && !i.liveUrlIsStaging) return true;
   if (i.repoUrl && !i.isPrivateRepo) return true;
+  if (i.proposedDeploymentEnvironment.startsWith("oit-")) return true;
   return false;
 }
 
@@ -224,13 +229,13 @@ const verifyPiloting: Verifier = (i) => {
 
 const verifyProduction: Verifier = (i) => {
   const problems: VerificationProblem[] = [];
-  const rule = "production: liveUrl OR public repoUrl (the repo as artifact); productionScope set; supportContact set.";
+  const rule = "production: liveUrl OR public repoUrl (the repo as artifact) OR OIT-managed deployment (oit-*); productionScope set; supportContact set.";
   if (!hasPubliclyAccessibleArtifact(i)) {
     problems.push(
       problem(
         i,
         rule,
-        "claims `production` but has no publicly-accessible artifact — needs a liveUrl, or a public repoUrl (with isPrivateRepo unset/false) for repo-as-artifact deliverables."
+        "claims `production` but has no accessible artifact — needs a liveUrl, a public repoUrl (with isPrivateRepo unset/false) for repo-as-artifact deliverables, or an OIT-managed (oit-*) deployment environment."
       )
     );
   }
@@ -245,7 +250,7 @@ const verifyProduction: Verifier = (i) => {
 
 const verifyMaintained: Verifier = (i) => {
   const problems: VerificationProblem[] = [];
-  const rule = "maintained: production accessibility (liveUrl or public repo); no commits to main in last 90d.";
+  const rule = "maintained: production accessibility (liveUrl, public repo, or OIT-managed deployment); no commits to main in last 90d.";
   if (!hasPubliclyAccessibleArtifact(i)) {
     problems.push(problem(i, rule, "claims `maintained` but has no publicly-accessible artifact (liveUrl or public repoUrl)."));
   }

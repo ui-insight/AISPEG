@@ -31,8 +31,8 @@ The day-to-day status IIDS tracks. Each state has a verification rule that can b
 | `building` | Building | `repoUrl` set; `lastCommitDate` within last 60 days; no `liveUrl` (or `liveUrl` is staging-only — flagged via a `liveUrlIsStaging: true`); `pilotCohort` empty. |
 | `prototype` | Prototype | Demo-able; `liveUrl` may be set (often staging). `pilotCohort` empty. **Either** `lastCommitDate` is older than 30 days **OR** `featureComplete: true` is explicitly set. |
 | `piloting` | Piloting | `liveUrl` accessible to a **named cohort**. `pilotCohort` populated with `size > 0` and a bounded `scope` (single unit OR named individuals OR an explicit "limited beta" descriptor). |
-| `production` | Production | A **publicly-accessible artifact** exists beyond the original pilot cohort: either (a) a `liveUrl` reachable beyond the pilot, or (b) a public `repoUrl` (`isPrivateRepo: false` or unset) where the repo itself is the consumable deliverable — the path that covers infrastructure, scaffolds, and self-hostable appliances. `productionScope` is `"home-unit"` (entire home unit's users), `"institution-wide"`, or `"external"` (institutional + outside-UI deployments). `supportContact` populated. |
-| `maintained` | Maintained | Inherits production's accessibility rule (liveUrl OR public repo). **No commits to `main` in the last 90 days.** No open feature issues — only `bug`-, `security`-, or `chore`-labeled issues. |
+| `production` | Production | A **publicly-accessible artifact** exists beyond the original pilot cohort: either (a) a `liveUrl` reachable beyond the pilot, or (b) a public `repoUrl` (`isPrivateRepo: false` or unset) where the repo itself is the consumable deliverable — the path that covers infrastructure, scaffolds, and self-hostable appliances, or (c) operation on an OIT-managed environment (`proposedDeploymentEnvironment` in the `oit-*` family) — the path that covers SSO-gated internal enterprise apps such as Nexus modules. `productionScope` is `"home-unit"` (entire home unit's users), `"institution-wide"`, or `"external"` (institutional + outside-UI deployments). `supportContact` populated. |
+| `maintained` | Maintained | Inherits production's accessibility rule (liveUrl, public repo, or OIT-managed environment). **No commits to `main` in the last 90 days.** No open feature issues — only `bug`-, `security`-, or `chore`-labeled issues. |
 | `sunsetting` | Sunsetting | `sunsetDate` set (ISO date, future or recent past). `replacedBy` populated — either a successor project `slug` or the literal string `manual-process`. |
 | `archived` | Archived | `liveUrl` returns 404, is null, or domain is dead (or, for repo-as-artifact deliverables, `repoUrl` is archived/deleted). Service stopped. Record kept for institutional memory. |
 | `tracked` *(meta)* | Tracked | Not built by IIDS. `trackingOnly: true`. Bypasses the operational ladder; the public stage is its own bucket. |
@@ -51,7 +51,7 @@ What stakeholders see. Rolls up automatically from operational state. Stable, lo
 
 The operational status remains visible as a **secondary chip** on portfolio cards (e.g. `Live · Piloting`). On the landing's stat strip and `/explore`, only public stage shows.
 
-## Three sub-decisions resolved
+## Sub-decisions resolved
 
 ### 1. Governance domain name → `iids-portfolio`
 
@@ -70,6 +70,22 @@ Pure commit-cadence has false positives — a healthy maintained project with sp
 ### 4. `production` accepts a public repo as the artifact, not just `liveUrl`
 
 The first draft of the rules required a `liveUrl` for `production`. That broke for two real cases in the portfolio: `template-app` is a scaffold consumed by cloning, and `dgx-stack` is a self-hostable appliance — neither is a hosted webapp, and both are honestly in production use. The semantic the rule is reaching for is "**is there a publicly-accessible artifact someone outside the build team can use right now?**" For hosted apps, that's `liveUrl`. For infrastructure, scaffolds, and self-hostable deliverables, the public repo *is* the consumable artifact. Either satisfies the rule. The verifier checks that `repoUrl` is set and `isPrivateRepo` is not true — a private repo with no liveUrl fails, as it should.
+
+### 5. OIT-managed production counts as accessible (2026-07-24 amendment)
+
+The Retroactive Payment Requests module went into production on OIT's
+Nexus platform in July 2026 — SSO-gated, used daily by Payroll, private
+repo, and (initially) no recorded URL. Under the original rule it could
+not honestly claim `production` even though it plainly is. The semantic
+gap: sub-decision #4's "publicly-accessible artifact" predates
+OIT-hosted internal enterprise apps, which are *deliberately* not
+anonymous-accessible. For those, the operated platform is the artifact:
+an `oit-*` `proposedDeploymentEnvironment` means OIT has accepted,
+hosts, and monitors the app on managed infrastructure. The verifier
+therefore also accepts `proposedDeploymentEnvironment` starting with
+`oit-` for `production`/`maintained` accessibility (with
+`productionScope` and `supportContact` still required). A liveUrl
+should still be recorded whenever one exists.
 
 ## Schema additions to `Project`
 
@@ -234,3 +250,13 @@ names to satisfy `idea`.
 
 **Follow-up.** Same as `paused`: add `scoping` to the vendored
 `iids-portfolio` ProjectStatus vocabulary upstream.
+
+### 2026-07-24 — OIT-managed production accessibility (sub-decision #5)
+
+**Context.** Retroactive Payment Requests reached production on OIT's
+Nexus platform — SSO-gated with a private repo — and failed the
+production accessibility rule despite being in daily use by Payroll.
+
+**Decision.** Recorded as sub-decision #5 above: an `oit-*`
+`proposedDeploymentEnvironment` satisfies `production`/`maintained`
+accessibility; the OIT-operated platform is the artifact.
