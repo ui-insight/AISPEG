@@ -39,6 +39,21 @@ import { createRegistry, type Audience, type ToolRegistry } from "./tools/regist
 
 const MAX_ITERATIONS = 6;
 
+// Generous completion budget for the loop's calls: qwen3.6 is a thinking
+// model, and the default 2048 leaves too little room for a final answer
+// after a long reasoning stream over big tool results (the ClickUp
+// summarizer hit the same wall — see lib/clickup-sync.ts).
+const LOOP_MAX_TOKENS = 4096;
+
+// One-shot corrective when the model answers without ever calling a tool.
+// Observed failure (2026-07-24, qwen3.6-27b): the model *narrates* an
+// intention — "I'll search for projects…" with empty section headers —
+// instead of emitting tool_calls, and the narration becomes the final
+// answer. The nudge explicitly permits the standard refusal so
+// out-of-scope questions still resolve cleanly.
+const NO_TOOLS_NUDGE =
+  "You have not called any tools yet. Do not describe what you plan to do — either call the tool(s) needed to answer now, or output the standard refusal. Never answer with placeholders or empty section headers.";
+
 export const publicRegistry: ToolRegistry = createRegistry([
   searchPortfolioTool,
   lookupPortfolioEntryTool,
@@ -191,13 +206,18 @@ export async function runAgent(opts: RunOptions): Promise<AgentResponse> {
   const tools = registry.list();
   const citations: Citation[] = [];
   const toolCalls: ToolCallTrace[] = [];
+  let nudged = false;
+  let needsSynthesis = false;
+  let iterationsUsed = 0;
 
   for (let iter = 1; iter <= MAX_ITERATIONS; iter++) {
+    iterationsUsed = iter;
     const response = await chatCompletion({
       messages,
       tools,
       tool_choice: "auto",
       temperature: 0.2,
+      max_tokens: LOOP_MAX_TOKENS,
     });
 
     const choice = response.choices[0];
@@ -215,6 +235,23 @@ export async function runAgent(opts: RunOptions): Promise<AgentResponse> {
     const calls = msg.tool_calls ?? [];
 
     if (calls.length === 0) {
+      // Narration guard: a final answer before ANY tool has run is
+      // either the narrate-instead-of-call failure or an out-of-scope
+      // refusal. One corrective pass distinguishes them — the nudge
+      // permits the refusal, so a clean refusal comes straight back.
+      if (toolCalls.length === 0 && !nudged) {
+        nudged = true;
+        messages.push({ role: "assistant", content: msg.content ?? "" });
+        messages.push({ role: "user", content: NO_TOOLS_NUDGE });
+        continue;
+      }
+      const text = (msg.content ?? "").trim();
+      // Empty final (the thinking stream can exhaust the completion
+      // budget): force one synthesis turn instead of returning nothing.
+      if (text === "") {
+        needsSynthesis = true;
+        break;
+      }
       return {
         response: msg.content ?? "",
         citations: dedupeCitations(citations),
@@ -247,20 +284,24 @@ export async function runAgent(opts: RunOptions): Promise<AgentResponse> {
     }
   }
 
-  // Hit the iteration cap — force a final synthesis turn with tool_choice
-  // = "none" so the model has to commit to text.
+  // Two ways to land here: the iteration cap was hit (truncated), or the
+  // model returned an empty final message (needsSynthesis). Either way,
+  // force a synthesis turn with tool_choice = "none" so the model has to
+  // commit to text.
   const finalResponse = await chatCompletion({
     messages: [
       ...messages,
       {
         role: "user",
-        content:
-          "You've reached the tool-call limit. Synthesise your best answer from the tool results above, or refuse if you don't have enough cited data.",
+        content: needsSynthesis
+          ? "Your previous message was empty. Write your answer now from the tool results above, or output the standard refusal if you don't have enough cited data."
+          : "You've reached the tool-call limit. Synthesise your best answer from the tool results above, or refuse if you don't have enough cited data.",
       },
     ],
     tools,
     tool_choice: "none",
     temperature: 0.2,
+    max_tokens: LOOP_MAX_TOKENS,
   });
 
   return {
@@ -269,7 +310,7 @@ export async function runAgent(opts: RunOptions): Promise<AgentResponse> {
       "I wasn't able to reach a conclusion within the tool-call limit.",
     citations: dedupeCitations(citations),
     toolCalls,
-    iterations: MAX_ITERATIONS,
-    truncated: true,
+    iterations: iterationsUsed,
+    truncated: !needsSynthesis,
   };
 }
