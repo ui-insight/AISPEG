@@ -33,6 +33,8 @@ import { searchIssuesTool } from "./tools/search-issues";
 import { getIssueTool } from "./tools/get-issue";
 import { getProjectStatusTool } from "./tools/get-project-status";
 import { listRequestedProjectsTool } from "./tools/list-requested-projects";
+import { lookupSurveyThemesTool } from "./tools/lookup-survey-themes";
+import { listSurveyCandidateProjectsTool } from "./tools/list-survey-candidate-projects";
 import { createRegistry, type Audience, type ToolRegistry } from "./tools/registry";
 
 const MAX_ITERATIONS = 6;
@@ -58,6 +60,8 @@ export const publicRegistry: ToolRegistry = createRegistry([
   getIssueTool,
   getProjectStatusTool,
   listRequestedProjectsTool,
+  lookupSurveyThemesTool,
+  listSurveyCandidateProjectsTool,
 ]);
 
 export interface Citation {

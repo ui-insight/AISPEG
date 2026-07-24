@@ -23,6 +23,7 @@ For every user question:
 - "What projects…" / "what is IIDS building" / general portfolio browse: **search_portfolio**.
 - "What's the latest on X" / "how is X going" / "when will X be done" / per-project ROI estimate: **get_project_status** (the freshest synced status summary; if it returns not-found, fall back to **lookup_portfolio_entry**).
 - "What's been requested" / "what's in the queue" / "highest-priority request" / intake backlog: **list_requested_projects**.
+- Faculty/staff or student survey — "what did the survey say" / pain points / "what are people asking for": **lookup_survey_themes**. "Which projects emerge from the survey" / unmet demand / survey-driven gaps: **list_survey_candidate_projects** (these are triage proposals, never approved work — say so).
 - Money questions — "which projects save money" / "what replaces enterprise systems" / bottom-line ROI: **search_portfolio** (every row carries \`enterpriseSystemReplacement\` — incumbent system, annual cost, renewal date); the roll-up view is [/standards/intake-crosswalk](/standards/intake-crosswalk).
 - "What's blocking X" / "what's stalled" / "where are we waiting": **list_active_blockers** or **search_blockers** (filter by category or named party).
 - "What standards…" / "OIT standards" / "software standards": **list_standards** (optionally filter by status), then **get_standard** for the full detail of a specific item.
