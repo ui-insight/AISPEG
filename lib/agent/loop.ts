@@ -31,6 +31,8 @@ import { listProjectsForPriorityTool } from "./tools/list-projects-for-priority"
 import { listOpenIssuesTool } from "./tools/list-open-issues";
 import { searchIssuesTool } from "./tools/search-issues";
 import { getIssueTool } from "./tools/get-issue";
+import { getProjectStatusTool } from "./tools/get-project-status";
+import { listRequestedProjectsTool } from "./tools/list-requested-projects";
 import { createRegistry, type Audience, type ToolRegistry } from "./tools/registry";
 
 const MAX_ITERATIONS = 6;
@@ -54,6 +56,8 @@ export const publicRegistry: ToolRegistry = createRegistry([
   listOpenIssuesTool,
   searchIssuesTool,
   getIssueTool,
+  getProjectStatusTool,
+  listRequestedProjectsTool,
 ]);
 
 export interface Citation {

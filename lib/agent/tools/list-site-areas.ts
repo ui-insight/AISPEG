@@ -24,18 +24,20 @@ const SITE_AREAS: SiteArea[] = [
     name: "Projects",
     url: "/portfolio",
     purpose:
-      "The IIDS-coordinated portfolio of AI projects across UI units. Each project lists its home unit, operational owner, lifecycle status, and active blockers.",
+      "The IIDS-coordinated portfolio of AI projects across UI units. Each project lists its home unit, operational owner, lifecycle status, and active blockers. Browse by problem area with the category filter chips, or by lifecycle stage with the two-tier stage filter.",
     example_questions: [
       "What projects is IIDS working on?",
       "Who owns DGX Stack?",
       "What's the status of MindRouter?",
     ],
-  },
-  {
-    name: "Explore",
-    url: "/explore",
-    purpose:
-      "Browse the portfolio by problem area instead of by home unit. Categories include automation, communication, decision support, and others.",
+    sub_areas: [
+      {
+        name: "Requested projects",
+        url: "/portfolio/pipeline",
+        purpose:
+          "The scored intake backlog — project requests awaiting a start decision, ranked on the public 11-criterion prioritization rubric.",
+      },
+    ],
   },
   {
     name: "Submit a Project",
@@ -64,6 +66,30 @@ const SITE_AREAS: SiteArea[] = [
         url: "/standards/strategic-plan",
         purpose:
           "Maps portfolio projects to the UI Strategic Plan pillars and priorities. Bidirectional — see which projects advance each priority.",
+      },
+      {
+        name: "Strategic Plan Map",
+        url: "/standards/strategic-plan/map",
+        purpose:
+          "Coverage map of the strategic plan — which priorities have portfolio projects advancing them and where the gaps are.",
+      },
+      {
+        name: "Intake Crosswalk",
+        url: "/standards/intake-crosswalk",
+        purpose:
+          "Every project profiled in the Unified Technology Request vocabulary: intake track, data touched, AI-risk posture, funding, and bottom-line ROI (hard-dollar savings from replacing enterprise software contracts).",
+      },
+      {
+        name: "OIT Pathway",
+        url: "/standards/oit-pathway",
+        purpose:
+          "The OIT Enterprise AI Development Framework and AI-Assisted Builder Guide: the six-stage lifecycle with gates for teams deploying onto OIT-managed infrastructure, and where our projects sit in it.",
+      },
+      {
+        name: "Operational Excellence Survey",
+        url: "/standards/operational-excellence",
+        purpose:
+          "Explorable results of the Operational Excellence survey — themes and unit responses that inform where AI work is pointed.",
       },
     ],
   },

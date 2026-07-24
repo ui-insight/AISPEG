@@ -53,7 +53,7 @@ export const searchPortfolioTool: ToolHandler = {
           status: {
             type: "string",
             description:
-              "Optional filter by lifecycle status. One of: idea, approved, building, prototype, piloting, production, maintained, sunsetting, archived, tracked.",
+              "Optional filter by lifecycle status. One of: idea, scoping, approved, building, prototype, piloting, production, maintained, paused, sunsetting, archived, tracked.",
           },
           limit: {
             type: "integer",
