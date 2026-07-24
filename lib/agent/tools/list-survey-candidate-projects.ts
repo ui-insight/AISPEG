@@ -25,7 +25,7 @@ export const listSurveyCandidateProjectsTool: ToolHandler = {
     function: {
       name: "list_survey_candidate_projects",
       description:
-        "Potential projects derived from the Operational Excellence survey's demand signal — the data-backed answer to 'what projects emerge from the faculty/staff (or student) survey'. Each candidate carries the problem in respondents' terms, a proposed shape, the survey clusters evidencing it, a coverage verdict against the current portfolio (gap = no current project, partial, covered), and related portfolio slugs. These are proposals awaiting triage — never present them as approved or resourced work.",
+        "Potential projects derived from the Operational Excellence survey's demand signal — the data-backed answer to 'what projects emerge from the faculty/staff (or student) survey'. Each candidate carries the problem in respondents' terms, a proposed shape, the survey clusters evidencing it, a coverage verdict against the current portfolio (gap = no current project, partial, covered), and related portfolio slugs. The faculty/staff and student surveys are separate instruments — when the user asks about one audience, pass `audience` and answer for that audience only, noting which candidates are shared. These are proposals awaiting triage — never present them as approved or resourced work.",
       parameters: {
         type: "object",
         properties: {
@@ -34,6 +34,11 @@ export const listSurveyCandidateProjectsTool: ToolHandler = {
             description:
               "Optional filter: 'gap' (unmet demand), 'partial', or 'covered'. Omit for all, sorted gap-first.",
           },
+          audience: {
+            type: "string",
+            description:
+              "Optional filter: 'faculty' (faculty & staff survey) or 'student' (student survey). Returns candidates evidenced by that audience's responses, including ones shared with the other audience.",
+          },
         },
         additionalProperties: false,
       },
@@ -41,18 +46,25 @@ export const listSurveyCandidateProjectsTool: ToolHandler = {
   },
   async execute(rawArgs): Promise<ToolResult> {
     const coverageFilter = pickString(rawArgs, "coverage");
+    const audienceFilter = pickString(rawArgs, "audience");
     const all = candidateProjectsByCoverage();
-    const filtered =
+    let filtered =
       coverageFilter === "gap" ||
       coverageFilter === "partial" ||
       coverageFilter === "covered"
         ? all.filter((c) => c.coverage === coverageFilter)
         : all;
+    if (audienceFilter === "faculty" || audienceFilter === "student") {
+      filtered = filtered.filter((c) =>
+        c.audiences.includes(audienceFilter)
+      );
+    }
 
     return {
       data: {
         total: all.length,
         returned: filtered.length,
+        audienceFilter: audienceFilter ?? null,
         note: "Proposals derived from survey demand, awaiting CADSO/IIDS triage — not commitments.",
         candidates: filtered.map((c) => ({
           id: c.id,
