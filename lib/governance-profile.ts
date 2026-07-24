@@ -39,18 +39,20 @@ import {
 } from "./roi-rubric";
 
 // ---- Intake vocabulary (mirrors the Unified Technology Request) -------
+// The track vocabulary itself lives in lib/utr.ts (the UTR process
+// module, ADR 0005) and is re-exported here so existing consumers keep
+// their import path.
+
+import type { IntakeTrack } from "./utr";
+
+export type { IntakeTrack };
+export {
+  INTAKE_TRACK_LABEL,
+  INTAKE_TRACK_SHORT,
+  INTAKE_TRACK_TITLE,
+} from "./utr";
 
 export type BuildType = "built-in-house" | "bought" | "hybrid";
-
-// Fast Lane / Track A / B / C from the request routing, plus `external`
-// for work tracked in the inventory that predates (or sits outside) the
-// IIDS build pipeline.
-export type IntakeTrack =
-  | "fast-lane"
-  | "track-a"
-  | "track-b"
-  | "track-c"
-  | "external";
 
 // Provisional — reconcile with APM 30.11 data classification when the
 // office confirms its tiers. Ships unused (classification is pending).
@@ -310,33 +312,6 @@ export const BUILD_TYPE_LABEL: Record<BuildType, string> = {
   "built-in-house": "Built in-house",
   bought: "Purchased",
   hybrid: "Hybrid (vendor-assisted)",
-};
-
-export const INTAKE_TRACK_LABEL: Record<IntakeTrack, string> = {
-  "fast-lane": "Fast Lane",
-  "track-a": "Track A · Standard software",
-  "track-b": "Track B · Built in-house",
-  "track-c": "Track C · Idea / concept",
-  external: "External — tracked",
-};
-
-// Compact labels for the dense matrix view, where the full
-// "Track B · Built in-house" string is too wide. Pair with the title
-// tooltip (INTAKE_TRACK_TITLE) so the short form stays legible.
-export const INTAKE_TRACK_SHORT: Record<IntakeTrack, string> = {
-  "fast-lane": "Fast Lane",
-  "track-a": "A",
-  "track-b": "B",
-  "track-c": "C",
-  external: "Ext",
-};
-
-export const INTAKE_TRACK_TITLE: Record<IntakeTrack, string> = {
-  "fast-lane": "Fast Lane — low-risk individual purchase, automated approval.",
-  "track-a": "Track A — commercial purchase or subscription requiring governance review.",
-  "track-b": "Track B — fully realized in-house application needing security and operational acceptance.",
-  "track-c": "Track C — early-stage build requiring feasibility assessment and the development queue.",
-  external: "External — owned outside IIDS; tracked in the inventory, not routed through the intake process.",
 };
 
 export const DATA_CLASSIFICATION_LABEL: Record<DataClassification, string> = {

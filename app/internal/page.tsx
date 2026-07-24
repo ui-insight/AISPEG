@@ -69,6 +69,20 @@ export default async function InternalHome() {
 
       <section className="grid gap-4 md:grid-cols-3">
         <Link
+          href="/internal/requests"
+          className="group rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:border-ui-gold/40 hover:shadow-md"
+        >
+          <p className="text-xs font-medium uppercase tracking-wider text-ui-gold-dark">
+            UTR registry
+          </p>
+          <p className="mt-1 text-base font-semibold text-ui-charcoal group-hover:text-ui-gold-dark">
+            Unified request queue &rarr;
+          </p>
+          <p className="mt-2 text-xs text-gray-500">
+            Every request from every origin — ClickUp, site, TDX (soon)
+          </p>
+        </Link>
+        <Link
           href="/internal/agent-log"
           className="group rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:border-ui-gold/40 hover:shadow-md md:col-span-2"
         >
