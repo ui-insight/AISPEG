@@ -259,7 +259,7 @@ an API. Powers the public sortable/searchable-by-function page and the
 
 | Surface | Change |
 |---|---|
-| `/portfolio/pipeline` | Becomes the unified request queue: all origins, track/stage/flag chips, disposition; rubric scores stay |
+| `/portfolio/pipeline` | Becomes the unified request queue: all origins, track/stage/flag chips, disposition; rubric scores stay. **Shipped 2026-07-24** (pulled forward from Phase 2 — see amendment below) |
 | `/standards/intake-crosswalk` | Gains real flag/gate/ROI-claim data as it exists; "pending" cells retire one by one |
 | `/standards/approved-tools` (new sub-page, `StandardsSubNav` row per rule 11) | The sortable/searchable-by-function transparency list + fast-lane criteria |
 | `/portfolio/[slug]` | Interest-pool count ("N units have asked for this"), bottom-line-ROI line with basis, gate status |
@@ -341,3 +341,35 @@ migration + typed module + `seed`/`verify` updates + `npm run build`.
 - **No public prioritization surface** until the working group settles
   the model — internal first, same graduation path as ClickUp
   timelines.
+
+## Amendments
+
+### 2026-07-24 — One public queue; no public/internal split
+
+**Context.** Phase 1 shipped the registry with an auth-gated queue at
+`/internal/requests` while `/portfolio/pipeline` still read only the
+ClickUp projection — two request surfaces telling different stories
+(a site-submitted request was in the registry but invisible on the
+public queue). The portfolio owner's call: the site is the project
+inventory and the primary organization and communication tool (Chief
+AI & Data Science Officer onboarding is the immediate audience), it
+will ultimately merge with OIT's TDX, and **all pages tell the same
+story with no public vs. internal distinction**.
+
+**Decision.**
+
+- `/portfolio/pipeline` is the canonical, public, all-origin queue
+  (the Phase 2 line item, pulled forward): registry rows drive state;
+  ClickUp enrichment supplies rubric scores where they exist; unscored
+  arrivals render in an "awaiting scoring" section until triage.
+- `/internal/requests` redirects to `/portfolio/pipeline`.
+- Requestor names render publicly — consistent with the site's
+  owner-named ethos.
+- The Operational Excellence survey's eight candidate projects are
+  registered as `origin: 'direct'` rows (Migration 019), dispositions
+  `open`; coverage analysis rides in need statements and project links
+  (`informs` / `interest`), and formal routing decisions remain
+  triage's call.
+- This supersedes the "internal first" posture above **for the request
+  queue**. Prioritization rounds (Phase 4) will make their own
+  visibility call when they land.

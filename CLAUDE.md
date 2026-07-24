@@ -130,7 +130,7 @@ Four primary surfaces in the sidebar, plus an About link in the footer:
 
 | Surface | Route | Source of truth |
 |---|---|---|
-| Projects | `/portfolio` | Postgres `applications` table (read via `lib/work.ts`); `lib/portfolio.ts` is the TS shadow + seed source for `scripts/seed-portfolio.ts`. Filter UI is two-tier: public stage (rollup) → operational status (drill-in), per [ADR 0001](docs/adr/0001-product-lifecycle-taxonomy.md). The category filter (chips driven by `lib/work-categories.ts`) is the by-problem entry point. |
+| Projects | `/portfolio` | Postgres `applications` table (read via `lib/work.ts`); `lib/portfolio.ts` is the TS shadow + seed source for `scripts/seed-portfolio.ts`. Filter UI is two-tier: public stage (rollup) → operational status (drill-in), per [ADR 0001](docs/adr/0001-product-lifecycle-taxonomy.md). The category filter (chips driven by `lib/work-categories.ts`) is the by-problem entry point. Sub-route `/portfolio/pipeline` is the **unified request queue** — every requested/suggested project from every origin (`tech_requests` registry via `lib/requests.ts`, ClickUp rubric enrichment via `lib/clickup-data.ts`), per [ADR 0005](docs/adr/0005-unified-technology-request-registry.md). There is no internal copy: the site tells one story (owner decision 2026-07-24). |
 | Submit a Project | `/builder-guide` | `lib/builder-guide-data.ts` (quiz definition); Postgres `submissions` (responses) |
 | Standards | `/standards` | `lib/standards-watch.ts` (ledger entries; commit-worthy). Sub-nav covers Data Model, Strategic Plan, and the strategic-plan coverage Map (per [ADR 0003](docs/adr/0003-strategic-plan-map-home.md)). |
 | Reports | `/reports` | `lib/artifacts.ts` — unified timeline of briefs, activity reports, and external presentations |
@@ -200,7 +200,7 @@ app/                       # Next.js App Router
     data-model/            # Data Governance Explorer (UDM catalog + extensions)
     strategic-plan/        # Strategic Plan Alignment Explorer (pillars + priorities)
   ai4ra-ecosystem/         # AI4RA partnership deep-dive (linked from /about)
-  internal/                # Auth-gated views (Basic auth) — same data, sharper detail
+  internal/                # Ops surfaces (sync trigger, agent log). Request queue moved public → /portfolio/pipeline (2026-07-24); /internal/requests redirects there
   admin/                   # Registry + submissions admin
   api/                     # Next.js API routes
   docs/                    # Technical + user documentation

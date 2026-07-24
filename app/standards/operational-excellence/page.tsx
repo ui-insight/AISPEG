@@ -424,6 +424,17 @@ function CandidatesView() {
           {count("gap")} gaps · {count("partial")} partially covered ·{" "}
           {count("covered")} already addressed
         </p>
+        <p className="mt-2 text-sm text-ink-muted">
+          All eight are registered in the{" "}
+          <Link
+            href="/portfolio/pipeline"
+            className="font-medium text-brand-black hover:underline"
+          >
+            unified request queue
+          </Link>
+          , where triage assigns tracks and scores alongside every other
+          request.
+        </p>
       </section>
 
       {groups.map((g) => {

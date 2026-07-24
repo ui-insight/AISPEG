@@ -20,6 +20,9 @@ import {
 export interface TechRequest {
   id: string;
   origin: RequestOrigin;
+  /** ClickUp task id when the request originated in the intake backlog —
+   *  the join key for rubric enrichment (lib/clickup-data.ts). */
+  clickupTaskId: string | null;
   title: string;
   needStatement: string | null;
   requestorName: string | null;
@@ -42,6 +45,7 @@ export interface TechRequest {
 interface TechRequestRow {
   id: string;
   origin: RequestOrigin;
+  clickup_task_id: string | null;
   title: string;
   need_statement: string | null;
   requestor_name: string | null;
@@ -63,6 +67,7 @@ function toTechRequest(row: TechRequestRow): TechRequest {
   return {
     id: row.id,
     origin: row.origin,
+    clickupTaskId: row.clickup_task_id,
     title: row.title,
     needStatement: row.need_statement,
     requestorName: row.requestor_name,
@@ -88,14 +93,15 @@ function toTechRequest(row: TechRequestRow): TechRequest {
 
 /**
  * Every registry row, newest first, with per-origin detail joined in.
- * Internal-audience: rows include requestor names and site-submission
- * content that has no public-visibility decision yet — render only on
- * auth-gated surfaces (see ADR 0005 open question on visibility).
+ * Public-audience since 2026-07-24: the portfolio owner's call is that
+ * the site tells one story with no public/internal split — requestor
+ * names render publicly, consistent with the owner-named ethos of the
+ * rest of the inventory. /portfolio/pipeline is the canonical surface.
  */
 export async function listTechRequests(): Promise<TechRequest[]> {
   const rows = await query<TechRequestRow>(
     `SELECT
-       tr.id, tr.origin, tr.title, tr.need_statement,
+       tr.id, tr.origin, tr.clickup_task_id, tr.title, tr.need_statement,
        tr.requestor_name, tr.requestor_unit,
        tr.track, tr.stage, tr.disposition,
        tr.decided_at, tr.decided_by, tr.decision_summary,

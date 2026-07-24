@@ -35,7 +35,7 @@ const SITE_AREAS: SiteArea[] = [
         name: "Requested projects",
         url: "/portfolio/pipeline",
         purpose:
-          "The scored intake backlog — project requests awaiting a start decision, ranked on the public 11-criterion prioritization rubric.",
+          "The unified technology request queue (ADR 0005) — every requested or suggested project from every origin (ClickUp intake backlog, Submit-a-Project assessments, direct entries, Operational Excellence survey candidates; TDX once wired). Intake-backlog rows carry the public 11-criterion prioritization score; newer arrivals hold unscored until triage. There is no separate internal queue.",
       },
     ],
   },
