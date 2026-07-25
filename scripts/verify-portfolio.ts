@@ -17,6 +17,7 @@
 import { projects } from "../lib/portfolio.js";
 import { verifyAll, type VerificationProblem } from "../lib/portfolio-verification.js";
 import { priorities } from "../lib/strategic-plan/catalog.js";
+import { OIT_EA_PROJECTS } from "../lib/oit-ea-portfolio.js";
 
 function format(p: VerificationProblem): string {
   const tag = p.severity === "error" ? "ERROR " : "WARN  ";
@@ -43,14 +44,51 @@ function verifyStrategicPlanAlignment(): VerificationProblem[] {
   return problems;
 }
 
+// The crosswalk in lib/oit-ea-portfolio.ts is the one seam between OIT's
+// FY2027 inventory and ours. A `portfolioSlug` that no longer resolves —
+// or a claimed match with no stated basis — is drift, not a match.
+function verifyOitCrosswalk(): VerificationProblem[] {
+  const validSlugs = new Set(projects.map((p) => p.slug));
+  const problems: VerificationProblem[] = [];
+  for (const row of OIT_EA_PROJECTS) {
+    if (row.portfolioSlug === undefined) continue;
+    if (!validSlugs.has(row.portfolioSlug)) {
+      problems.push({
+        slug: row.portfolioSlug,
+        claimedStatus: "tracked",
+        problem: `OIT crosswalk row "${row.name}" points at slug "${row.portfolioSlug}", which is not present in lib/portfolio.ts`,
+        rule: "oit-crosswalk",
+        severity: "error",
+      });
+    }
+    if (!row.crosswalkConfidence || !row.crosswalkNote) {
+      problems.push({
+        slug: row.portfolioSlug,
+        claimedStatus: "tracked",
+        problem: `OIT crosswalk row "${row.name}" claims a match without both crosswalkConfidence and crosswalkNote`,
+        rule: "oit-crosswalk",
+        severity: "error",
+      });
+    }
+  }
+  return problems;
+}
+
 function main(): void {
   const lifecycleProblems = verifyAll(projects);
   const stratPlanProblems = verifyStrategicPlanAlignment();
-  const all = [...lifecycleProblems, ...stratPlanProblems];
+  const oitCrosswalkProblems = verifyOitCrosswalk();
+  const all = [
+    ...lifecycleProblems,
+    ...stratPlanProblems,
+    ...oitCrosswalkProblems,
+  ];
   const errors = all.filter((p) => p.severity === "error");
   const warnings = all.filter((p) => p.severity === "warning");
 
-  console.log(`Verifying ${projects.length} projects against ADR 0001 rules and strategic-plan alignment ...\n`);
+  console.log(
+    `Verifying ${projects.length} projects against ADR 0001 rules, strategic-plan alignment, and the OIT FY2027 crosswalk ...\n`
+  );
 
   if (warnings.length > 0) {
     console.log(`Warnings (${warnings.length}):`);

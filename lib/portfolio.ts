@@ -949,6 +949,7 @@ export const projects: Project[] = [
       "Establishes governed lakehouse access to institutional data sources, with documentation and data dictionaries, as the shared substrate for AI4UI applications.",
     operationalExcellenceOutcome:
       "Aligns the data used and created by AI4UI applications on one governed foundation instead of per-project extracts — the E.1 data-warehouse priority made concrete.",
+    tech: ["Databricks"],
     relatedSlugs: ["dgx-stack", "nexus"],
     workCategories: ["ai-infrastructure"],
     strategicPlanAlignment: ["E.1", "E.2"],
