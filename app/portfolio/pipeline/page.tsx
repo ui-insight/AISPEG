@@ -22,6 +22,13 @@ import {
   isRequestValueLens,
   type RequestValueLens,
 } from "@/lib/rubric";
+import {
+  OIT_EA_PROJECTS,
+  SOURCE_FISCAL_YEAR,
+  crosswalkedProjects,
+  projectsByPriority,
+  teamCounts,
+} from "@/lib/oit-ea-portfolio";
 
 export const dynamic = "force-dynamic";
 
@@ -392,6 +399,96 @@ function CompactRequestList({
         );
       })}
     </ul>
+  );
+}
+
+// Standing context for anything in this queue that would route to OIT.
+// Deliberately makes no per-request claim: matching a free-text request
+// against an OIT row on subject matter alone is the kind of inference
+// the crosswalk in lib/oit-ea-portfolio.ts exists to prevent. What the
+// reader gets is the shape of OIT's committed FY load, named by team and
+// TPM, so a collision is something they can see rather than be told.
+function OitCommitments() {
+  const teams = teamCounts();
+  const critical = projectsByPriority("Critical");
+  const shared = crosswalkedProjects();
+
+  return (
+    <section className="space-y-4 border-t border-hairline pt-8">
+      <div>
+        <p className="text-xs font-medium uppercase tracking-wider text-brand-silver">
+          Standing context
+        </p>
+        <h2 className="mt-1 text-xl font-black tracking-tight text-brand-black">
+          What OIT has already committed to
+        </h2>
+        <p className="mt-3 max-w-3xl text-base leading-relaxed text-ink-muted">
+          This queue produces new asks. OIT&apos;s Enterprise Applications
+          group is already carrying {OIT_EA_PROJECTS.length} committed
+          efforts in {SOURCE_FISCAL_YEAR}, {critical.length} of them
+          Critical. A request routed to OIT lands on top of that load, not
+          into open capacity — so the queue is worth reading against it.
+        </p>
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)]">
+        <div className="rounded-xl border border-hairline bg-surface-alt p-5">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-brand-silver">
+            Committed efforts by owning team
+          </p>
+          <dl className="mt-3 space-y-2">
+            {teams.map(({ team, count }) => (
+              <div key={team} className="flex items-baseline gap-3">
+                <dt className="flex-1 text-sm text-ui-charcoal">{team}</dt>
+                <dd className="text-sm font-semibold tabular-nums text-brand-black">
+                  {count}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+
+        <div className="rounded-xl border border-hairline bg-white p-5">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-brand-silver">
+            The Critical commitments
+          </p>
+          <ul className="mt-3 space-y-2">
+            {critical.map((row) => (
+              <li
+                key={row.id}
+                className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5"
+              >
+                <span className="text-sm font-medium text-brand-black">
+                  {row.name}
+                </span>
+                <span className="text-xs text-ink-subtle">
+                  {row.tpmOrManager}
+                </span>
+                {row.portfolioSlug && (
+                  <Link
+                    href={`/portfolio/${row.portfolioSlug}`}
+                    className="text-xs font-medium text-brand-clearwater"
+                  >
+                    in our inventory
+                  </Link>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      <p className="max-w-3xl text-xs leading-relaxed text-ink-subtle">
+        No request in this queue is matched to an OIT row — a shared subject
+        is not evidence of shared work. The {shared.length} efforts the two
+        inventories genuinely share are already active projects, not
+        requests.{" "}
+        <Link href="/standards/oit-portfolio">
+          See OIT&apos;s full {SOURCE_FISCAL_YEAR} portfolio
+        </Link>{" "}
+        for all {OIT_EA_PROJECTS.length} rows and how they were crosswalked.
+      </p>
+    </section>
   );
 }
 
@@ -769,6 +866,8 @@ export default async function PipelinePage({
           )}
         </>
       )}
+
+      <OitCommitments />
 
       <footer className="space-y-2 border-t border-hairline pt-6">
         {lastSync && <SyncFreshness syncedAt={lastSync.finishedAt} />}
