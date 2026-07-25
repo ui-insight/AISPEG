@@ -196,7 +196,8 @@ app/                       # Next.js App Router
   intake/[token]/          # Submitter-visible status page (Sprint 3a)
   reports/                 # Reports surface
   presentations/           # Legacy redirect → /reports (kept to preserve inbound links)
-  standards/               # Standards (sub-nav: ledger + data-model + strategic-plan)
+  standards/               # Standards (sub-nav: ledger + data-model + strategic-plan
+                           #   + intake-crosswalk + oit-pathway + oit-portfolio + op-excellence)
     data-model/            # Data Governance Explorer (UDM catalog + extensions)
     strategic-plan/        # Strategic Plan Alignment Explorer (pillars + priorities)
   ai4ra-ecosystem/         # AI4RA partnership deep-dive (linked from /about)
@@ -218,6 +219,7 @@ components/                # Reusable components
 lib/                       # Domain logic
   portfolio.ts             # Project inventory + lifecycle module (types, rollup, labels, colors, type guards)
   portfolio-verification.ts # ADR 0001 verifier — `npm run verify:portfolio`
+  oit-ea-portfolio.ts      # OIT's FY2027 EA inventory in OIT's structure + crosswalk to portfolio slugs
   portfolio-meta.ts        # AUTO-GENERATED — derived lastCommitDate per repo (do not edit)
   work.ts                  # Postgres-backed query module for /portfolio (reads applications + blockers)
   work-categories.ts       # "By problem" taxonomy — typed slugs + audience-facing labels
@@ -296,6 +298,7 @@ normative version of any of these lives in **Agent Rules** above).
 | A standards ledger entry | `lib/standards-watch.ts` | Each is commit-worthy; the git log is the audit trail. |
 | A sub-section under `/standards` | `app/standards/<sub>/page.tsx` + add a row to `subNavItems` in `components/StandardsSubNav.tsx` | The shared eyebrow + sub-nav lives in `app/standards/layout.tsx`. Each sub-page owns its own H1. Sidebar stays at one "Standards" entry — never edit `Sidebar.tsx` for sub-sections. |
 | A canonical UDM table tag | `lib/governance/canonical-udm-tables.ts` | Hand-curated v1 list. The data-governance catalog JSONs do not yet carry canonical/extension classification — once they do, this module retires. |
+| An OIT FY portfolio row, or a crosswalk to one | `lib/oit-ea-portfolio.ts` | Point-in-time transcription of OIT's spreadsheet — re-transcribe on a new cut and bump `SOURCE_AS_OF`. Keep OIT's columns in OIT's vocabulary; `portfolioSlug` is the only seam to `lib/portfolio.ts`, and a claimed match needs both `crosswalkConfidence` and `crosswalkNote`. `npm run verify:portfolio` polices both. |
 | A presentation or external talk | `lib/artifacts.ts` (entry with `kind: "presentation"`, `external: true`, `href` pointing at the hosted deck) | The artifact appears in the /reports timeline. |
 | A report | `app/reports/page.tsx` and (if needed) a route under `app/reports/<slug>` | Time-stamped, reverse-chron. |
 

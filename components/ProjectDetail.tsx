@@ -16,6 +16,13 @@ import {
   DEPLOYMENT_ENVIRONMENT_LABELS,
   type EnterpriseSystemReplacement,
 } from "@/lib/project-governance";
+import {
+  CROSSWALK_CONFIDENCE_LABELS,
+  OIT_EFFORT_DISCIPLINES,
+  SOURCE_FISCAL_YEAR,
+  oitProjectForSlug,
+  type OitEaProject,
+} from "@/lib/oit-ea-portfolio";
 
 // Blocker severity is a documented exception to the brand-token rule —
 // the amber/red signals are functional alerting, not status decoration.
@@ -96,6 +103,92 @@ function replacementSummary(replacement: EnterpriseSystemReplacement) {
         : ""
     }`,
   };
+}
+
+// A project OIT also carries in its FY2027 Enterprise Applications
+// portfolio. Rendered in OIT's own vocabulary — priority, owning team,
+// TPM, effort by discipline — because those facts are theirs, not ours,
+// and the crosswalk note is explicit about how firm the match is.
+function OitPortfolioSection({ row }: { row: OitEaProject }) {
+  const efforts = OIT_EFFORT_DISCIPLINES.filter(
+    ({ key }) => row.effort[key] !== undefined
+  );
+  return (
+    <section className="border-t border-hairline pt-6">
+      <SectionEyebrow>Also tracked by OIT</SectionEyebrow>
+      <div className="mt-3 max-w-3xl rounded-lg border border-hairline bg-surface-alt p-5">
+        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <p className="text-sm font-bold tracking-tight text-brand-black">
+            {row.name}
+          </p>
+          <span className="text-xs text-brand-silver">
+            {SOURCE_FISCAL_YEAR} Enterprise Applications portfolio
+          </span>
+        </div>
+
+        <dl className="mt-4 grid gap-x-6 gap-y-3 sm:grid-cols-3">
+          <div>
+            <dt className="text-[11px] font-semibold uppercase tracking-wider text-brand-silver">
+              OIT priority
+            </dt>
+            <dd className="mt-0.5 text-sm text-ui-charcoal">{row.priority}</dd>
+          </div>
+          <div>
+            <dt className="text-[11px] font-semibold uppercase tracking-wider text-brand-silver">
+              Owning team
+            </dt>
+            <dd className="mt-0.5 text-sm text-ui-charcoal">
+              {row.primaryTeam}
+            </dd>
+          </div>
+          <div>
+            <dt className="text-[11px] font-semibold uppercase tracking-wider text-brand-silver">
+              TPM or manager
+            </dt>
+            <dd className="mt-0.5 text-sm text-ui-charcoal">
+              {row.tpmOrManager}
+            </dd>
+          </div>
+        </dl>
+
+        {efforts.length > 0 && (
+          <div className="mt-4">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-brand-silver">
+              Effort by discipline
+            </p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {efforts.map(({ key, label }) => (
+                <span
+                  key={key}
+                  className="rounded-md border border-hairline bg-white px-2.5 py-1 text-xs text-ui-charcoal"
+                >
+                  {label}{" "}
+                  <span className="font-semibold">{row.effort[key]}</span>
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {row.notes && (
+          <p className="mt-4 text-sm text-ink-muted">{row.notes}</p>
+        )}
+
+        {row.crosswalkConfidence && row.crosswalkNote && (
+          <p className="mt-4 border-t border-hairline pt-3 text-xs leading-relaxed text-ink-subtle">
+            <span className="font-semibold">
+              {CROSSWALK_CONFIDENCE_LABELS[row.crosswalkConfidence]}.
+            </span>{" "}
+            {row.crosswalkNote}{" "}
+            <Link href="/standards/oit-portfolio">
+              See the full OIT portfolio
+            </Link>
+            .
+          </p>
+        )}
+      </div>
+    </section>
+  );
 }
 
 function GitHubIcon() {
@@ -196,6 +289,7 @@ export default function ProjectDetail({
   const showBuildSegment =
     buildParticipantsLabel && buildParticipantsLabel !== homeUnitLabel;
   const replacement = replacementSummary(app.enterpriseSystemReplacement);
+  const oitRow = oitProjectForSlug(app.slug);
 
   return (
     <div className="space-y-12">
@@ -478,6 +572,8 @@ export default function ProjectDetail({
           </p>
         </section>
       )}
+
+      {oitRow && <OitPortfolioSection row={oitRow} />}
 
       {/* Beat 3 — Can I use it? Engagement surface: links, deployments,
           tech, features, related. */}
