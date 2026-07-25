@@ -39,6 +39,11 @@ import { lookupOitPathwayTool } from "./tools/lookup-oit-pathway";
 import { lookupOitPortfolioTool } from "./tools/lookup-oit-portfolio";
 import { lookupIntakeProfileTool } from "./tools/lookup-intake-profile";
 import { createRegistry, type Audience, type ToolRegistry } from "./tools/registry";
+import {
+  looksLikeImitatedToolCall,
+  mentionsKnownTool,
+  salvageToolCalls,
+} from "./salvage-tool-call";
 
 const MAX_ITERATIONS = 6;
 
@@ -56,6 +61,11 @@ const LOOP_MAX_TOKENS = 4096;
 // out-of-scope questions still resolve cleanly.
 const NO_TOOLS_NUDGE =
   "You have not called any tools yet. Do not describe what you plan to do — either call the tool(s) needed to answer now, or output the standard refusal. Never answer with placeholders or empty section headers.";
+
+// Last-resort text when every recovery path has failed. Matches the
+// refusal phrasing in the system prompt so the user sees one voice.
+const SALVAGE_FAILED_REFUSAL =
+  "I don't have data on that. Try browsing [/portfolio](/portfolio) for the active project list.";
 
 export const publicRegistry: ToolRegistry = createRegistry([
   searchPortfolioTool,
@@ -104,6 +114,13 @@ export interface AgentResponse {
   toolCalls: ToolCallTrace[];
   iterations: number;
   truncated: boolean;
+  /**
+   * How many tool calls this turn had to be recovered from assistant
+   * prose rather than read off the tool channel. Non-zero means the
+   * model is misbehaving even though the user got a good answer — worth
+   * watching if it climbs after a model change.
+   */
+  salvagedToolCalls: number;
 }
 
 export interface RunOptions {
@@ -210,21 +227,27 @@ export async function runAgent(opts: RunOptions): Promise<AgentResponse> {
   ];
 
   const tools = registry.list();
+  const toolNames = tools.map((t) => t.function.name);
   const citations: Citation[] = [];
   const toolCalls: ToolCallTrace[] = [];
   let nudged = false;
   let needsSynthesis = false;
   let iterationsUsed = 0;
+  let salvageCount = 0;
+  // Set for one call only, when the model narrated an intent to use a
+  // tool but emitted nothing runnable. See the nudge branch below.
+  let forceToolCall = false;
 
   for (let iter = 1; iter <= MAX_ITERATIONS; iter++) {
     iterationsUsed = iter;
     const response = await chatCompletion({
       messages,
       tools,
-      tool_choice: "auto",
+      tool_choice: forceToolCall ? "required" : "auto",
       temperature: 0.2,
       max_tokens: LOOP_MAX_TOKENS,
     });
+    forceToolCall = false;
 
     const choice = response.choices[0];
     if (!choice) {
@@ -234,11 +257,33 @@ export async function runAgent(opts: RunOptions): Promise<AgentResponse> {
         toolCalls,
         iterations: iter,
         truncated: false,
+        salvagedToolCalls: salvageCount,
       };
     }
 
     const msg = choice.message;
-    const calls = msg.tool_calls ?? [];
+    let calls = msg.tool_calls ?? [];
+
+    // Salvage pass: the model sometimes writes a tool call as prose
+    // instead of emitting it on the tool channel. When the text names a
+    // registered tool, run it — the intent is unambiguous and nudging
+    // has been observed to just produce the imitation again in a
+    // different syntax. Real tool_calls always win; this only fires when
+    // the channel came back empty.
+    if (calls.length === 0) {
+      const salvaged = salvageToolCalls(msg.content ?? "", toolNames);
+      if (salvaged.length > 0) {
+        salvageCount += salvaged.length;
+        calls = salvaged.map((s, i) => ({
+          id: `salvaged_${iter}_${i}`,
+          type: "function" as const,
+          function: {
+            name: s.name,
+            arguments: JSON.stringify(s.arguments),
+          },
+        }));
+      }
+    }
 
     if (calls.length === 0) {
       // Narration guard: a final answer before ANY tool has run is
@@ -247,6 +292,11 @@ export async function runAgent(opts: RunOptions): Promise<AgentResponse> {
       // permits the refusal, so a clean refusal comes straight back.
       if (toolCalls.length === 0 && !nudged) {
         nudged = true;
+        // If the narration named a tool, the model meant to call one and
+        // botched the channel — make the retry mandatory rather than
+        // hoping the wording lands. A genuine out-of-scope refusal names
+        // no tool and keeps "auto", so it still comes straight back.
+        forceToolCall = mentionsKnownTool(msg.content ?? "", toolNames);
         messages.push({ role: "assistant", content: msg.content ?? "" });
         messages.push({ role: "user", content: NO_TOOLS_NUDGE });
         continue;
@@ -258,20 +308,43 @@ export async function runAgent(opts: RunOptions): Promise<AgentResponse> {
         needsSynthesis = true;
         break;
       }
+      // A leftover imitation that salvage couldn't run (unknown tool
+      // name, unparseable args) must never reach the user as markup.
+      // With tool results in hand, force a synthesis turn; without any,
+      // refuse in the standard voice.
+      if (looksLikeImitatedToolCall(text, toolNames)) {
+        if (toolCalls.length > 0) {
+          needsSynthesis = true;
+          break;
+        }
+        return {
+          response: SALVAGE_FAILED_REFUSAL,
+          citations: dedupeCitations(citations),
+          toolCalls,
+          iterations: iter,
+          truncated: false,
+          salvagedToolCalls: salvageCount,
+        };
+      }
       return {
         response: msg.content ?? "",
         citations: dedupeCitations(citations),
         toolCalls,
         iterations: iter,
         truncated: false,
+        salvagedToolCalls: salvageCount,
       };
     }
 
     // Append the assistant's tool-call turn to the running log so the
-    // model sees its own decision when we come back around.
+    // model sees its own decision when we come back around. On a salvage
+    // the content IS the imitation markup — drop it, so the log models a
+    // well-formed tool-call turn rather than echoing the bad pattern
+    // back into the context.
+    const salvagedThisTurn = (msg.tool_calls ?? []).length === 0;
     messages.push({
       role: "assistant",
-      content: msg.content ?? null,
+      content: salvagedThisTurn ? null : msg.content ?? null,
       tool_calls: calls,
     });
 
@@ -318,5 +391,6 @@ export async function runAgent(opts: RunOptions): Promise<AgentResponse> {
     toolCalls,
     iterations: iterationsUsed,
     truncated: !needsSynthesis,
+    salvagedToolCalls: salvageCount,
   };
 }
