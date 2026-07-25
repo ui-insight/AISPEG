@@ -35,6 +35,9 @@ import { getProjectStatusTool } from "./tools/get-project-status";
 import { listRequestedProjectsTool } from "./tools/list-requested-projects";
 import { lookupSurveyThemesTool } from "./tools/lookup-survey-themes";
 import { listSurveyCandidateProjectsTool } from "./tools/list-survey-candidate-projects";
+import { lookupOitPathwayTool } from "./tools/lookup-oit-pathway";
+import { lookupOitPortfolioTool } from "./tools/lookup-oit-portfolio";
+import { lookupIntakeProfileTool } from "./tools/lookup-intake-profile";
 import { createRegistry, type Audience, type ToolRegistry } from "./tools/registry";
 
 const MAX_ITERATIONS = 6;
@@ -77,6 +80,9 @@ export const publicRegistry: ToolRegistry = createRegistry([
   listRequestedProjectsTool,
   lookupSurveyThemesTool,
   listSurveyCandidateProjectsTool,
+  lookupOitPathwayTool,
+  lookupOitPortfolioTool,
+  lookupIntakeProfileTool,
 ]);
 
 export interface Citation {
