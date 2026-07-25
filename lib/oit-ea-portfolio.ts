@@ -92,8 +92,13 @@ export type CrosswalkConfidence =
 
 /**
  * A row of OIT's portfolio that lands on a surface this site already
- * maintains without being a project in our inventory — OIT's governance
- * and data-standards work, mostly.
+ * maintains without being a project in our inventory.
+ *
+ * The bar is the same as for a crosswalk: an owner has affirmed the
+ * relationship. Shared subject matter is not enough — several rows that
+ * read as adjacent (the AI decision framework, the operational-excellence
+ * CoP, MyUI) were reviewed in July 2026 and left unlinked because the
+ * connection could not be supported. Leave the field off by default.
  */
 export interface RelatedSurface {
   label: string;
@@ -164,7 +169,7 @@ export const OIT_EA_PROJECTS: readonly OitEaProject[] = [
     relatedSurface: {
       label: "Data Model",
       href: "/standards/data-model",
-      note: "The AI4RA Unified Data Model catalog and controlled vocabularies this site tracks are the data-standards layer OIT's enablement work governs.",
+      note: "Adjacent to the UDM catalog and controlled vocabularies tracked here, but OIT's enablement scope is institution-wide and considerably broader than that work — related, not equivalent.",
     },
   },
   {
@@ -181,9 +186,9 @@ export const OIT_EA_PROJECTS: readonly OitEaProject[] = [
       systems: "High",
     },
     portfolioSlug: "data-infrastructure-pilot",
-    crosswalkConfidence: "candidate",
+    crosswalkConfidence: "confirmed",
     crosswalkNote:
-      "Both efforts stand up a lakehouse for institutional data. Whether the Data Infrastructure Pilot is meant to land on OIT's Databricks platform, or is a parallel IIDS track, has not been confirmed with OIT.",
+      "Databricks is the main technical platform deliverable of the Data Infrastructure Pilot — one effort, tracked from both sides (confirmed by Barrie Robison, July 2026).",
   },
   {
     id: "nacubo-dashboards-data-architecture",
@@ -217,9 +222,9 @@ export const OIT_EA_PROJECTS: readonly OitEaProject[] = [
       systems: "Low",
     },
     portfolioSlug: "openera",
-    crosswalkConfidence: "probable",
+    crosswalkConfidence: "confirmed",
     crosswalkNote:
-      "OpenERA declares VERAS as the enterprise system it replaces ($150k/yr, renewal March 2027), and OIT carries VERAS replacement as a Critical FY27 commitment. Open question: whether OIT's row denotes OpenERA itself or the Nexus sponsored-programs module — these are separate efforts and should not be conflated.",
+      "OpenERA is the system that will replace VERAS (confirmed by Barrie Robison, July 2026). OIT carries the replacement as a Critical FY27 commitment; our entry carries the incumbent economics — $150k/yr, renewal March 2027.",
   },
   {
     id: "nexus",
@@ -237,7 +242,7 @@ export const OIT_EA_PROJECTS: readonly OitEaProject[] = [
     portfolioSlug: "nexus",
     crosswalkConfidence: "confirmed",
     crosswalkNote:
-      "The same platform on both sides: OIT's Enterprise Applications team owns delivery; our inventory tracks it as the OIT-managed landing zone where UI application modules deploy.",
+      "The same platform on both sides (confirmed by Barrie Robison, July 2026): OIT's Enterprise Applications team owns delivery; our inventory tracks it as the OIT-managed landing zone where UI application modules deploy.",
   },
   {
     id: "ai-development-decision-framework",
@@ -247,11 +252,6 @@ export const OIT_EA_PROJECTS: readonly OitEaProject[] = [
     primaryTeam: "Enterprise Applications",
     tpmOrManager: "Kali Armitage",
     effort: { tpmManager: "Medium" },
-    relatedSurface: {
-      label: "OIT Pathway",
-      href: "/standards/oit-pathway",
-      note: "The Enterprise AI Development Framework and AI-Assisted Builder Guide tracked on that page are the decision framework this row funds.",
-    },
   },
   {
     id: "edabroad-platform-assessment",
@@ -530,11 +530,6 @@ export const OIT_EA_PROJECTS: readonly OitEaProject[] = [
     primaryTeam: "Product Management",
     tpmOrManager: "Trevor Humble",
     effort: { tpmManager: "Medium", administration: "Low" },
-    relatedSurface: {
-      label: "Data Model",
-      href: "/standards/data-model",
-      note: "Data-governance capacity work adjacent to the UDM catalog and controlled vocabularies tracked here.",
-    },
   },
   {
     id: "disability-resurvey-form",
@@ -554,11 +549,6 @@ export const OIT_EA_PROJECTS: readonly OitEaProject[] = [
     tpmOrManager: "Trevor Humble",
     effort: { tpmManager: "Medium", administration: "High" },
     notes: "Q3 and Q4 project",
-    relatedSurface: {
-      label: "Op Excellence Survey",
-      href: "/standards/operational-excellence",
-      note: "A real MyUI mobile app was one of the most-requested items in the student survey.",
-    },
   },
   {
     id: "myui-custom-card-resurvey",
@@ -765,11 +755,6 @@ export const OIT_EA_PROJECTS: readonly OitEaProject[] = [
     primaryTeam: "Product Management",
     tpmOrManager: "Kali Armitage",
     effort: { tpmManager: "Medium" },
-    relatedSurface: {
-      label: "Op Excellence Survey",
-      href: "/standards/operational-excellence",
-      note: "The community of practice this row funds is the standing home for the operational-excellence survey findings tracked here.",
-    },
   },
 
   // --- Category: Infrastructure -------------------------------------

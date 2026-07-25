@@ -100,7 +100,8 @@ function ProjectRow({ row }: { row: OitEaProject }) {
 
       {row.relatedSurface && (
         <p className="mt-2 text-xs leading-relaxed text-ink-subtle">
-          Touches <Link href={row.relatedSurface.href}>
+          Related to{" "}
+          <Link href={row.relatedSurface.href}>
             {row.relatedSurface.label}
           </Link>{" "}
           on this site. {row.relatedSurface.note}
@@ -145,10 +146,11 @@ export default function OitPortfolioPage() {
         </h2>
         <p className="mt-2 max-w-3xl text-base leading-relaxed text-ink-muted">
           {crosswalked.length} of OIT&apos;s {OIT_EA_PROJECTS.length} rows
-          describe work this inventory also tracks. The rest is OIT&apos;s
-          own — infrastructure, Softdocs forms, Banner operations — and the
-          overlap is deliberately small, so each match carries its basis and
-          its open questions rather than an implied equivalence.
+          describe work this inventory also tracks, each confirmed by the
+          portfolio owner rather than inferred from a shared subject. The
+          rest is OIT&apos;s own — infrastructure, Softdocs forms, Banner
+          operations. The overlap is genuinely this small, and rows that
+          merely read as adjacent are left unlinked.
         </p>
         <ul className="mt-6 space-y-0">
           {crosswalked.map((row) => (
@@ -159,11 +161,12 @@ export default function OitPortfolioPage() {
         {surfaceLinked.length > 0 && (
           <>
             <h3 className="mt-10 text-lg font-bold tracking-tight text-brand-black">
-              And {surfaceLinked.length} more that meet our standards work
+              Related, but not the same work
             </h3>
             <p className="mt-2 max-w-3xl text-sm leading-relaxed text-ink-muted">
-              These are not projects in our inventory, but they govern or feed
-              surfaces this site maintains.
+              Not a project in our inventory, and not a match — a row whose
+              subject overlaps a surface this site maintains, where the
+              scopes differ enough that saying more would overstate it.
             </p>
             <ul className="mt-4 space-y-0">
               {surfaceLinked.map((row) => (
