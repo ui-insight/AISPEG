@@ -483,7 +483,7 @@ function OitCommitments() {
         is not evidence of shared work. The {shared.length} efforts the two
         inventories genuinely share are already active projects, not
         requests.{" "}
-        <Link href="/standards/oit-portfolio">
+        <Link href="/coordination/oit-portfolio">
           See OIT&apos;s full {SOURCE_FISCAL_YEAR} portfolio
         </Link>{" "}
         for all {OIT_EA_PROJECTS.length} rows and how they were crosswalked.
@@ -741,7 +741,7 @@ export default async function PipelinePage({
                   been through rubric scoring — site submissions, direct
                   entries, and candidate projects derived from the{" "}
                   <Link
-                    href="/standards/operational-excellence"
+                    href="/coordination/operational-excellence"
                     className="font-medium text-brand-black hover:underline"
                   >
                     Operational Excellence survey

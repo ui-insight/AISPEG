@@ -83,3 +83,4 @@ ADRs are **append-only**. To change a decision:
 | [0003](./0003-strategic-plan-map-home.md) | Strategic-Plan Map Home + `/explore` Retirement | Accepted | 2026-05-05 |
 | [0004](./0004-clickup-ingestion-boundary.md) | ClickUp Ingestion Boundary | Accepted | 2026-07-10 |
 | [0005](./0005-unified-technology-request-registry.md) | Unified Technology Request: Request Registry & Governance Tracking | Proposed | 2026-07-23 |
+| [0006](./0006-coordination-surface-split.md) | Split `/coordination` out of `/standards` | Accepted | 2026-07-25 |

@@ -24,12 +24,12 @@ import { getWorkCategoryLabel } from "@/lib/work-categories";
 import { getProjectBySlug } from "@/lib/portfolio";
 
 export const metadata = {
-  title: "Operational Excellence Survey — Standards",
+  title: "Operational Excellence Survey — Coordination",
   description:
     "Themes and every anonymized response from the University of Idaho's October 2025 Operational Excellence survey (Strategic Plan Pillar 5): what faculty, staff, and students want simplified, automated, and improved.",
 };
 
-const BASE = "/standards/operational-excellence";
+const BASE = "/coordination/operational-excellence";
 type ViewMode = "themes" | "explore" | "candidates";
 
 // ── URL param handling ───────────────────────────────────────
@@ -542,7 +542,7 @@ export default async function OperationalExcellenceSurveyPage({
             <Link href={href({ view: "candidates" })}>Candidate projects</Link>{" "}
             view turns the strongest patterns into proposals &mdash;
             cross-referenced against what is already running &mdash; for the{" "}
-            <Link href="/standards/intake-crosswalk">intake crosswalk</Link> and{" "}
+            <Link href="/coordination/intake-crosswalk">intake crosswalk</Link> and{" "}
             <Link href="/portfolio">project inventory</Link> to triage.
           </p>
         </section>

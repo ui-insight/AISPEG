@@ -1,7 +1,7 @@
 // lookup_survey_themes — the Operational Excellence survey (October
 // 2025): what faculty/staff and students actually asked for, as
 // question-clusters with summaries and sub-themes. Everything returned
-// here is already published on /standards/operational-excellence —
+// here is already published on /coordination/operational-excellence —
 // verbatims pass through the same privacy handling as the page
 // (withheld responses never enter the module; featured quotes are
 // hand-curated).
@@ -17,7 +17,7 @@ import {
 import type { SurveyAudience, SurveyClusterKey } from "@/lib/surveys/types";
 import type { ToolHandler, ToolResult } from "./registry";
 
-const CANONICAL_URL = "/standards/operational-excellence";
+const CANONICAL_URL = "/coordination/operational-excellence";
 const AUDIENCES: SurveyAudience[] = ["faculty", "student"];
 
 function pickString(args: Record<string, unknown>, key: string): string | undefined {

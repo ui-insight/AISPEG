@@ -124,7 +124,7 @@ export default function BuilderGuideDocsPage() {
         during Stage 2, no later than the pre-review handoff. That milestone records
         deployment intent and shared custody; it does not replace the security,
         staging, or production gates. See the{" "}
-        <Link href="/standards/oit-pathway">OIT deployment pathway</Link>.
+        <Link href="/coordination/oit-pathway">OIT deployment pathway</Link>.
       </InfoBox>
 
       <InfoBox type="info" title="Your submission is not a commitment">

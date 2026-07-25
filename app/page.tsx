@@ -7,6 +7,10 @@ import {
 import { artifacts, sortedArtifacts } from "@/lib/artifacts";
 import { summary as standardsSummary } from "@/lib/standards-watch";
 import { buildProjectMapGraph } from "@/lib/project-map-graph";
+import {
+  allGovernanceProfiles,
+  governanceCoverage,
+} from "@/lib/governance-profile";
 
 export default async function Home() {
   const all = getPubliclyVisible();
@@ -27,6 +31,7 @@ export default async function Home() {
   const liveUnits = new Set(liveProjects.flatMap((p) => p.homeUnits)).size;
 
   const standards = standardsSummary();
+  const coverage = governanceCoverage(allGovernanceProfiles());
   const reportCount = artifacts.length;
   const mostRecent = sortedArtifacts()[0]?.dateLabel;
 
@@ -164,6 +169,19 @@ export default async function Home() {
                 <span className="text-xs text-ink-muted">
                   {standards.counts.approved} approved &middot;{" "}
                   {standards.outstanding} in progress
+                </span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/coordination"
+                className="group flex items-baseline justify-between gap-3"
+              >
+                <span className="font-semibold text-brand-black group-hover:text-brand-clearwater">
+                  Coordination
+                </span>
+                <span className="text-xs text-ink-muted">
+                  {coverage.total} projects profiled for intake
                 </span>
               </Link>
             </li>

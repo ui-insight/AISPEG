@@ -65,8 +65,9 @@ rule conflicts with something else in this document, the rule wins.
 ### Structure
 11. **NEVER add Sidebar entries for sub-sections.** The IA is
     intentionally narrow. Sub-pages live under their parent's `layout.tsx`
-    with a sub-nav (see `app/standards/layout.tsx` as the canonical
-    pattern), not as new sidebar items.
+    with a sub-nav — declare `subNavItems` there and render the shared
+    `components/SectionSubNav.tsx` (see `app/standards/layout.tsx` and
+    `app/coordination/layout.tsx`), not as new sidebar items.
 12. **NEVER recreate routes removed in the May 2026 refactor**:
     `/knowledge`, `/cautionary-tales`, `/roadmap`, `/outreach`,
     `/action-plan`, `/approach`, `/standards/[id]`, `/explore` (retired
@@ -126,13 +127,18 @@ sprint sequencing.
 
 ## Information architecture
 
-Four primary surfaces in the sidebar, plus an About link in the footer:
+Five primary surfaces in the sidebar, plus an About link in the footer.
+The Coordination / Standards split is load-bearing: **Coordination holds
+process** (how work gets in and moves), **Standards holds reference**
+(what the work is measured against). New surfaces go on the side of that
+line they answer to — see [ADR 0006](docs/adr/0006-coordination-surface-split.md).
 
 | Surface | Route | Source of truth |
 |---|---|---|
 | Projects | `/portfolio` | Postgres `applications` table (read via `lib/work.ts`); `lib/portfolio.ts` is the TS shadow + seed source for `scripts/seed-portfolio.ts`. Filter UI is two-tier: public stage (rollup) → operational status (drill-in), per [ADR 0001](docs/adr/0001-product-lifecycle-taxonomy.md). The category filter (chips driven by `lib/work-categories.ts`) is the by-problem entry point. Sub-route `/portfolio/pipeline` is the **unified request queue** — every requested/suggested project from every origin (`tech_requests` registry via `lib/requests.ts`, ClickUp rubric enrichment via `lib/clickup-data.ts`), per [ADR 0005](docs/adr/0005-unified-technology-request-registry.md). There is no internal copy: the site tells one story (owner decision 2026-07-24). |
 | Submit a Project | `/builder-guide` | `lib/builder-guide-data.ts` (quiz definition); Postgres `submissions` (responses) |
-| Standards | `/standards` | `lib/standards-watch.ts` (ledger entries; commit-worthy). Sub-nav covers Data Model, Strategic Plan, and the strategic-plan coverage Map (per [ADR 0003](docs/adr/0003-strategic-plan-map-home.md)). |
+| Coordination | `/coordination` | **Process** surfaces — how a request becomes tracked institutional work. Overview page is composed from the typed modules below; sub-nav covers Intake Crosswalk (`lib/governance-profile.ts`), OIT Pathway (`lib/oit-pathway.ts`), OIT Portfolio (`lib/oit-ea-portfolio.ts`), and the Op Excellence Survey (`lib/surveys/*`). Split out of `/standards` in July 2026 — see [ADR 0006](docs/adr/0006-coordination-surface-split.md). |
+| Standards | `/standards` | **Reference** surfaces — what the work is measured against. `lib/standards-watch.ts` (ledger entries; commit-worthy). Sub-nav covers Data Model, Strategic Plan, and the strategic-plan coverage Map (per [ADR 0003](docs/adr/0003-strategic-plan-map-home.md)). |
 | Reports | `/reports` | `lib/artifacts.ts` — unified timeline of briefs, activity reports, and external presentations |
 
 Plus `/ai4ra-ecosystem` (deep-dive linked from About), `/docs/*`
@@ -145,6 +151,12 @@ were removed entirely in Sprint 4. `/explore` was retired in May 2026
 per [ADR 0003](docs/adr/0003-strategic-plan-map-home.md); the strategic-plan
 coverage map moved to `/standards/strategic-plan/map`, and the by-problem
 browse role is now served by `/portfolio`'s category filter chips.
+
+Four `/standards/*` process sub-pages moved to `/coordination/*` in July
+2026 per [ADR 0006](docs/adr/0006-coordination-surface-split.md)
+(`intake-crosswalk`, `oit-pathway`, `oit-portfolio`,
+`operational-excellence`). Permanent redirects live in `next.config.mjs`
+— don't remove them; those links were circulated externally.
 Recover from git history if a salvage need arises; check `REFACTOR.md`
 for the rationale.
 
@@ -196,10 +208,15 @@ app/                       # Next.js App Router
   intake/[token]/          # Submitter-visible status page (Sprint 3a)
   reports/                 # Reports surface
   presentations/           # Legacy redirect → /reports (kept to preserve inbound links)
-  standards/               # Standards (sub-nav: ledger + data-model + strategic-plan
-                           #   + intake-crosswalk + oit-pathway + oit-portfolio + op-excellence)
+  standards/               # Standards — REFERENCE (sub-nav: ledger + data-model
+                           #   + strategic-plan + map)
     data-model/            # Data Governance Explorer (UDM catalog + extensions)
     strategic-plan/        # Strategic Plan Alignment Explorer (pillars + priorities)
+  coordination/            # Coordination — PROCESS (ADR 0006). Overview + sub-nav
+    intake-crosswalk/      # Projects profiled in the Unified Technology Request vocabulary
+    oit-pathway/           # OIT six-stage lifecycle, gates, and where our projects sit
+    oit-portfolio/         # OIT's FY2027 EA inventory + owner-confirmed crosswalks
+    operational-excellence/ # Oct 2025 survey — themes, responses, candidate projects
   ai4ra-ecosystem/         # AI4RA partnership deep-dive (linked from /about)
   internal/                # Ops surfaces (sync trigger, agent log). Request queue moved public → /portfolio/pipeline (2026-07-24); /internal/requests redirects there
   admin/                   # Registry + submissions admin
@@ -208,7 +225,7 @@ app/                       # Next.js App Router
 
 components/                # Reusable components
   Sidebar.tsx              # Sidebar navigation
-  StandardsSubNav.tsx      # Sub-nav under /standards
+  SectionSubNav.tsx        # Shared sub-nav; items declared in each surface's layout.tsx
   PortfolioCard.tsx        # Project card
   PortfolioFilters.tsx     # Two-tier public-stage / operational-status filter
   ProjectDetail.tsx        # Project detail page composition
@@ -296,7 +313,7 @@ normative version of any of these lives in **Agent Rules** above).
 | Strategic-plan alignment on a project | `lib/portfolio.ts` (the `strategicPlanAlignment` field on the entry) | Reference priority codes (e.g. `"A.1"`, `"D.3"`) defined in `lib/strategic-plan/catalog.ts`. The drift CI workflow validates references against the upstream `vendor/strategic-plan/` snapshot. Per [ADR 0002](docs/adr/0002-strategic-plan-alignment-explorer.md). |
 | A work category | `lib/work-categories.ts` (constant + label record) + tag relevant projects | Audience-facing labels (a Dean's vocabulary). Header comment in the file documents add/rename/retire/promote mechanics. tsc enforces consistency across consumers. |
 | A standards ledger entry | `lib/standards-watch.ts` | Each is commit-worthy; the git log is the audit trail. |
-| A sub-section under `/standards` | `app/standards/<sub>/page.tsx` + add a row to `subNavItems` in `components/StandardsSubNav.tsx` | The shared eyebrow + sub-nav lives in `app/standards/layout.tsx`. Each sub-page owns its own H1. Sidebar stays at one "Standards" entry — never edit `Sidebar.tsx` for sub-sections. |
+| A sub-section under `/standards` or `/coordination` | `app/<surface>/<sub>/page.tsx` + add a row to `subNavItems` in that surface's `layout.tsx` | Pick the surface by the Coordination/Standards split — process vs. reference ([ADR 0006](docs/adr/0006-coordination-surface-split.md)). The eyebrow and `subNavItems` sit together in `layout.tsx`, rendered through `components/SectionSubNav.tsx`. Each sub-page owns its own H1. Sidebar stays at one entry per surface — never edit `Sidebar.tsx` for sub-sections. |
 | A canonical UDM table tag | `lib/governance/canonical-udm-tables.ts` | Hand-curated v1 list. The data-governance catalog JSONs do not yet carry canonical/extension classification — once they do, this module retires. |
 | An OIT FY portfolio row, or a crosswalk to one | `lib/oit-ea-portfolio.ts` | Point-in-time transcription of OIT's spreadsheet — re-transcribe on a new cut and bump `SOURCE_AS_OF`. Keep OIT's columns in OIT's vocabulary; `portfolioSlug` is the only seam to `lib/portfolio.ts`, and a claimed match needs both `crosswalkConfidence` and `crosswalkNote`. `npm run verify:portfolio` polices both. |
 | A presentation or external talk | `lib/artifacts.ts` (entry with `kind: "presentation"`, `external: true`, `href` pointing at the hosted deck) | The artifact appears in the /reports timeline. |

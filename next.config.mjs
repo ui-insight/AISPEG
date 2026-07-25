@@ -23,6 +23,30 @@ const nextConfig = {
         destination: "/portfolio",
         permanent: true,
       },
+      // Process surfaces moved out of /standards into /coordination (Jul
+      // 2026). /standards keeps the reference material — ledger, data
+      // model, strategic plan. These four moved wholesale; preserve any
+      // link already circulated.
+      {
+        source: "/standards/intake-crosswalk",
+        destination: "/coordination/intake-crosswalk",
+        permanent: true,
+      },
+      {
+        source: "/standards/oit-pathway",
+        destination: "/coordination/oit-pathway",
+        permanent: true,
+      },
+      {
+        source: "/standards/oit-portfolio",
+        destination: "/coordination/oit-portfolio",
+        permanent: true,
+      },
+      {
+        source: "/standards/operational-excellence",
+        destination: "/coordination/operational-excellence",
+        permanent: true,
+      },
     ];
   },
 };

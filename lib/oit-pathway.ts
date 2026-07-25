@@ -2,7 +2,7 @@
 // governance documents as they apply to teams outside OIT deploying on
 // OIT-managed infrastructure. Source documents live on the Azure DevOps
 // Development wiki (links below); this module tracks the published
-// drafts so /standards/oit-pathway can render the lifecycle, the rules,
+// drafts so /coordination/oit-pathway can render the lifecycle, the rules,
 // and where our projects sit — and so tsc catches drift when a stage or
 // rule is renamed.
 //

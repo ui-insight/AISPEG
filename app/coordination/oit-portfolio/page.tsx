@@ -19,7 +19,7 @@ import {
 import { projects } from "@/lib/portfolio";
 
 export const metadata = {
-  title: "OIT Portfolio — Standards",
+  title: "OIT Portfolio — Coordination",
   description:
     "OIT's FY2027 Enterprise Applications portfolio in OIT's own tracking structure — priority, owning team, TPM, and effort by discipline — and the three projects it shares with this inventory.",
 };

@@ -70,7 +70,7 @@ that attach to any track and **two gates** for in-house builds:
 |---|---|---|
 | Project registry (`applications` + `lib/portfolio.ts`) | Migrations 003/005/007/008/012 | The AI project inventory the site is canonical for |
 | Enterprise-replacement facts (incumbent system, annual cost, renewal) | Migration 012 | *Is* Scott's bottom-line ROI, per project (OpenERA→VERAS $150k/yr already recorded) |
-| Intake Crosswalk (`lib/governance-profile.ts`, `/standards/intake-crosswalk`) | July 2026 | Already mirrors the UTR vocabulary: `IntakeTrack` (fast-lane/A/B/C/external), `BuildType`, provisional `DataClassification`, `AiRiskTier` — derived + override, read-only |
+| Intake Crosswalk (`lib/governance-profile.ts`, `/coordination/intake-crosswalk`) | July 2026 | Already mirrors the UTR vocabulary: `IntakeTrack` (fast-lane/A/B/C/external), `BuildType`, provisional `DataClassification`, `AiRiskTier` — derived + override, read-only |
 | ROI rubric placeholder (`lib/roi-rubric.ts`, `ROI_RUBRIC_READY=false`) | July 2026 | Waiting on the Ben/Scott framework |
 | ClickUp request backlog (`clickup_requests`, 11-criterion rubric) | ADR 0004, `/portfolio/pipeline` | The current *de facto* request queue — but IIDS-only |
 | Site submissions (`submissions` + similarity engine + `/intake/[token]`) | Migrations 001–003, Sprint 3a | A second request-shaped stream; evaluation requests (GEO/Scrunch) are seeded into it by hand (migrations 013, 017) |
@@ -174,7 +174,7 @@ past SLA can *surface* as a blocker, not replace it.
 JSONB` (① stack, hosting target, auth, data-access pattern, security
 reqs; ② docs, runbook URL, named owner, lifecycle funding). Gate ①
 maps onto Builder Guide stages 1–2, Gate ② onto stages 4–5
-(`lib/oit-pathway.ts` gains the mapping so `/standards/oit-pathway`
+(`lib/oit-pathway.ts` gains the mapping so `/coordination/oit-pathway`
 and the UTR view tell one story). Supersedes the coarse
 `institutional_review_status` field over time (deprecation, not
 removal).
@@ -260,8 +260,8 @@ an API. Powers the public sortable/searchable-by-function page and the
 | Surface | Change |
 |---|---|
 | `/portfolio/pipeline` | Becomes the unified request queue: all origins, track/stage/flag chips, disposition; rubric scores stay. **Shipped 2026-07-24** (pulled forward from Phase 2 — see amendment below) |
-| `/standards/intake-crosswalk` | Gains real flag/gate/ROI-claim data as it exists; "pending" cells retire one by one |
-| `/standards/approved-tools` (new sub-page, `StandardsSubNav` row per rule 11) | The sortable/searchable-by-function transparency list + fast-lane criteria |
+| `/coordination/intake-crosswalk` | Gains real flag/gate/ROI-claim data as it exists; "pending" cells retire one by one |
+| `/standards/approved-tools` (new sub-page, `subNavItems` row in `app/standards/layout.tsx` per rule 11) | The sortable/searchable-by-function transparency list + fast-lane criteria |
 | `/portfolio/[slug]` | Interest-pool count ("N units have asked for this"), bottom-line-ROI line with basis, gate status |
 | `/internal/prioritization` | Round workbench: open round, ranked entries, aggregated-ROI evidence; internal until the process settles |
 | Submit-a-Project | Files into `tech_requests` (origin `site-submission`); the existing live-similarity step gains a one-click "add me to the interested-users pool" on matches — the cheapest possible version of the stretch goal, shippable early |
