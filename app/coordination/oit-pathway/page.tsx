@@ -13,7 +13,7 @@ import {
 } from "@/lib/oit-pathway";
 
 export const metadata = {
-  title: "OIT Pathway — Standards",
+  title: "OIT Pathway — Coordination",
   description:
     "How teams outside OIT build and deploy AI applications on OIT-managed infrastructure: the two governing documents, the six-stage lifecycle with gates, the six rules, and where our projects sit.",
 };

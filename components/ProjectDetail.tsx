@@ -180,7 +180,7 @@ function OitPortfolioSection({ row }: { row: OitEaProject }) {
               {CROSSWALK_CONFIDENCE_LABELS[row.crosswalkConfidence]}.
             </span>{" "}
             {row.crosswalkNote}{" "}
-            <Link href="/standards/oit-portfolio">
+            <Link href="/coordination/oit-portfolio">
               See the full OIT portfolio
             </Link>
             .

@@ -184,7 +184,7 @@ export default function StandardsWatchPage() {
             Builder Guide &rarr;
           </a>
           <Link
-            href="/standards/oit-pathway"
+            href="/coordination/oit-pathway"
             className="font-medium text-brand-black underline decoration-brand-clearwater decoration-1 underline-offset-4 hover:decoration-2"
           >
             The pathway, and where our projects sit &rarr;

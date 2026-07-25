@@ -12,7 +12,7 @@ import {
 } from "@/lib/surveys/candidate-projects";
 import type { ToolHandler, ToolResult } from "./registry";
 
-const CANONICAL_URL = "/standards/operational-excellence";
+const CANONICAL_URL = "/coordination/operational-excellence";
 
 function pickString(args: Record<string, unknown>, key: string): string | undefined {
   const v = args[key];

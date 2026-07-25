@@ -73,21 +73,40 @@ const SITE_AREAS: SiteArea[] = [
         purpose:
           "Coverage map of the strategic plan — which priorities have portfolio projects advancing them and where the gaps are.",
       },
+    ],
+  },
+  {
+    name: "Coordination",
+    url: "/coordination",
+    purpose:
+      "How a technology request becomes tracked institutional work: where demand arrives, how requests are classified against the Unified Technology Request vocabulary, the OIT deployment pathway they follow, and how commitments are tracked against OIT's own portfolio. Use this for process questions; use /standards for what the work is measured against.",
+    example_questions: [
+      "How does a project get approved?",
+      "What happens after I submit a request?",
+      "How does our work line up with what OIT is doing?",
+    ],
+    sub_areas: [
       {
         name: "Intake Crosswalk",
-        url: "/standards/intake-crosswalk",
+        url: "/coordination/intake-crosswalk",
         purpose:
           "Every project profiled in the Unified Technology Request vocabulary: intake track, data touched, AI-risk posture, funding, and bottom-line ROI (hard-dollar savings from replacing enterprise software contracts).",
       },
       {
         name: "OIT Pathway",
-        url: "/standards/oit-pathway",
+        url: "/coordination/oit-pathway",
         purpose:
           "The OIT Enterprise AI Development Framework and AI-Assisted Builder Guide: the six-stage lifecycle with gates for teams deploying onto OIT-managed infrastructure, and where our projects sit in it.",
       },
       {
+        name: "OIT Portfolio",
+        url: "/coordination/oit-portfolio",
+        purpose:
+          "OIT's FY2027 Enterprise Applications portfolio in OIT's own tracking structure — priority, owning team, TPM, effort by discipline — and the owner-confirmed rows it shares with this inventory.",
+      },
+      {
         name: "Operational Excellence Survey",
-        url: "/standards/operational-excellence",
+        url: "/coordination/operational-excellence",
         purpose:
           "Explorable results of the Operational Excellence survey — themes and unit responses that inform where AI work is pointed.",
       },

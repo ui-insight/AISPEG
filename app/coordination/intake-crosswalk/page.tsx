@@ -33,7 +33,7 @@ export const dynamic = "force-dynamic";
 type ProfileWithRoi = ResolvedProfile & { clickupRoi: ClickUpRoi | null };
 
 export const metadata = {
-  title: "Intake Crosswalk — Standards",
+  title: "Intake Crosswalk — Coordination",
   description:
     "How the University of Idaho AI project inventory maps onto the Unified Technology Request intake process: business need, data touched, ownership, build track, AI-risk posture, funding, and ROI.",
 };
@@ -166,8 +166,8 @@ function Field({
 
 function ViewToggle({ active }: { active: ViewMode }) {
   const options: { mode: ViewMode; label: string; href: string }[] = [
-    { mode: "cards", label: "Cards", href: "/standards/intake-crosswalk" },
-    { mode: "matrix", label: "Matrix", href: "/standards/intake-crosswalk?view=matrix" },
+    { mode: "cards", label: "Cards", href: "/coordination/intake-crosswalk" },
+    { mode: "matrix", label: "Matrix", href: "/coordination/intake-crosswalk?view=matrix" },
   ];
   return (
     <nav
