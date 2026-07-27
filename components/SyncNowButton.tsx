@@ -3,7 +3,7 @@
 // The one client component in the ClickUp ingestion feature: fires the
 // manual sync (POST /internal/sync) and reports the run summary inline.
 // Rendered only on /internal, so the request rides the Basic-auth
-// credentials the middleware already collected.
+// credentials the proxy already collected.
 
 import { useState } from "react";
 

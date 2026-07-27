@@ -3,10 +3,13 @@ import { NextRequest, NextResponse } from "next/server";
 // Basic auth gate for /internal/*. v1 only — replace with UI SSO later.
 //
 // Requires BASIC_AUTH_USER and BASIC_AUTH_PASS in the environment. If
-// either is unset the middleware fails closed (503) rather than letting
-// the route through without authentication.
+// either is unset this fails closed (503) rather than letting the route
+// through without authentication.
+//
+// Named `proxy` per the Next 16 file convention that supersedes
+// `middleware` — the function name has to match the filename (#267).
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   // /internal/requests went public at /portfolio/pipeline (ADR 0005
   // amendment, 2026-07-24) — redirect before the auth gate so old links
   // land on the public queue without a credential prompt.

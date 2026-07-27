@@ -1,7 +1,7 @@
 // /internal/agent-log — auth-gated review of recent /api/ask traffic.
 // Slice #113 of Epic #107.
 //
-// The middleware (middleware.ts) gates /internal/* with basic auth.
+// The proxy (proxy.ts) gates /internal/* with basic auth.
 // Reads from agent_queries (Migration 009).
 
 import Link from "next/link";
