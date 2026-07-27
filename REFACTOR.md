@@ -176,7 +176,7 @@ Keep the existing 9-step assessment quiz — already a better product than TDX.
 Close these gaps:
 
 1. **Named-human acknowledgment + SLA.** Form submits → user gets email within
-   minutes from a named IIDS person. Default: "Colin Armitage will follow up within
+   minutes from a named IIDS person. Default: "Colin Addington will follow up within
    2 business days." The named-human signal is the single biggest TDX
    differentiator.
 2. **Submitter-visible status page.** Each submission gets `/intake/[token]` (no

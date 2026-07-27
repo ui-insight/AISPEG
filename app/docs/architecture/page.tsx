@@ -39,7 +39,7 @@ export default function ArchitectureDocsPage() {
 ┌────────────────────────┐    ┌──────────────────────────────┐
 │     PostgreSQL 16      │    │   MindRouter (On-Prem LLM)   │
 │  ┌──────────────────┐  │    │  OpenAI-compatible API        │
-│  │ submissions      │  │    │  gpt-oss-120b model           │
+│  │ submissions      │  │    │  qwen3.6-27b model            │
 │  │ submission_details│  │    │  https://mindrouter.uidaho.edu│
 │  │ submission_notes  │  │    └──────────────────────────────┘
 │  │ applications     │  │

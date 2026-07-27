@@ -82,7 +82,7 @@ GITHUB_TOKEN=
 # MindRouter AI (required for AI features)
 MINDROUTER_API_KEY=mr2_...
 MINDROUTER_BASE_URL=https://mindrouter.uidaho.edu
-MINDROUTER_MODEL=openai/gpt-oss-120b
+MINDROUTER_MODEL=qwen/qwen3.6-27b
       `}</pre>
 
       <InfoBox type="warning" title="Security">
