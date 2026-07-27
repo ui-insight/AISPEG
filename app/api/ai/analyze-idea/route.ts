@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { analyzeIdea } from "@/lib/mindrouter";
+import { analyzeIdea, MindRouterError } from "@/lib/mindrouter";
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,8 +25,26 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(analysis);
   } catch (error) {
     console.error("POST /api/ai/analyze-idea error:", error);
-    const message =
-      error instanceof Error ? error.message : "AI analysis failed";
-    return NextResponse.json({ error: message }, { status: 500 });
+
+    // Upstream detail belongs in the server log, not on a submitter's
+    // screen — before this, a raw `MindRouter 422: {"detail":...}` was
+    // rendered verbatim in the wizard (#249).
+    if (error instanceof MindRouterError) {
+      return NextResponse.json(
+        {
+          error:
+            "The AI assistant couldn't analyze that idea just now. You can " +
+            "try again, or continue filling out the form without it — " +
+            "nothing about your submission depends on this step.",
+          upstream: true,
+        },
+        { status: 502 }
+      );
+    }
+
+    return NextResponse.json(
+      { error: "AI analysis failed. Please try again." },
+      { status: 500 }
+    );
   }
 }
