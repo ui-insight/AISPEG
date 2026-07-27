@@ -151,7 +151,7 @@ export default function ApiReferenceDocsPage() {
         <Endpoint method="PATCH" path="/api/registry/[id]" description="Update any application fields. Only provided fields are modified.">
           <ParamTable params={[
             { name: "name", type: "string?", desc: "Application name" },
-            { name: "status", type: "string?", desc: "idea | approved | in-development | staging | production | retired" },
+            { name: "status", type: "string?", desc: "An ADR 0001 operational status — idea | scoping | approved | building | prototype | piloting | production | maintained | paused | sunsetting | archived | tracked. The column is plain TEXT with no CHECK, so anything else writes successfully and renders as Exploring. Send one of these." },
             { name: "github_repo", type: "string?", desc: "GitHub repository" },
             { name: "url", type: "string?", desc: "Production URL" },
             { name: "...", type: "...", desc: "Any other application field" },

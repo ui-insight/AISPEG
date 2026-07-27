@@ -108,8 +108,6 @@ department        TEXT
 github_repo       TEXT           -- e.g. "ui-insight/my-app"
 url               TEXT           -- Production URL
 tier              INTEGER        -- 1-4
-status            TEXT           -- idea | approved | in-development |
-                                 -- staging | production | retired
 proposed_deployment_environment TEXT
                                  -- OIT-hosted/Azure/OCI/on-prem, IIDS,
                                  -- external, not-applicable, or TBD
