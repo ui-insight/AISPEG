@@ -5,6 +5,7 @@ import {
   type DeploymentEnvironment,
   type EnterpriseReplacementStatus,
 } from "@/lib/project-governance";
+import { statusColor } from "./status-style";
 
 export const dynamic = "force-dynamic";
 
@@ -21,20 +22,6 @@ const visibilityColors: Record<string, string> = {
   internal: "bg-gray-200 text-gray-700",
 };
 
-const statusColors: Record<string, string> = {
-  production: "bg-green-100 text-green-700",
-  Production: "bg-green-100 text-green-700",
-  Piloting: "bg-blue-100 text-blue-700",
-  staging: "bg-blue-100 text-blue-700",
-  "in-development": "bg-yellow-100 text-yellow-700",
-  Prototype: "bg-yellow-100 text-yellow-700",
-  approved: "bg-purple-100 text-purple-700",
-  idea: "bg-gray-100 text-gray-600",
-  Planned: "bg-gray-100 text-gray-600",
-  retired: "bg-red-100 text-red-500",
-  Archived: "bg-red-100 text-red-500",
-  Tracked: "bg-violet-100 text-violet-700",
-};
 
 const usd = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -189,7 +176,7 @@ export default async function AdminRegistryPage() {
             </thead>
             <tbody className="divide-y divide-gray-100">
               {apps.map((app) => {
-                const sc = statusColors[app.status] || statusColors.idea;
+                const sc = statusColor(app.status);
                 const tc = tierLabels[app.tier] || tierLabels[1];
                 const vc =
                   visibilityColors[app.visibility_tier] ||

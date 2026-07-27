@@ -17,34 +17,20 @@ import {
   type DeploymentEnvironment,
   type EnterpriseReplacementStatus,
 } from "@/lib/project-governance";
+import { PROJECT_STATUSES } from "@/lib/portfolio";
+import { statusColor } from "../status-style";
 
-// Status options now span both submission lifecycle (idea/approved/in-development/
-// staging/production/retired) and operational lifecycle (Planned/Prototype/
-// Piloting/Production/Tracked/Archived). The DB column is plain TEXT and admins
-// may enter custom values too.
-const STATUS_OPTIONS = [
-  "idea", "approved", "in-development", "staging", "production", "retired",
-  "Planned", "Prototype", "Piloting", "Production", "Tracked", "Archived",
-];
+// The ADR 0001 operational ladder, imported rather than retyped — see
+// PROJECT_STATUSES in lib/portfolio.ts. This list previously carried the
+// legacy submission states and the superseded capitalised union; because
+// applications.status is plain TEXT with no CHECK, those saved fine and
+// then rendered as "Exploring" on /portfolio.
+const STATUS_OPTIONS = PROJECT_STATUSES;
 
 const VISIBILITY_OPTIONS = ["public", "embargoed", "internal"] as const;
 const AI4RA_OPTIONS = ["None", "Core", "Adjacent", "Reference", "UI-parallel"];
 const REVIEW_STATUS_OPTIONS = ["", "OIT-endorsed", "Under OIT review", "N/A"];
 
-const statusColors: Record<string, string> = {
-  production: "bg-green-100 text-green-700",
-  Production: "bg-green-100 text-green-700",
-  Piloting: "bg-blue-100 text-blue-700",
-  staging: "bg-blue-100 text-blue-700",
-  "in-development": "bg-yellow-100 text-yellow-700",
-  Prototype: "bg-yellow-100 text-yellow-700",
-  approved: "bg-purple-100 text-purple-700",
-  idea: "bg-gray-100 text-gray-600",
-  Planned: "bg-gray-100 text-gray-600",
-  retired: "bg-red-100 text-red-500",
-  Archived: "bg-red-100 text-red-500",
-  Tracked: "bg-violet-100 text-violet-700",
-};
 
 const visibilityColors: Record<string, string> = {
   public: "bg-green-100 text-green-700",
@@ -545,7 +531,7 @@ export default function RegistryDetailPage() {
         <div className="flex flex-col items-end gap-2">
           <span
             className={`rounded-full px-3 py-1 text-sm font-semibold ${
-              statusColors[app.status] || statusColors.idea
+              statusColor(app.status)
             }`}
           >
             {app.status}
@@ -613,20 +599,31 @@ export default function RegistryDetailPage() {
         <div className="grid gap-4 md:grid-cols-3">
           <Field
             label="Status"
-            hint="Free-text; common values listed."
+            hint="ADR 0001 operational ladder. The API rejects anything else."
           >
-            <input
-              type="text"
-              list="status-options"
+            {/* Was a free-text input with a datalist of suggestions, which
+                is how legacy values kept getting saved. The API now
+                validates, so the control is constrained to match — an
+                unconstrained field that 400s on submit is worse than a
+                select. Values that predate the taxonomy stay selectable
+                only if already on the row (see below), so opening an old
+                record doesn't silently rewrite its status. */}
+            <select
               value={form.status}
               onChange={(e) => setForm({ ...form, status: e.target.value })}
               className={inputCls}
-            />
-            <datalist id="status-options">
+            >
+              {!STATUS_OPTIONS.includes(form.status as (typeof STATUS_OPTIONS)[number]) && (
+                <option value={form.status}>
+                  {form.status} — not in the taxonomy, pick a replacement
+                </option>
+              )}
               {STATUS_OPTIONS.map((s) => (
-                <option key={s} value={s} />
+                <option key={s} value={s}>
+                  {s}
+                </option>
               ))}
-            </datalist>
+            </select>
           </Field>
           <Field
             label="Visibility tier"
