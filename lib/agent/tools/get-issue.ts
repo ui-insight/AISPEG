@@ -41,6 +41,8 @@ export const getIssueTool: ToolHandler = {
       };
     }
 
+    // Null means the issue genuinely isn't there. A failed lookup throws
+    // and is reported as a tool error rather than a missing issue (#44).
     const issue = await fetchIssue(number);
     if (!issue) {
       return {

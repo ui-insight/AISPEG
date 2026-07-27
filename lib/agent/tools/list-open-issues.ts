@@ -58,6 +58,10 @@ export const listOpenIssuesTool: ToolHandler = {
         ? Math.min(Math.max(1, limitRaw), MAX_LIMIT)
         : DEFAULT_LIMIT;
 
+    // Deliberately unguarded: a GitHubUnavailableError propagates to the
+    // loop, which reports the tool as failed. Catching it here and
+    // returning an empty list would have the agent announce that nothing
+    // is open when we simply couldn't ask (#44).
     const all = await fetchIssues();
     const open = all.filter((i) => i.state === "open");
     const matched = label
