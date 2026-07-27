@@ -1,5 +1,34 @@
 # AISPEG Refactor Plan — May 2026
 
+> **Status: historical plan document. Last substantive update 2026-07-10.**
+>
+> Sprints 1–5 are complete and the user-facing surfaces no longer read as
+> mid-refactor. Read this for the *why* behind what was cut and how the
+> data architecture was originally framed — that reasoning is still
+> load-bearing and Agent Rule 5 still points here before structural work.
+>
+> Do **not** read it as a description of the current site. Several things
+> below were overtaken:
+>
+> - The primary nav is **five surfaces**, not four —
+>   `/coordination` was added in July 2026
+>   ([ADR 0006](./docs/adr/0006-coordination-surface-split.md)).
+> - `The Work` never became `/work`; the route stayed `/portfolio` and
+>   the label is now "Projects".
+> - The public/internal split described here was reversed on 2026-07-24:
+>   the site tells one story, and `/portfolio/pipeline` is the single
+>   all-origin request queue
+>   ([ADR 0005](./docs/adr/0005-unified-technology-request-registry.md)
+>   amendment).
+> - The co-branded *"Sponsored by AISPEG"* header language was dropped.
+>   Agent Rule 10 now forbids AISPEG in user-facing copy.
+> - ClickUp ingestion shipped read-only in July 2026
+>   ([ADR 0004](./docs/adr/0004-clickup-ingestion-boundary.md)); the
+>   bidirectional sync sketched below was not built.
+>
+> For anything decided after May 2026, [`docs/adr/`](./docs/adr/) is
+> authoritative and this file is not.
+
 ## Why
 
 The site was conceived in early 2026 as a collaborative nexus for the AI Strategic
