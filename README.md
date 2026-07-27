@@ -180,7 +180,7 @@ Design direction is captured in [`.impeccable.md`](./.impeccable.md).
 npm run dev                  # Dev server on :3000
 npm run build                # Production build (also a TypeScript check)
 npm run lint                 # ESLint
-npm run verify:portfolio     # ADR 0001 status-rule enforcer (CI runs this)
+npm run verify:portfolio     # ADR 0001 status-rule enforcer + governance parity (CI)
 npm run migrate              # Apply pending SQL migrations
 npm run seed:portfolio       # lib/portfolio.ts → applications table
 npm run sync:clickup         # ClickUp read-only ingestion (ADR 0004)
