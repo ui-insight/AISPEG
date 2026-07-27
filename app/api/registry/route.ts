@@ -4,6 +4,31 @@ import {
   isDeploymentEnvironment,
   isEnterpriseReplacementStatus,
 } from "@/lib/project-governance";
+import { isProjectStatus, PROJECT_STATUSES, type ProjectStatus } from "@/lib/portfolio";
+
+// Admin list ordering: most-live first, then winding-down, then
+// externally-owned. Typed as Record<ProjectStatus, number> so tsc forces
+// a rank for any status added to the ADR 0001 ladder — the previous
+// hand-written CASE ranked six statuses that no longer exist and none of
+// the six that had been added since.
+const STATUS_RANK: Record<ProjectStatus, number> = {
+  production: 1,
+  maintained: 2,
+  piloting: 3,
+  building: 4,
+  prototype: 5,
+  approved: 6,
+  scoping: 7,
+  idea: 8,
+  paused: 9,
+  sunsetting: 10,
+  archived: 11,
+  tracked: 12,
+};
+
+const SORT_ORDER = (Object.keys(STATUS_RANK) as ProjectStatus[]).sort(
+  (a, b) => STATUS_RANK[a] - STATUS_RANK[b]
+);
 
 // GET /api/registry — list all applications
 export async function GET() {
@@ -23,22 +48,14 @@ export async function GET() {
               submission_id, created_at, updated_at
        FROM applications
        ORDER BY
-         CASE status
-           WHEN 'production' THEN 1
-           WHEN 'Production' THEN 1
-           WHEN 'staging' THEN 2
-           WHEN 'Piloting' THEN 2
-           WHEN 'in-development' THEN 3
-           WHEN 'Prototype' THEN 3
-           WHEN 'approved' THEN 4
-           WHEN 'idea' THEN 5
-           WHEN 'Planned' THEN 5
-           WHEN 'retired' THEN 6
-           WHEN 'Archived' THEN 6
-           WHEN 'Tracked' THEN 7
-         END,
+         -- Ladder order, most-live first. Driven by PROJECT_STATUSES so a
+         -- new ADR 0001 status can't silently sort last; anything outside
+         -- the union sorts to the end (array_position returns NULL, and
+         -- NULLS LAST makes that explicit rather than accidental).
+         array_position($1::text[], status) NULLS LAST,
          updated_at DESC
-       LIMIT 500`
+       LIMIT 500`,
+      [SORT_ORDER]
     );
     return NextResponse.json(rows);
   } catch (error) {
@@ -137,6 +154,16 @@ export async function POST(request: NextRequest) {
     if (!isEnterpriseReplacementStatus(replacementStatus)) {
       return NextResponse.json(
         { error: "Invalid enterprise replacement status" },
+        { status: 400 }
+      );
+    }
+    // Same rule as PATCH — the column has no CHECK, so guard it here.
+    if (status !== undefined && (typeof status !== "string" || !isProjectStatus(status))) {
+      return NextResponse.json(
+        {
+          error: "Invalid status",
+          detail: `status must be one of the ADR 0001 operational states: ${PROJECT_STATUSES.join(", ")}`,
+        },
         { status: 400 }
       );
     }

@@ -9,12 +9,12 @@ import {
   type DeploymentEnvironment,
   type EnterpriseReplacementStatus,
 } from "@/lib/project-governance";
+import { PROJECT_STATUSES } from "@/lib/portfolio";
 
-// Lifecycle taxonomy from ADR 0001 — see lib/portfolio.ts ProjectStatus.
-const STATUS_OPTIONS = [
-  "idea", "scoping", "approved", "building", "prototype", "piloting",
-  "production", "maintained", "paused", "sunsetting", "archived", "tracked",
-];
+// Imported, not retyped. This copy happened to be correct while its
+// sibling in [id]/page.tsx had drifted to the legacy vocabulary — which
+// is the argument for having exactly one list.
+const STATUS_OPTIONS = PROJECT_STATUSES;
 
 const VISIBILITY_OPTIONS = ["public", "embargoed", "internal"] as const;
 const AI4RA_OPTIONS = ["None", "Core", "Adjacent", "Reference", "UI-parallel"];

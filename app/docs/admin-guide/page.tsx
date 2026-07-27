@@ -120,31 +120,29 @@ export default function AdminGuideDocsPage() {
         <li><strong>tracked</strong> — externally owned; IIDS observes but did not build</li>
       </ul>
 
-      <InfoBox type="warning" title="The registry form's status list is stale">
+      <InfoBox type="info" title="How the status field is constrained">
         <p>
-          <code>STATUS_OPTIONS</code> in{" "}
-          <code>app/admin/registry/[id]/page.tsx</code> still offers the legacy
-          submission states (<code>in-development</code>, <code>staging</code>,{" "}
-          <code>retired</code>) and the pre-ADR-0001 capitalised union
-          (<code>Planned</code>, <code>Prototype</code>, <code>Piloting</code>,{" "}
-          <code>Production</code>, <code>Tracked</code>, <code>Archived</code>).
-          None of those are members of the current taxonomy.
+          The status control is a <strong>select</strong> built from{" "}
+          <code>PROJECT_STATUSES</code> in <code>lib/portfolio.ts</code>, and{" "}
+          <code>POST /api/registry</code> and{" "}
+          <code>PATCH /api/registry/[id]</code> both reject a status outside
+          the union with a <strong>400</strong>. You cannot save a value the
+          taxonomy doesn&apos;t know.
         </p>
         <p className="mt-2">
-          <code>applications.status</code> is plain <code>TEXT</code> with no
-          CHECK constraint, so such a value writes successfully, and{" "}
-          <code>publicStageFromStatus()</code> buckets anything unrecognised as{" "}
-          <em>Exploring</em> so the UI never crashes. The practical effect:
-          setting a status here can silently misfile a project on{" "}
-          <code>/portfolio</code>.{" "}
-          <code>npm run verify:portfolio</code> will not catch it — the verifier
-          reads <code>lib/portfolio.ts</code>, not the database.
+          This used to be a free-text input with a suggestion list, and the
+          suggestions were the legacy submission states plus the pre-ADR-0001
+          capitalised union. Because <code>applications.status</code> is plain{" "}
+          <code>TEXT</code> with no CHECK constraint, those saved successfully,
+          and <code>publicStageFromStatus()</code> buckets anything
+          unrecognised as <em>Exploring</em> — so a project could be quietly
+          misfiled on <code>/portfolio</code>. A July 2026 audit found four
+          divergent copies of the list; there is now one.
         </p>
         <p className="mt-2">
-          <strong>Until that list is fixed, prefer editing{" "}
-          <code>lib/portfolio.ts</code> and re-seeding</strong> over changing a
-          status here. Tracked as a follow-up to the July 2026 documentation
-          audit.
+          If you open a record whose stored status predates the taxonomy, the
+          select shows it as a marked option so the record isn&apos;t silently
+          rewritten on load — pick a replacement and save.
         </p>
       </InfoBox>
 

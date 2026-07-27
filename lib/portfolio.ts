@@ -1105,23 +1105,8 @@ export function computePublicStage(status: ProjectStatus): PublicStage {
   }
 }
 
-const STATUSES: ReadonlyArray<ProjectStatus> = [
-  "idea",
-  "scoping",
-  "approved",
-  "building",
-  "prototype",
-  "piloting",
-  "production",
-  "maintained",
-  "paused",
-  "sunsetting",
-  "archived",
-  "tracked",
-];
-
 export function isProjectStatus(s: string): s is ProjectStatus {
-  return (STATUSES as readonly string[]).includes(s);
+  return (PROJECT_STATUSES as readonly string[]).includes(s);
 }
 
 // String-input version of computePublicStage. Postgres-sourced rows
@@ -1250,6 +1235,20 @@ export const OPERATIONAL_LABEL: Record<ProjectStatus, string> = {
   archived: "Archived",
   tracked: "Tracked",
 };
+
+// The operational ladder as an ordered list — the single source any UI
+// should build a status picker from. Derived from OPERATIONAL_LABEL
+// rather than hand-maintained: that record is `Record<ProjectStatus,
+// string>`, so tsc refuses to compile if a union member is missing, and
+// JS preserves insertion order for string keys, so this comes out in
+// ladder order for free.
+//
+// Hand-maintained copies of this list are how the taxonomy drifted before
+// (a July 2026 audit found four divergent copies, two of them wrong).
+// Import this instead of retyping the values.
+export const PROJECT_STATUSES = Object.keys(
+  OPERATIONAL_LABEL
+) as ProjectStatus[];
 
 // Tooltip-grade definitions for the colored chips on PortfolioCard. Each
 // string is short enough to read in a native `title` tooltip; together

@@ -4,6 +4,7 @@ import {
   isDeploymentEnvironment,
   isEnterpriseReplacementStatus,
 } from "@/lib/project-governance";
+import { isProjectStatus, PROJECT_STATUSES } from "@/lib/portfolio";
 
 // All applications columns the registry detail page reads. Stays in lockstep
 // with the registry schema through db/migrations/012_project_governance_tracking.sql.
@@ -94,6 +95,25 @@ export async function PATCH(
     ) {
       return NextResponse.json(
         { error: "Invalid proposed deployment environment" },
+        { status: 400 }
+      );
+    }
+
+    // applications.status carries no DB CHECK by design (ADR 0001 — the
+    // typed union is the source of truth). That left the column open to
+    // any string via this endpoint, and publicStageFromStatus() buckets
+    // an unrecognised value as `exploring`, so a typo or a stale
+    // vocabulary would quietly misfile a project on /portfolio rather
+    // than fail. Reject it here instead.
+    if (
+      "status" in body &&
+      (typeof body.status !== "string" || !isProjectStatus(body.status))
+    ) {
+      return NextResponse.json(
+        {
+          error: "Invalid status",
+          detail: `status must be one of the ADR 0001 operational states: ${PROJECT_STATUSES.join(", ")}`,
+        },
         { status: 400 }
       );
     }
