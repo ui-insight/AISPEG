@@ -59,7 +59,7 @@ export default function ApiReferenceDocsPage() {
   return (
     <DocPage
       title="API Reference"
-      subtitle="REST API endpoints for submissions, the application registry, notes, similarity detection, and AI features."
+      subtitle="REST API endpoints for submissions, the application registry, notes, similarity detection, AI features, the site assistant, and the ClickUp sync trigger."
       breadcrumbs={[
         { label: "Docs", href: "/docs" },
         { label: "API Reference" },
@@ -176,7 +176,78 @@ export default function ApiReferenceDocsPage() {
           ]} />
           <p className="text-xs text-gray-500 mt-2">Returns 503 if MINDROUTER_API_KEY is not configured.</p>
         </Endpoint>
+
+        <Endpoint method="POST" path="/api/ask" description="The site assistant. Runs the tool-using agent loop over read-only site data and returns a cited answer. Backs the floating chat widget on every page. See ADR 0007.">
+          <ParamTable params={[
+            { name: "message", type: "string", desc: "User question. Required; 2000 chars max." },
+            { name: "history", type: "array", desc: "Optional prior turns as {role: 'user'|'assistant', content}. Last 20 kept; other roles are dropped." },
+          ]} />
+          <p className="text-xs text-gray-500 mt-2">
+            Returns <code>{`{ response, citations[], toolCalls[], iterations, truncated, salvagedToolCalls }`}</code>.
+            Citations are assembled from the tools&apos; own canonical URLs, never authored by the model.
+          </p>
+          <p className="text-xs text-gray-500 mt-1">
+            Rate limited per IP hash: 60/hour public, 600/hour internal. Over the
+            limit returns <strong>429</strong> with <code>Retry-After</code>,
+            <code>X-RateLimit-Limit</code>, and <code>X-RateLimit-Remaining</code>.
+            Returns 503 with <code>unconfigured: true</code> when
+            MINDROUTER_API_KEY is unset.
+          </p>
+          <p className="text-xs text-gray-500 mt-1">
+            A MindRouter outage returns <strong>200</strong>, not 500 — the body
+            carries a friendly fallback message and <code>fallback: true</code> so
+            the chat widget degrades instead of erroring. Every call is logged to{" "}
+            <code>agent_queries</code>.
+          </p>
+        </Endpoint>
       </div>
+
+      <h2>Similarity</h2>
+      <div className="not-prose space-y-4">
+        <Endpoint method="POST" path="/api/similarity/preview" description="Stateless similarity check against the registry. Takes a partial assessment profile and returns matches without persisting anything — used mid-assessment so a submitter can coordinate before duplicating effort.">
+          <ParamTable params={[
+            { name: "sensitivity", type: "string[]", desc: "Partial wizard answers — all fields optional" },
+            { name: "complexity", type: "string", desc: "Static | CRUD | Multi-source | Real-time" },
+            { name: "userbase", type: "string", desc: "Team | Department | College | University | External" },
+            { name: "auth", type: "string", desc: "None | Password | SSO | RBAC | Multi-tenant" },
+            { name: "integrations", type: "string[]", desc: "" },
+            { name: "dataSources", type: "string[]", desc: "" },
+            { name: "universitySystems", type: "string[]", desc: "" },
+            { name: "outputTypes", type: "string[]", desc: "" },
+          ]} />
+          <p className="text-xs text-gray-500 mt-2">
+            Distinct from <code>/api/submissions/[id]/similarity</code>, which
+            persists matches after a real submission. This runs at threshold
+            <strong> 0.2</strong> rather than 0.3 — deliberately over-notifying and
+            letting the submitter judge.
+          </p>
+        </Endpoint>
+      </div>
+
+      <h2>Operations</h2>
+      <div className="not-prose space-y-4">
+        <Endpoint method="POST" path="/internal/sync" description="Trigger a ClickUp ingestion run (ADR 0004). Pulls project status updates, ROI fields, and the scored request backlog into the clickup_* tables.">
+          <p className="text-xs text-gray-500 mt-2">
+            Lives under <code>/internal</code> so the Basic-auth proxy covers it.
+            Used by the &ldquo;Sync now&rdquo; button and by the host cron:
+          </p>
+          <pre className="mt-2 rounded-lg bg-gray-900 p-3 text-xs text-green-400 overflow-x-auto">{`curl -s -u "$BASIC_AUTH_USER:$BASIC_AUTH_PASS" -X POST \\
+  https://aispeg.insight.uidaho.edu/internal/sync`}</pre>
+          <p className="text-xs text-gray-500 mt-2">
+            Returns the run summary on success. <strong>503</strong> if
+            CLICKUP_API_TOKEN is unset; <strong>409</strong> if a sync is already
+            in flight — a run takes 30–60s of sequential ClickUp calls and
+            overlapping runs would double-write.
+          </p>
+        </Endpoint>
+      </div>
+
+      <InfoBox type="tip" title="Keeping this page honest">
+        This page drifted badly once already (issue #94): it documented the
+        registry and submissions endpoints while missing the site assistant, the
+        similarity preview, and the sync trigger entirely. If you add a route
+        under <code>app/api/</code>, add it here in the same PR.
+      </InfoBox>
     </DocPage>
   );
 }
