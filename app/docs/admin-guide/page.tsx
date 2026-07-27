@@ -4,7 +4,7 @@ export default function AdminGuideDocsPage() {
   return (
     <DocPage
       title="Admin Guide"
-      subtitle="Managing submissions, the application registry, notes, and the review workflow."
+      subtitle="Managing submissions, the application registry, notes, and the review workflow during the ClickUp transition."
       breadcrumbs={[
         { label: "Docs", href: "/docs" },
         { label: "Admin Guide" },
@@ -95,15 +95,58 @@ export default function AdminGuideDocsPage() {
       </ul>
 
       <h3>Application Lifecycle</h3>
-      <p>Applications progress through these states:</p>
+      <p>
+        The canonical lifecycle is the two-layer taxonomy in{" "}
+        <a href="https://github.com/ui-insight/AISPEG/blob/main/docs/adr/0001-product-lifecycle-taxonomy.md">
+          ADR 0001
+        </a>
+        : an operational ladder of eleven states plus the <code>tracked</code>{" "}
+        meta-state, rolling up into six public stages. Each state has a
+        measurable verification rule enforced by{" "}
+        <code>npm run verify:portfolio</code> in CI.
+      </p>
       <ul>
-        <li><strong>idea</strong> — Concept stage, not yet approved</li>
-        <li><strong>approved</strong> — Approved to proceed (auto-set when promoted)</li>
-        <li><strong>in-development</strong> — Actively being built</li>
-        <li><strong>staging</strong> — Deployed to a test environment</li>
-        <li><strong>production</strong> — Live and serving users</li>
-        <li><strong>retired</strong> — Decommissioned (excluded from similarity checks)</li>
+        <li><strong>idea</strong> — named, no owner or sponsor engaged yet</li>
+        <li><strong>scoping</strong> — named humans engaged, feasibility underway, no formal go decision</li>
+        <li><strong>approved</strong> — committed to build with named owner and sponsor</li>
+        <li><strong>building</strong> — under active development</li>
+        <li><strong>prototype</strong> — demo-able but quiet; feature-complete or dormant</li>
+        <li><strong>piloting</strong> — in use by a bounded, named cohort</li>
+        <li><strong>production</strong> — in real institutional use beyond the pilot</li>
+        <li><strong>maintained</strong> — production, maintenance-only mode</li>
+        <li><strong>paused</strong> — deliberately on hold; not abandoned</li>
+        <li><strong>sunsetting</strong> — winding down with a planned successor</li>
+        <li><strong>archived</strong> — stopped; record kept for institutional memory</li>
+        <li><strong>tracked</strong> — externally owned; IIDS observes but did not build</li>
       </ul>
+
+      <InfoBox type="warning" title="The registry form's status list is stale">
+        <p>
+          <code>STATUS_OPTIONS</code> in{" "}
+          <code>app/admin/registry/[id]/page.tsx</code> still offers the legacy
+          submission states (<code>in-development</code>, <code>staging</code>,{" "}
+          <code>retired</code>) and the pre-ADR-0001 capitalised union
+          (<code>Planned</code>, <code>Prototype</code>, <code>Piloting</code>,{" "}
+          <code>Production</code>, <code>Tracked</code>, <code>Archived</code>).
+          None of those are members of the current taxonomy.
+        </p>
+        <p className="mt-2">
+          <code>applications.status</code> is plain <code>TEXT</code> with no
+          CHECK constraint, so such a value writes successfully, and{" "}
+          <code>publicStageFromStatus()</code> buckets anything unrecognised as{" "}
+          <em>Exploring</em> so the UI never crashes. The practical effect:
+          setting a status here can silently misfile a project on{" "}
+          <code>/portfolio</code>.{" "}
+          <code>npm run verify:portfolio</code> will not catch it — the verifier
+          reads <code>lib/portfolio.ts</code>, not the database.
+        </p>
+        <p className="mt-2">
+          <strong>Until that list is fixed, prefer editing{" "}
+          <code>lib/portfolio.ts</code> and re-seeding</strong> over changing a
+          status here. Tracked as a follow-up to the July 2026 documentation
+          audit.
+        </p>
+      </InfoBox>
 
       <h3>Registry Detail Page</h3>
       <p>
@@ -126,6 +169,37 @@ export default function AdminGuideDocsPage() {
         To register an application that didn&apos;t come through the Submit-a-Project
         assessment, click <strong> &ldquo;Register App&rdquo;</strong> on the registry page.
         This is useful for existing applications that predate the platform.
+      </p>
+
+      <h2>Where the admin surfaces sit now</h2>
+      <p>
+        <code>/admin/*</code> is <strong>transitional</strong>. The source-of-truth
+        boundary has moved since these pages were built:
+      </p>
+      <ul>
+        <li>
+          <strong>Project identity and lifecycle</strong> — authored in{" "}
+          <code>lib/portfolio.ts</code> and seeded into <code>applications</code>{" "}
+          by <code>npm run seed:portfolio</code>. The seed{" "}
+          <code>TRUNCATE</code>s, so registry edits made here are{" "}
+          <strong>overwritten by the next re-seed</strong>.
+        </li>
+        <li>
+          <strong>Project status narrative and ROI</strong> — ClickUp, pulled
+          read-only into <code>clickup_*</code> tables (ADR 0004). Trigger a
+          pull with the &ldquo;Sync now&rdquo; button on <code>/internal</code>.
+        </li>
+        <li>
+          <strong>Requests</strong> — the <code>tech_requests</code> registry
+          (ADR 0005), surfaced publicly at <code>/portfolio/pipeline</code>.
+          That is the one all-origin queue; there is no internal copy.
+        </li>
+      </ul>
+      <p>
+        Submissions review — the dashboard, notes, similarity, and promote —
+        remains the live workflow here, and is what this page is for. ClickUp
+        write-side (new submissions creating ClickUp tasks) is still future
+        work; when it lands, <code>/admin/submissions</code> retires.
       </p>
 
       <h2>Notes System</h2>
