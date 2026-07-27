@@ -93,35 +93,40 @@ MINDROUTER_MODEL=openai/gpt-oss-120b
 
       <h2>Database Migrations</h2>
       <p>
-        Migrations live in <code>db/migrations/</code> and are numbered sequentially:
+        Migrations live in <code>db/migrations/</code>, numbered sequentially and applied in
+        that order. They are a mix of schema changes (<code>007_lifecycle_taxonomy.sql</code>)
+        and data migrations (<code>016_update_ucm_and_water_law_statuses.sql</code>).
       </p>
-      <ul>
-        <li><code>001_submissions.sql</code> — submissions, submission_details tables</li>
-        <li><code>002_extended_questions.sql</code> — New columns + submission_notes table</li>
-        <li><code>003_application_registry.sql</code> — applications, similarity_matches, GIN indexes, trigger</li>
-      </ul>
 
       <h3>Running Migrations</h3>
       <p>
-        On first database creation, all migrations in <code>db/migrations/</code> run automatically
-        via Docker&apos;s <code>initdb.d</code> mount. For subsequent migrations on an existing database:
+        <code>scripts/migrate.ts</code> is the only thing that applies migrations. It records
+        each one in the <code>schema_migrations</code> table and skips anything already
+        recorded, so it is safe to run at any time.
       </p>
       <pre className="not-prose rounded-lg bg-gray-900 p-4 text-sm text-green-400 overflow-x-auto">{`
-# Run a specific migration
-ssh devops@openera.insight.uidaho.edu \\
-  "docker exec -i aispeg-postgres-prod \\
-   psql -U aispeg -d aispeg" < db/migrations/003_application_registry.sql
+# Local, against the dev database
+npm run migrate
 
-# Verify tables
-ssh devops@openera.insight.uidaho.edu \\
-  "docker exec aispeg-postgres-prod \\
-   psql -U aispeg -d aispeg -c '\\dt'"
+# Dev deployment — applied automatically by the migrate-dev
+# one-shot before the app container starts
+docker compose --profile dev up -d --build
+
+# Production — deliberate, run on demand
+ssh devops@openera.insight.uidaho.edu
+docker compose --profile migrate run --rm migrate-prod
+
+# Verify what has been applied
+docker exec aispeg-postgres-prod \\
+  psql -U aispeg -d aispeg -c 'select version from schema_migrations order by version'
       `}</pre>
 
-      <InfoBox type="info" title="Idempotent migrations">
-        All migrations use <code>IF NOT EXISTS</code> and <code>IF NOT EXISTS</code> guards,
-        so they&apos;re safe to run multiple times. Each migration is wrapped in a
-        <code>BEGIN/COMMIT</code> transaction.
+      <InfoBox type="warning" title="Never pipe a .sql file straight into psql">
+        A hand-applied migration changes the schema without recording itself in
+        <code>schema_migrations</code>, so the runner will later try to apply it again and
+        fail on the second attempt. Individual migrations are <em>not</em> reliably
+        idempotent — several add columns without an <code>IF NOT EXISTS</code> guard, and the
+        data migrations would duplicate rows. Idempotency lives in the runner, not the files.
       </InfoBox>
 
       <h2>Port Mapping (All Insight Apps)</h2>
