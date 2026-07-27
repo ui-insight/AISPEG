@@ -260,3 +260,49 @@ production accessibility rule despite being in daily use by Payroll.
 **Decision.** Recorded as sub-decision #5 above: an `oit-*`
 `proposedDeploymentEnvironment` satisfies `production`/`maintained`
 accessibility; the OIT-operated platform is the artifact.
+
+### 2026-07-27 — Vocabulary follow-ups closed, and enforced from now on
+
+**Context.** The `paused` and `scoping` amendments above each ended with
+a **Follow-up** to register the new code in the vendored
+`iids-portfolio` ProjectStatus vocabulary. `paused` was done
+([data-governance#15](https://github.com/ui-insight/data-governance/pull/15)).
+`scoping` was not — and stayed undone while a project shipped claiming
+the status, with every check green the whole time.
+
+Each amendment noted in passing that this "does not block the build or
+the drift CI." That was accurate and, in hindsight, the actual problem:
+a follow-up whose only enforcement is someone remembering it is not
+enforced. The `iids-portfolio` registration exists precisely so this
+taxonomy has drift detection and an audit trail
+(see "Governance registration shape" above); it had neither for its own
+vocabulary.
+
+**Decision.**
+
+- `scoping` is registered upstream
+  ([data-governance#17](https://github.com/ui-insight/data-governance/pull/17)),
+  which also corrected the `Exploring` rollup rule to include it and
+  sharpened `idea` — whose rule read "no owner **OR** no sponsor" and
+  would otherwise have overlapped `scoping`. The verifier's meaning
+  (neither → `idea`, either → `scoping`) is now what the vocabulary says.
+- **Parity is now a CI error, in both directions.**
+  `verifyGovernanceVocabularyParity()` in `scripts/verify-portfolio.ts`
+  asserts that the `ProjectStatus` and `PublicStage` unions in
+  `lib/portfolio.ts` and the registered `iids-portfolio` vocabulary
+  contain exactly the same codes. It reads the unions from the exhaustive
+  `OPERATIONAL_LABEL` / `PUBLIC_STAGE_LABEL` records, so tsc guarantees
+  there is no third list to keep in sync.
+
+  This runs in the existing `verify:portfolio` job, which fires on every
+  PR. The Governance Drift workflow was the wrong home: it validates the
+  vendored registry's internal consistency and its remote repo canaries,
+  it has no knowledge of this repo's TypeScript unions, and it does not
+  run on `lib/portfolio.ts` changes.
+
+**Consequence for future amendments.** Adding an operational status is
+now a two-repo change, and CI will say so. The correct order is: land the
+vocabulary upstream, bump the submodule, run `npm run build:governance`,
+then add the code to the union. A "Follow-up" line is no longer a
+sufficient mechanism — if an amendment defers something, say what will
+fail if it is forgotten.

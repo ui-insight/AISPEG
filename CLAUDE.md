@@ -386,7 +386,11 @@ npm run migrate                # Apply pending SQL migrations against $DATABASE_
                                # (sole authority — never pipe a .sql into psql;
                                #  hand-applied files desync schema_migrations)
 npm run seed:portfolio         # lib/portfolio.ts → applications table (dev DB)
-npm run verify:portfolio       # ADR 0001 status-rule enforcer (CI runs this)
+npm run verify:portfolio       # ADR 0001 status-rule enforcer (CI runs this).
+                               # Also polices strategic-plan codes, the OIT
+                               # crosswalk, and ProjectStatus/PublicStage parity
+                               # with the vendored iids-portfolio vocabulary —
+                               # adding a status is a two-repo change.
 npm run refresh:commit-dates   # Hit GitHub API → regenerate lib/portfolio-meta.ts
 
 # ClickUp ingestion (ADR 0004; needs CLICKUP_API_TOKEN)
