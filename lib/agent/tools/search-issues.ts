@@ -71,6 +71,8 @@ export const searchIssuesTool: ToolHandler = {
         ? Math.min(Math.max(1, limitRaw), MAX_LIMIT)
         : DEFAULT_LIMIT;
 
+    // Unguarded by design — see the note in list-open-issues.ts. "No
+    // match" and "couldn't reach GitHub" must not look alike (#44).
     const all = await fetchIssues();
     const filtered = all.filter((i) => {
       if (state !== "all" && i.state !== state) return false;
