@@ -374,6 +374,42 @@ story with no public vs. internal distinction**.
   queue**. Prioritization rounds (Phase 4) will make their own
   visibility call when they land.
 
+### 2026-07-27 — `/internal/portfolio` retired; the directive applies to the inventory too
+
+**Context.** The 2026-07-24 amendment above retired `/internal/requests`
+in favour of one public queue. It did not sweep `/internal/portfolio`,
+which went on rendering a parallel view of the inventory — the same
+duplication, one surface over.
+
+The audit that found it also found that it had **no exclusive content**:
+
+- No project has ever carried the `Internal-only` visibility tier (27
+  `Public`, 2 `Partial`). The internal audience adds `internal` to the
+  tier filter in `lib/work.ts`, and that tier matches nothing, so both
+  routes rendered the same 29 projects.
+- Its one genuine difference — `internal_text` on blockers — held only
+  auto-derived placeholders from `scripts/seed-portfolio.ts`, whose text
+  reads *"Auto-seeded from … Refine with the actual submission date, the
+  named OIT contact."* Notes-to-self, not withheld institutional detail.
+
+So the cost of the duplication was real (a second thing to keep current,
+and a standing contradiction of the directive) and the benefit was zero.
+
+**Decision.** `/internal/portfolio` and `/internal/portfolio/[slug]`
+redirect to `/portfolio` and `/portfolio/<slug>`, in `proxy.ts` ahead of
+the auth gate so a bookmarked link resolves without a credential prompt.
+Deep links keep their slug. `/internal` keeps its ops surfaces — the sync
+trigger and the agent log — and nothing else.
+
+**The seam stays.** `audience: "internal"` remains in `lib/work.ts`, and
+`blockers.internal_text` remains in the schema. If sharper blocker detail
+is ever genuinely authored, the query path back is intact. What is gone
+is a *surface* that existed by default rather than by decision.
+
+**Generalised.** The directive is not "one request queue" — it is **one
+view of anything the public site shows**. `/internal` is for operating
+the site, not for reading it differently.
+
 ### 2026-07-27 — Status: Proposed → Accepted for Phase 1
 
 **Context.** This ADR was written as a proposal to the UTR working group

@@ -24,10 +24,16 @@ export default async function InternalHome() {
           Internal coordination view
         </h1>
         <p className="mt-3 max-w-2xl text-base leading-relaxed text-gray-700">
-          The auth-gated IIDS-only view of the institutional AI inventory.
-          Same data as the public portfolio with sharper blocker detail
-          (named individuals, contact history) and the embargoed and
-          internal-only records visible.
+          Operations surfaces only — sync control and agent traffic. The
+          inventory itself is public at{" "}
+          <Link href="/portfolio" className="underline decoration-brand-clearwater underline-offset-2">
+            /portfolio
+          </Link>{" "}
+          and the request queue at{" "}
+          <Link href="/portfolio/pipeline" className="underline decoration-brand-clearwater underline-offset-2">
+            /portfolio/pipeline
+          </Link>
+          . The site tells one story; there is no internal copy of either.
         </p>
       </header>
 
@@ -52,17 +58,17 @@ export default async function InternalHome() {
           </p>
         </div>
         <Link
-          href="/internal/portfolio"
+          href="/portfolio"
           className="group rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:border-ui-gold/40 hover:shadow-md"
         >
           <p className="text-xs font-medium uppercase tracking-wider text-ui-gold-dark">
-            Drill in
+            Inventory
           </p>
           <p className="mt-1 text-base font-semibold text-ui-charcoal group-hover:text-ui-gold-dark">
-            Internal portfolio &rarr;
+            Projects &rarr;
           </p>
           <p className="mt-2 text-xs text-gray-500">
-            Full inventory with internal-text blocker detail
+            Public at /portfolio — the same records these counts describe
           </p>
         </Link>
       </section>
@@ -114,13 +120,23 @@ export default async function InternalHome() {
 
       <section className="rounded-xl border border-dashed border-gray-300 bg-white/50 p-6">
         <h2 className="text-base font-semibold text-ui-charcoal">
-          Coming in Sprint 3
+          Still outstanding
         </h2>
         <ul className="mt-3 space-y-1 text-sm text-gray-600">
-          <li>&bull; ClickUp write-side — new submissions create ClickUp tasks</li>
-          <li>&bull; Submitter status pages (<code>/intake/[token]</code>)</li>
-          <li>&bull; Submission similarity surfaced live during the assessment</li>
-          <li>&bull; Named-SLA acknowledgment email on intake</li>
+          <li>
+            &bull; ClickUp write-side — new submissions create ClickUp tasks.
+            Read-side shipped (ADR 0004); writes remain future work.
+          </li>
+          <li>
+            &bull; Named-SLA acknowledgment <em>email</em> on intake. The named
+            human and SLA render on the results page and on{" "}
+            <code>/intake/[token]</code>, but nothing is actually sent — there
+            is no mailer in the stack.
+          </li>
+          <li>
+            &bull; TDX request sync (<code>scripts/sync-tdx.ts</code>) — blocked
+            on API access. ADR 0005 Phase 4.
+          </li>
         </ul>
       </section>
     </div>

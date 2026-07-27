@@ -240,13 +240,13 @@ app/                       # Next.js App Router
     oit-portfolio/         # OIT's FY2027 EA inventory + owner-confirmed crosswalks
     operational-excellence/ # Oct 2025 survey — themes, responses, candidate projects
   ai4ra-ecosystem/         # AI4RA partnership deep-dive (linked from /about)
-  internal/                # Auth-gated ops surfaces (sync trigger, agent log).
-                           #   Request queue moved public → /portfolio/pipeline
-                           #   (2026-07-24); /internal/requests redirects there.
-                           #   NOTE: /internal/portfolio still renders a second
-                           #   view of the inventory, which predates and
-                           #   contradicts the one-story directive — under
-                           #   review; don't build on it.
+  internal/                # Auth-gated ops surfaces ONLY (sync trigger, agent
+                           #   log). No inventory or request views live here:
+                           #   /internal/requests → /portfolio/pipeline
+                           #   (2026-07-24) and /internal/portfolio →
+                           #   /portfolio (2026-07-27). Both redirect in
+                           #   proxy.ts before the auth gate. Don't add a
+                           #   second view of anything public here.
   admin/                   # Registry + submissions admin
   api/                     # Next.js API routes
   docs/                    # Technical + user documentation

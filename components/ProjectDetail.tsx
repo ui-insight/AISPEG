@@ -262,7 +262,7 @@ export interface ProjectDetailProps {
   app: ApplicationWithBlockers;
   related: RelatedApp[];
   audience: "public" | "internal";
-  basePath: string; // "/portfolio" or "/internal/portfolio"
+  basePath: string; // "/portfolio" — the only caller since 2026-07-27
   // ClickUp-synced status narrative + ROI (ADR 0004). Null/undefined when
   // the project has no mapped ClickUp list or sync hasn't run.
   clickup?: ClickUpProjectStatus | null;

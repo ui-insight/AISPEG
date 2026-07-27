@@ -19,6 +19,17 @@ export function proxy(req: NextRequest) {
     );
   }
 
+  // /internal/portfolio was the second inventory view the same directive
+  // rules out (ADR 0005 amendment, 2026-07-27). It survived the July
+  // sweep that caught /internal/requests. Deep links keep their slug so a
+  // bookmarked project lands on that project, not the index.
+  if (req.nextUrl.pathname.startsWith("/internal/portfolio")) {
+    const slug = req.nextUrl.pathname.slice("/internal/portfolio".length);
+    return NextResponse.redirect(
+      new URL(`/portfolio${slug}`, req.nextUrl.origin)
+    );
+  }
+
   const user = process.env.BASIC_AUTH_USER;
   const pass = process.env.BASIC_AUTH_PASS;
 
