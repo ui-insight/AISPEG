@@ -572,76 +572,83 @@ export const vocabularyGroups: VocabularyGroup[] = [
         "code": "idea",
         "label": "Idea",
         "displayOrder": 1,
-        "description": "Named with a unit-of-interest; not yet committed to build.",
-        "verificationRule": "No committed operationalOwner OR no committed iidsSponsor; repoUrl empty or repo has zero commits."
+        "description": "Named with a unit-of-interest; no owner or sponsor engaged yet.",
+        "verificationRule": "No committed operationalOwner AND no committed iidsSponsor (either one engaged makes it scoping); repoUrl empty or repo has zero commits."
+      },
+      {
+        "code": "scoping",
+        "label": "Scoping",
+        "displayOrder": 2,
+        "description": "Named humans engaged; feasibility and shape being worked out before a formal go decision.",
+        "verificationRule": "A named operationalOwners[0] OR iidsSponsor is engaged (neither means it is still idea); no liveUrl; pilotCohort empty. No repo-cadence requirement — scoping produces framing and feasibility work, not necessarily commits."
       },
       {
         "code": "approved",
         "label": "Approved",
-        "displayOrder": 2,
+        "displayOrder": 3,
         "description": "Committed to build with named owner and sponsor; not yet under active development.",
         "verificationRule": "operationalOwners[0] set AND iidsSponsor set AND non-empty description; no liveUrl; repo (if present) has <10 commits OR no commits in last 14 days."
       },
       {
         "code": "building",
         "label": "Building",
-        "displayOrder": 3,
+        "displayOrder": 4,
         "description": "Active development. Code exists but not yet for real users.",
         "verificationRule": "repoUrl set; lastCommitDate within last 60 days; no liveUrl (or liveUrl flagged liveUrlIsStaging:true); pilotCohort empty."
       },
       {
         "code": "prototype",
         "label": "Prototype",
-        "displayOrder": 4,
+        "displayOrder": 5,
         "description": "Demo-able but quiet — feature-complete or dormant.",
         "verificationRule": "pilotCohort empty; either lastCommitDate older than 30 days OR featureComplete:true."
       },
       {
         "code": "piloting",
         "label": "Piloting",
-        "displayOrder": 5,
+        "displayOrder": 6,
         "description": "In use by a bounded, named cohort.",
         "verificationRule": "liveUrl set; pilotCohort populated with size > 0 and a bounded scope."
       },
       {
         "code": "production",
         "label": "Production",
-        "displayOrder": 6,
+        "displayOrder": 7,
         "description": "In real institutional use beyond the pilot cohort.",
         "verificationRule": "Publicly-accessible artifact: liveUrl OR a public repoUrl (isPrivateRepo:false) for repo-as-artifact deliverables (infrastructure, scaffolds, appliances). productionScope and supportContact populated."
       },
       {
         "code": "maintained",
         "label": "Maintained",
-        "displayOrder": 7,
+        "displayOrder": 8,
         "description": "In production but in maintenance-only mode.",
         "verificationRule": "Inherits production accessibility (liveUrl or public repo); no commits to main in last 90 days; no open feature issues — only bug-, security-, or chore-labeled."
       },
       {
         "code": "paused",
         "label": "Paused",
-        "displayOrder": 8,
+        "displayOrder": 9,
         "description": "Deliberately on hold — not abandoned; expected to resume.",
         "verificationRule": "Deliberate hold, so no commit-cadence requirement; pilotCohort empty."
       },
       {
         "code": "sunsetting",
         "label": "Sunsetting",
-        "displayOrder": 9,
+        "displayOrder": 10,
         "description": "Being wound down with a planned successor.",
         "verificationRule": "sunsetDate (ISO) set; replacedBy populated — successor project slug or the literal 'manual-process'."
       },
       {
         "code": "archived",
         "label": "Archived",
-        "displayOrder": 10,
+        "displayOrder": 11,
         "description": "Stopped. Record kept for institutional memory.",
         "verificationRule": "liveUrl returns 404 / is null / domain dead, or (for repo-as-artifact) repoUrl is archived/deleted; service stopped."
       },
       {
         "code": "tracked",
         "label": "Tracked",
-        "displayOrder": 11,
+        "displayOrder": 12,
         "description": "Externally-owned project IIDS observes but does not build.",
         "verificationRule": "trackingOnly:true; bypasses the operational ladder."
       }
@@ -658,7 +665,7 @@ export const vocabularyGroups: VocabularyGroup[] = [
         "label": "Exploring",
         "displayOrder": 1,
         "description": "Thinking about it / committed to build.",
-        "verificationRule": "Rolls up from ProjectStatus values: idea, approved."
+        "verificationRule": "Rolls up from ProjectStatus values: idea, scoping, approved."
       },
       {
         "code": "building",

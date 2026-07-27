@@ -33,6 +33,10 @@ By convention, follow the shape of [`0001-product-lifecycle-taxonomy.md`](./0001
 # ADR NNNN — Short title
 
 **Status:** Proposed | Accepted | Superseded by [ADR NNNN](./NNNN-...)
+           (an ADR that decides some things this repo owns and proposes
+            others that bind another office may scope its status — see
+            ADR 0005 — but say which part is which, and never let a
+            header imply a ratification that hasn't happened)
 **Date:** YYYY-MM-DD
 **Deciders:** Names of the people who actually made the call
 **Supersedes:** (optional) Pointer to the ADR or pattern this replaces
@@ -82,6 +86,6 @@ ADRs are **append-only**. To change a decision:
 | [0002](./0002-strategic-plan-alignment-explorer.md) | Strategic Plan Alignment Explorer | Accepted | 2026-05-03 |
 | [0003](./0003-strategic-plan-map-home.md) | Strategic-Plan Map Home + `/explore` Retirement | Accepted | 2026-05-05 |
 | [0004](./0004-clickup-ingestion-boundary.md) | ClickUp Ingestion Boundary | Accepted | 2026-07-10 |
-| [0005](./0005-unified-technology-request-registry.md) | Unified Technology Request: Request Registry & Governance Tracking | Proposed | 2026-07-23 |
+| [0005](./0005-unified-technology-request-registry.md) | Unified Technology Request: Request Registry & Governance Tracking | Accepted (Phase 1); cross-institutional pieces proposed | 2026-07-23 |
 | [0006](./0006-coordination-surface-split.md) | Split `/coordination` out of `/standards` | Accepted | 2026-07-25 |
 | [0007](./0007-site-assistant-tool-grounded-qa.md) | Site Assistant: Tool-Grounded Q&A with Strict Citation | Accepted | 2026-07-27 |
