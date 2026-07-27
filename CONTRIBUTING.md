@@ -9,9 +9,11 @@ Copilot**, or any LLM-powered coding assistant.
 The site was built collaboratively this way and is designed to keep working
 that way.
 
-> Before you make non-trivial changes: read [`REFACTOR.md`](./REFACTOR.md)
-> for the strategic context and current sprint state, and
-> [`CLAUDE.md`](./CLAUDE.md) for project conventions and the IA.
+> Before you make non-trivial changes: read [`CLAUDE.md`](./CLAUDE.md)
+> for the normative Agent Rules, project conventions, and the IA; and
+> [`docs/adr/`](./docs/adr/) for the durable decisions and why they were
+> made. [`REFACTOR.md`](./REFACTOR.md) gives the May 2026 strategic
+> context behind what was cut.
 
 ---
 
@@ -28,36 +30,58 @@ that way.
 ## Getting started
 
 ```bash
-git clone https://github.com/ui-insight/AISPEG.git
+git clone --recurse-submodules https://github.com/ui-insight/AISPEG.git
 cd AISPEG
 cp .env.example .env.local   # then fill in DATABASE_URL and optional GITHUB_TOKEN
 npm install
 npm run dev
 ```
 
+The `--recurse-submodules` is not optional: `predev` regenerates the typed
+governance and strategic-plan catalogs from `vendor/`, and fails without
+them. If you already cloned without it, run
+`git submodule update --init --recursive`.
+
 The site runs at <http://localhost:3000>.
 
 > **Tip for agentic tools**: at the start of a session, point your agent at
-> [`CLAUDE.md`](./CLAUDE.md) and [`REFACTOR.md`](./REFACTOR.md). Together
-> they cover project structure, conventions, the five-surface IA, the
-> friction-ledger model, and the sprint sequencing.
+> [`CLAUDE.md`](./CLAUDE.md) — it carries the normative Agent Rules, the
+> IA, and the project structure. [`docs/adr/`](./docs/adr/) is where the
+> durable decisions live. [`REFACTOR.md`](./REFACTOR.md) is the May 2026
+> plan document, useful for *why* things were cut but superseded by the
+> ADRs on anything decided since.
 
 ---
 
 ## How the site works
 
-### Four primary surfaces
+### Five primary surfaces
 
 | Surface | Route | Source of truth |
 |---|---|---|
-| Projects | `/portfolio` | Postgres `applications` (read via `lib/work.ts`); `lib/portfolio.ts` is the typed seed source. Two-tier filter (public stage → operational status) per [ADR 0001](./docs/adr/0001-product-lifecycle-taxonomy.md). The category filter (`lib/work-categories.ts`) is the by-problem entry point. |
+| Projects | `/portfolio` | Postgres `applications` (read via `lib/work.ts`); `lib/portfolio.ts` is the typed seed source. Two-tier filter (public stage → operational status) per [ADR 0001](./docs/adr/0001-product-lifecycle-taxonomy.md). The category filter (`lib/work-categories.ts`) is the by-problem entry point. `/portfolio/pipeline` is the unified all-origin request queue (`lib/requests.ts` + ClickUp enrichment) per [ADR 0005](./docs/adr/0005-unified-technology-request-registry.md). |
 | Submit a Project | `/builder-guide` | `lib/builder-guide-data.ts` (quiz) + Postgres `submissions` (responses); status page at `/intake/[token]`. |
+| Coordination | `/coordination` | **Process** — how a request becomes tracked work. Sub-nav: Intake Crosswalk (`lib/governance-profile.ts`), OIT Pathway (`lib/oit-pathway.ts`), OIT Portfolio (`lib/oit-ea-portfolio.ts`), Op Excellence Survey (`lib/surveys/*`). |
+| Standards | `/standards` | **Reference** — `lib/standards-watch.ts`; sub-nav surfaces `/standards/data-model`, `/standards/strategic-plan`, and `/standards/strategic-plan/map` (per [ADR 0003](./docs/adr/0003-strategic-plan-map-home.md)). |
 | Reports | `/reports` | `lib/artifacts.ts` (unified timeline) + per-report routes |
-| Standards | `/standards` | `lib/standards-watch.ts`; sub-nav surfaces `/standards/data-model`, `/standards/strategic-plan`, and `/standards/strategic-plan/map` (per [ADR 0003](./docs/adr/0003-strategic-plan-map-home.md)). |
+
+The Coordination / Standards line is load-bearing: **Coordination holds
+process**, **Standards holds reference**. A new sub-page goes on the side
+of that line it answers to — see
+[ADR 0006](./docs/adr/0006-coordination-surface-split.md).
 
 Plus `/ai4ra-ecosystem`, `/about`, `/internal` (auth-gated),
 `/docs/*`, `/admin/*`. See [`CLAUDE.md`](./CLAUDE.md) for the full
 route inventory and what's been archived.
+
+### The site assistant
+
+A conversational assistant (`components/ChatWidget.tsx` → `POST /api/ask`)
+is mounted in the root layout and reachable from every page. It answers
+questions about the portfolio, standards, reports, and coordination
+surfaces by calling read-only tools in `lib/agent/tools/` against site
+data. If you add a surface that a stakeholder would ask about, add a tool
+for it — otherwise the assistant will not know it exists.
 
 ### Typed data modules over JSON blobs
 
@@ -82,23 +106,32 @@ shared across surfaces.
 - Don't reach for `"use client"` reflexively — server components keep
   bundles small and let Next render on the server.
 
-### Data architecture intent (Sprint 2+)
+### Data architecture
 
-The post-refactor data model:
+Source-of-truth boundaries:
 
 - **Postgres `applications` table** is canonical for project identity,
-  classification, and provenance.
-- **ClickUp** is canonical for project status, blockers, and daily
-  workflow. Each ClickUp task references an `applications.id`; each
-  `applications` row has a `clickup_task_id`. Sync runs on a cron.
+  classification, and provenance. `lib/portfolio.ts` is the typed shadow
+  and the seed source; `lib/work.ts` is the runtime read path.
+- **ClickUp** is canonical for project status narrative, ROI estimates,
+  and the scored request backlog. Ingestion is **read-only and pull-only**
+  into `clickup_*` projection tables, per
+  [ADR 0004](./docs/adr/0004-clickup-ingestion-boundary.md). There is no
+  write-back. Synced tables carry no foreign keys to `applications` —
+  they join to portfolio slugs at read time via `lib/clickup-map.ts`, so
+  a re-seed can't wipe them.
+- **This site's Postgres** owns the request registry (`tech_requests` and
+  friends) — request identity across origins, the request↔project graph,
+  and ROI claims, per
+  [ADR 0005](./docs/adr/0005-unified-technology-request-registry.md).
 - **GitHub issues** drive technical work and are surfaced via
   `lib/github.ts`.
-- **Markdown / typed TS** drives narrative content (decks, About copy,
-  standards ledger).
+- **Markdown / typed TS** drives narrative content (About copy, standards
+  ledger, vocabularies).
 
-Sprint 1 has not yet wired ClickUp; Sprint 2's Migration 005 adds the
-friction-ledger fields and a `blockers` table. Until then, status data is
-hand-maintained in `lib/portfolio.ts`.
+A note on why so much is typed TS rather than DB rows: each change to a
+governance vocabulary is a commit-worthy decision, and the git log is the
+audit trail. That's Agent Rule 9 in `CLAUDE.md`.
 
 ---
 
@@ -170,14 +203,20 @@ The status taxonomy is defined and enforced by
 [ADR 0001 — Product Lifecycle Taxonomy](./docs/adr/0001-product-lifecycle-taxonomy.md).
 The lifecycle has two layers:
 
-- **Operational ladder** (9 states + `tracked` meta): `idea`,
-  `approved`, `building`, `prototype`, `piloting`, `production`,
-  `maintained`, `sunsetting`, `archived`, plus `tracked` for
-  partner-unit-led work IIDS coordinates around.
-- **Public stage rollup** (5 buckets) — `exploring`, `building`,
-  `live`, `retired`, `tracked` — derived automatically from the
-  operational state. Stakeholders see the public stage; IIDS sees the
-  operational state as a secondary chip.
+- **Operational ladder** (11 states + `tracked` meta): `idea`,
+  `scoping`, `approved`, `building`, `prototype`, `piloting`,
+  `production`, `maintained`, `paused`, `sunsetting`, `archived`, plus
+  `tracked` for partner-unit-led work IIDS coordinates around.
+  `scoping` and `paused` were added by July 2026 amendments to ADR 0001
+  — `scoping` for named humans engaged before a formal go decision,
+  `paused` for a deliberate hold that is not abandonment.
+- **Public stage rollup** (6 buckets) — `exploring`, `building`,
+  `live`, `paused`, `retired`, `tracked` — derived automatically from
+  the operational state by `computePublicStage()`. Stakeholders see the
+  public stage; IIDS sees the operational state as a secondary chip.
+
+All values are **lowercase**; the union in `lib/portfolio.ts` is the
+source of truth and tsc will reject anything else.
 
 Each operational state has a **measurable verification rule** (e.g.
 `production` requires either a public `liveUrl` reachable beyond the
@@ -206,7 +245,7 @@ owns it, IIDS may have advised but did not build. Always pair with
   work, may not include IIDS at all.
 - **Example:** UCM Daily Register — `homeUnits:
   ["University Communications and Marketing"]`, `buildParticipants:
-  ["UCM"]`, `status: "Tracked"`. IIDS coordinates; UCM owns and builds.
+  ["UCM"]`, `status: "tracked"`. IIDS coordinates; UCM owns and builds.
 
 #### AI4RA relationship
 
@@ -289,9 +328,14 @@ artifact:
 
 ### Adding a new top-level route
 
-The IA is intentionally narrow (5 primary surfaces). Adding a new
-top-level route should be a deliberate choice — discuss in
-`REFACTOR.md` or open an issue first.
+The IA is intentionally narrow (5 primary surfaces plus Home and a
+footer About). Adding a new top-level route should be a deliberate
+choice — open an issue first, and if the decision is durable, write an
+ADR. [ADR 0006](./docs/adr/0006-coordination-surface-split.md) is the
+worked example of adding one.
+
+Most things that feel like they need a new route actually need a
+sub-section under Coordination or Standards. Try that first.
 
 If approved:
 
@@ -299,9 +343,15 @@ If approved:
 2. Add the entry to `primaryItems` (or `footerItems`) in
    `components/Sidebar.tsx`. Existing icons (each used by exactly one
    entry): `house` (Home), `grid` (Projects), `compass` (Submit a
-   Project), `shield` (Standards), `document` (Reports), `book` (About).
-   **Each sidebar entry uses a distinct icon** — adding a new entry
-   means adding a new glyph to `NavIcon`, not reusing an existing one.
+   Project), `funnel` (Coordination), `shield` (Standards), `document`
+   (Reports), `book` (About). **Each sidebar entry uses a distinct
+   icon** — adding a new entry means adding a new glyph to `NavIcon`,
+   not reusing an existing one.
+
+   Note the difference between a **primary surface** and a
+   **sub-section**: sub-sections never get a sidebar row. They go in
+   `subNavItems` in the parent surface's `layout.tsx`, rendered through
+   `components/SectionSubNav.tsx`. That's Agent Rule 11.
 3. Apply the page-heading-and-eyebrow rule documented in
    `.impeccable.md` — the H1 must thread the sidebar label (Form A: H1
    matches verbatim; Form B: declarative H1 with the sidebar label as
@@ -319,23 +369,17 @@ index.
 
 ## Workflow
 
-### For solo work (direct to main)
-
-```
-1. Pull latest:    git pull origin main
-2. Make changes:   (edit with your agentic tool)
-3. Verify:         npm run build && npm run lint
-4. Commit & push:  git add <files>
-                   git commit -m "imperative-mood subject"
-                   git push
-```
-
-### For collaborative or substantive work (branch + PR)
+**All work lands via PR. Never commit directly to `main`** — this is
+Agent Rule 1 in [`CLAUDE.md`](./CLAUDE.md), and it applies to solo work
+and human contributors too, not just agents. The value isn't review
+gating (often there's only one reviewer); it's that the PR body is where
+the *why* gets written down, and CI runs before the branch is live.
 
 ```
 1. Create branch:  git checkout -b feature/your-feature
 2. Make changes
 3. Verify:         npm run build && npm run lint
+                   npm run verify:portfolio   # if you touched lib/portfolio.ts
 4. Commit & push:  git push -u origin feature/your-feature
 5. Open PR:        gh pr create --title "..." --body "..."
 ```
@@ -343,10 +387,16 @@ index.
 **Always run `npm run build` before committing.** It's the primary
 TypeScript check and catches drift between data shapes and components.
 
-For the May 2026 refactor itself, work is happening in **per-sprint PRs**
-off `main` (see `REFACTOR.md`). If you're contributing during the
-refactor window, sync with whoever's running the active sprint before
-opening a parallel PR.
+**Run `npm run verify:portfolio` if you touched `lib/portfolio.ts`.** CI
+enforces it. It fails any project whose claimed lifecycle status isn't
+backed by the evidence [ADR 0001](./docs/adr/0001-product-lifecycle-taxonomy.md)
+requires — a `production` claim with no `supportContact`, a `piloting`
+claim with no cohort, and so on. Catching it locally is faster than
+catching it in CI.
+
+CI additionally runs ESLint, `tsc --noEmit`, and a production build, plus
+governance and strategic-plan drift checks on PRs touching the vendored
+catalogs.
 
 ---
 
@@ -356,12 +406,12 @@ opening a parallel PR.
 
 Give your agent the strategic context first. A good opening:
 
-> Read `REFACTOR.md` and `CLAUDE.md` to understand the project. This is a
-> Next.js 16 site that's the coordination nexus for the University of
-> Idaho's institutional AI initiative, operated by IIDS. We're mid-refactor
-> from a legacy AISPEG-collaboration framing. The IA is five surfaces:
-> Projects, Explore, Submit a Project, Reports, Standards. Run
-> `npm run build` to verify changes.
+> Read `CLAUDE.md` and skim `docs/adr/` to understand the project. This
+> is a Next.js 16 site that's the coordination nexus for the University
+> of Idaho's institutional AI initiative, operated by IIDS. The IA is
+> five primary surfaces: Projects, Submit a Project, Coordination,
+> Standards, Reports. Work on a feature branch — never commit to main.
+> Run `npm run build` to verify changes.
 
 ### Effective prompt patterns
 
@@ -374,24 +424,35 @@ Give your agent the strategic context first. A good opening:
 > alphabetical. Don't change the data."
 
 **New feature:**
-> "Add a `/standards/[id]` permalink that opens directly to the relevant
-> entry on the standards page. Read `lib/standards-watch.ts` first."
+> "Add a sub-page under `/coordination` summarizing X. Read
+> `app/coordination/layout.tsx` for the sub-nav pattern and
+> `docs/adr/0006-coordination-surface-split.md` for why it belongs on
+> Coordination rather than Standards."
 
 **Verification:**
-> "Run `npm run build` and `npm run lint`, fix any errors."
+> "Run `npm run build`, `npm run lint`, and `npm run verify:portfolio`;
+> fix any errors."
 
 ### What your agent needs to know
 
-- `REFACTOR.md` and `CLAUDE.md` are the primary orientation docs.
+- `CLAUDE.md` is the primary orientation doc, and its **Agent Rules**
+  section is normative — it wins over anything else, including this
+  file, if they ever conflict.
+- `docs/adr/` holds the durable decisions. Read the relevant ADR before
+  changing a taxonomy, a schema, or the IA.
 - Typed `lib/*.ts` modules are the source of truth for cross-surface
   content. Per-page data lives next to the page (e.g.
   `app/reports/<slug>/data.ts`).
+- Several `lib/` modules are **auto-generated** and must never be edited
+  by hand: `lib/governance/{catalog,vocabularies}.ts`,
+  `lib/strategic-plan/catalog.ts`, `lib/portfolio-meta.ts`. Edit the
+  vendored source and regenerate.
 - Tailwind tokens: `ui-charcoal`, `ui-gold`, `ui-gold-dark`,
   `brand-huckleberry`, `brand-lupine`. No raw hex in components.
-- `npm run build` must pass before committing.
-- The site is mid-refactor; legacy routes were cut for cause in the May
-  2026 refactor and should not be reintroduced without checking
-  `REFACTOR.md`.
+- `npm run build` must pass before committing; so must
+  `npm run verify:portfolio` if `lib/portfolio.ts` changed.
+- Legacy routes were cut for cause in the May 2026 refactor and should
+  not be reintroduced without checking `REFACTOR.md`.
 
 ### Common pitfalls
 
@@ -401,8 +462,17 @@ Give your agent the strategic context first. A good opening:
 - **Don't reach for `"use client"`** unless a component genuinely needs
   client-side state or events.
 - **Don't reintroduce cut routes** (`/knowledge`, `/cautionary-tales`,
-  `/roadmap`, `/outreach`, `/action-plan`, `/approach`) — they were cut
-  for cause; check `REFACTOR.md` before touching them.
+  `/roadmap`, `/outreach`, `/action-plan`, `/approach`,
+  `/standards/[id]`, `/explore`) — they were cut for cause. `/explore`
+  was retired per [ADR 0003](./docs/adr/0003-strategic-plan-map-home.md);
+  the coverage map lives at `/standards/strategic-plan/map` and the
+  by-problem browse is `/portfolio`'s category chips. Check
+  `REFACTOR.md` before touching the rest.
+- **Don't build a second view of anything the public site already
+  shows.** The standing directive (2026-07-24, recorded in the
+  [ADR 0005](./docs/adr/0005-unified-technology-request-registry.md)
+  amendment) is that the site tells one story with no public/internal
+  split. `/portfolio/pipeline` is the one request queue.
 - **Don't editorialize on user-facing surfaces** — the design principle is
   evidence-forward (status fields, day counters, owner names) over
   forcing-function rhetoric.
@@ -479,6 +549,7 @@ No display serif pairing. The brand is sans-only.
 ## Where to ask for help
 
 For project context (why a thing is the way it is): start with
-`REFACTOR.md` and `CLAUDE.md`. For technical specifics: see
+`docs/adr/` and `CLAUDE.md`, then `REFACTOR.md` for the May 2026
+cuts. For technical specifics: see
 [`/docs`](http://localhost:3000/docs) on the running site. For anything
 else: ping the IIDS team through the usual UI channels.

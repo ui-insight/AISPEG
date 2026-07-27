@@ -123,7 +123,29 @@ sprint sequencing.
   (PRs #194-196). /portfolio polish: stat-strip lede, filter demotion,
   rename "The Work" → "Projects" (PRs #207-218). UniVerso added as
   the first ui-iids portfolio entry (#221). Strategic-plan alignment
-  declared for all 15 portfolio projects (#220).
+  declared for every portfolio project (#220).
+- **July 2026** — Four decisions, four ADRs, all shipped:
+  **ClickUp ingestion** ([ADR 0004](./docs/adr/0004-clickup-ingestion-boundary.md),
+  Migrations 010–011) — read-only pull of status narrative, ROI, and the
+  scored request backlog; no write-back.
+  **OIT pathway + FY2027 EA crosswalk** — `/coordination/oit-pathway` and
+  `/coordination/oit-portfolio` (PR #283); crosswalk matches require
+  owner confirmation, not subject-matter adjacency.
+  **Unified Technology Request registry**
+  ([ADR 0005](./docs/adr/0005-unified-technology-request-registry.md),
+  Migrations 018–019) — Phase 1 registry plus `/portfolio/pipeline` as
+  the single all-origin request queue. Phases 2–4 remain; TDX sync is
+  blocked on API access.
+  **Coordination surface split**
+  ([ADR 0006](./docs/adr/0006-coordination-surface-split.md)) — the four
+  process sub-pages moved out of `/standards`; permanent redirects in
+  `next.config.mjs`.
+  ADR 0001 also gained the `paused` and `scoping` operational states and
+  the OIT-managed-production accessibility rule.
+
+The inventory currently holds **29 projects across 13 home units**. Don't
+copy a count out of this file into UI copy — compute it from
+`lib/portfolio.ts` at build time.
 
 ## Information architecture
 
@@ -203,7 +225,7 @@ app/                       # Next.js App Router
   layout.tsx               # Root layout, sidebar, metadata
   about/                   # About — strategic frame, AI4RA partnership, IIDS operator note
   portfolio/               # Projects
-  explore/                 # Explore — "by problem" axis, category-tile entry
+    pipeline/              # Unified all-origin request queue (ADR 0005)
   builder-guide/           # Submit a Project (assessment quiz)
   intake/[token]/          # Submitter-visible status page (Sprint 3a)
   reports/                 # Reports surface
@@ -218,7 +240,13 @@ app/                       # Next.js App Router
     oit-portfolio/         # OIT's FY2027 EA inventory + owner-confirmed crosswalks
     operational-excellence/ # Oct 2025 survey — themes, responses, candidate projects
   ai4ra-ecosystem/         # AI4RA partnership deep-dive (linked from /about)
-  internal/                # Ops surfaces (sync trigger, agent log). Request queue moved public → /portfolio/pipeline (2026-07-24); /internal/requests redirects there
+  internal/                # Auth-gated ops surfaces (sync trigger, agent log).
+                           #   Request queue moved public → /portfolio/pipeline
+                           #   (2026-07-24); /internal/requests redirects there.
+                           #   NOTE: /internal/portfolio still renders a second
+                           #   view of the inventory, which predates and
+                           #   contradicts the one-story directive — under
+                           #   review; don't build on it.
   admin/                   # Registry + submissions admin
   api/                     # Next.js API routes
   docs/                    # Technical + user documentation
@@ -251,6 +279,20 @@ lib/                       # Domain logic
   clickup.ts               # ClickUp REST client + typed custom-field extraction (ADR 0004)
   clickup-map.ts           # IIDS-AI4UI list ids ↔ portfolio slugs (typed map)
   clickup-sync.ts          # ClickUp → Postgres sync engine (script + /internal/sync share it)
+  clickup-data.ts          # Read module over the clickup_* projection tables
+  utr.ts                   # Unified Technology Request vocabularies (ADR 0005)
+  requests.ts              # Postgres read module for the request registry
+  governance-profile.ts    # Per-project UTR intake profile (Intake Crosswalk)
+  oit-pathway.ts           # OIT six-stage lifecycle + gates
+  project-governance.ts    # Governance-tracking facts per project
+  project-value.ts         # Replacement-cost / bottom-line-ROI facts
+  project-map-graph.ts     # Graph model behind the strategic-plan coverage map
+  roi-rubric.ts            # ROI dimensions + fiscal-year helpers (CADSO rubric pending)
+  rubric.ts                # ClickUp 11-criterion request-scoring rubric
+  agent/                   # Site assistant — tool registry, loop, prompts,
+                           #   rate limiting, query logging (POST /api/ask)
+  surveys/                 # Operational Excellence survey — themes, responses,
+                           #   candidate projects
   governance/              # Data Governance Explorer typed modules
     types.ts               # Shared interfaces (Project, Table, Column, Vocabulary*)
     canonical-udm-tables.ts # Hand-curated canonical-vs-extension tagging (v1)
@@ -266,7 +308,13 @@ lib/                       # Domain logic
     project-alignment.ts   # Reverse lookup — projects advancing each priority
     catalog.ts             # AUTO-GENERATED — pillars + priorities (do not edit)
 
-db/migrations/             # SQL migrations (001 → 010; 007 = lifecycle, 008 = strategic-plan-alignment, 010 = clickup ingestion)
+db/migrations/             # SQL migrations (001 → 019). Landmarks: 005 = friction
+                           #   ledger, 007 = lifecycle, 008 = strategic-plan
+                           #   alignment, 009 = agent query log, 010–011 = clickup
+                           #   ingestion, 012 = enterprise-replacement facts,
+                           #   018 = UTR registry, 019 = survey candidates
+
+evals/agent/               # Site-assistant eval harness (`npm run eval:agent`)
 
 scripts/                   # Node scripts run via tsx
   build-governance-catalog.ts     # vendor/data-governance/ → lib/governance/{catalog,vocabularies}.ts
