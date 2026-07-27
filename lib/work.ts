@@ -10,7 +10,10 @@
 //   - internal:  not on the public site at all
 //
 // Blockers carry public_text (safe for /portfolio) and internal_text
-// (sharper detail, only shown on /internal/portfolio).
+// (sharper detail). No surface renders internal_text as of 2026-07-27 —
+// /internal/portfolio was retired as a duplicate inventory view. The
+// column and the query seam stay; restoring a reader for them is a
+// deliberate decision, not a default.
 
 import "server-only";
 import { query } from "./db";
@@ -328,7 +331,11 @@ export interface ListOptions {
    * - "public" — default for the public /portfolio surface; includes
    *   public + embargoed (embargoed entries render with a held-detail
    *   notice but are not hidden).
-   * - "internal" — for /internal/portfolio; includes all three tiers.
+   * - "internal" — includes all three tiers. No route passes this since
+   *   /internal/portfolio was retired (2026-07-27); the /internal index
+   *   still uses it for its ops counts. Note that no project has ever
+   *   carried the `Internal-only` tier, so today it selects the same
+   *   rows as "public".
    */
   audience?: "public" | "internal";
 }

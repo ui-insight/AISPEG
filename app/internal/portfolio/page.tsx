@@ -1,70 +1,21 @@
-import Link from "next/link";
-import PortfolioCard from "@/components/PortfolioCard";
-import { listApplications, groupByHomeUnit } from "@/lib/work";
+import { redirect } from "next/navigation";
 
-export const dynamic = "force-dynamic";
+// The internal portfolio view was retired on 2026-07-27. It rendered the
+// same inventory as /portfolio — no project has ever carried the
+// `Internal-only` visibility tier, so the extra tier in its query matched
+// nothing — and its only exclusive content was auto-derived placeholder
+// blocker text. That made it a second view of the inventory, which the
+// one-story directive rules out (ADR 0005 amendment, 2026-07-24, extended
+// 2026-07-27).
+//
+// The `audience: "internal"` seam in lib/work.ts stays. If genuinely
+// sensitive blocker detail is ever authored, the query path back is
+// intact — but restoring a separate surface needs a deliberate decision,
+// not a page that quietly persisted.
+//
+// proxy.ts redirects this prefix before the auth gate; this handler is
+// the belt-and-braces copy, matching /internal/requests.
 
-export default async function InternalPortfolioPage() {
-  const apps = await listApplications({ audience: "internal" });
-  const groups = groupByHomeUnit(apps);
-
-  const total = apps.length;
-  const blockerCount = apps.reduce((sum, a) => sum + a.activeBlockers.length, 0);
-  const internalOnly = apps.filter((a) => a.visibilityTier === "internal").length;
-  const embargoed = apps.filter((a) => a.visibilityTier === "embargoed").length;
-
-  return (
-    <div className="space-y-10">
-      {/* Header */}
-      <div>
-        <p className="text-xs font-semibold uppercase tracking-wider text-ui-gold-dark">
-          IIDS Internal
-        </p>
-        <h1 className="mt-2 text-3xl font-black tracking-tight text-ui-charcoal">
-          Internal portfolio view
-        </h1>
-        <p className="mt-3 max-w-3xl text-sm leading-relaxed text-gray-700">
-          The full IIDS-coordinated AI inventory, including embargoed and
-          internal-only entries, with sharper blocker detail (named
-          individuals, contact history) than the public portfolio shows.
-        </p>
-        <p className="mt-2 text-sm text-gray-500">
-          {total} projects · {embargoed} embargoed · {internalOnly}{" "}
-          internal-only · {blockerCount} active blocker
-          {blockerCount === 1 ? "" : "s"}
-        </p>
-        <p className="mt-3 text-xs text-gray-500">
-          <Link
-            href="/portfolio"
-            className="text-ui-gold-dark hover:underline"
-          >
-            View the public portfolio &rarr;
-          </Link>
-        </p>
-      </div>
-
-      {/* Groups by home unit */}
-      {groups.map(({ unit, items }) => (
-        <section key={unit} className="space-y-4">
-          <div className="flex items-baseline gap-3">
-            <h2 className="text-xl font-black tracking-tight text-brand-black">{unit}</h2>
-            <span className="text-sm text-ink-subtle">
-              {items.length}{" "}
-              {items.length === 1 ? "project" : "projects"}
-            </span>
-          </div>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {items.map((app) => (
-              <PortfolioCard
-                key={app.id}
-                app={app}
-                audience="internal"
-                basePath="/internal/portfolio"
-              />
-            ))}
-          </div>
-        </section>
-      ))}
-    </div>
-  );
+export default function InternalPortfolioRedirect() {
+  redirect("/portfolio");
 }

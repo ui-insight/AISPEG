@@ -1,48 +1,14 @@
-import { notFound } from "next/navigation";
-import ProjectDetail from "@/components/ProjectDetail";
-import {
-  getApplicationBySlug,
-  getRelatedApplications,
-} from "@/lib/work";
-import { getProjectStatusBySlug } from "@/lib/clickup-data";
+import { redirect } from "next/navigation";
 
-export const dynamic = "force-dynamic";
+// Retired with the internal portfolio index — see ../page.tsx for why.
+// Keeps the slug so a bookmarked project detail lands on that project's
+// public page rather than the inventory index.
 
-export async function generateMetadata({
+export default async function InternalProjectRedirect({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const app = await getApplicationBySlug(slug, { audience: "internal" });
-  if (!app) return { title: "Not found" };
-  return {
-    title: `${app.name} · IIDS Internal`,
-    description: app.tagline ?? app.description.slice(0, 160),
-  };
-}
-
-export default async function InternalProjectDetailPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params;
-  const app = await getApplicationBySlug(slug, { audience: "internal" });
-  if (!app) notFound();
-
-  const [related, clickup] = await Promise.all([
-    getRelatedApplications(app, { audience: "internal" }),
-    getProjectStatusBySlug(slug),
-  ]);
-
-  return (
-    <ProjectDetail
-      app={app}
-      related={related}
-      audience="internal"
-      basePath="/internal/portfolio"
-      clickup={clickup}
-    />
-  );
+  redirect(`/portfolio/${slug}`);
 }
