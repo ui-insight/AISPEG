@@ -335,6 +335,8 @@ npm run lint                   # ESLint
 
 # Portfolio data + ADR 0001 enforcement
 npm run migrate                # Apply pending SQL migrations against $DATABASE_URL
+                               # (sole authority — never pipe a .sql into psql;
+                               #  hand-applied files desync schema_migrations)
 npm run seed:portfolio         # lib/portfolio.ts → applications table (dev DB)
 npm run verify:portfolio       # ADR 0001 status-rule enforcer (CI runs this)
 npm run refresh:commit-dates   # Hit GitHub API → regenerate lib/portfolio-meta.ts
@@ -430,6 +432,11 @@ docker compose --profile prod up -d --build       # Production (port 9260)
 docker compose --profile dev up -d --build        # Dev (port 9270)
 docker compose --profile prod logs -f
 docker compose --profile prod down
+
+# Migrations — scripts/migrate.ts is the sole authority. Dev applies them
+# automatically via the migrate-dev one-shot (the app container is gated on
+# its clean exit). Production is deliberate:
+docker compose --profile migrate run --rm migrate-prod
 ```
 
 ### Deploy via Claude Code

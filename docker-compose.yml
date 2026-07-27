@@ -20,8 +20,14 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-aispeg}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-aispeg_secret}
     volumes:
+      # db/migrations is deliberately NOT mounted into
+      # /docker-entrypoint-initdb.d. Postgres would run every file on first
+      # init of the volume, but only four of them record themselves in
+      # schema_migrations — so scripts/migrate.ts would then collide trying
+      # to re-apply the rest (#266). scripts/migrate.ts is the sole
+      # authority. On prod that step is deliberate and human-run; see
+      # "Applying migrations" in README / app/docs/deployment.
       - aispeg-pg-prod-data:/var/lib/postgresql/data
-      - ./db/migrations:/docker-entrypoint-initdb.d:ro
     networks:
       aispeg-net:
         ipv4_address: 10.10.9.10
@@ -55,6 +61,31 @@ services:
     profiles:
       - prod
 
+  # Production migrations, run on demand. Deliberately under its own
+  # `migrate` profile so `--profile prod up` never starts it: applying a
+  # migration to production stays a decision someone makes, not a side
+  # effect of a deploy. Invoke it explicitly:
+  #
+  #   docker compose --profile migrate run --rm migrate-prod
+  #
+  # Use this rather than piping a .sql file into psql — the runner records
+  # what it applied in schema_migrations, and hand-applied files are
+  # exactly how a database drifts out of sync with it (#266).
+  migrate-prod:
+    build:
+      context: .
+      target: builder
+    container_name: aispeg-migrate-prod
+    restart: "no"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-aispeg}:${POSTGRES_PASSWORD:-aispeg_secret}@10.10.9.10:5432/${POSTGRES_DB:-aispeg}
+    command: ["npx", "tsx", "scripts/migrate.ts"]
+    networks:
+      aispeg-net:
+        ipv4_address: 10.10.9.13
+    profiles:
+      - migrate
+
   # ── Development ─────────────────────────────────────
   postgres-dev:
     image: postgres:16-alpine
@@ -65,8 +96,9 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-aispeg}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-aispeg_secret}
     volumes:
+      # Not mounted as initdb.d — see the note on postgres-prod. On dev the
+      # migrate-dev service below applies migrations instead.
       - aispeg-pg-dev-data:/var/lib/postgresql/data
-      - ./db/migrations:/docker-entrypoint-initdb.d:ro
     networks:
       aispeg-net:
         ipv4_address: 10.10.9.11
@@ -82,6 +114,38 @@ services:
       timeout: 5s
       retries: 5
 
+  # One-shot migration runner. Targets the `builder` stage because the
+  # production runner image is a Next standalone bundle — it has no tsx, no
+  # scripts/, and no db/migrations/. The builder stage already has all
+  # three and shares its layers with the app build, so this costs nothing
+  # extra to produce and never ships to the runtime image.
+  #
+  # Dev only, by design. Production migrations stay a deliberate human step
+  # so a bad migration can't land unattended — several migrations under
+  # db/migrations/ are data migrations, not just additive DDL.
+  migrate-dev:
+    build:
+      context: .
+      target: builder
+    container_name: aispeg-migrate-dev
+    # A one-shot must not be restarted; it exits 0 when there's nothing
+    # pending, and the app is gated on that clean exit.
+    restart: "no"
+    depends_on:
+      postgres-dev:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-aispeg}:${POSTGRES_PASSWORD:-aispeg_secret}@10.10.9.11:5432/${POSTGRES_DB:-aispeg_dev}
+    # Not `npm run migrate` — that script expects --env-file=.env.local,
+    # which doesn't exist in the image. DATABASE_URL comes from the
+    # environment above.
+    command: ["npx", "tsx", "scripts/migrate.ts"]
+    networks:
+      aispeg-net:
+        ipv4_address: 10.10.9.12
+    profiles:
+      - dev
+
   aispeg-dev:
     build: .
     container_name: aispeg-dev
@@ -89,6 +153,8 @@ services:
     depends_on:
       postgres-dev:
         condition: service_healthy
+      migrate-dev:
+        condition: service_completed_successfully
     environment:
       GITHUB_TOKEN: ${GITHUB_TOKEN:-}
       CLICKUP_API_TOKEN: ${CLICKUP_API_TOKEN:-}
