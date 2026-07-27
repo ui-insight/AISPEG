@@ -296,7 +296,7 @@ ClickUp-independent. Reads from Postgres directly; ClickUp later replaces
 *who* updates status, not the surfaces.
 
 - ✅ `lib/intake-config.ts` — single source of truth for the named human
-  (Colin Armitage), the SLA wording, and the status-state labels.
+  (Colin Addington), the SLA wording, and the status-state labels.
 - ✅ `POST /api/similarity/preview` — stateless similarity endpoint that
   takes a partial assessment profile and returns matches against the
   registry. Threshold lower than the post-submit endpoint (0.2 vs 0.3) —
