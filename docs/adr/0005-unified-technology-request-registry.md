@@ -1,8 +1,8 @@
 # ADR 0005 — Unified Technology Request: request registry & governance tracking
 
-**Status:** Proposed — for discussion with the UTR working group (Hunter, Victoravich, Bartlett, Ewart, Robison)
+**Status:** Accepted for the registry layer and Phase 1 (shipped 2026-07-24). The cross-institutional pieces — the TDX boundary, the prioritization model, and approved-tools ownership — remain **proposed**, pending the UTR working group (Hunter, Victoravich, Bartlett, Ewart, Robison). See the 2026-07-27 amendment.
 **Date:** 2026-07-23
-**Deciders:** Pending — Barrie Robison (IIDS) + UTR working group
+**Deciders:** Barrie Robison (IIDS), for the registry design and Phase 1 as built. Working-group ratification outstanding for the pieces that bind other offices.
 **Related:** [ADR 0001](./0001-product-lifecycle-taxonomy.md) (lifecycle), [ADR 0004](./0004-clickup-ingestion-boundary.md) (ingestion pattern this extends), Migration 012 (enterprise-replacement facts), `UnifiedTechRequest/Unified Technology Request Process.pptx` (July 2026 draft), UTR meeting notes + email thread of 2026-07-20 → 2026-07-23
 
 ## Context
@@ -373,3 +373,53 @@ story with no public vs. internal distinction**.
 - This supersedes the "internal first" posture above **for the request
   queue**. Prioritization rounds (Phase 4) will make their own
   visibility call when they land.
+
+### 2026-07-27 — Status: Proposed → Accepted for Phase 1
+
+**Context.** This ADR was written as a proposal to the UTR working group
+and its header still said `Proposed` / `Deciders: Pending` three days
+after Phase 1 shipped. A documentation audit flagged the mismatch: the
+index in [`docs/adr/README.md`](./README.md) was telling readers that a
+decision embodied in live tables, live code, and a public surface had not
+been made yet.
+
+The confusion is real rather than clerical. This ADR does two different
+things. It designs a registry **this repo owns and can build alone**, and
+it proposes a division of labour that **binds other offices** — TDX as
+the workflow system of record, a shared prioritization model, OIT's
+ownership of the approved-tools list. The first was decided and built.
+The second is still a proposal, and nothing here can accept it on the
+working group's behalf.
+
+**Decision.** Split the status rather than flatten it.
+
+- **Accepted** — the registry layer and Phase 1 as built: `tech_requests`,
+  `tech_request_events`, `tech_request_links`,
+  `tech_request_project_links`, and `roi_claims` (Migration 018);
+  `lib/utr.ts` and `lib/requests.ts`; the backfill of ClickUp requests,
+  site submissions, and the GEO/Scrunch records; the survey candidates
+  registered by Migration 019; and `/portfolio/pipeline` as the single
+  all-origin queue (the Phase 2 line item pulled forward per the
+  2026-07-24 amendment). Decided by the portfolio owner; these needed no
+  external dependency, which is exactly why Phase 1 was scoped that way.
+- **Still proposed** — §1's assignment of workflow to TDX, §5's
+  `sync-tdx.ts` boundary, the prioritization model (open question 1), and
+  approved-tools ownership (open question 2). These describe how other
+  offices would work and are for the working group to ratify, amend, or
+  reject.
+- **Not yet built** — Phases 2, 3, and 4. No `project_interest_pool`,
+  `governance_flags`, `project_gates`, or `prioritization_*` tables
+  exist; `lib/approved-tools.ts`, `/standards/approved-tools`,
+  `/internal/prioritization`, and `scripts/sync-tdx.ts` are all
+  unwritten. Phase 4's TDX sync remains blocked on API access.
+
+**Why not simply mark the whole thing Accepted.** It would assert that a
+group which has not met on it signed off on a division of institutional
+labour. The site's own standard is that every claim names a human and
+holds up; an ADR header overclaiming ratification fails that standard in
+the audit trail itself.
+
+**Follow-up.** When the working group does take this up, record the
+outcome as a further amendment — including a rejection, if that is the
+outcome. The header should stop hedging once there is something real to
+point at.
