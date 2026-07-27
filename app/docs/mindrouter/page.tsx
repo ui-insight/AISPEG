@@ -18,8 +18,11 @@ export default function MindRouterDocsPage() {
         infrastructure with full data sovereignty.
       </p>
       <p>
-        This site uses MindRouter for two features: <strong>AI-powered idea analysis</strong> and
-        the <strong>AI Assistant chat panel</strong> in the Submit-a-Project assessment.
+        This site uses MindRouter for three features: <strong>AI-powered idea analysis</strong>,
+        the <strong>AI Assistant chat panel</strong> in the Submit-a-Project assessment, and the
+        <strong> site assistant</strong> reachable from every page, which answers questions about
+        the portfolio, standards, and reports by calling read-only tools against site data
+        (<code>POST /api/ask</code>).
       </p>
 
       <h2>Architecture</h2>
@@ -27,7 +30,7 @@ export default function MindRouterDocsPage() {
 Browser (Client)                  This site (Server)             MindRouter
 ─────────────────                 ─────────────────              ────────────
 "Analyze" click  ──POST──►  /api/ai/analyze-idea  ──POST──►  /v1/chat/completions
-                                  (JSON mode)                 (gpt-oss-120b)
+                                  (JSON mode)                 (qwen3.6-27b)
                  ◄──JSON──  Structured analysis    ◄──JSON──  Structured output
 
 Chat message     ──POST──►  /api/ai/refine         ──POST──►  /v1/chat/completions
@@ -115,14 +118,19 @@ Chat message     ──POST──►  /api/ai/refine         ──POST──►
       <pre className="not-prose rounded-lg bg-gray-900 p-4 text-sm text-green-400 overflow-x-auto">{`
 MINDROUTER_API_KEY=mr2_...        # Required. Bearer token for auth.
 MINDROUTER_BASE_URL=https://mindrouter.uidaho.edu  # Default.
-MINDROUTER_MODEL=openai/gpt-oss-120b              # Current model.
+MINDROUTER_MODEL=qwen/qwen3.6-27b                  # Default.
       `}</pre>
 
       <InfoBox type="tip" title="Model selection">
-        MindRouter hosts 60+ models. The current default is <code>openai/gpt-oss-120b</code>
-        which provides excellent structured output quality. Other good options include
-        <code>llama3.3:70b</code>, <code>qwen2.5:72b</code>, and <code>mistral-large:123b</code>.
-        Change the model by updating the <code>MINDROUTER_MODEL</code> environment variable.
+        The default is <code>qwen/qwen3.6-27b</code>, set in{" "}
+        <code>lib/mindrouter.ts</code> — that constant is the source of truth,
+        not this page. It was chosen in May 2026 on the recommendation of Luke
+        Sheneman, who operates the MindRouter cluster. The sibling{" "}
+        <code>qwen/qwen3.6-35b</code> is the lower-latency option; set{" "}
+        <code>MINDROUTER_MODEL</code> to override per environment when latency
+        matters more than accuracy. Model identifiers change as the cluster is
+        re-provisioned — query the models endpoint below rather than trusting a
+        list written down here.
       </InfoBox>
 
       <h2>Graceful Degradation</h2>

@@ -8,9 +8,9 @@
 export const intakeConfig = {
   /** The IIDS staff member named on the post-submit confirmation. */
   intakeOwner: {
-    name: "Colin Armitage",
+    name: "Colin Addington",
     title: "IIDS",
-    email: "carmitage@uidaho.edu",
+    email: "caddington@uidaho.edu",
   },
   /** Service-level commitment shown to submitters at confirmation time. */
   sla: {
