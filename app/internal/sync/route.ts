@@ -1,6 +1,6 @@
 // POST /internal/sync — manual ClickUp sync trigger (ADR 0004).
 //
-// Lives under /internal so the existing Basic-auth middleware covers it
+// Lives under /internal so the existing Basic-auth proxy covers it
 // (fails closed 503 when credentials are unset). Used by the "Sync now"
 // button on /internal and by the host cron:
 //
