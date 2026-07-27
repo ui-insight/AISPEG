@@ -54,6 +54,14 @@ export interface ToolDefinition {
   };
 }
 
+/**
+ * How much of the token budget the model may spend on hidden reasoning
+ * before it starts emitting content. The institutional default model is a
+ * thinking model, so on structured-output calls this is the difference
+ * between an answer and a 422 — see `analyzeIdea` below.
+ */
+export type ReasoningEffort = "none" | "low" | "medium" | "high";
+
 export interface ChatCompletionOptions {
   messages: ChatMessage[];
   temperature?: number;
@@ -64,6 +72,58 @@ export interface ChatCompletionOptions {
   /** OpenAI-compatible tool definitions */
   tools?: ToolDefinition[];
   tool_choice?: "auto" | "none" | "required";
+  /**
+   * Caps hidden reasoning so it can't consume the whole `max_tokens`
+   * budget. Sent only when set; silently dropped if this MindRouter
+   * deployment doesn't recognise it.
+   */
+  reasoning_effort?: ReasoningEffort;
+}
+
+/**
+ * Upstream MindRouter failure. Carries the status and raw body so route
+ * handlers can log the detail while showing users something human.
+ */
+export class MindRouterError extends Error {
+  readonly status: number;
+  readonly detail: string;
+
+  constructor(status: number, detail: string) {
+    super(`MindRouter ${status}: ${detail}`);
+    this.name = "MindRouterError";
+    this.status = status;
+    this.detail = detail;
+  }
+
+  /**
+   * True when the model burned its whole budget on reasoning before
+   * producing content. Retryable with more headroom or less reasoning.
+   */
+  get isReasoningBudgetExhausted(): boolean {
+    return (
+      this.status === 422 &&
+      /reasoning|thinking/i.test(this.detail) &&
+      /token budget|max_tokens/i.test(this.detail)
+    );
+  }
+}
+
+/**
+ * Set once we learn this deployment rejects `reasoning_effort`, so we stop
+ * sending it for the rest of the process rather than paying a failed
+ * request per call.
+ */
+let reasoningEffortUnsupported = false;
+
+/** Does this look like "you sent a parameter I don't know about"? */
+function isUnknownParameterError(status: number, body: string): boolean {
+  if (status !== 400 && status !== 422) return false;
+  return (
+    /reasoning_effort/i.test(body) &&
+    /unknown|unsupported|unexpected|not permitted|extra_forbidden|invalid|no such/i.test(
+      body
+    )
+  );
 }
 
 export interface ChatCompletionResponse {
@@ -112,6 +172,12 @@ export async function chatCompletion(
     body.tool_choice = opts.tool_choice ?? "auto";
   }
 
+  const wantsReasoningEffort =
+    opts.reasoning_effort !== undefined && !reasoningEffortUnsupported;
+  if (wantsReasoningEffort) {
+    body.reasoning_effort = opts.reasoning_effort;
+  }
+
   const res = await fetch(`${MINDROUTER_BASE}/v1/chat/completions`, {
     method: "POST",
     headers: {
@@ -123,7 +189,30 @@ export async function chatCompletion(
 
   if (!res.ok) {
     const text = await res.text().catch(() => "");
-    throw new Error(`MindRouter ${res.status}: ${text}`);
+    const failure = new MindRouterError(res.status, text);
+
+    // `reasoning_effort` is OpenAI-compatible but not guaranteed on every
+    // MindRouter build. If this deployment doesn't take it, drop it for the
+    // rest of the process and retry once — a call that worked before this
+    // parameter existed must not start failing because of it.
+    //
+    // Order matters: the budget-exhaustion message names `reasoning_effort`
+    // in its remediation advice, so it must be ruled out first or we'd
+    // permanently disable a parameter that is in fact supported.
+    if (
+      wantsReasoningEffort &&
+      !failure.isReasoningBudgetExhausted &&
+      isUnknownParameterError(res.status, text)
+    ) {
+      reasoningEffortUnsupported = true;
+      console.warn(
+        "MindRouter rejected reasoning_effort; retrying without it and " +
+          "omitting it for the remainder of this process."
+      );
+      return chatCompletion(opts);
+    }
+
+    throw failure;
   }
 
   return res.json();
@@ -136,7 +225,11 @@ export async function chatCompletion(
 export async function ask(
   userMessage: string,
   systemPrompt?: string,
-  jsonMode?: boolean
+  jsonMode?: boolean,
+  opts?: Pick<
+    ChatCompletionOptions,
+    "max_tokens" | "temperature" | "reasoning_effort"
+  >
 ): Promise<string> {
   const messages: ChatMessage[] = [];
   if (systemPrompt) {
@@ -147,6 +240,7 @@ export async function ask(
   const response = await chatCompletion({
     messages,
     json_mode: jsonMode,
+    ...opts,
   });
 
   return response.choices[0]?.message?.content ?? "";
@@ -191,14 +285,73 @@ Be conservative with sensitivity classifications — if student data is involved
 Return ONLY valid JSON, no markdown fences.`;
 
 /**
+ * Token budget for idea analysis. The schema above is large and the default
+ * model is a thinking model, so the 2048 default left no room for content
+ * after reasoning — the failure reported in #249.
+ */
+const ANALYSIS_MAX_TOKENS = 4096;
+/** Retry headroom when the first attempt still starves on reasoning. */
+const ANALYSIS_RETRY_MAX_TOKENS = 8192;
+
+/**
+ * Strip markdown fences before parsing. The system prompt asks for bare
+ * JSON, but thinking models fence their output often enough that treating
+ * a fenced object as unparseable would throw away a good answer.
+ */
+function parseJsonLoose(raw: string): unknown {
+  const trimmed = raw.trim();
+  try {
+    return JSON.parse(trimmed);
+  } catch {
+    const fenced = trimmed.match(/```(?:json)?\s*([\s\S]*?)```/i);
+    if (fenced?.[1]) return JSON.parse(fenced[1].trim());
+
+    const firstBrace = trimmed.indexOf("{");
+    const lastBrace = trimmed.lastIndexOf("}");
+    if (firstBrace !== -1 && lastBrace > firstBrace) {
+      return JSON.parse(trimmed.slice(firstBrace, lastBrace + 1));
+    }
+    throw new Error("No JSON object found in response");
+  }
+}
+
+/**
  * Analyze a free-text application idea via MindRouter and return structured
  * suggestions for the wizard.
+ *
+ * Throws `MindRouterError` when the upstream call fails — the caller is
+ * responsible for turning that into something a submitter should read.
  */
 export async function analyzeIdea(ideaText: string): Promise<IdeaAnalysis> {
-  const raw = await ask(ideaText, ANALYSIS_SYSTEM_PROMPT, true);
+  let raw: string;
+  try {
+    raw = await ask(ideaText, ANALYSIS_SYSTEM_PROMPT, true, {
+      max_tokens: ANALYSIS_MAX_TOKENS,
+      reasoning_effort: "low",
+    });
+  } catch (error) {
+    // If reasoning still ate the budget — because this deployment ignores
+    // reasoning_effort, or the idea is unusually involved — give it real
+    // headroom once before surfacing a failure to the submitter.
+    if (
+      error instanceof MindRouterError &&
+      error.isReasoningBudgetExhausted
+    ) {
+      console.warn(
+        `analyzeIdea: reasoning exhausted ${ANALYSIS_MAX_TOKENS}-token budget; ` +
+          `retrying at ${ANALYSIS_RETRY_MAX_TOKENS}.`
+      );
+      raw = await ask(ideaText, ANALYSIS_SYSTEM_PROMPT, true, {
+        max_tokens: ANALYSIS_RETRY_MAX_TOKENS,
+        reasoning_effort: "none",
+      });
+    } else {
+      throw error;
+    }
+  }
 
   try {
-    return JSON.parse(raw) as IdeaAnalysis;
+    return parseJsonLoose(raw) as IdeaAnalysis;
   } catch {
     // If the model returned something that isn't valid JSON, wrap it
     return {
@@ -244,7 +397,10 @@ export async function refinementChat(
   const response = await chatCompletion({
     messages: allMessages,
     temperature: 0.5,
-    max_tokens: 1024,
+    // Same exposure as analyzeIdea: on a thinking model a 1024 budget can
+    // be spent entirely on reasoning, returning empty content.
+    max_tokens: 2048,
+    reasoning_effort: "low",
   });
 
   return response.choices[0]?.message?.content ?? "";

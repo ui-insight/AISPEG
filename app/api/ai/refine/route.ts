@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { refinementChat, ChatMessage } from "@/lib/mindrouter";
+import { refinementChat, ChatMessage, MindRouterError } from "@/lib/mindrouter";
 
 export async function POST(request: NextRequest) {
   try {
@@ -39,8 +39,23 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ reply });
   } catch (error) {
     console.error("POST /api/ai/refine error:", error);
-    const message =
-      error instanceof Error ? error.message : "AI refinement failed";
-    return NextResponse.json({ error: message }, { status: 500 });
+
+    // Same rule as analyze-idea: upstream detail stays in the log.
+    if (error instanceof MindRouterError) {
+      return NextResponse.json(
+        {
+          error:
+            "The AI assistant is unavailable right now. You can keep " +
+            "working through the form without it.",
+          upstream: true,
+        },
+        { status: 502 }
+      );
+    }
+
+    return NextResponse.json(
+      { error: "AI refinement failed. Please try again." },
+      { status: 500 }
+    );
   }
 }
