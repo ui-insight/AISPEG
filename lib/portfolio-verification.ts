@@ -26,6 +26,10 @@ export interface VerificationProblem {
   problem: string;
   rule: string;
   severity: "error" | "warning";
+  // What the checked source actually carried, when that isn't a member of the
+  // union — a database row's raw `applications.status`, say. Reported in place
+  // of `claimedStatus`, which the type system pins to the union.
+  observedStatus?: string;
 }
 
 type Verifier = (i: Project) => VerificationProblem[];

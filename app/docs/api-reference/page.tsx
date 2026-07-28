@@ -134,7 +134,7 @@ export default function ApiReferenceDocsPage() {
             { name: "github_repo", type: "string?", desc: "GitHub repo (org/repo format)" },
             { name: "url", type: "string?", desc: "Production URL" },
             { name: "tier", type: "number?", desc: "1-4, defaults to 1" },
-            { name: "status", type: "string?", desc: "Lifecycle status, defaults to 'idea'" },
+            { name: "status", type: "string?", desc: "An ADR 0001 operational status, defaults to 'idea'. Anything outside the ladder returns 400." },
             { name: "proposed_deployment_environment", type: "string?", desc: "Proposed hosting target; defaults to 'to-be-determined'" },
             { name: "enterprise_replacement_status", type: "string?", desc: "yes | no | to-be-determined" },
             { name: "existing_enterprise_system_name", type: "string?", desc: "Required when replacement status is yes" },
@@ -151,7 +151,7 @@ export default function ApiReferenceDocsPage() {
         <Endpoint method="PATCH" path="/api/registry/[id]" description="Update any application fields. Only provided fields are modified.">
           <ParamTable params={[
             { name: "name", type: "string?", desc: "Application name" },
-            { name: "status", type: "string?", desc: "An ADR 0001 operational status — idea | scoping | approved | building | prototype | piloting | production | maintained | paused | sunsetting | archived | tracked. The column is plain TEXT with no CHECK, so anything else writes successfully and renders as Exploring. Send one of these." },
+            { name: "status", type: "string?", desc: "An ADR 0001 operational status — idea | scoping | approved | building | prototype | piloting | production | maintained | paused | sunsetting | archived | tracked. The column is plain TEXT with no CHECK, so this endpoint is the constraint: anything else returns 400." },
             { name: "github_repo", type: "string?", desc: "GitHub repository" },
             { name: "url", type: "string?", desc: "Production URL" },
             { name: "...", type: "...", desc: "Any other application field" },

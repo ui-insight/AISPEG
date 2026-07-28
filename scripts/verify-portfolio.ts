@@ -8,16 +8,24 @@
 // NOT fail the build — they're surfaced for awareness so a stale
 // portfolio-meta doesn't gate CI.
 //
+// The verifier reads the typed module, which is the authoring source. When
+// DATABASE_URL is set it additionally audits `applications.status` in that
+// database — the column /portfolio actually renders from, and the one place
+// a value outside the union can appear without the typed module changing.
+//
 // Usage:
 //   npm run verify:portfolio
 //
 // CI:
-//   wired into .github/workflows/ci.yml as a separate job.
+//   wired into .github/workflows/ci.yml as a separate job. CI has no
+//   DATABASE_URL, so the database audit is skipped there; it's for the
+//   dev/prod databases, run locally or on the host.
 
 import {
   projects,
   OPERATIONAL_LABEL,
   PUBLIC_STAGE_LABEL,
+  isProjectStatus,
 } from "../lib/portfolio.js";
 import { verifyAll, type VerificationProblem } from "../lib/portfolio-verification.js";
 import { priorities } from "../lib/strategic-plan/catalog.js";
@@ -26,7 +34,7 @@ import { vocabularyGroups } from "../lib/governance/vocabularies.js";
 
 function format(p: VerificationProblem): string {
   const tag = p.severity === "error" ? "ERROR " : "WARN  ";
-  return `  [${tag}] ${p.slug.padEnd(28)} (${p.claimedStatus})\n           ${p.problem}\n           rule: ${p.rule}`;
+  return `  [${tag}] ${p.slug.padEnd(28)} (${p.observedStatus ?? p.claimedStatus})\n           ${p.problem}\n           rule: ${p.rule}`;
 }
 
 function verifyStrategicPlanAlignment(): VerificationProblem[] {
@@ -158,23 +166,88 @@ function verifyGovernanceVocabularyParity(): VerificationProblem[] {
   return problems;
 }
 
-function main(): void {
+// Everything above reads lib/portfolio.ts. But /portfolio renders from the
+// `applications` table, and `applications.status` is plain TEXT with no CHECK
+// constraint — ADR 0001 chose that deliberately so a new state needs a re-seed
+// rather than a migration. The cost of that choice is that a value outside the
+// union can land in the column (a legacy row, a hand-run UPDATE) and never be
+// caught: publicStageFromStatus() files anything unrecognised under
+// "exploring", so the site keeps rendering and simply misplaces the project.
+//
+// This audit is the check for that. It needs a live database, so it only runs
+// when DATABASE_URL is set — CI has none and skips it; run it against dev or
+// prod (or the host cron) to police the rows themselves.
+async function verifyDatabaseStatuses(): Promise<VerificationProblem[]> {
+  const databaseUrl = process.env.DATABASE_URL;
+  if (!databaseUrl) {
+    console.log(
+      "Skipping the applications.status audit — DATABASE_URL is not set.\n"
+    );
+    return [];
+  }
+
+  const { Pool } = await import("pg");
+  const pool = new Pool({ connectionString: databaseUrl });
+  const problems: VerificationProblem[] = [];
+
+  try {
+    const { rows } = await pool.query<{
+      slug: string | null;
+      name: string;
+      status: string;
+    }>("SELECT slug, name, status FROM applications ORDER BY name");
+
+    console.log(
+      `Auditing applications.status across ${rows.length} row(s) in ${databaseUrl.replace(/\/\/[^@]+@/, "//***@")} ...\n`
+    );
+
+    for (const row of rows) {
+      if (isProjectStatus(row.status)) continue;
+      problems.push({
+        slug: row.slug ?? row.name,
+        claimedStatus: "tracked",
+        observedStatus: row.status,
+        problem: `applications.status is "${row.status}", which is not a member of the ProjectStatus union. /portfolio renders this project as "Exploring". Fix it in lib/portfolio.ts and re-seed, or correct the row at /admin/registry.`,
+        rule: "db-status-in-union",
+        severity: "error",
+      });
+    }
+  } catch (err) {
+    // A database that's simply unreachable isn't portfolio drift — warn so a
+    // down dev box doesn't read as a data problem.
+    problems.push({
+      slug: "applications",
+      claimedStatus: "tracked",
+      problem: `could not audit applications.status — ${err instanceof Error ? err.message : String(err)}`,
+      rule: "db-status-in-union",
+      severity: "warning",
+    });
+  } finally {
+    await pool.end();
+  }
+
+  return problems;
+}
+
+async function main(): Promise<void> {
+  console.log(
+    `Verifying ${projects.length} projects against ADR 0001 rules, strategic-plan alignment, the OIT FY2027 crosswalk, and iids-portfolio vocabulary parity ...\n`
+  );
+
   const lifecycleProblems = verifyAll(projects);
   const stratPlanProblems = verifyStrategicPlanAlignment();
   const oitCrosswalkProblems = verifyOitCrosswalk();
   const vocabParityProblems = verifyGovernanceVocabularyParity();
+  const dbStatusProblems = await verifyDatabaseStatuses();
   const all = [
     ...lifecycleProblems,
     ...stratPlanProblems,
     ...oitCrosswalkProblems,
     ...vocabParityProblems,
+    ...dbStatusProblems,
   ];
   const errors = all.filter((p) => p.severity === "error");
   const warnings = all.filter((p) => p.severity === "warning");
-
-  console.log(
-    `Verifying ${projects.length} projects against ADR 0001 rules, strategic-plan alignment, the OIT FY2027 crosswalk, and iids-portfolio vocabulary parity ...\n`
-  );
 
   if (warnings.length > 0) {
     console.log(`Warnings (${warnings.length}):`);
@@ -194,4 +267,7 @@ function main(): void {
   );
 }
 
-main();
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

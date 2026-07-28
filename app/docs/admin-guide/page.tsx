@@ -144,6 +144,13 @@ export default function AdminGuideDocsPage() {
           select shows it as a marked option so the record isn&apos;t silently
           rewritten on load — pick a replacement and save.
         </p>
+        <p className="mt-2">
+          To find such rows without opening them one at a time, run{" "}
+          <code>npm run verify:portfolio</code> with <code>DATABASE_URL</code>{" "}
+          set: it reads <code>applications.status</code> and errors on any
+          value outside the union. CI has no database, so there it checks the
+          typed module only.
+        </p>
       </InfoBox>
 
       <h3>Registry Detail Page</h3>
