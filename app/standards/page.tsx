@@ -1,4 +1,10 @@
 import Link from "next/link";
+import StandardDraftPanel from "@/components/StandardDraftPanel";
+import {
+  MATURITY_LEVELS,
+  draftSummary,
+  standardDraftById,
+} from "@/lib/standards-drafts";
 import {
   standardsWatch,
   summary,
@@ -31,14 +37,18 @@ function StatusChip({ status }: { status: StandardsWatchStatus }) {
 }
 
 function StandardRow({ item }: { item: StandardsWatchItem }) {
+  const draft = standardDraftById.get(item.id);
+
   return (
-    <article className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="flex-1">
+    <article id={item.id} className="scroll-mt-28 border-t border-hairline py-6">
+      <div className="grid gap-4 sm:grid-cols-[3.5rem_minmax(0,1fr)] sm:gap-6">
+        <div>
+          <span className="inline-flex size-10 items-center justify-center rounded-full bg-brand-black font-mono text-xs font-bold text-white">
+            {item.agenda}.{item.id.split("-")[1]}
+          </span>
+        </div>
+        <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded bg-gray-100 px-2 py-0.5 font-mono text-xs font-medium text-gray-600">
-              {item.agenda}.{item.id.split("-")[1]}
-            </span>
             <h3 className="text-base font-semibold text-ui-charcoal">
               {item.title}
             </h3>
@@ -55,55 +65,63 @@ function StandardRow({ item }: { item: StandardsWatchItem }) {
                 Response artifact
               </a>
             )}
+            {draft && (
+              <span className="rounded-full bg-violet-100 px-2.5 py-0.5 text-xs font-medium text-brand-huckleberry">
+                Measurable draft attached
+              </span>
+            )}
           </div>
-        </div>
-      </div>
 
-      <details className="mt-4 group">
-        <summary className="cursor-pointer text-xs font-medium text-gray-500 hover:text-brand-black">
-          Show requested detail ({item.details.length} sub-items)
-        </summary>
-        <ul className="mt-3 space-y-2 border-l-2 border-gray-100 pl-4">
-          {item.details.map((d, i) => (
-            <li key={i} className="text-sm leading-relaxed text-gray-700">
-              {d}
-            </li>
-          ))}
-        </ul>
-        {item.links && item.links.length > 0 && (
-          <div className="mt-4 border-l-2 border-gray-100 pl-4">
-            <p className="text-xs font-medium uppercase tracking-wider text-brand-silver">
-              References
-            </p>
-            <ul className="mt-2 space-y-1.5">
-              {item.links.map((l) => (
-                <li key={l.href} className="text-sm leading-relaxed">
-                  <a
-                    href={l.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-brand-black underline decoration-brand-clearwater decoration-1 underline-offset-4 hover:decoration-2"
-                  >
-                    {l.label}
-                  </a>
+          <details className="group mt-4">
+            <summary className="cursor-pointer text-xs font-medium text-gray-500 hover:text-brand-black">
+              Requested scope ({item.details.length} sub-items)
+            </summary>
+            <ul className="mt-3 list-disc space-y-2 pl-5 marker:text-brand-gold-dark">
+              {item.details.map((d, i) => (
+                <li key={i} className="text-sm leading-relaxed text-gray-700">
+                  {d}
                 </li>
               ))}
             </ul>
-          </div>
-        )}
-      </details>
+            {item.links && item.links.length > 0 && (
+              <div className="mt-4">
+                <p className="text-xs font-medium uppercase tracking-wider text-brand-silver">
+                  Existing references
+                </p>
+                <ul className="mt-2 space-y-1.5">
+                  {item.links.map((l) => (
+                    <li key={l.href} className="text-sm leading-relaxed">
+                      <a
+                        href={l.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-brand-black underline decoration-brand-clearwater decoration-1 underline-offset-4 hover:decoration-2"
+                      >
+                        {l.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </details>
 
-      {item.responseNote && (
-        <p className="mt-3 rounded bg-green-50 px-3 py-2 text-xs text-green-900">
-          <strong>Response note:</strong> {item.responseNote}
-        </p>
-      )}
+          {item.responseNote && (
+            <p className="mt-4 bg-green-50 px-3 py-2 text-xs leading-relaxed text-green-950">
+              <strong>OIT response to date:</strong> {item.responseNote}
+            </p>
+          )}
+
+          {draft && <StandardDraftPanel draft={draft} />}
+        </div>
+      </div>
     </article>
   );
 }
 
 export default function StandardsWatchPage() {
   const stats = summary();
+  const drafts = draftSummary();
   const agendaI = standardsWatch.filter((s) => s.agenda === "I");
   const agendaII = standardsWatch.filter((s) => s.agenda === "II");
 
@@ -128,6 +146,83 @@ export default function StandardsWatchPage() {
           approved.
         </p>
       </header>
+
+      <section
+        aria-labelledby="proposed-drafts-heading"
+        className="bg-brand-black px-5 py-6 text-white sm:px-7 sm:py-8"
+      >
+        <p className="text-xs font-bold uppercase tracking-wider text-brand-gold">
+          Working material — not yet University policy
+        </p>
+        <div className="mt-3 grid gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(17rem,0.65fr)] lg:gap-12">
+          <div>
+            <h2
+              id="proposed-drafts-heading"
+              className="text-xl font-black tracking-tight text-white sm:text-2xl"
+            >
+              Evidence-backed drafts now cover all twenty categories
+            </h2>
+            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-gray-200">
+              {drafts.requirements} atomic requirements draw on {drafts.sources}{" "}
+              published sources. Each requirement states what evidence an
+              assessor examines and how it is tested. {drafts.criticalRequirements}{" "}
+              requirements are explicit gates that cannot disappear inside an
+              average score.
+            </p>
+          </div>
+          <div className="border-t border-gray-700 pt-4 lg:border-t-0 lg:border-l lg:pl-8 lg:pt-0">
+            <p className="text-sm font-semibold text-white">Publication rule</p>
+            <p className="mt-2 text-sm leading-relaxed text-gray-300">
+              External sources justify and shape a proposal. Only a named
+              University authority can resolve local thresholds and move an
+              entry from draft to approved.
+            </p>
+            <Link
+              href="/standards/foundation"
+              className="mt-3 inline-block text-sm font-semibold text-white"
+            >
+              Read the definitions and assessment instruments →
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="assessment-heading">
+        <div className="grid gap-6 lg:grid-cols-[minmax(15rem,0.55fr)_minmax(0,1.45fr)] lg:gap-12">
+          <div>
+            <p className="text-xs font-medium uppercase tracking-wider text-brand-silver">
+              Assessment method
+            </p>
+            <h2
+              id="assessment-heading"
+              className="mt-2 text-xl font-black tracking-tight text-brand-black"
+            >
+              Conformance and maturity answer different questions
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed text-ink-muted">
+              Every requirement is marked Met, Partially met, Not met, Not
+              applicable, or Not assessed. Maturity describes how reliably the
+              institution sustains that practice; it does not excuse a failed
+              legal, accessibility, privacy, or security gate.
+            </p>
+          </div>
+          <ol className="grid gap-px overflow-hidden border border-hairline bg-hairline sm:grid-cols-5">
+            {MATURITY_LEVELS.map((level) => (
+              <li key={level.score} className="bg-white p-4">
+                <span className="font-mono text-xs font-bold text-brand-huckleberry">
+                  {level.score}
+                </span>
+                <p className="mt-2 text-sm font-black text-brand-black">
+                  {level.label}
+                </p>
+                <p className="mt-1 text-xs leading-relaxed text-ink-muted">
+                  {level.definition}
+                </p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
 
       {/* Active sources — resources OIT is currently drafting against
           that answer (in part or whole) the asks below. As OIT
@@ -214,7 +309,7 @@ export default function StandardsWatchPage() {
             deployed, and maintained at the University of Idaho.
           </p>
         </div>
-        <div className="space-y-3">
+        <div>
           {agendaI.map((item) => (
             <StandardRow key={item.id} item={item} />
           ))}
@@ -232,7 +327,7 @@ export default function StandardsWatchPage() {
             behave, and treat the people who use them.
           </p>
         </div>
-        <div className="space-y-3">
+        <div>
           {agendaII.map((item) => (
             <StandardRow key={item.id} item={item} />
           ))}

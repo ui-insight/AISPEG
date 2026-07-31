@@ -5,6 +5,7 @@ import SectionSubNav, { type SubNavItem } from "@/components/SectionSubNav";
 // /coordination.
 const subNavItems: SubNavItem[] = [
   { href: "/standards", label: "Standards" },
+  { href: "/standards/foundation", label: "Foundation" },
   { href: "/standards/data-model", label: "Data Model" },
   { href: "/standards/strategic-plan", label: "Strategic Plan" },
   { href: "/standards/strategic-plan/map", label: "Map" },
