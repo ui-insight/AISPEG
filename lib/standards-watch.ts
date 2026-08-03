@@ -262,8 +262,8 @@ export const standardsWatch: StandardsWatchItem[] = [
       "Keyboard navigation: full operability without a mouse (2.1.1); no keyboard traps (2.1.2); visible focus indicator on every interactive element (2.4.7); skip-to-content link on pages with repetitive navigation (2.4.1).",
       "Text alternatives for non-text content (1.1.1); captions for prerecorded media (1.2.2); resize text up to 200% without loss of content or functionality (1.4.4); reflow at 320 CSS px without horizontal scroll (1.4.10).",
       "ARIA usage: semantic HTML first; ARIA only when no native element conveys the same semantics. Name / role / value correct on custom widgets (4.1.2). Status messages programmatically determinable (4.1.3).",
-      "Reduced motion: respect prefers-reduced-motion (3.3.1 / WCAG 2.2 candidate) for any animation triggered by interaction or page load.",
-      "Testing: automated tooling (axe-core, Lighthouse, pa11y) catches roughly 30% of WCAG criteria. Manual review is required for the remainder — keyboard walkthrough, screen-reader pass (NVDA on Windows, VoiceOver on macOS/iOS), contrast spot-check, reduced-motion check.",
+      "Motion: avoid flashing; provide pause, stop, or hide controls when required; do not require device motion; and, as an institutional implementation practice, respect prefers-reduced-motion for non-essential animation.",
+      "Testing: automated tooling (axe-core, Lighthouse, pa11y) covers only a subset of WCAG criteria. Manual review is also required — keyboard walkthrough, screen-reader pass (NVDA on Windows, VoiceOver on macOS/iOS), contrast spot-check, zoom/reflow, and reduced-motion check.",
     ],
     links: [
       {
