@@ -195,7 +195,8 @@ export type RoiDimension =
   | "cost-avoidance"
   | "revenue"
   | "risk-reduction"
-  | "time-savings";
+  | "time-savings"
+  | "strategic-enablement";
 
 export const ROI_DIMENSION_LABEL: Record<RoiDimension, string> = {
   "hard-dollar-replacement": "Bottom-line (contract replacement)",
@@ -204,6 +205,30 @@ export const ROI_DIMENSION_LABEL: Record<RoiDimension, string> = {
   revenue: "Revenue",
   "risk-reduction": "Risk reduction",
   "time-savings": "Time savings",
+  "strategic-enablement": "Strategic enablement",
+};
+
+/**
+ * Label for a dimension value read back from the database. The column
+ * carries no CHECK by design, so a row written by a newer vocabulary
+ * than this module falls back to its raw slug rather than crashing the
+ * renderer.
+ */
+export function roiDimensionLabel(value: string): string {
+  return (ROI_DIMENSION_LABEL as Record<string, string>)[value] ?? value;
+}
+
+// Structural (CHECKed in Migration 021): whether a claim carries
+// numbers or narrative + evidence. Qualitative claims may NOT carry
+// numbers — if you can put a number on it, it's quantified — and must
+// carry evidence (verbatim quotes, document paths); a quantified
+// claim's honesty lives in `basis` instead.
+
+export type RoiClaimKind = "quantified" | "qualitative";
+
+export const ROI_CLAIM_KIND_LABEL: Record<RoiClaimKind, string> = {
+  quantified: "Quantified",
+  qualitative: "Qualitative",
 };
 
 export type RoiClaimSource =
