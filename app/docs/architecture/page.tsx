@@ -235,7 +235,12 @@ resolved_at      DATE
         origin (<code>tdx</code> | <code>clickup</code> |{" "}
         <code>site-submission</code> | <code>direct</code>), with an append-only
         event trail, a request↔request and request↔project link graph, and an
-        ROI claims ledger. Backs <code>/portfolio/pipeline</code>, the single
+        ROI claims ledger. Since Migration 021 the ledger is
+        kind-discriminated: quantified claims carry numbers justified in{" "}
+        <code>basis</code>; qualitative claims carry no numbers and must cite
+        verbatim <code>evidence</code> instead (read through{" "}
+        <code>lib/roi-claims.ts</code>, which keeps qualitative rows out of
+        sums). Backs <code>/portfolio/pipeline</code>, the single
         all-origin request queue.
       </p>
       <p>
