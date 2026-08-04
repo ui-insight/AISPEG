@@ -104,15 +104,25 @@ export const UTR_STAGES: Record<Exclude<IntakeTrack, "external">, UtrStage[]> =
   };
 
 // ---- Request origins --------------------------------------------------
-// Structural (CHECKed in Migration 018): where a request entered.
+// Structural (CHECKed in Migrations 018 + 023): where a request
+// entered. 'oit-idea' is the current OIT IDEA form, reaching us as
+// spreadsheet export cuts (scripts/import-idea-requests.ts); 'tdx' is
+// reserved for the enhanced unified intake form the 7/20 decision
+// assigns to TDX, once API access lands.
 
-export type RequestOrigin = "tdx" | "clickup" | "site-submission" | "direct";
+export type RequestOrigin =
+  | "tdx"
+  | "clickup"
+  | "site-submission"
+  | "direct"
+  | "oit-idea";
 
 export const REQUEST_ORIGIN_LABEL: Record<RequestOrigin, string> = {
   tdx: "TDX",
   clickup: "ClickUp intake",
   "site-submission": "Site submission",
   direct: "Direct entry",
+  "oit-idea": "OIT IDEA form",
 };
 
 // ---- Dispositions -----------------------------------------------------

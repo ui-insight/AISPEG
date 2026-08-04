@@ -1,0 +1,530 @@
+{
+  "source": "IDEA Requests - All (Copy)-08-02-2026.xlsx",
+  "sourceCut": "2026-08-02",
+  "timezone": "America/Los_Angeles",
+  "note": "Raw export of the OIT IDEA form backlog. Timestamps are naive local time as exported; the import script interprets them in the timezone above. No ticket ids in this cut — source keys are derived from title+created until OIT provides ids.",
+  "rows": [
+    {
+      "title": "Articulate 360 AI Teams for CASE Short-Course and Microcredential Development",
+      "description": "As a course-development lead in Earth and Spatial Sciences, I need two Articulate 360 AI Teams licenses so we can efficiently build interactive, accessible online short courses and microcredential modules for the CASE initiative and related Vice Provost for Digital Learning priorities. One license would support Earth and Spatial Sciences course development, and one would support CETL instructional/learning-engineering support.",
+      "requestor": "Doug Hardman",
+      "dept": "804 - COS Earth and Spatial Sciences",
+      "oitStatus": "Received",
+      "createdRaw": "2026-07-29 12:12:14.490000",
+      "modifiedRaw": "2026-07-30 11:09:01.483000"
+    },
+    {
+      "title": "Boodlebox",
+      "description": "Hello,\n\nI would like to use a new AI called Boodlebox for online class discussions.\n https://boodlebox.ai/ \n\nI plan to create AI agents for role-playing exercises for my MBA students (MBA5250).\nStudents will be able to use the agents through the links I send them, and they will subscribe only for the class period.\n\nCould you please approve this ASAP so that I can adopt this in my class?\n\nThank you,\n\nYun Chung",
+      "requestor": "Yun Chung",
+      "dept": "889 - CBE Business",
+      "oitStatus": "Received",
+      "createdRaw": "2026-07-29 10:47:07.190000",
+      "modifiedRaw": "2026-07-29 10:47:07.453000"
+    },
+    {
+      "title": "I need to purchase Software",
+      "description": "AS an athletic trainer, I would like to scan and build custom orthotics on Software system and send it off the company to print them out. It will cut off custom orthotic cost as department.",
+      "requestor": "Natsumi Kuribayashi",
+      "dept": "837 - ATHL Training Room",
+      "oitStatus": "In Progress",
+      "createdRaw": "2026-07-20 18:53:52.043000",
+      "modifiedRaw": "2026-07-21 15:59:53.020000"
+    },
+    {
+      "title": "Elicit.com",
+      "description": "Elicit.com is an artificial-intelligence research platform designed to locate, evaluate, and synthesize scholarly literature. It searches academic databases using research questions rather than only keywords, identifies relevant studies, summarizes articles, screens papers according to inclusion and exclusion criteria, extracts qualitative and quantitative information—including data from tables and figures—and generates synthesis reports with source-linked citations.\n\nIt can assist faculty to find research gaps, develop research ideas, and find literature to develop those research ideas.",
+      "requestor": "Tracey Anderson",
+      "dept": "860 - CBE Accounting & Mgmt Info Systems",
+      "oitStatus": "Received",
+      "createdRaw": "2026-07-20 12:57:06.470000",
+      "modifiedRaw": "2026-07-31 08:35:28.513000"
+    },
+    {
+      "title": "Flare - New Student Section Group App",
+      "description": "Vandalizers student section enhancement; allow staff & student emails to be used to sign up.",
+      "requestor": "Eric Anderson",
+      "dept": "802 - ATHL Marketing & Promotions",
+      "oitStatus": "In Progress",
+      "createdRaw": "2026-07-20 12:27:34.150000",
+      "modifiedRaw": "2026-07-30 10:43:13.853000"
+    },
+    {
+      "title": "Photo Mechanic Software for Enhanced Digital Asset Management Needs",
+      "description": "As the Digital Asset Manager for University Communications and Marketing (UCM), I need a dedicated, native image ingestion and metadata tagging tool (Photo Mechanic). This will allow me to quickly cull high-volume media, embed accurate metadata into assets hosted on our new SNS EVO production server, and optimize files before archiving them in our Sitecore Content Hub DAM, ensuring university media is immediately discoverable for the UCM web team and other campus users leveraging the Sitecore DAM and CMS website ecosystems.",
+      "requestor": "John Barnhart",
+      "dept": "795 - UCM Creative Services Director",
+      "oitStatus": "Received",
+      "createdRaw": "2026-07-20 11:37:34.540000",
+      "modifiedRaw": "2026-07-23 10:35:03.963000"
+    },
+    {
+      "title": "Argos X",
+      "description": "Enabling Argos X will enhance our ability to transform institutional data into meaningful, interactive visualizations and dashboards that support informed decision-making.  The dashboard functionality will allow stakeholders to quickly identify trends, monitor key performance indicators, and gain actionable insights from complex data sets, resulting in more timely and data-driven decisions across the institution.  Information on Argos X can be found online at  https://www.evisions.com/argosx/ .",
+      "requestor": "Lindsey Brown",
+      "dept": "583 - SEM Registrars Office",
+      "oitStatus": "In Progress",
+      "createdRaw": "2026-07-17 16:34:34.707000",
+      "modifiedRaw": "2026-07-23 09:43:20.427000"
+    },
+    {
+      "title": "Stella Architect for System Dynamics Research and Modelling to manage water resources in the Eastern Snake Plain Aquifer (ESPA)",
+      "description": "As a Ph.D. student and water resources researcher, I need to install and apply Stella Architect to develop and evaluate system dynamics models for sustainable water resources planning and management in the Eastern Snake Plain Aquifer (ESPA) across southern Idaho so I can analyze climate-driven drought and water management scenarios and support my academic research.",
+      "requestor": "Jae Ryu",
+      "dept": "826 - CALS Soils and Water Systems",
+      "oitStatus": "Received",
+      "createdRaw": "2026-07-14 12:51:56.750000",
+      "modifiedRaw": "2026-07-24 00:03:20.857000"
+    },
+    {
+      "title": "LiveBinders for 4-H Project Materials",
+      "description": "As the individual in charge of managing 4-H project curriculum statewide, I need a user-friendly, easy to update way for our local Extension professionals, 4-H volunteers, and program participants to access research-based materials relating to their chosen projects. After exploring several options including OneDrive/Sharepoint, retaining documents on the UI website, and continuing to use our employees only storage site, we began looking at external solutions. LiveBinders (www.livebinders.com) will not only allow us to create a central, easy-to-access and use system for our audience, I believe it will in the future save us hundreds of hours during the annual document update process.",
+      "requestor": "Robin Baumgartner",
+      "dept": "830 - CALS State 4-H",
+      "oitStatus": "Received",
+      "createdRaw": "2026-07-13 16:46:45.213000",
+      "modifiedRaw": "2026-07-16 10:38:09.827000"
+    },
+    {
+      "title": "TRIO Time and Effort Reporting Form",
+      "description": "We would like a a simple form, ideally in Teams, for exempt staff to enter their actual hours worked, any leave taken, and to submit that their supervisor, and for that to be stored and accessible in case of an audit. It could be similar process to the Approvals app in Teams, that easily gets routed, and is accessible by both the staff who submit it and staff who approves.",
+      "requestor": "Janelle Culley",
+      "dept": "828 - CEHHS TRIO-INSPIRE",
+      "oitStatus": "On Hold",
+      "createdRaw": "2026-07-13 13:48:55.503000",
+      "modifiedRaw": "2026-07-28 13:59:19.123000"
+    },
+    {
+      "title": "SAS JMP Statistical Analysis Software",
+      "description": "As a researcher, I'd like to utilize enterprise licensed statistical analysis software for my data sets.",
+      "requestor": "Julia Piaskowski",
+      "dept": "771 - CALS Research Administration",
+      "oitStatus": "In Progress",
+      "createdRaw": "2026-07-10 09:30:21.827000",
+      "modifiedRaw": "2026-07-29 15:31:25.753000"
+    },
+    {
+      "title": "H5P: Creating Engaging and Interactive Learning Content",
+      "description": "As an instructional design team, we want to integrate H5P into our course development workflow so we can create engaging, ADA-accessible learning experiences, automate grading through the Canvas Gradebook, and provide a consistent learning experience across courses.",
+      "requestor": "Margaret Pinnell",
+      "dept": "614 - VPF CETL",
+      "oitStatus": "In Progress",
+      "createdRaw": "2026-06-26 13:38:35.047000",
+      "modifiedRaw": "2026-07-30 10:54:27.787000"
+    },
+    {
+      "title": "Print Operations Software",
+      "description": "print management software that includes print online order submission so students, staff and faculty can submit print orders 24/7\nprint estimating component so the print team can provide an estimate for all print project\norder entry and invoicing modual so even a simple black & white copy job is entered into the system and invoiced at the close of the job.\nImposition tool so multiple pages can be printed at one time.\ninventory management to keep track of paper inventory levels and prompts for reorders as needed.",
+      "requestor": "John Barnhart",
+      "dept": "795 - UCM Creative Services Director",
+      "oitStatus": "Received",
+      "createdRaw": "2026-06-24 13:30:54.300000",
+      "modifiedRaw": "2026-07-31 23:02:56.317000"
+    },
+    {
+      "title": "NACUBO Toolkits",
+      "description": "Through this project, UI personnel will work with consultants from the National Association of College and University Business Officers (NACUBO) to customize, integrate, and implement NACUBO dashboards and related toolkits. NACUBO provides the code for these dashboards free of charge. Consultants will help the UI Institutional Research team to create PowerBI dashboards that provide visualizations of UI data to support decision-making, tracking, and continuous improvement, particularly in student success and academic programs' educational and financial viability.",
+      "requestor": "Gwen Gorzelsky",
+      "dept": "687 - VPAI Vice Provost for Acad Initiat",
+      "oitStatus": "In Progress",
+      "createdRaw": "2026-06-11 09:58:50.733000",
+      "modifiedRaw": "2026-06-25 11:07:29.617000"
+    },
+    {
+      "title": "Human Resources Chat Bot",
+      "description": "I’m reaching out to explore the possibility of developing a chatbot for the Human Resources webpage. We’re excited about the opportunity to enhance user experience by providing quick, reliable, and accessible information to our campus community.",
+      "requestor": "Brandi Terwilliger",
+      "dept": "644 - HR Employment and Benefit Services",
+      "oitStatus": "In Progress",
+      "createdRaw": "2026-06-08 15:59:46.080000",
+      "modifiedRaw": "2026-06-10 13:44:00.770000"
+    },
+    {
+      "title": "12Twenty migration",
+      "description": "The Career Development Office needs a platform to coordinate job postings and student appointments, employer relationships, on campus interviews, pro bono service, externships, and job outcome data collection.  Currently, the Office utilizes Symplicity for this purpose but would like to explore changing the platform to 12Twenty.",
+      "requestor": "Elana Salzman",
+      "dept": "861 - CLAW College of Law Administration",
+      "oitStatus": "Received",
+      "createdRaw": "2026-06-04 14:25:38.837000",
+      "modifiedRaw": "2026-07-27 13:36:59.097000"
+    },
+    {
+      "title": "Adding Re: Members (formerly GreekBill) payment option to Campus Director.",
+      "description": "We would like to utilize Greek Bill (now known as Re:Members) on Campus Director, which is the platform that all Potential New Members (PNMs) use for Primary Fraternity and Sorority Recruitment at University of Idaho.",
+      "requestor": "Erin Lasher",
+      "dept": "654 - SA Dean of Students",
+      "oitStatus": "In Progress",
+      "createdRaw": "2026-06-03 11:25:10.657000",
+      "modifiedRaw": "2026-07-30 14:13:09.477000"
+    },
+    {
+      "title": "Facilities Work Order System",
+      "description": "Facilites uses FAMIS to manage work and work orders. However, Facilities moved away from FAMIS to intake work orders. Currently, to request work, users submit requests to facilities@uidaho.edu to request service. This is inefficient, does not allow users to see work order progress, and requires manual entry of work orders into FAMIS. We need to have a work order intake and management process/system that automates the process, creates tracking and accountability for Facilities and user, and helps us provide excellent customer service. We would like to either enhance or fully utilize FAMIS functionality or use a work management system (ClickUp, TDX, etc.) that integrates with FAMIS.",
+      "requestor": "Lee Espey",
+      "dept": "744 - FINAN VP Finance",
+      "oitStatus": "Received",
+      "createdRaw": "2026-05-27 09:24:45.010000",
+      "modifiedRaw": "2026-07-30 16:02:37.950000"
+    },
+    {
+      "title": "MEADOW Vendor to assist in account balance collections for Student Accounts",
+      "description": "Meadow is a higher education-focused pre-collections platform designed to assist institutions with proactive student accounts receivable management prior to external collections placement. The platform provides automated outreach, payment plan management, and student engagement tools intended to help students resolve outstanding balances earlier in the delinquency cycle. Meadow will integrate with University financial/accounting workflows to support pre-collection communications, payment arrangements, and account resolution tracking while maintaining FERPA compliance and applicable payment security standards.",
+      "requestor": "Laila Cornwall",
+      "dept": "636 - FINPLN Student Accounts",
+      "oitStatus": "In Progress",
+      "createdRaw": "2026-05-20 08:32:36.437000",
+      "modifiedRaw": "2026-07-09 10:35:22.673000"
+    },
+    {
+      "title": "Required Safety Program",
+      "description": "As the instructor, I want to implement the Required Safety Program (RSP) consisting of three video-based modules through SCORM file feed through Vector Solutions so students can have easy access to the program, and we can continue to see high rates of completion.",
+      "requestor": "Erin Bacon",
+      "dept": "743 - SA StudBenefits, Health, &Wellness",
+      "oitStatus": "In Progress",
+      "createdRaw": "2026-05-18 12:34:07.467000",
+      "modifiedRaw": "2026-06-01 11:30:45.170000"
+    },
+    {
+      "title": "Connectors and code execution/file creation for Claude Enterprise",
+      "description": "As users across the university are getting access to Enterprise Claude accounts, they are finding limitations are in place that directly impact their ability to use Claude in service of operational excellence. Specifically, a RAG system created by a University employee, Sabrina Woo, can't be set up because of the lack of ability to set up Connectors. Same thing for project management via ClickUp and the natively supported ClickUp connector. There are real efficiencies to be gained here by being able to interact with these systems through Claude.\n\nSimilarly, as research administrators who LIVE in spreadsheets, the inability to execute code or create proper office files. We also can't execute bath python or node scripts on the files we use, like cleaning messy spreadsheet data or generating charts.",
+      "requestor": "Sarah Martonick",
+      "dept": "609 - UR Office of Research Assurances",
+      "oitStatus": "Received",
+      "createdRaw": "2026-04-22 10:58:26.320000",
+      "modifiedRaw": "2026-07-20 13:37:47.557000"
+    },
+    {
+      "title": "Adobe Acrobat Integration",
+      "description": "I'm working on the IAMP relaunch and since all contracting now routes through the University, we'd like to integrate Adobe Acrobat Sign with the web app to automate routing of bid waivers and contracts for signature. I've already discussed the approach with [OIT contact name] and gotten the go-ahead on the design.\n\nTwo things I need:\n\n1. A service/functional account for the integration, so the API credentials aren't tied to my personal user account\n2. An OAuth application configured against that account with the following scopes: agreement_write, agreement_read, webhook_write, webhook_read\n\nOnce it's set up I'll need the Client ID and Client Secret, and I can provide a redirect URI whenever you're ready to configure it.\n\nIf any of this is something I can do myself in the Acrobat Sign admin console, happy to — just point me at the docs. Otherwise let me know what else you need from me to get it provisioned.\n\nThanks!\n-Andrew",
+      "requestor": "Andrew Child",
+      "dept": "897 - RCI Inst for Interdisc Data Sci",
+      "oitStatus": "In Progress",
+      "createdRaw": "2026-04-22 09:32:01.150000",
+      "modifiedRaw": "2026-07-29 10:24:02.637000"
+    },
+    {
+      "title": "Accounts Payable in TDX",
+      "description": "Dan Ewart suggested that I reach out to you to get the TDX ticketing system going for Accounts Payable.  Matthew has asked for access, I believe, so he has been added as a contact on this ticket.",
+      "requestor": "Matthew Rueger",
+      "dept": "729 - FINPLN Controller",
+      "oitStatus": "In Progress",
+      "createdRaw": "2026-04-22 09:11:59.420000",
+      "modifiedRaw": "2026-07-29 08:28:56.993000"
+    },
+    {
+      "title": "Replacement of Visual Productions Team's ProMax Server",
+      "description": "UCM Creative Services is currently doing an RFP to replace the photo/video team's production server. After receiving quotes and doing demos with multiple vendors, we have decided to select Studio Network Solutions (SNS) as the vendor for our new server.",
+      "requestor": "John Barnhart",
+      "dept": "795 - UCM Creative Services Director",
+      "oitStatus": "In Progress",
+      "createdRaw": "2026-04-03 17:19:01.283000",
+      "modifiedRaw": "2026-06-03 09:43:41.367000"
+    },
+    {
+      "title": "Motion Money - 3rd party payer of Athletics NIL Payments",
+      "description": "Would like to work with this company to act as our third-party payor for NIL payments for student-athletes. Mechanism would be we would send money, they would put in our ledger to make payments we request for NIL payments. This is part of the House v NCAA Settlement. The third party would also handle tax withholdings and tax forms for given years. This is a much streamlined process. Our interface from the department would be web-based.",
+      "requestor": "Garrett Haldeman",
+      "dept": "896 - ATHL Athletics Administration",
+      "oitStatus": "In Progress",
+      "createdRaw": "2026-04-03 07:31:13.447000",
+      "modifiedRaw": "2026-07-31 12:26:13.077000"
+    },
+    {
+      "title": "Improve the Keep Learning Experience (Request for CMS purchase)",
+      "description": "User Perspective: The \"Keep Learning\" Experience To better understand the need for this transition, we look at the platform through the eyes of our primary audience: As a prospective student looking for professional development, I want to search for topics like \"AI\" or \"Gardening\" and see all available learning opportunities—even if I don't know the exact course code—and see suggestions for related classes, so I can easily plan my educational path and complete my registration without frustration or confusion. Why this matters: The Current Reality: Right now, that same user searches for \"AI,\" sees \"No Results Found,\" and assumes the college offers no AI training. They then leave the site and look at a competitor. The Goal: To ensure the website acts as a helpful \"concierge\" rather than a barrier, guiding the user from their initial interest to a successful checkout.\n\t\n\t  Justification / Business Need The current \"Keep Learning\" frontend , hosted on Modern Campus Lifelong Learning (LLLEE), is creating significant barriers to enrollment and operational efficiency. The system suffers from critical search failures, a lack of modern marketing tools, and a high dependency on technical staff for basic updates. We propose migrating the public-facing \"frontend\" of Keep Learning to WordPress.com Business plan. This solution provides a high-performance, low-cost ($1,000–$2,000/year) bridge that integrates with our existing registration backend while resolving current user experience (UX) bottlenecks. \n\n1. Critical Pain Points & Business Impact Feature Current State (LLLEE) Business Impact Searchability Fails to index course descriptions; requires manual \"keyword\" entry. Lost Revenue: Students cannot find courses that exist, leading to site abandonment. Navigation No \"Related Courses\" or cross-selling; manual HTML required for links. Lower Order Value: No path for students to discover \"next steps\" or complementary courses. Maintenance Requires a Frontend Developer (coding) for simple content changes. Bottleneck: High-cost technical staff are tied up in routine edits; Marketing cannot react in real-time. Marketing Static content; no personalization, A/B testing, or geo-targeting. Low Conversion: One-size-fits-all messaging fails to engage specific demographics (e.g., local vs. remote).   2. Proposed Solution: WordPress Business Plan WordPress powers over 40% of the web and offers a robust ecosystem of \"plugins\" that solve our specific technical gaps without custom development. Smart Search: Implementation of AI-powered search (e.g., SearchWP) that indexes full course descriptions and provides \"live\" results as users type. No-Code Management: Transition to a WYSIWYG (What You See Is What You Get) editor, allowing the Marketing Director and Administrative Assistants to manage content without touching a line of code. Marketing Automation: Leveraging tools like \"If-So\" for dynamic content, allowing us to show different headers to returning users vs. new users and automate \"related course\" suggestions. 3. Financial & Operational Comparison Factor Modern Campus (Full Integration) WordPress Business (Proposed) Implementation High-cost custom development (OMNI CMS). Low-cost Proof of Concept (already built). Annual Cost Significant (SaaS + Custom Fees). Est. $1,200 – $2,000/year. Speed to Market Months of vendor consultation. Weeks (Internal Control). Staffing Requires Developer. Accessible to Marketing/Admin.   4. Risk Mitigation & Security To ensure a secure transition, we will adopt a \"Decoupled Frontend\" strategy : Data Integrity: No user PII (Personally Identifiable Information) or financial transactions will be stored on WordPress. Seamless Hand-off: WordPress will handle the \"Search and Discovery\" phase. Once a user clicks \"Register,\" they are passed directly into the secure Modern Campus shopping cart. Reduced Liability: By keeping the transactional layer in the vendor's environment, we maintain our current security posture while gaining frontend flexibility. 5. Expected Outcomes Increased Conversion: Improved search and \"related products\" features will directly reduce user frustration and increase course registrations. Marketing Agility: The Marketing team can launch campaigns, pop-ups, and A/B tests instantly without waiting for developer availability. Future-Proofing: WordPress is vendor-agnostic. If we ever change our backend registration system, our frontend (and SEO value) remains intact. \nRecommendation Approve the purchase of the WordPress Business plan and associated plugins (e.g., If-So). This investment represents a fraction of the cost of a full OMNI CMS integration while providing 10x the marketing capability currently available.",
+      "requestor": "Ken Udas",
+      "dept": "901 - VPDL Vice Provost for Digital Learn",
+      "oitStatus": "On Hold",
+      "createdRaw": "2026-04-01 13:45:28.757000",
+      "modifiedRaw": "2026-06-25 07:42:06.963000"
+    },
+    {
+      "title": "Pressbooks as a Canvas LTI",
+      "description": "Pressbooks is an open source content management system with native H5P integration. H5P is a tool that the First Year Experience Team uses to create tutorial activities for students enrolled in ENGL 1102. We are hoping that by integrating Pressbooks as a Canvas LTI, we can create H5P activities that are SCORM-compliant and automatically grade when students complete the activities so that librarians would not need to grade each individual assignment manually.",
+      "requestor": "Pamela Martin",
+      "dept": "788 - GL General Library",
+      "oitStatus": "Received",
+      "createdRaw": "2026-03-31 13:52:26.973000",
+      "modifiedRaw": "2026-07-30 00:05:44.760000"
+    },
+    {
+      "title": "ClickUp and Claude",
+      "description": "AS IIDS staff, I want to tell my AI assistant (Claude) to review my outstanding projects and push new information into them, like how long I spent on a task that will be billed through the service center, or update the name of a task for me, or add new details to a task, or notify another person that my task is complete, or calculate how much of the budget for the project has been spent.",
+      "requestor": "Barrie Robison",
+      "dept": "690 - UR ORED AVP-Research Ops",
+      "oitStatus": "In Progress",
+      "createdRaw": "2026-03-24 09:08:40.963000",
+      "modifiedRaw": "2026-06-25 11:11:10.613000"
+    },
+    {
+      "title": "Planning to purchase a metabolic cart with computer",
+      "description": "Hello, \n\nI am planning to purchase a metabolic cart, which comes with a mandatory laptop and software. This laptop will be used only to process and collect metabolic cart data. The computer does not require any updates or an internet connection.",
+      "requestor": "Syed Imran Ahmed",
+      "dept": "818 - CEHHS DepartmenTofMovementSciences",
+      "oitStatus": "In Progress",
+      "createdRaw": "2026-03-23 11:27:23.990000",
+      "modifiedRaw": "2026-07-17 09:59:32.683000"
+    },
+    {
+      "title": "RFD TeamUp",
+      "description": "[Created from ticket 494086]Teresa Amos:\nChanged Status from Approved to In Progress .\nReassigned this service request from OIT-ProductTeam to OIT-Security-Solutions.\n\nHi Kathleen,\n\nSince the calendaring option you're requesting in TeamUp would require integration with our Microsoft environment we will need to do some further investigation and a security evaluation.  I'm forwarding this ticket to our Solutions team for their follow up.\n\nThanks,\nTeresa\n---\nKathleen Skovgard:\n Hi Teresa, I wanted to check in and see if any determination has been made by the Solutions team towards our TeamUp request. If we can help answer any questions, please let me know. Best, Kathleen Kathleen Skovgard \n Administrative Specialist III\n Equal Opportunity Representative Staff Council Representative\n Office of Research and Economic Development \n kskovgard@uidaho.edu \n 208-885-5663 The highest tier of research in the nation. \n---\nKathleen Skovgard:\n Hi Teresa, The team is having a meeting tomorrow and would like to provide an update on the possibility of using TeamUp. Do you know if any progress has been made in determining if the group may proceed with this system? Thank you, Kathleen Kathleen Skovgard \n Administrative Specialist III\n Equal Opportunity Representative Staff Council Representative\n Office of Research and Economic Development \n kskovgard@uidaho.edu \n 208-885-5663 The highest tier of research in the nation. \n---\nTeresa Amos:\nPosted By: Amos, Teresa (tamos@uidaho.edu) <tamos@uidaho.edu>\n This message was proxied because the token was intended for <kskovgard@uidaho.edu> but the reply was from <tamos@uidaho.edu>. Further replies to this comment may no longer notify <tamos@uidaho.edu>.\n\n Hi Kathleen, \n I reviewed the ticket and you’ve been approved for use of TeamUp. Please follow the vendor instructions for set up. https://calendar.teamup.com/kb/icalendar-feeds-inbound/ \n The approval is based on your agreement to the following: Intended use is low risk data ( how to identify data classification) Ensuring that any research or grant requirements are not violated by the purchase. Reading, understanding and following terms & conditions for software use. Utilizing a University of Idaho email address for registration and use of the product. Following all federal or state laws and university policies (APM and FSH) Any cost is born by the individual/department (no additional funds requested) Following the U of I Purchasing processes and Pcard use rules . Software will not require direct linking to university products or services like OneDrive, Outlook, Department Shares, etc . Individual licenses (can be for a limited number of additional people, for instance a PI, co-PI and a grad student on a grant) Not for use by a whole class or department (whether free or paid) No support required from OIT except possible administrative rights for installation. Does not require a connection to any existing UI systems Not on the banned vendor list . Purchase/subscription is for the current version which is actively supported and maintained by the vendor or manufacturer. Please let me know if you have any questions. \n Thanks, Teresa \n \n \n---\nKathleen Skovgard:\n Good morning, Teresa, Thank you for letting us know. We have some questions on the bullet points below. Bullet 8 - Can you please share what “direct linking” means for OIT? TeamUp has the ability to connect with Teams . This would allow PIs to go into Teams and see a TeamUp tab. Would this count as direct linking? Would sharing calendar invitations from TeamUp to Outlook count as direct linking? Bullet 9 – We are interested in the Business subscription for TeamUp, as we envision up to 40 people will need to use this at one time (Research and Faculty Development team and PIs). Would this one license be allowable, as it accepts up to 50 users at one time, or would this violate OIT terms? Bullet 12 – what does connection mean in this case? Does that also entail direct linking or does this mean running the program on UI equipment? Thank you, Kathleen Kathleen Skovgard \n Administrative Specialist III\n Equal Opportunity Representative Staff Council Representative\n Office of Research and Economic Development \n kskovgard@uidaho.edu \n 208-885-5663 The highest tier of research in the nation. \n---\nKathleen Skovgard:\n Hi Teresa, I am following up on our three questions below. Can you please review these when you have a chance? Thank you, Kathleen Kathleen Skovgard \n Administrative Specialist III\n Equal Opportunity Representative Staff Council Representative\n Office of Research and Economic Development \n kskovgard@uidaho.edu \n 208-885-5663 The highest tier of research in the nation. \n---\nTeresa Amos:\nPosted By: Amos, Teresa (tamos@uidaho.edu) <tamos@uidaho.edu>\n This message was proxied because the token was intended for <kskovgard@uidaho.edu> but the reply was from <tamos@uidaho.edu>. Further replies to this comment may no longer notify <tamos@uidaho.edu>.\n\n Hi Kathleen, \n My apologies for missing this. I’m trying to get answers for you now. \n Stay tuned! \n Teresa",
+      "requestor": "Kathleen Skovgard",
+      "dept": "895 - UR VP Res and Econ Dev",
+      "oitStatus": "Received",
+      "createdRaw": "2026-03-17 09:21:06.310000",
+      "modifiedRaw": "2026-03-17 09:21:06.310000"
+    },
+    {
+      "title": "RFD TeamUp",
+      "description": "[Created from ticket 494086]Teresa Amos:\nChanged Status from Approved to In Progress .\nReassigned this service request from OIT-ProductTeam to OIT-Security-Solutions.\n\nHi Kathleen,\n\nSince the calendaring option you're requesting in TeamUp would require integration with our Microsoft environment we will need to do some further investigation and a security evaluation.  I'm forwarding this ticket to our Solutions team for their follow up.\n\nThanks,\nTeresa\n---\nKathleen Skovgard:\n Hi Teresa, I wanted to check in and see if any determination has been made by the Solutions team towards our TeamUp request. If we can help answer any questions, please let me know. Best, Kathleen Kathleen Skovgard \n Administrative Specialist III\n Equal Opportunity Representative Staff Council Representative\n Office of Research and Economic Development \n kskovgard@uidaho.edu \n 208-885-5663 The highest tier of research in the nation. \n---\nKathleen Skovgard:\n Hi Teresa, The team is having a meeting tomorrow and would like to provide an update on the possibility of using TeamUp. Do you know if any progress has been made in determining if the group may proceed with this system? Thank you, Kathleen Kathleen Skovgard \n Administrative Specialist III\n Equal Opportunity Representative Staff Council Representative\n Office of Research and Economic Development \n kskovgard@uidaho.edu \n 208-885-5663 The highest tier of research in the nation. \n---\nTeresa Amos:\nPosted By: Amos, Teresa (tamos@uidaho.edu) <tamos@uidaho.edu>\n This message was proxied because the token was intended for <kskovgard@uidaho.edu> but the reply was from <tamos@uidaho.edu>. Further replies to this comment may no longer notify <tamos@uidaho.edu>.\n\n Hi Kathleen, \n I reviewed the ticket and you’ve been approved for use of TeamUp. Please follow the vendor instructions for set up. https://calendar.teamup.com/kb/icalendar-feeds-inbound/ \n The approval is based on your agreement to the following: Intended use is low risk data ( how to identify data classification) Ensuring that any research or grant requirements are not violated by the purchase. Reading, understanding and following terms & conditions for software use. Utilizing a University of Idaho email address for registration and use of the product. Following all federal or state laws and university policies (APM and FSH) Any cost is born by the individual/department (no additional funds requested) Following the U of I Purchasing processes and Pcard use rules . Software will not require direct linking to university products or services like OneDrive, Outlook, Department Shares, etc . Individual licenses (can be for a limited number of additional people, for instance a PI, co-PI and a grad student on a grant) Not for use by a whole class or department (whether free or paid) No support required from OIT except possible administrative rights for installation. Does not require a connection to any existing UI systems Not on the banned vendor list . Purchase/subscription is for the current version which is actively supported and maintained by the vendor or manufacturer. Please let me know if you have any questions. \n Thanks, Teresa \n \n \n---\nKathleen Skovgard:\n Good morning, Teresa, Thank you for letting us know. We have some questions on the bullet points below. Bullet 8 - Can you please share what “direct linking” means for OIT? TeamUp has the ability to connect with Teams . This would allow PIs to go into Teams and see a TeamUp tab. Would this count as direct linking? Would sharing calendar invitations from TeamUp to Outlook count as direct linking? Bullet 9 – We are interested in the Business subscription for TeamUp, as we envision up to 40 people will need to use this at one time (Research and Faculty Development team and PIs). Would this one license be allowable, as it accepts up to 50 users at one time, or would this violate OIT terms? Bullet 12 – what does connection mean in this case? Does that also entail direct linking or does this mean running the program on UI equipment? Thank you, Kathleen Kathleen Skovgard \n Administrative Specialist III\n Equal Opportunity Representative Staff Council Representative\n Office of Research and Economic Development \n kskovgard@uidaho.edu \n 208-885-5663 The highest tier of research in the nation. \n---\nKathleen Skovgard:\n Hi Teresa, I am following up on our three questions below. Can you please review these when you have a chance? Thank you, Kathleen Kathleen Skovgard \n Administrative Specialist III\n Equal Opportunity Representative Staff Council Representative\n Office of Research and Economic Development \n kskovgard@uidaho.edu \n 208-885-5663 The highest tier of research in the nation.",
+      "requestor": "Kathleen Skovgard",
+      "dept": "895 - UR VP Res and Econ Dev",
+      "oitStatus": "Received",
+      "createdRaw": "2026-03-16 14:40:05.693000",
+      "modifiedRaw": "2026-03-16 14:40:05.693000"
+    },
+    {
+      "title": "TDX Knowledge base setup",
+      "description": "Laila is interested in creating a Knowledge Base within TDX for her department, where they can begin creating articles for commonly asked questions they receive.  They get multiple phone calls and emails from students so they would like to be able to direct them to a knowledge base where they would be able to get some of this information themselves without having to reach out directly to student accounts staff.",
+      "requestor": "Laila Cornwall",
+      "dept": "636 - FINPLN Student Accounts",
+      "oitStatus": "In Progress",
+      "createdRaw": "2026-03-13 08:56:52.730000",
+      "modifiedRaw": "2026-07-30 15:02:31.077000"
+    },
+    {
+      "title": "Campus Community - Education Abroad Management System Change",
+      "description": "I want to change our education abroad management system (Terra Dotta) to Campus Community to manage study abroad programs, student applications, and the international travel registration. Terra Dotta is currently integrated with Banner/SIS, Campus Community would be the same type of integration.",
+      "requestor": "Kate Wray Chettri",
+      "dept": "594 - SEM International Programs",
+      "oitStatus": "In Progress",
+      "createdRaw": "2026-03-06 15:54:08.467000",
+      "modifiedRaw": "2026-04-10 09:53:56.877000"
+    },
+    {
+      "title": "Learning Stream Request",
+      "description": "The Professional Development department is requesting to use Learning Stream for their student registration system. Currently, the center uses Modern Campus, which does not meet all of our current needs.",
+      "requestor": "Stacy Selleck",
+      "dept": "879 - CEHHS CoEd, Health & Human Science",
+      "oitStatus": "Received",
+      "createdRaw": "2026-02-18 16:22:14.280000",
+      "modifiedRaw": "2026-05-19 15:16:32.063000"
+    },
+    {
+      "title": "AI-Detection Software Purchase – GPTZero & Winston AI (AIDAN Grant)",
+      "description": "As a faculty researcher, I need to use AI-detection tools to screen anonymized student essays so I can evaluate AI-assisted authorship patterns and study ethical AI integration in higher education under an IRB-approved research framework.",
+      "requestor": "Sharon Stoll",
+      "dept": "818 - CEHHS DepartmenTofMovementSciences",
+      "oitStatus": "In Progress",
+      "createdRaw": "2026-02-16 21:44:43.217000",
+      "modifiedRaw": "2026-07-24 08:14:00.490000"
+    },
+    {
+      "title": "CAFE Research Dairy - Feed Software",
+      "description": "Feed management software that will be used to operate the new research dairy in Minidoka county that will open spring 2026.  This is an essential software for operated a large scale modern day dairy.",
+      "requestor": "Matt Powell",
+      "dept": "839 - CALS Dean Administration",
+      "oitStatus": "Received",
+      "createdRaw": "2026-02-06 15:18:05.627000",
+      "modifiedRaw": "2026-04-22 08:36:09.350000"
+    },
+    {
+      "title": "CAFE Research Dairy - Herd Management Software",
+      "description": "This software is being requested to use for herd management at the new dairy in Minidoka county, ID.  This software will manage up to 2,000 cows at full capacity.  The dairy plans to open spring 2026.",
+      "requestor": "Matt Powell",
+      "dept": "839 - CALS Dean Administration",
+      "oitStatus": "Received",
+      "createdRaw": "2026-02-06 15:09:28.037000",
+      "modifiedRaw": "2026-04-22 08:35:22.810000"
+    },
+    {
+      "title": "Podium Global Career Accelerator",
+      "description": "Experiential project based cloud learning environment.",
+      "requestor": "Dean Kahler",
+      "dept": "621 - SEM Enrollment Management",
+      "oitStatus": "In Progress",
+      "createdRaw": "2026-02-02 15:03:44.977000",
+      "modifiedRaw": "2026-04-27 11:13:14.803000"
+    },
+    {
+      "title": "Implementing a Ticketing System for Efficient Workload Management in Research Integrity",
+      "description": "We need to implement a ticketing system for our Assistant Director for Research Integrity to manage her extensive workload. She oversees compliance with Unmanned Aircraft Systems, research misconduct inquiries and investigations, export control analysis, undue foreign government influence analysis and training, and the Research Conflict of Interest Program. These duties involve significant interaction with University of Idaho personnel, resulting in a high volume of emails and extensive work tracking. We are seeking the assistance of OIT to develop this system.",
+      "requestor": "Archibald Harner",
+      "dept": "895 - UR VP Res and Econ Dev",
+      "oitStatus": "In Progress",
+      "createdRaw": "2026-01-14 14:25:13.150000",
+      "modifiedRaw": "2026-07-30 17:05:04.073000"
+    },
+    {
+      "title": "XYZ Homework",
+      "description": "As an instructor for the online section of STAT 1153, I want an affordable online homework platform that has high quality questions and resources so I can provide students homework problems with immediate feedback that align with the courses learning objectives. \n\nHere is a link to XYZ Homework's policies:  Privacy Policy | XYZ Homework",
+      "requestor": "Annelise Nielsen",
+      "dept": "811 - COS Mathematics & Statistical Sci",
+      "oitStatus": "In Progress",
+      "createdRaw": "2026-01-13 15:14:51.413000",
+      "modifiedRaw": "2026-04-05 00:04:14.447000"
+    },
+    {
+      "title": "Visible Body course software",
+      "description": "I am using visible Body online resource for my course. I would like to integrate into the Canvas platform, but the software has not been approved by the university yet.",
+      "requestor": "Joshua Bailey",
+      "dept": "818 - CEHHS DepartmenTofMovementSciences",
+      "oitStatus": "In Progress",
+      "createdRaw": "2026-01-12 14:27:35.933000",
+      "modifiedRaw": "2026-03-23 00:05:15.377000"
+    },
+    {
+      "title": "Boodle.ai",
+      "description": "I'm submitting this on behalf of Bart Baumgaertner.  He is working with SBOE to integrate Boodle.ai into UI services such as SSO, and Canvas, as a pilot project for the Spring 2026 semester.\n\nBelow is the email I received from Liza Long with SBOE.\n  Sean and Bert,   I’m just following up to see where we are on this. I need to send your team’s email address to Boodlebox so they can create the team account. Do you have questions or need help?   Thanks!   Liza   From:  Liza Long\n Sent:  Tuesday, January 6, 2026 3:54 PM\n To:  ssullivan@uidaho.edu\n Cc:  Baumgaertner, Bert (bbaum@uidaho.edu) <bbaum@uidaho.edu>\n Subject:  Boodlebox Pilot Updates and Requests   Hello!   I’m reaching out with some additional information and a few requests for our state-funded Spring 2026 Boodlebox pilot. First, I want to confirm that Boodlebox has been approved for use at your institution. Please let me know if there are any outstanding issues, and I’ll connect you with the Boodlebox team to resolve them. I have copied your campus AI Catalyst.   Admin Email and Team Accounts We need to create Boodlebox teams at each institution so that we can add seats for students. Here’s what we need Please create a free account at  https://box.boodle.ai  using an  admin/team account  email address (e.g.,  boodlebox@[institutional EDU domain] ). You will need to create this new email first. Your campus AI catalyst (copied above) should be the team leader for this email account.  Once your account is created, please let me know the email address you used. I’ll work with Boodlebox to add your contracted seats so your team can get started right away.   SSO Integration Boodlebox provided me with LTI documentation for both the LMS (Canvas) and IMP in case someone desires to use a different platform for SSO. Please see SSO integration documentation below:  Integrating with IMP - LTI Integrating with LMS - LTI LTI 1.3 Integration - Canvas   Important Technical Note To ensure Boodlebox system emails reach the faculty and students at each institution, please request that each institution whitelists this email address in their spam filters before sending invitations out:  support@sp.boodle.ai   Adding Members to Your Team (for AI Catalysts) Once each team has set up their team using the above instructions, please add your team members to your team using these instructions: Visit  https://box.boodle.ai/settings/management Click on \"+ Invite Team Member\" From here you can either: Add people individually by pasting their emails one by one on the initial screen Click \"Bulk Invite\" and paste all emails in the text field for those who you want to receive an invite  (Note: each email must be on a unique line.) Click Invite via CSV to upload a csv file of your team members NOTE: In the first column of the CSV include all the email addresses to be invited. Optionally, include the user role as Admin or Member in the second column. Any blanks will be invited as a Member. After you have all your emails added, click \"Send Invites\", and each member will be sent an email to join your team.   Here’s the list of pilot courses and faculty at your institution.   Soil 2050 Robert Heinse rheinse@uidaho.edu PHIL/POLS 4040 Bert Baumgaertner bbaum@uidaho.edu   If you have any questions, please reach out!     Liza Long, Ed.D. |  Academic Technology Program Manager       650 W. State St., Suite 307 Boise, ID 83702-5936 (208) 332-1593 llong@edu.idaho.gov   PUBLIC RECORDS NOTICE :  Pursuant to Idaho Code § 74-101 through 74-126, this email and responses are subject to the Idaho Public Records law and may be disclosed to the public upon request, unless otherwise exempt from disclosure under the law.   |  Book time to meet with me",
+      "requestor": "Bert Baumgaertner",
+      "dept": "893 - CLASS Politics and Philosophy",
+      "oitStatus": "In Progress",
+      "createdRaw": "2026-01-12 08:06:58.453000",
+      "modifiedRaw": "2026-04-24 19:05:18.410000"
+    },
+    {
+      "title": "Admin-Ops/ESS Tech Work Orders",
+      "description": "I'd like to have a work order/help desk system setup for Admin Ops / Events services similar to what other departments use to track maintenance and work orders. I find that clients (particularly Athletics) send requests to me or my staff through teams and we have limited resources to track the work being done specifically for A/V infrastructure in our spaces. If there is a system that the university of already using and is simple to add another group to it would hopefully save cost.",
+      "requestor": "Corbin Hohstadt",
+      "dept": "645 - AUX ADMIN OPS",
+      "oitStatus": "In Progress",
+      "createdRaw": "2026-01-07 09:22:18.103000",
+      "modifiedRaw": "2026-07-31 00:03:37.010000"
+    },
+    {
+      "title": "TDX portal development for CNR",
+      "description": "We would like to develop a TDX ticketing system for CNR, starting with Travel. How do we initiate this process?",
+      "requestor": "Jennifer Meekhof",
+      "dept": "677 - CNR College of Natural Resources",
+      "oitStatus": "In Progress",
+      "createdRaw": "2025-12-02 11:32:30.857000",
+      "modifiedRaw": "2026-07-22 14:26:49.280000"
+    },
+    {
+      "title": "Opentrons Flex static IP",
+      "description": "We have previously purchased an Opentrons Flex robot. To make use of the remote task tracking software available, we require a static IP address. We have been working with Chad Kasimatis to troubleshoot this issue and we have been instructed to complete this form in order to complete a Vendor Security Assessment.",
+      "requestor": "Jacob Bledsoe",
+      "dept": "848 - CALS Animal, Vet & Food Sciences",
+      "oitStatus": "Received",
+      "createdRaw": "2025-10-30 10:30:52.867000",
+      "modifiedRaw": "2025-12-17 11:38:24.997000"
+    },
+    {
+      "title": "Proctoring software",
+      "description": "I have been teaching online using Zoom for live instruction since I started at U of I 10 years ago.  My course is an intensive physiology course with a lot of details that the students need to both memorize and understand functionally.  Exams are a critical component to student evaluation, and I use Canvas to administer my exams.  Last semester, it was obvious the students are using AI while taking exams.  Most of my colleagues at other universities use some sort of proctoring software to maintain the integrity of online exams and prevent cheating.  I think it is time the U of I do the same.",
+      "requestor": "Brian Small",
+      "dept": "690 - UR ORED AVP-Research Ops",
+      "oitStatus": "Received",
+      "createdRaw": "2025-10-07 14:05:27.363000",
+      "modifiedRaw": "2025-10-23 15:22:29.567000"
+    },
+    {
+      "title": "Garmin GPS data software installation for lab teaching",
+      "description": "We are teaching GPS technology for our ASM classes. The software called Base Camp below are necessary for ASM class lab teaching so that students can download the data from the Garmin handheld device and save into a generic format for analysis in the lab. Due to the limits to update the GPS device, we request to resume installing the Base Camp software for the ASM course lab teaching and students learning. Thanks for your understanding and support! \n  Download BaseCamp | Garmin \n Download BaseCamp™ software to plan your outdoor activities, organize your data and share your adventurers with others.\n www.garmin.com",
+      "requestor": "Johnny Li",
+      "dept": "826 - CALS Soils and Water Systems",
+      "oitStatus": "Received",
+      "createdRaw": "2025-09-22 14:26:14.083000",
+      "modifiedRaw": "2026-01-22 23:02:40.950000"
+    },
+    {
+      "title": "Exploring Opportunities - Streamline Software",
+      "description": "Hoping to explore how we might streamline the various software platforms currently in use across campus that support student services. At present, different areas of the University use a range of systems, and I obviously am only aware of the ones in Student Affairs, which include:\n  Medicat – EHR for Vandal Health Clinic, which includes Nutrition Counseling, Psychiatry, & we are moving forward with Athletic Pre-Participation Exams & Concussion Management (this fall). Titanium – EHR for Counseling & Mental Health Center (We were planning to move CMHC to Medicat, but that would require a new contract of 5 years.) Maxient/Advocate – Case Management AIM – Center for Disability Access & Resources  \nHowever, there are also areas across the University, that I wonder about, such as:\n  iSmart Clinic Athletic Training Programs Programs for tracking training, internships, & practicum hours.  \nI am sure I am barely scratching the surface with how many different platforms we all use.  While I know each platform serves important functions, I currently am seeing just how difficult it is to share information from one area (platform) to another, especially in times of need/crisis. This creates challenges for students, staff, and administrators alike. With our EHR system contract, Medicat, set to expire in January 2027, I see an opportunity to take a step back and evaluate whether a more integrated or coordinated approach would better meet the needs of our campus community. I am also aware, that there is a very high chance that there is no perfect platform for all the things listed above, and even the ones I am not thinking of. However, I am hopeful to see if there is something out there that could potentially whittle that list down.",
+      "requestor": "Crystal Hogg",
+      "dept": "654 - SA Dean of Students",
+      "oitStatus": "Received",
+      "createdRaw": "2025-09-16 16:07:41.077000",
+      "modifiedRaw": "2025-09-25 14:56:52.313000"
+    },
+    {
+      "title": "Employment Outreach",
+      "description": "As a person with a disability or protected veteran working with an organization to improve my chances of being hired for open positions at the University of Idaho, I need to receive a daily or weekly email digest of positions with links that take me to the job listing/announcement so I can be notified of openings, and apply in a timely manner.",
+      "requestor": "Elissa Keim",
+      "dept": "665 - OGC PDL EEO",
+      "oitStatus": "Received",
+      "createdRaw": "2025-08-11 07:53:42.643000",
+      "modifiedRaw": "2025-08-14 11:45:48.960000"
+    },
+    {
+      "title": "Replace Applicant Tracking System (PeopleAdmin)",
+      "description": "We need to go out for bid of our applicant tracking system and add components of onboarding and possibly offboarding functionality to the new system to create a streamlined and efficient system with full customer service support and flexibility for our needs.  We need to go out for Bid and then implement the new system.",
+      "requestor": "Brandi Terwilliger",
+      "dept": "644 - HR Employment and Benefit Services",
+      "oitStatus": "In Progress",
+      "createdRaw": "2025-08-04 15:00:24.610000",
+      "modifiedRaw": "2026-04-07 11:19:14.103000"
+    },
+    {
+      "title": "Mobile Exam Scoring Options",
+      "description": "CDAR proctored over 1,500 exams spring semester 25 from all colleges and departments. This year multiple instructors were using ZipGrade -  ZipGrade: iOS and Android Grading App For Teachers  . There's a few using GradeCam -  Home Page - GradeCam .  Both apps let you grade an exam answer sheet using your phone.  \n\nI think most instructors are just paying for the app out of pocket or using the free version. \n\nMath used CrowdMark this year -  Grading and Assessment - Crowdmark  - and we had great success integrating that with CDAR processes. I know it has some built in scan/ qr code features, but haven't looked to see if it has something that would integrate with a mobile app. \n\nAs support staff, just wanting to make sure any mobile / web based grading solutions I'm recommending to instructors have been approved for use on campus.",
+      "requestor": "Eric Matson",
+      "dept": "654 - SA Dean of Students",
+      "oitStatus": "In Progress",
+      "createdRaw": "2025-05-12 10:36:06.340000",
+      "modifiedRaw": "2025-08-18 16:01:32.893000"
+    },
+    {
+      "title": "Linux in the ECE CompE Labs (landscape clients)",
+      "description": "To extend the life of current hardware, and to improve the student experience while completing their lab exercises, we are seeking to install Ubuntu on lab PCs to run our development software. We are looking to run Ubuntu Landscape, Ubuntu's first-party tool for managing software and security updates. The College of Engineering already has experience running Ubuntu for specialized instances, and Ubuntu can run Sophos Antivirus to maintain compliance with OIT policies.",
+      "requestor": "Rowdy Sanford",
+      "dept": "752 - COE Electrical & Computer Eng",
+      "oitStatus": "In Progress",
+      "createdRaw": "2025-05-05 14:02:30.850000",
+      "modifiedRaw": "2025-11-04 08:58:54.797000"
+    },
+    {
+      "title": "AI options for EMAIL",
+      "description": "Email is one thing that really weighs me down. I need to find ways to track threads and emphasize emails in urgent need of response. Cold the UI suggest or authorized use of any AI interfaces to help with handling Outlook email.  For example, could add MailMaestro (a Chat GPT app) to my outlook account?  Or are there other AI apps that I could use to help write responses to emails and schedule meetings?\n\nThanks for any insight you can give me.",
+      "requestor": "Karen Launchbaugh",
+      "dept": "691 - CNR Forest, Rangeland & Fire Sci",
+      "oitStatus": "Received",
+      "createdRaw": "2025-03-04 15:54:04.617000",
+      "modifiedRaw": "2025-03-06 11:04:05.683000"
+    },
+    {
+      "title": "AI options for EMAIL",
+      "description": "Email is one thing that really weighs me down. I need to find ways to track threads and emphasize emails in urgent need of response. Cold the UI suggest or authorized use of any AI interfaces to help with handling Outlook email.  For example, could add MailMaestro (a Chat GPT app) to my outlook account?  Or are there other AI apps that I could use to help write responses to emails and schedule meetings?\n\nThanks for any insight you can give me. I am happy to dig a bit deeper into AI options for email if that would help.",
+      "requestor": "Karen Launchbaugh",
+      "dept": "691 - CNR Forest, Rangeland & Fire Sci",
+      "oitStatus": "In Progress",
+      "createdRaw": "2025-02-26 19:08:06.040000",
+      "modifiedRaw": "2025-05-28 08:37:29.107000"
+    },
+    {
+      "title": "API Setup for ALEKS and AVANT/STAMP Testing",
+      "description": "My staff members of the Testing Center would like to be able to set up an API system so that student’s scores can be automatically pulled from the ALEKS and AVANT/STAMP testing company’s websites and populated into the student’s Banner profile. This would reduce wait times for students and other departments while increasing efficiency for a necessary university function.",
+      "requestor": "Jenn Urhausen",
+      "dept": "709 - SA Counseling & Mental Health Cen",
+      "oitStatus": "In Progress",
+      "createdRaw": "2025-01-13 13:18:40.723000",
+      "modifiedRaw": "2025-08-04 10:04:55.137000"
+    },
+    {
+      "title": "NextGen Bar Assessment Platform - Surpass Assessment",
+      "description": "The University of Idaho College of Law mirrors the process and utilizes the same software as the Idaho State Bar uses to administer the Bar Exam. In 2026, the Idaho State Bar is transitioning to the NextGen Bar Exam, which utilizes a different assessment platform than what is currently utilized. The new software is Surpass Assessment ( Surpass Assessment - Technology & Test Development Services ). To ensure College of Law students are adequately prepared for the 2026 switch, we propose switching from ExamSoft to Surpass in FY26 and we would like an investigation of the feasibility of adopting and utilizing the new software.",
+      "requestor": "Jenny Tardigrade",
+      "dept": "861 - CLAW College of Law Administration",
+      "oitStatus": "In Progress",
+      "createdRaw": "2024-11-18 13:58:27.910000",
+      "modifiedRaw": "2025-03-14 14:57:45.963000"
+    },
+    {
+      "title": "Facial Recognition",
+      "description": "I would like to provide facial recognition access at locations that necessitate access and security without the need to carry a vandal card... Also at locations where a patron may prefer the convenience and is prepared to fund the technology. Like practice facilities, or certain Administrative offices. Facial recognition systems can identify tailgating, improve security and reduce the circumvention of security measures.",
+      "requestor": "Bruce Lovell",
+      "dept": "693 - DFA Security",
+      "oitStatus": "In Progress",
+      "createdRaw": "2024-11-13 12:02:15.187000",
+      "modifiedRaw": "2024-12-17 14:41:49.697000"
+    },
+    {
+      "title": "SSB Access for Alumni",
+      "description": "As an alumni, I need access to my student records for employment/education/knowledge.",
+      "requestor": "Lindsey Brown",
+      "dept": "583 - SEM Registrars Office",
+      "oitStatus": "In Progress",
+      "createdRaw": "2024-04-04 16:31:27.933000",
+      "modifiedRaw": "2025-01-16 13:11:19.340000"
+    }
+  ]
+}

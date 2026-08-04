@@ -134,6 +134,7 @@ export async function requestCounts(): Promise<RequestCounts> {
     clickup: 0,
     "site-submission": 0,
     direct: 0,
+    "oit-idea": 0,
   };
   let total = 0;
   let open = 0;
