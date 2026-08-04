@@ -454,6 +454,7 @@ export const tiers: TierRecommendation[] = [
       "Implement proper error handling and logging from the start",
       "Set up automated testing before your first deployment",
       "Document your API endpoints and data schemas",
+      "Keep a record of which AI models and tools you used to build — OIT's draft development standards require it",
     ],
   },
   {
@@ -480,6 +481,7 @@ export const tiers: TierRecommendation[] = [
       "Plan for backup and disaster recovery from day one",
       "You will need a data flow diagram approved before handling regulated data",
       "Consider load testing before launch if serving 100+ concurrent users",
+      "Expect peer review by someone other than the author, plus automated secret and dependency scanning — both required at this tier under OIT's draft development standards",
     ],
   },
   {
@@ -515,6 +517,7 @@ export const tiers: TierRecommendation[] = [
       "Budget for ongoing security monitoring and incident response",
       "Multi-tenant architectures need data isolation verification",
       "Consider hiring or designating a technical lead for ongoing maintenance",
+      "Development environments may not hold production data at this tier — plan for synthetic or sanitized test data under OIT's draft development standards",
     ],
   },
 ];

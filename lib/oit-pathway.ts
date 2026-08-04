@@ -6,7 +6,7 @@
 // and where our projects sit — and so tsc catches drift when a stage or
 // rule is renamed.
 //
-// Two tracks, two documents:
+// Two tracks, plus a base layer:
 //   - Enterprise AI Development Framework — the TECH standards (approved
 //     stack, two-zone hosted environment, APM 30.11 classification,
 //     required pre-deploy artifacts). Tracked ask-by-ask in
@@ -14,6 +14,12 @@
 //   - AI-Assisted Builder Guide — the PROCESS for builders outside OIT
 //     (six-stage lifecycle with gates, enterprise tooling from day one,
 //     six binding rules). Modeled here.
+//   - Software Development Lifecycle standard (draft, June 2026) — the
+//     SECURITY floor for all university code, AI or not (risk
+//     classification, secure development, environments, repositories;
+//     NIST SP800-218 + CIS GitHub benchmark alignment). OIT-internal, no
+//     public URL. Builder-facing asks modeled in SDLC_DRAFT_REQUIREMENTS
+//     below; the document is tracked per-ask in lib/standards-watch.ts.
 //
 // The hosted environment these documents describe is what the project
 // inventory tracks as Nexus (lib/portfolio.ts, slug "nexus") — the
@@ -24,8 +30,10 @@
 
 export interface OitSourceDoc {
   title: string;
-  href: string;
-  updated: string; // ISO date of the wiki page's last update
+  // Absent when the document has no publicly accessible URL (the draft
+  // SDLC standard is OIT-internal); the card renders unlinked.
+  href?: string;
+  updated: string; // ISO date of the document's last update
   role: string; // one-line description of what this document governs
 }
 
@@ -47,6 +55,11 @@ export const OIT_SOURCE_DOCS: OitSourceDoc[] = [
     href: "https://dev.azure.com/uidaho/Development/_wiki/wikis/Development.wiki/19582/AI-Development",
     updated: "2026-05-20",
     role: "The joint IIDS/OIT effort behind both documents, with the named delivery, security, IAM, infrastructure, and development contacts.",
+  },
+  {
+    title: "Software Development Lifecycle standard (draft)",
+    updated: "2026-06-26",
+    role: "OIT's draft baseline for all code developed for or by the university — risk classification, secure development, environments, and repository requirements, aligned to NIST SP800-218 and the CIS GitHub benchmarks. OIT-internal; no public link yet. Tracked ask-by-ask on the Standards ledger.",
   },
 ];
 
@@ -193,6 +206,63 @@ export const PATHWAY_RULES: PathwayRule[] = [
     title: "Named ownership required",
     detail:
       "Every application has a named individual owner responsible for maintenance, updates, and decommissioning. A department name is not sufficient.",
+  },
+];
+
+// ---- Draft SDLC standard — what it adds for builders --------------------
+
+// OIT's draft Software Development Lifecycle standard (June 2026) sits
+// beneath the Builder Guide: the guide defines the process, the draft
+// standard defines the floor the Stage 3 security gate measures against.
+// Still in draft and OIT-internal (no public link), so requirements are
+// modeled here at ask level — the ones most likely to change how a
+// builder works — and the Standards ledger tracks the document itself.
+export interface SdlcDraftRequirement {
+  title: string;
+  detail: string;
+  // The draft's own applicability tag — which risk tiers the requirement
+  // binds. Rendered verbatim; the draft classifies code by the highest
+  // risk of the data it touches, the systems it configures, and the
+  // information embedded in it.
+  appliesTo: string;
+}
+
+export const SDLC_DRAFT_REQUIREMENTS: SdlcDraftRequirement[] = [
+  {
+    title: "AI-assisted code is explainable code",
+    detail:
+      "AI-generated or AI-assisted code must be thoroughly understood, reviewed, and reasonably tested before production — and the author must be able to explain it to the peer reviewer and product owner, including the behavior of any integrated applications or services.",
+    appliesTo: "All risk tiers",
+  },
+  {
+    title: "Document the AI models used",
+    detail:
+      "Documentation of which AI models were used in development must exist, and only AI tools approved for the relevant risk tier may be used.",
+    appliesTo: "All risk tiers",
+  },
+  {
+    title: "A reviewer who is not the author",
+    detail:
+      "Approvals must include at least one person separate from the developer(s) for the change set under review; pull-request self-approval on production branches is prohibited, and approvals are dismissed when updates land.",
+    appliesTo: "Moderate and high risk",
+  },
+  {
+    title: "Separated environments, production-like data",
+    detail:
+      "Development, testing, and production environments fully separated — testing may hold read-only rights into production, and development environments carry production-like data only, never production data.",
+    appliesTo: "Separation: all tiers · data rule: high risk",
+  },
+  {
+    title: "Four scans, on everything",
+    detail:
+      "Secret, dependency, config/IaC, and OWASP/CWE code scanning on every deployment pipeline, every pull request, and weekly — results shared with the developer automatically and reported to a central OIT Security platform.",
+    appliesTo: "Moderate and high risk",
+  },
+  {
+    title: "Pinned, quarantined dependencies",
+    detail:
+      "Specific versions only (never latest or nightly), trusted registries with checksum validation, a 60-day quarantine on newly released open-source dependencies, and an auto-generated SBOM covering transitive dependencies before production.",
+    appliesTo: "Moderate and high risk",
   },
 ];
 

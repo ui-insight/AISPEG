@@ -239,7 +239,7 @@ export default function StandardsWatchPage() {
           Active sources
         </p>
         <h2 className="mt-2 text-lg font-black tracking-tight text-brand-black">
-          OIT&rsquo;s AI governance runs on two tracks
+          Three OIT drafts now answer these asks
         </h2>
         <p className="mt-2 max-w-3xl text-sm leading-relaxed text-ink-muted">
           The joint IIDS/OIT &ldquo;AI for UI&rdquo; effort (OIT delivery
@@ -256,10 +256,19 @@ export default function StandardsWatchPage() {
           </span>{" "}
           (May 2026) sets the process for teams outside OIT deploying on
           OIT infrastructure — a six-stage lifecycle with gates and six
-          rules for every in-scope application. Open decisions include
-          the AI model gateway (MindRouter is the named candidate),
-          model-registry ownership, local AI tooling policy, and
-          long-term application ownership.
+          rules for every in-scope application. Beneath both, OIT&rsquo;s
+          draft{" "}
+          <span className="font-semibold text-brand-black">
+            Software Development Lifecycle standard
+          </span>{" "}
+          (June 2026; OIT-internal, not yet publicly linkable) sets the
+          security baseline for all code developed for or by the
+          university — risk classification, secure development, environment
+          separation, and repository requirements aligned to NIST SP800-218
+          and the CIS GitHub benchmarks. Open decisions include the AI
+          model gateway (MindRouter is the named candidate), model-registry
+          ownership, local AI tooling policy, and long-term application
+          ownership.
         </p>
         <p className="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-sm">
           <a
