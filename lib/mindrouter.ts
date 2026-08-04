@@ -297,8 +297,10 @@ const ANALYSIS_RETRY_MAX_TOKENS = 8192;
  * Strip markdown fences before parsing. The system prompt asks for bare
  * JSON, but thinking models fence their output often enough that treating
  * a fenced object as unparseable would throw away a good answer.
+ *
+ * Exported for other structured-output callers (scripts/infer-idea-requests.ts).
  */
-function parseJsonLoose(raw: string): unknown {
+export function parseJsonLoose(raw: string): unknown {
   const trimmed = raw.trim();
   try {
     return JSON.parse(trimmed);
