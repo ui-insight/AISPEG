@@ -31,6 +31,7 @@ const SUGGESTED_TRACKS: readonly IdeaSuggestedTrack[] = [
   "track-a",
   "track-b",
   "track-c",
+  "track-d",
 ];
 
 export function isIdeaSuggestedTrack(v: unknown): v is IdeaSuggestedTrack {

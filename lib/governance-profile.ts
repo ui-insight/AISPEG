@@ -283,6 +283,7 @@ export function governanceCoverage(
     "track-a": 0,
     "track-b": 0,
     "track-c": 0,
+    "track-d": 0,
     external: 0,
   };
   let classificationPending = 0;

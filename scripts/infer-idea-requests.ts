@@ -68,7 +68,7 @@ const DATA_SIGNAL_DEFS = (
 const SYSTEM_PROMPT = `You classify technology requests submitted to the University of Idaho's OIT IDEA form. Given a request's title, requesting department, and prose description, return ONLY a JSON object with exactly these fields:
 
 {
-  "track": "fast-lane" | "track-a" | "track-b" | "track-c",
+  "track": "fast-lane" | "track-a" | "track-b" | "track-c" | "track-d",
   "ai_involvement": "none" | "ai-feature" | "ai-core",
   "tool": string | null,
   "need_summary": string,
@@ -83,7 +83,8 @@ Field definitions:
   - "track-a": ${INTAKE_TRACK_TITLE["track-a"]}
   - "track-b": ${INTAKE_TRACK_TITLE["track-b"]}
   - "track-c": ${INTAKE_TRACK_TITLE["track-c"]}
-  Requests to buy, license, subscribe to, or integrate an existing commercial product are track-a (or fast-lane when it is a low-risk single-user purchase). Requests where something new would have to be designed or built are track-c. track-b applies only when the requestor has already built a working application.
+  - "track-d": ${INTAKE_TRACK_TITLE["track-d"]}
+  Requests to buy, license, subscribe to, or integrate an existing commercial product are track-a (or fast-lane when it is a low-risk single-user purchase). Requests where something new would have to be designed or built are track-c. track-b applies only when the requestor has already built a working application. Requests whose substance is access — to existing institutional data, a report, a dashboard, or a system's records (rather than acquiring or building software) — are track-d.
 
 - ai_involvement: "ai-core" when AI/LLM functionality is the point of the request; "ai-feature" when the requested product happens to include AI capabilities but the need itself is not AI; "none" when no AI involvement is apparent. Classify from what the text says, not what a product might offer.
 
