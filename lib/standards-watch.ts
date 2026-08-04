@@ -40,6 +40,14 @@ const OIT_FRAMEWORK_URL =
 const OIT_BUILDER_GUIDE_URL =
   "https://dev.azure.com/uidaho/Development/_wiki/wikis/Development.wiki/19581/AI-Assisted-Builder-Guide";
 
+// A third OIT document reached us August 2026: the draft Software
+// Development Lifecycle standard (revision dated 2026-06-26 — a full
+// rewrite aligning existing practice to NIST SP800-218 and the CIS
+// GitHub benchmarks; standards owner: OIT). It is OIT-internal with no
+// publicly accessible URL, so items it advances cite it by name in
+// responseNote rather than via responseUrl. It remains a draft — no
+// item moves to "approved" on its account.
+
 const PLACEHOLDER_DATE = "2026-02-15"; // mid-February — when these items first surfaced; refine per-entry as needed
 
 export const standardsWatch: StandardsWatchItem[] = [
@@ -97,7 +105,7 @@ export const standardsWatch: StandardsWatchItem[] = [
     status: "in-discussion",
     responseUrl: OIT_FRAMEWORK_URL,
     responseNote:
-      "Framework adopts APM 30.11 (Low / Moderate / High) as the binding classification scheme and specifies PostgreSQL with pgvector, pgaudit, and pgsodium (containerized, per application) — pgaudit covering audit logging. Prompt and completion logs inherit the classification of underlying data. The draft notes dev and test environments currently house production data. Canonical data models, retention, lineage, and DR standards are not yet specified.",
+      "Framework adopts APM 30.11 (Low / Moderate / High) as the binding classification scheme and specifies PostgreSQL with pgvector, pgaudit, and pgsodium (containerized, per application) — pgaudit covering audit logging. Prompt and completion logs inherit the classification of underlying data. OIT's draft Software Development Lifecycle standard (June 2026) extends classification to code itself — a codebase is classified by the highest risk of the data it touches, the systems it configures, and the information embedded in it — and makes the environment rule binding: development environments must hold production-like data only, never production data (high risk). Its own action-item list flags dev-data sanitization as currently incomplete. Canonical data models, retention, lineage, and DR standards are not yet specified.",
   },
   {
     id: "i-4",
@@ -116,7 +124,7 @@ export const standardsWatch: StandardsWatchItem[] = [
     status: "in-draft",
     responseUrl: OIT_FRAMEWORK_URL,
     responseNote:
-      "Framework specifies 1Password Connect for secrets management (no hardcoded credentials), Microsoft Entra ID for auth, governance-shifts-left posture, and explicit handling of FERPA (Moderate) and HIPAA PHI / SSN / CUI (High) under APM 30.11. EAR + VASA reviews are required pre-deploy for new tech and new vendors. Specific OS/container hardening baselines and SAST/DAST tooling are not yet specified.",
+      "Framework specifies 1Password Connect for secrets management (no hardcoded credentials), Microsoft Entra ID for auth, governance-shifts-left posture, and explicit handling of FERPA (Moderate) and HIPAA PHI / SSN / CUI (High) under APM 30.11. EAR + VASA reviews are required pre-deploy for new tech and new vendors. OIT's draft Software Development Lifecycle standard (June 2026; NIST SP800-218 + CIS GitHub benchmark alignment) now drafts the secure-development core: OWASP Top 10 Proactive Controls as the minimum control set; credential rules (encrypted at rest, never stored with the decryptor, keys reset on any exposure including role departures); encryption at rest and in transit; and four required scan types — secret, dependency, config/IaC, and OWASP/CWE code scanning — run on every deployment pipeline, every pull request, weekly, and on newly disclosed significant vulnerabilities, with results reported to a central OIT Security platform and high/critical pipeline findings requiring OIT Security approval before production. Specific OS/container hardening baselines and the SAST/DAST tool choices are still unspecified.",
   },
   {
     id: "i-5",
@@ -134,7 +142,7 @@ export const standardsWatch: StandardsWatchItem[] = [
     status: "in-draft",
     responseUrl: OIT_FRAMEWORK_URL,
     responseNote:
-      "Framework defines OCI OKE + on-prem Kubernetes as the approved hosting environments (the Builder Guide adds Azure for production deployment), Azure Pipelines as the CI/CD pipeline (GitHub Actions under review), ADO as source control (GitHub Enterprise under review), ArgoCD + Kustomize for GitOps deployment, and per-team K8s namespaces with no direct cluster access in test/prod. Each team gets a starter deployment repository. Specific environment-structure rules and IaC standards beyond Kustomize are not yet specified.",
+      "Framework defines OCI OKE + on-prem Kubernetes as the approved hosting environments (the Builder Guide adds Azure for production deployment), Azure Pipelines as the CI/CD pipeline (GitHub Actions under review), ADO as source control (GitHub Enterprise under review), ArgoCD + Kustomize for GitOps deployment, and per-team K8s namespaces with no direct cluster access in test/prod. Each team gets a starter deployment repository. OIT's draft Software Development Lifecycle standard (June 2026) supplies the environment-structure rules: development, testing, and production fully separated (testing may hold read-only rights into production; development restricted to OIT-managed networks), and for high-risk work a build process defined as code — worker configuration at build time, pipeline event logging (scans, stage events, approvals), locked dependencies, verified IaC manifests — plus signed containers from approved registries, verified before run (moderate/high risk).",
   },
   {
     id: "i-6",
@@ -152,7 +160,7 @@ export const standardsWatch: StandardsWatchItem[] = [
     status: "in-draft",
     responseUrl: OIT_BUILDER_GUIDE_URL,
     responseNote:
-      "The AI-Assisted Builder Guide (May 2026) now drafts the lifecycle end-to-end: a six-stage pathway with gates at stages 1, 3, 4, and 5, a hard security gate with no bypass, named-individual ownership (a department is not sufficient), and a runbook + documented decommission path on file before go-live, plus an annual ownership confirmation. The Framework separately names the pre-deploy artifact set (architecture diagram, data-flow diagrams, risk assessment, runbook, EAR, VASA). Long-term support responsibility remains an explicit open question — options range from full product-team ownership to OIT-assumed support.",
+      "The AI-Assisted Builder Guide (May 2026) now drafts the lifecycle end-to-end: a six-stage pathway with gates at stages 1, 3, 4, and 5, a hard security gate with no bypass, named-individual ownership (a department is not sufficient), and a runbook + documented decommission path on file before go-live, plus an annual ownership confirmation. The Framework separately names the pre-deploy artifact set (architecture diagram, data-flow diagrams, risk assessment, runbook, EAR, VASA). OIT's draft Software Development Lifecycle standard (June 2026) adds a formal ownership model: seven required roles with defined responsibilities — product owner, developer, approver/reviewer, tester, administrator, end user, and designer (who owns accessibility) — with assignment left to the relevant department's discretion. Long-term support responsibility remains an explicit open question — options range from full product-team ownership to OIT-assumed support.",
   },
   {
     id: "i-7",
@@ -169,7 +177,7 @@ export const standardsWatch: StandardsWatchItem[] = [
     status: "in-draft",
     responseUrl: OIT_FRAMEWORK_URL,
     responseNote:
-      "Framework specifies the approved tooling stack: Ruff + Pyright (Python lint/type), Biome (JS/TS lint/format), pytest (Python tests), Vitest + Testing Library (JS/TS tests), uv + pyproject.toml (Python deps), SQLAlchemy + Alembic (ORM/migrations). Frontend is React + Vite + TypeScript. Specific testing-coverage thresholds, refactoring approval paths, and tech-debt tracking processes are not yet specified.",
+      "Framework specifies the approved tooling stack: Ruff + Pyright (Python lint/type), Biome (JS/TS lint/format), pytest (Python tests), Vitest + Testing Library (JS/TS tests), uv + pyproject.toml (Python deps), SQLAlchemy + Alembic (ORM/migrations). Frontend is React + Vite + TypeScript. OIT's draft Software Development Lifecycle standard (June 2026) adds the review and documentation floor: peer reviews check for environment-specific leakage, secrets/PII, comment quality, project code standards, and confidentiality/integrity/availability impact; approvals must include at least one person separate from the developer (moderate/high risk); pull requests are required for production branches, with self-approval prohibited and stale approvals dismissed on update. Documentation minimums: ownership, a defined version scheme such as semantic versioning, and code history recording who changed what, when, why, and who approved. AI-generated or -assisted code must be understood and explainable by its author, and the AI models used must be documented. Testing-coverage thresholds and tech-debt tracking processes are still unspecified.",
   },
   {
     id: "i-8",
@@ -199,10 +207,10 @@ export const standardsWatch: StandardsWatchItem[] = [
       "Communication expectations for breaking changes",
     ],
     dateRequested: PLACEHOLDER_DATE,
-    status: "in-discussion",
+    status: "in-draft",
     responseUrl: OIT_BUILDER_GUIDE_URL,
     responseNote:
-      "The AI-Assisted Builder Guide's Stage 6 (Operate & Maintain) starts on this: builders notify OIT before any change, all updates follow the same review process as the original build, AI-vendor API deprecation remediation is the builder's responsibility, and an annual review confirms compliance, ownership, and continued need. Version-upgrade cadence, backward-compatibility rules, and breaking-change communication are not yet specified.",
+      "The AI-Assisted Builder Guide's Stage 6 (Operate & Maintain) starts on this: builders notify OIT before any change, all updates follow the same review process as the original build, AI-vendor API deprecation remediation is the builder's responsibility, and an annual review confirms compliance, ownership, and continued need. OIT's draft Software Development Lifecycle standard (June 2026) drafts the dependency side: pin specific versions (never latest or nightly, verified security patches excepted), resolve only from trusted registries with checksum validation, a 60-day quarantine on newly released open-source dependencies, patch-management compliance per the maintenance standard, and auto-generated SBOMs covering transitive dependencies before production. Version-upgrade cadence, backward-compatibility rules, and breaking-change communication are not yet specified.",
   },
   {
     id: "i-10",
@@ -219,7 +227,7 @@ export const standardsWatch: StandardsWatchItem[] = [
     status: "in-draft",
     responseUrl: OIT_FRAMEWORK_URL,
     responseNote:
-      "Framework requires all four observability components: OpenTelemetry, Prometheus, Jaeger, and Splunk. Splunk is deployed first. Observability diagrams must be completed and ownership assigned before production. Specific dashboards, alert thresholds, and metric expectations are not yet specified.",
+      "Framework requires all four observability components: OpenTelemetry, Prometheus, Jaeger, and Splunk. Splunk is deployed first. Observability diagrams must be completed and ownership assigned before production. OIT's draft Software Development Lifecycle standard (June 2026) adds log-content rules: data access, transfer, and change events captured (high risk); sensitive information never written to logs; user-facing errors stripped of debugging and stack-trace detail; and error handling on security controls denying access by default. Specific dashboards, alert thresholds, and metric expectations are not yet specified.",
   },
 
   // ───── Agenda Item II — User Experience Standards ─────
@@ -290,7 +298,7 @@ export const standardsWatch: StandardsWatchItem[] = [
     dateRequested: PLACEHOLDER_DATE,
     status: "in-discussion",
     responseNote:
-      "WCAG 2.1 Level AA confirmed as the binding compliance level for institutional UI applications. The OIT Enterprise AI Development Framework draft does not yet enumerate accessibility-specific testing requirements, ARIA expectations, or per-component checks; this entry tracks the elaboration alongside the WCAG references.",
+      "WCAG 2.1 Level AA confirmed as the binding compliance level for institutional UI applications. OIT's draft Software Development Lifecycle standard (June 2026) assigns accessibility to a required Designer role — ensuring all accessibility requirements are met is that role's defined responsibility. The Framework draft does not yet enumerate accessibility-specific testing requirements, ARIA expectations, or per-component checks; this entry tracks the elaboration alongside the WCAG references.",
   },
   {
     id: "ii-4",

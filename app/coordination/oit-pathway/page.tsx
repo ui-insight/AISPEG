@@ -4,6 +4,7 @@ import {
   PATHWAY_STAGES,
   PATHWAY_MILESTONES,
   PATHWAY_RULES,
+  SDLC_DRAFT_REQUIREMENTS,
   IN_SCOPE_TRIGGERS,
   OUT_OF_SCOPE_EXAMPLES,
   PATHWAY_PROJECTS,
@@ -15,7 +16,7 @@ import {
 export const metadata = {
   title: "OIT Pathway — Coordination",
   description:
-    "How teams outside OIT build and deploy AI applications on OIT-managed infrastructure: the two governing documents, the six-stage lifecycle with gates, the six rules, and where our projects sit.",
+    "How teams outside OIT build and deploy AI applications on OIT-managed infrastructure: the governing documents, the six-stage lifecycle with gates, the six rules, and where our projects sit.",
 };
 
 const LEAD_STYLE: Record<StageLead, string> = {
@@ -141,10 +142,16 @@ export default function OitPathwayPage() {
           </span>{" "}
           sets the process for teams outside OIT who want their applications
           hosted, supported, and maintained on OIT-managed infrastructure.
-          The platform both documents describe is what our inventory tracks
+          Beneath both, OIT&rsquo;s draft{" "}
+          <span className="font-semibold text-brand-black">
+            Software Development Lifecycle standard
+          </span>{" "}
+          (June 2026) sets the security floor for all university code — the
+          floor the Stage 3 gate measures against. The platform these
+          documents describe is what our inventory tracks
           as <Link href="/portfolio/nexus">Nexus</Link> — the OIT-managed
           application platform built collaboratively by OIT and IIDS. This
-          page covers the second track: the lifecycle, the gates, the rules,
+          page covers the builder track: the lifecycle, the gates, the rules,
           and where our projects stand in it.
         </p>
       </header>
@@ -157,16 +164,20 @@ export default function OitPathwayPage() {
         >
           Source documents
         </p>
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {OIT_SOURCE_DOCS.map((doc) => (
             <article
-              key={doc.href}
+              key={doc.title}
               className="rounded-lg border border-hairline bg-white p-4"
             >
               <h2 className="text-sm font-bold tracking-tight text-brand-black">
-                <a href={doc.href} target="_blank" rel="noopener noreferrer">
-                  {doc.title}
-                </a>
+                {doc.href ? (
+                  <a href={doc.href} target="_blank" rel="noopener noreferrer">
+                    {doc.title}
+                  </a>
+                ) : (
+                  doc.title
+                )}
               </h2>
               <p className="mt-1 text-xs text-ink-subtle">
                 Updated{" "}
@@ -184,8 +195,9 @@ export default function OitPathwayPage() {
           ))}
         </div>
         <p className="text-xs text-ink-subtle">
-          Both governance documents remain discussion drafts; entries here
-          track the published wiki versions and update as OIT revises them.
+          All of these documents remain drafts; entries here track the
+          versions we have and update as OIT revises them. The SDLC standard
+          is OIT-internal and not yet publicly linkable.
         </p>
       </section>
 
@@ -283,6 +295,44 @@ export default function OitPathwayPage() {
               </h3>
               <p className="mt-1.5 text-xs leading-relaxed text-ink-muted">
                 {rule.detail}
+              </p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      {/* Draft SDLC standard — what's coming */}
+      <section aria-labelledby="sdlc-heading" className="space-y-4">
+        <div className="max-w-3xl">
+          <h2
+            id="sdlc-heading"
+            className="text-xl font-black tracking-tight text-brand-black"
+          >
+            What the draft SDLC standard adds
+          </h2>
+          <p className="mt-1 text-sm text-ink-muted">
+            OIT&rsquo;s draft Software Development Lifecycle standard (June
+            2026) sets the baseline the Stage 3 security gate will measure
+            against — for all university code, not just AI applications.
+            Still in draft; these are the requirements most likely to change
+            how a builder works. The document itself is tracked on the{" "}
+            <Link href="/standards">Standards ledger</Link>.
+          </p>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {SDLC_DRAFT_REQUIREMENTS.map((req) => (
+            <article
+              key={req.title}
+              className="rounded-lg border border-hairline bg-white p-4"
+            >
+              <h3 className="text-sm font-bold tracking-tight text-brand-black">
+                {req.title}
+              </h3>
+              <p className="mt-1.5 text-xs leading-relaxed text-ink-muted">
+                {req.detail}
+              </p>
+              <p className="mt-2.5 border-t border-hairline pt-2 text-[11px] font-medium uppercase tracking-wider text-brand-silver">
+                {req.appliesTo}
               </p>
             </article>
           ))}
