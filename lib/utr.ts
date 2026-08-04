@@ -7,10 +7,15 @@
 // types. Editing a vocabulary here is the taxonomy change; tsc
 // surfaces every consumer (006/007/008 pattern).
 //
-// Source process: the July 2026 "Unified Technology Request Process"
-// draft (one intake form, three tracks, DATA/AI/BUY flags, two gates).
-// Flag and gate vocabularies land with their tables in ADR 0005
-// Phase 3; this module carries what Phase 1 writes and renders.
+// Source process: Ben Hunter's "Unified Technology Request Process"
+// draft, August 2026 revision (one intake form, four tracks — D added
+// 2026-08-03 per worksheet W29 — DATA/AI/BUY flags, two gates):
+// https://bhunter-uidaho.github.io/UnifiedTechnologyRequest/
+// Point-in-time transcription (oit-ea-portfolio posture): the source
+// is a hand-authored page with no machine-readable catalog, so
+// re-transcribe here when the flow revises. Flag and gate vocabularies
+// land with their tables in ADR 0005 Phase 3; this module carries what
+// Phase 1 writes and renders.
 
 // ---- Tracks -----------------------------------------------------------
 // Fast Lane / Track A / B / C from the request routing, plus `external`
@@ -23,6 +28,7 @@ export type IntakeTrack =
   | "track-a"
   | "track-b"
   | "track-c"
+  | "track-d"
   | "external";
 
 export const INTAKE_TRACK_LABEL: Record<IntakeTrack, string> = {
@@ -30,6 +36,7 @@ export const INTAKE_TRACK_LABEL: Record<IntakeTrack, string> = {
   "track-a": "Track A · Standard software",
   "track-b": "Track B · Built in-house",
   "track-c": "Track C · Idea / concept",
+  "track-d": "Track D · Data & report access",
   external: "External — tracked",
 };
 
@@ -41,6 +48,7 @@ export const INTAKE_TRACK_SHORT: Record<IntakeTrack, string> = {
   "track-a": "A",
   "track-b": "B",
   "track-c": "C",
+  "track-d": "D",
   external: "Ext",
 };
 
@@ -49,6 +57,7 @@ export const INTAKE_TRACK_TITLE: Record<IntakeTrack, string> = {
   "track-a": "Track A — commercial purchase or subscription requiring governance review.",
   "track-b": "Track B — fully realized in-house application needing security and operational acceptance.",
   "track-c": "Track C — early-stage build requiring feasibility assessment and the development queue.",
+  "track-d": "Track D — access to existing data or a report; routes to data governance, not a build or purchase track.",
   external: "External — owned outside IIDS; tracked in the inventory, not routed through the intake process.",
 };
 
@@ -100,6 +109,14 @@ export const UTR_STAGES: Record<Exclude<IntakeTrack, "external">, UtrStage[]> =
       { slug: "design-flag-reviews", label: "Design-stage flag reviews" },
       { slug: "prioritization", label: "Prioritization" },
       { slug: "development", label: "Development" },
+    ],
+    // W29 (2026-08-03): data/report-access requests enter the single
+    // front door but route to the existing data-governance process.
+    "track-d": [
+      { slug: "access-request", label: "Access request" },
+      { slug: "entitlement-screen", label: "Classification & entitlement screen" },
+      { slug: "steward-review", label: "Data steward review" },
+      { slug: "grant-provisioning", label: "Grant, conditions & provisioning" },
     ],
   };
 
