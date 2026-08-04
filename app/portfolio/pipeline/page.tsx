@@ -14,7 +14,13 @@ import {
   REQUEST_ORIGIN_LABEL,
   isIntakeTrack,
   roiDimensionLabel,
+  type RequestOrigin,
 } from "@/lib/utr";
+import {
+  IDEA_AI_INVOLVEMENT_LABEL,
+  IDEA_DATA_SIGNAL_LABEL,
+  IDEA_DATA_SIGNAL_SHORT,
+} from "@/lib/oit-idea";
 import { listApplications } from "@/lib/work";
 import {
   RUBRIC_CRITERIA,
@@ -37,11 +43,44 @@ export const dynamic = "force-dynamic";
 export const metadata = {
   title: "Requested Projects · UI AI Portfolio",
   description:
-    "The unified technology request queue — every requested and suggested AI project from every origin, scored where reviewed, awaiting a start decision.",
+    "The unified technology request queue — every requested and suggested project from every origin, scored where reviewed, awaiting a start decision.",
 };
 
 interface PipelineSearchParams {
   value?: string;
+  focus?: string;
+  origin?: string;
+}
+
+// The unscored queue's two filter axes. `focus` defaults to the AI
+// slice — this is the AI portfolio's page, and the IDEA-form import
+// made the full queue mostly general software requests — with
+// everything one click away (owner call, 2026-08-04). `origin` composes
+// with it. Both are URL params so either view deep-links.
+type QueueFocus = "ai" | "all";
+
+function isAiRelevant(req: TechRequest): boolean {
+  // Non-IDEA origins are AI-scoped by construction (the ClickUp AI4UI
+  // backlog, the site's own AI intakes). IDEA-form rows carry the
+  // machine-inferred involvement classification.
+  if (req.origin !== "oit-idea") return true;
+  return (
+    req.inferredAiInvolvement === "ai-core" ||
+    req.inferredAiInvolvement === "ai-feature"
+  );
+}
+
+function pipelineHref(params: {
+  value?: string | null;
+  focus?: QueueFocus;
+  origin?: string | null;
+}): string {
+  const qs = new URLSearchParams();
+  if (params.value) qs.set("value", params.value);
+  if (params.focus === "all") qs.set("focus", "all");
+  if (params.origin) qs.set("origin", params.origin);
+  const s = qs.toString();
+  return s ? `/portfolio/pipeline?${s}` : "/portfolio/pipeline";
 }
 
 // A registry row paired with its ClickUp rubric enrichment when the
@@ -176,6 +215,86 @@ function TrackChip({ track }: { track: string }) {
       className="rounded-full border border-ui-gold/50 bg-ui-gold/10 px-2.5 py-0.5 text-xs font-medium text-brand-black"
     >
       Track {INTAKE_TRACK_SHORT[track]}
+    </span>
+  );
+}
+
+// Machine-inferred chips (IDEA-form requests only). Deliberately
+// distinct from human-claim chips: dashed border, muted ink, and the
+// model named in every tooltip. The gold TrackChip above renders only
+// a triage-assigned track — a suggestion never wears that treatment.
+const INFERRED_CHIP =
+  "rounded-full border border-dashed border-brand-silver/60 bg-white px-2.5 py-0.5 text-xs text-ink-muted";
+
+function inferredTitle(detail: string, model: string | null): string {
+  return `${detail} Inferred from the request text${model ? ` by ${model}` : ""} — a suggestion to speed triage, not a decision.`;
+}
+
+function InferredChips({ req }: { req: TechRequest }) {
+  return (
+    <>
+      {!req.track && req.inferredTrack && (
+        <span
+          title={inferredTitle(
+            INTAKE_TRACK_TITLE[req.inferredTrack],
+            req.inferenceModel
+          )}
+          className={INFERRED_CHIP}
+        >
+          Suggested · Track {INTAKE_TRACK_SHORT[req.inferredTrack]}
+        </span>
+      )}
+      {(req.inferredAiInvolvement === "ai-core" ||
+        req.inferredAiInvolvement === "ai-feature") && (
+        <span
+          title={inferredTitle(
+            req.inferredAiInvolvement === "ai-core"
+              ? "AI or LLM functionality is the substance of this request."
+              : "The requested product includes AI capabilities, but the need itself is not AI.",
+            req.inferenceModel
+          )}
+          className={INFERRED_CHIP}
+        >
+          {IDEA_AI_INVOLVEMENT_LABEL[req.inferredAiInvolvement]}
+        </span>
+      )}
+      {req.inferredTool && (
+        <span
+          title={inferredTitle(
+            "The commercial product this request names.",
+            req.inferenceModel
+          )}
+          className={INFERRED_CHIP}
+        >
+          {req.inferredTool}
+        </span>
+      )}
+      {req.inferredDataSignals.map((signal) => (
+        <span
+          key={signal}
+          title={inferredTitle(
+            `${IDEA_DATA_SIGNAL_LABEL[signal]} — a data-sensitivity signal for intake triage, not a compliance determination.`,
+            req.inferenceModel
+          )}
+          className="rounded-full border border-dashed border-brand-silver/60 bg-white px-2 py-0.5 text-[10px] text-ink-muted"
+        >
+          {IDEA_DATA_SIGNAL_SHORT[signal]}
+        </span>
+      ))}
+    </>
+  );
+}
+
+// OIT's own workflow status — source fact from the IDEA export, not
+// an inference, so it wears the solid neutral treatment.
+function OitStatusChip({ req }: { req: TechRequest }) {
+  if (!req.oitStatus) return null;
+  return (
+    <span
+      title="OIT's workflow status for this request, as of the latest IDEA-form export."
+      className="rounded-full border border-hairline bg-surface-alt px-2.5 py-0.5 text-xs font-medium text-brand-black"
+    >
+      OIT: {req.oitStatus}
     </span>
   );
 }
@@ -385,9 +504,11 @@ function UnscoredList({
                 {excerpt(req.needStatement, req.title)}
               </p>
             )}
-            <div className="mt-3 flex flex-wrap gap-1.5">
+            <div className="mt-3 flex flex-wrap items-center gap-1.5">
               <OriginChip req={req} />
+              <OitStatusChip req={req} />
               {req.track && <TrackChip track={req.track} />}
+              <InferredChips req={req} />
               {req.submissionTier !== null && (
                 <span
                   title="Submit-a-Project assessment tier (1–4)"
@@ -568,6 +689,7 @@ export default async function PipelinePage({
     : null;
   const selectedLens =
     REQUEST_VALUE_LENSES.find((lens) => lens.value === selectedValue) ?? null;
+  const focus: QueueFocus = params.focus?.trim() === "all" ? "all" : "ai";
   const [techRequests, scored, lastSync, apps, claimsByRequest] =
     await Promise.all([
       listTechRequests(),
@@ -599,6 +721,33 @@ export default async function PipelinePage({
 
   const scoredOpen = inReview.filter((item) => item.clickup !== null);
   const unscoredOpen = inReview.filter((item) => item.clickup === null);
+
+  // Unscored-queue filters. Each axis's chip counts are computed inside
+  // the other axis's current selection so the numbers always describe
+  // what clicking would show.
+  const unscoredOrigins = [...new Set(unscoredOpen.map(({ req }) => req.origin))]
+    .sort((a, b) =>
+      REQUEST_ORIGIN_LABEL[a].localeCompare(REQUEST_ORIGIN_LABEL[b])
+    );
+  const selectedOrigin: RequestOrigin | null = unscoredOrigins.includes(
+    params.origin?.trim() as RequestOrigin
+  )
+    ? (params.origin!.trim() as RequestOrigin)
+    : null;
+  const inFocus = (item: QueueItem) =>
+    focus === "all" || isAiRelevant(item.req);
+  const inOrigin = (item: QueueItem) =>
+    selectedOrigin === null || item.req.origin === selectedOrigin;
+  const filteredUnscored = unscoredOpen.filter(
+    (item) => inFocus(item) && inOrigin(item)
+  );
+  const aiCount = unscoredOpen.filter(
+    (item) => inOrigin(item) && isAiRelevant(item.req)
+  ).length;
+  const allCount = unscoredOpen.filter(inOrigin).length;
+  const inferenceModel =
+    unscoredOpen.find(({ req }) => req.inferenceModel !== null)?.req
+      .inferenceModel ?? null;
   const sortedScoredOpen = sortPending(
     scoredOpen.map((item) => item.clickup!),
     selectedLens
@@ -638,10 +787,10 @@ export default async function PipelinePage({
         </h1>
         <p className="mt-4 max-w-3xl text-base leading-relaxed text-ink-muted">
           Every technology request the registry knows about, from every
-          origin — the ClickUp intake backlog, Submit-a-Project
-          assessments, requests captured directly from working sessions
-          and email, and TDX once OIT wiring lands — in one queue per the
-          Unified Technology Request process (ADR 0005). Requests from
+          origin — the OIT IDEA form backlog, the ClickUp intake backlog,
+          Submit-a-Project assessments, requests captured directly from
+          working sessions and email, and TDX once OIT wiring lands — in
+          one queue per the Unified Technology Request process (ADR 0005). Requests from
           the intake backlog carry an 11-criterion prioritization score
           from Colin Addington: strategic impact (A1–A4), feasibility and
           effort (B1–B4), and urgency and buy-in (C1–C3). Newer arrivals
@@ -719,7 +868,7 @@ export default async function PipelinePage({
             </div>
             <div className="flex flex-wrap gap-1.5 pb-2">
               <Link
-                href="/portfolio/pipeline"
+                href={pipelineHref({ focus, origin: selectedOrigin })}
                 aria-current={!selectedLens ? "page" : undefined}
                 className={`unstyled inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
                   !selectedLens
@@ -740,7 +889,11 @@ export default async function PipelinePage({
                 return (
                   <Link
                     key={lens.value}
-                    href={`/portfolio/pipeline?value=${lens.value}`}
+                    href={pipelineHref({
+                      value: lens.value,
+                      focus,
+                      origin: selectedOrigin,
+                    })}
                     aria-current={active ? "page" : undefined}
                     title={lens.description}
                     className={`unstyled inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
@@ -803,23 +956,126 @@ export default async function PipelinePage({
                 </h2>
                 <p className="mt-1 max-w-3xl text-sm leading-relaxed text-ink-muted">
                   Registered requests and suggestions that have not yet
-                  been through rubric scoring — site submissions, direct
-                  entries, and candidate projects derived from the{" "}
+                  been through rubric scoring — the OIT IDEA form backlog,
+                  site submissions, direct entries, and candidate projects
+                  derived from the{" "}
                   <Link
                     href="/coordination/operational-excellence"
                     className="font-medium text-brand-black hover:underline"
                   >
                     Operational Excellence survey
                   </Link>
-                  . Triage assigns each a track and a score.
+                  . Triage assigns each a track and a score. The default
+                  view is the AI-relevant slice; the full queue is one
+                  click away.
                 </p>
               </div>
-              <UnscoredList
-                items={[...unscoredOpen].sort((a, b) =>
-                  b.req.receivedAt.localeCompare(a.req.receivedAt)
-                )}
-                claimsByRequest={claimsByRequest}
-              />
+              <div className="flex flex-wrap gap-1.5">
+                {(
+                  [
+                    { key: "ai", label: "AI-relevant", count: aiCount },
+                    { key: "all", label: "Everything", count: allCount },
+                  ] as const
+                ).map((chip) => {
+                  const active = focus === chip.key;
+                  return (
+                    <Link
+                      key={chip.key}
+                      href={pipelineHref({
+                        value: selectedValue,
+                        focus: chip.key,
+                        origin: selectedOrigin,
+                      })}
+                      aria-current={active ? "page" : undefined}
+                      className={`unstyled inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+                        active
+                          ? "border-ui-gold bg-ui-gold/15 text-brand-black"
+                          : "border-hairline bg-white text-ink-muted hover:border-brand-silver/40 hover:bg-surface-alt"
+                      }`}
+                    >
+                      {chip.label}
+                      <span
+                        className={`rounded-full px-1.5 py-0 text-[10px] font-semibold ${
+                          active
+                            ? "bg-brand-black/10 text-brand-black"
+                            : "bg-surface-alt text-ink-subtle"
+                        }`}
+                      >
+                        {chip.count}
+                      </span>
+                    </Link>
+                  );
+                })}
+                <span aria-hidden className="mx-1 self-center text-brand-silver">
+                  ·
+                </span>
+                {[null, ...unscoredOrigins].map((origin) => {
+                  const active = selectedOrigin === origin;
+                  const count =
+                    origin === null
+                      ? unscoredOpen.filter(inFocus).length
+                      : unscoredOpen.filter(
+                          (item) => inFocus(item) && item.req.origin === origin
+                        ).length;
+                  return (
+                    <Link
+                      key={origin ?? "all-origins"}
+                      href={pipelineHref({
+                        value: selectedValue,
+                        focus,
+                        origin,
+                      })}
+                      aria-current={active ? "page" : undefined}
+                      className={`unstyled inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+                        active
+                          ? "border-ui-gold bg-ui-gold/15 text-brand-black"
+                          : "border-hairline bg-white text-ink-muted hover:border-brand-silver/40 hover:bg-surface-alt"
+                      }`}
+                    >
+                      {origin === null
+                        ? "All origins"
+                        : REQUEST_ORIGIN_LABEL[origin]}
+                      <span
+                        className={`rounded-full px-1.5 py-0 text-[10px] font-semibold ${
+                          active
+                            ? "bg-brand-black/10 text-brand-black"
+                            : "bg-surface-alt text-ink-subtle"
+                        }`}
+                      >
+                        {count}
+                      </span>
+                    </Link>
+                  );
+                })}
+              </div>
+              {inferenceModel && (
+                <p className="max-w-3xl text-xs leading-relaxed text-ink-subtle">
+                  Dashed chips on IDEA-form requests — suggested track, AI
+                  relevance, named product, data-sensitivity flags — are
+                  inferred from the request text by {inferenceModel} to
+                  speed triage. They are suggestions, not decisions;
+                  triage&apos;s track assignment renders in gold when made.
+                </p>
+              )}
+              {filteredUnscored.length > 0 ? (
+                <UnscoredList
+                  items={[...filteredUnscored].sort((a, b) =>
+                    b.req.receivedAt.localeCompare(a.req.receivedAt)
+                  )}
+                  claimsByRequest={claimsByRequest}
+                />
+              ) : (
+                <p className="border-y border-hairline py-6 text-sm text-ink-muted">
+                  No unscored requests match this view —{" "}
+                  <Link
+                    href={pipelineHref({ value: selectedValue })}
+                    className="font-medium text-brand-black hover:underline"
+                  >
+                    reset the filters
+                  </Link>
+                  .
+                </p>
+              )}
             </section>
           )}
 

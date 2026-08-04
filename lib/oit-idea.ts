@@ -109,6 +109,19 @@ export const IDEA_DATA_SIGNAL_LABEL: Record<IdeaDataSignal, string> = {
   "physical-security": "Physical security / surveillance",
 };
 
+// Compact chip forms for dense queue views; pair with the full label
+// as the title tooltip (INTAKE_TRACK_SHORT pattern).
+export const IDEA_DATA_SIGNAL_SHORT: Record<IdeaDataSignal, string> = {
+  ferpa: "FERPA",
+  hipaa: "HIPAA",
+  pii: "PII",
+  cui: "CUI",
+  financial: "Financial",
+  hr: "HR",
+  biometric: "Biometric",
+  "physical-security": "Physical security",
+};
+
 export function isIdeaDataSignal(v: unknown): v is IdeaDataSignal {
   return (
     typeof v === "string" &&

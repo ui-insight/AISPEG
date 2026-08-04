@@ -16,6 +16,14 @@ import {
   type RequestDisposition,
   type RequestOrigin,
 } from "./utr";
+import {
+  isIdeaAiInvolvement,
+  isIdeaDataSignal,
+  isIdeaSuggestedTrack,
+  type IdeaAiInvolvement,
+  type IdeaDataSignal,
+  type IdeaSuggestedTrack,
+} from "./oit-idea";
 
 export interface TechRequest {
   id: string;
@@ -40,6 +48,20 @@ export interface TechRequest {
   submissionTier: number | null;
   /** Token for the submitter-visible status page, for site submissions. */
   submissionId: string | null;
+  /** OIT's own workflow status, verbatim, for IDEA-form requests. */
+  oitStatus: string | null;
+  /**
+   * Machine-inferred classification for IDEA-form requests
+   * (lib/oit-idea.ts posture: advisory claims with provenance, never
+   * triage decisions — surfaces must label them as inferred). Unknown
+   * stored values degrade to null/dropped rather than corrupting the
+   * typed unions.
+   */
+  inferredTrack: IdeaSuggestedTrack | null;
+  inferredAiInvolvement: IdeaAiInvolvement | null;
+  inferredTool: string | null;
+  inferredDataSignals: IdeaDataSignal[];
+  inferenceModel: string | null;
 }
 
 interface TechRequestRow {
@@ -61,6 +83,12 @@ interface TechRequestRow {
   weighted_score: string | null;
   submission_tier: number | null;
   submission_id: string | null;
+  oit_status: string | null;
+  inferred_track: string | null;
+  inferred_ai_involvement: string | null;
+  inferred_tool: string | null;
+  inferred_data_signals: string[] | null;
+  inference_model: string | null;
 }
 
 function toTechRequest(row: TechRequestRow): TechRequest {
@@ -88,6 +116,18 @@ function toTechRequest(row: TechRequestRow): TechRequest {
       row.weighted_score === null ? null : Number(row.weighted_score),
     submissionTier: row.submission_tier,
     submissionId: row.submission_id,
+    oitStatus: row.oit_status,
+    inferredTrack: isIdeaSuggestedTrack(row.inferred_track)
+      ? row.inferred_track
+      : null,
+    inferredAiInvolvement: isIdeaAiInvolvement(row.inferred_ai_involvement)
+      ? row.inferred_ai_involvement
+      : null,
+    inferredTool: row.inferred_tool,
+    inferredDataSignals: (row.inferred_data_signals ?? []).filter(
+      isIdeaDataSignal
+    ),
+    inferenceModel: row.inference_model,
   };
 }
 
@@ -108,10 +148,17 @@ export async function listTechRequests(): Promise<TechRequest[]> {
        tr.received_at,
        cr.weighted_score,
        s.tier AS submission_tier,
-       tr.submission_id
+       tr.submission_id,
+       oir.oit_status,
+       oir.inferred_track,
+       oir.inferred_ai_involvement,
+       oir.inferred_tool,
+       oir.inferred_data_signals,
+       oir.inference_model
      FROM tech_requests tr
      LEFT JOIN clickup_requests cr ON cr.clickup_task_id = tr.clickup_task_id
      LEFT JOIN submissions s ON s.id = tr.submission_id
+     LEFT JOIN oit_idea_requests oir ON oir.source_key = tr.oit_idea_key
      ORDER BY tr.received_at DESC`
   );
   return rows.map(toTechRequest);
