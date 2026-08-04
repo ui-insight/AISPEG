@@ -7,11 +7,13 @@ import {
 } from "@/lib/clickup-data";
 import { listIdForSlug, CLICKUP_PROJECT_LISTS } from "@/lib/clickup-map";
 import { listTechRequests, type TechRequest } from "@/lib/requests";
+import { roiClaimsByRequest, type RoiClaim } from "@/lib/roi-claims";
 import {
   INTAKE_TRACK_SHORT,
   INTAKE_TRACK_TITLE,
   REQUEST_ORIGIN_LABEL,
   isIntakeTrack,
+  roiDimensionLabel,
 } from "@/lib/utr";
 import { listApplications } from "@/lib/work";
 import {
@@ -292,10 +294,70 @@ function PendingExplorer({
   );
 }
 
+// The ROI case a request carries into triage, from the
+// kind-discriminated claims ledger (Migration 021). Quantified claims
+// lead with their number; qualitative claims render their verbatim
+// evidence — a claim is only as strong as its receipt. Collapsed by
+// default so the queue stays scannable, matching the score-table
+// disclosure pattern below.
+function RoiClaimsBlock({ claims }: { claims: RoiClaim[] }) {
+  if (claims.length === 0) return null;
+  const claimants = [
+    ...new Set(
+      claims
+        .map((claim) => claim.claimedBy)
+        .filter((name): name is string => name !== null)
+    ),
+  ];
+  return (
+    <details className="mt-3">
+      <summary className="cursor-pointer text-sm font-semibold text-brand-black">
+        ROI case — {claims.length} claim{claims.length === 1 ? "" : "s"}
+        {claimants.length > 0 && ` · ${claimants.join(", ")}`}
+      </summary>
+      <ul className="mt-3 max-w-3xl space-y-4">
+        {claims.map((claim) => (
+          <li key={claim.id}>
+            <p className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+              <span className="rounded-full border border-hairline bg-surface-alt px-2.5 py-0.5 text-xs font-medium text-brand-black">
+                {roiDimensionLabel(claim.dimension)}
+              </span>
+              {claim.kind === "quantified" && claim.annualValueUsd !== null && (
+                <span className="text-sm font-bold tabular-nums text-brand-black">
+                  ${claim.annualValueUsd.toLocaleString("en-US")}/yr
+                </span>
+              )}
+              {claim.kind === "quantified" && claim.fte !== null && (
+                <span className="text-sm font-bold tabular-nums text-brand-black">
+                  {claim.fte} FTE
+                </span>
+              )}
+            </p>
+            <p className="mt-1.5 text-sm leading-relaxed text-ink-muted">
+              {claim.basis}
+            </p>
+            {claim.kind === "qualitative" && (
+              <p className="mt-1 text-xs italic leading-relaxed text-ink-subtle">
+                {claim.evidence}
+              </p>
+            )}
+          </li>
+        ))}
+      </ul>
+    </details>
+  );
+}
+
 // Open requests that have not yet been rubric-scored — site submissions,
 // direct entries, and survey-derived candidates. The registry knows
 // them; triage scoring is what they are waiting on.
-function UnscoredList({ items }: { items: QueueItem[] }) {
+function UnscoredList({
+  items,
+  claimsByRequest,
+}: {
+  items: QueueItem[];
+  claimsByRequest: Map<string, RoiClaim[]>;
+}) {
   return (
     <ul className="divide-y divide-hairline border-y border-hairline">
       {items.map(({ req }) => (
@@ -343,6 +405,7 @@ function UnscoredList({ items }: { items: QueueItem[] }) {
                 </Link>
               )}
             </div>
+            <RoiClaimsBlock claims={claimsByRequest.get(req.id) ?? []} />
           </div>
           <div className="md:text-right">
             <p className="text-[10px] font-semibold uppercase tracking-wider text-brand-silver">
@@ -505,12 +568,14 @@ export default async function PipelinePage({
     : null;
   const selectedLens =
     REQUEST_VALUE_LENSES.find((lens) => lens.value === selectedValue) ?? null;
-  const [techRequests, scored, lastSync, apps] = await Promise.all([
-    listTechRequests(),
-    listScoredRequests(),
-    getLastSync(),
-    listApplications({ audience: "public" }).catch(() => []),
-  ]);
+  const [techRequests, scored, lastSync, apps, claimsByRequest] =
+    await Promise.all([
+      listTechRequests(),
+      listScoredRequests(),
+      getLastSync(),
+      listApplications({ audience: "public" }).catch(() => []),
+      roiClaimsByRequest().catch(() => new Map<string, RoiClaim[]>()),
+    ]);
 
   const scoredByTask = new Map(scored.map((r) => [r.taskId, r]));
   const queue: QueueItem[] = techRequests.map((req) => ({
@@ -753,6 +818,7 @@ export default async function PipelinePage({
                 items={[...unscoredOpen].sort((a, b) =>
                   b.req.receivedAt.localeCompare(a.req.receivedAt)
                 )}
+                claimsByRequest={claimsByRequest}
               />
             </section>
           )}
