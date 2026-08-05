@@ -23,6 +23,7 @@
     "sync:clickup": "tsx --env-file=.env.local scripts/sync-clickup.ts",
     "import:idea-requests": "tsx --env-file=.env.local scripts/import-idea-requests.ts",
     "infer:idea-requests": "tsx --env-file=.env.local scripts/infer-idea-requests.ts",
+    "infer:request-targets": "tsx --env-file=.env.local scripts/infer-request-targets.ts",
     "eval:agent": "NODE_OPTIONS='--conditions=react-server' tsx --env-file=.env.local --tsconfig tsconfig.json evals/agent/run.ts"
   },
   "dependencies": {

@@ -12,9 +12,13 @@
 
 import { query } from "./db";
 import {
+  isRequestDeploymentTarget,
   isRequestDisposition,
+  isTargetConfidence,
+  type RequestDeploymentTarget,
   type RequestDisposition,
   type RequestOrigin,
+  type TargetConfidence,
 } from "./utr";
 import {
   isIdeaAiInvolvement,
@@ -62,6 +66,17 @@ export interface TechRequest {
   inferredTool: string | null;
   inferredDataSignals: IdeaDataSignal[];
   inferenceModel: string | null;
+  /**
+   * Deployment-target classification (Migration 025, ADR 0008).
+   * Confidence rides with the target — 'inferred' rows come from the
+   * MindRouter pass and must render distinguishably from 'confirmed';
+   * both null = the unclassified pool. The rationale is the one-line
+   * evidence a triage reviewer checks before confirming.
+   */
+  proposedDeploymentTarget: RequestDeploymentTarget | null;
+  targetConfidence: TargetConfidence | null;
+  targetInferenceRationale: string | null;
+  targetConfirmedBy: string | null;
 }
 
 interface TechRequestRow {
@@ -89,6 +104,10 @@ interface TechRequestRow {
   inferred_tool: string | null;
   inferred_data_signals: string[] | null;
   inference_model: string | null;
+  proposed_deployment_target: string | null;
+  target_confidence: string | null;
+  target_inference_rationale: string | null;
+  target_confirmed_by: string | null;
 }
 
 function toTechRequest(row: TechRequestRow): TechRequest {
@@ -128,6 +147,18 @@ function toTechRequest(row: TechRequestRow): TechRequest {
       isIdeaDataSignal
     ),
     inferenceModel: row.inference_model,
+    // Target + confidence degrade together: the DB coherence CHECK
+    // (Migration 025) makes them non-null in pairs, and a value outside
+    // the typed vocabulary drops the pair rather than corrupting it.
+    ...(isRequestDeploymentTarget(row.proposed_deployment_target) &&
+    isTargetConfidence(row.target_confidence)
+      ? {
+          proposedDeploymentTarget: row.proposed_deployment_target,
+          targetConfidence: row.target_confidence,
+        }
+      : { proposedDeploymentTarget: null, targetConfidence: null }),
+    targetInferenceRationale: row.target_inference_rationale,
+    targetConfirmedBy: row.target_confirmed_by,
   };
 }
 
@@ -154,7 +185,11 @@ export async function listTechRequests(): Promise<TechRequest[]> {
        oir.inferred_ai_involvement,
        oir.inferred_tool,
        oir.inferred_data_signals,
-       oir.inference_model
+       oir.inference_model,
+       tr.proposed_deployment_target,
+       tr.target_confidence,
+       tr.target_inference_rationale,
+       tr.target_confirmed_by
      FROM tech_requests tr
      LEFT JOIN clickup_requests cr ON cr.clickup_task_id = tr.clickup_task_id
      LEFT JOIN submissions s ON s.id = tr.submission_id
