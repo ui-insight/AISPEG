@@ -24,6 +24,7 @@
     "import:idea-requests": "tsx --env-file=.env.local scripts/import-idea-requests.ts",
     "infer:idea-requests": "tsx --env-file=.env.local scripts/infer-idea-requests.ts",
     "infer:request-targets": "tsx --env-file=.env.local scripts/infer-request-targets.ts",
+    "print:utr-landscape": "tsx --env-file=.env.local scripts/print-utr-landscape.ts",
     "eval:agent": "NODE_OPTIONS='--conditions=react-server' tsx --env-file=.env.local --tsconfig tsconfig.json evals/agent/run.ts"
   },
   "dependencies": {
