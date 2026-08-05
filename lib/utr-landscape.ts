@@ -286,7 +286,7 @@ function computeFindings(
       detail:
         "The RCDS VM is staging, not a destination. Every workload here eventually needs a pathway plan to an OIT-managed target or an explicit decision to stay.",
       evidence: [
-        { label: "RCDS VM band", href: "/utr-landscape/rcds-vm" },
+        { label: "RCDS VM band", href: "/utr-landscape#target-rcds-vm" },
         { label: "Projects", href: "/portfolio" },
       ],
       counts: {
@@ -306,7 +306,7 @@ function computeFindings(
       headline: `${nexusDemand} ${plural(nexusDemand, "activity", "activities")} point at Nexus — ${nexus.headed.length} ${plural(nexus.headed.length, "project")} in flight and ${nexus.queued.length} open ${plural(nexus.queued.length, "request")} — while ${nexus.running.length} ${nexus.running.length === 1 ? "workload has" : "workloads have"} completed the pathway to date.`,
       detail: nexus.profile.timeToDeploy,
       evidence: [
-        { label: "Nexus band", href: "/utr-landscape/nexus-module" },
+        { label: "Nexus band", href: "/utr-landscape#target-nexus-module" },
         { label: "OIT pathway", href: "/coordination/oit-pathway" },
       ],
       counts: {
@@ -335,7 +335,7 @@ function computeFindings(
       evidence: [
         {
           label: "Databricks band",
-          href: "/utr-landscape/databricks-dashboard",
+          href: "/utr-landscape#target-databricks-dashboard",
         },
         {
           label: "Op Excellence survey",
@@ -360,8 +360,8 @@ function computeFindings(
       detail:
         "Both targets are named in the OIT drafts as approved platforms. The first landing will set the real timeline for everything behind it.",
       evidence: [
-        { label: "OCI band", href: "/utr-landscape/standalone-oci" },
-        { label: "OIT K8s band", href: "/utr-landscape/standalone-oit-k8s" },
+        { label: "OCI band", href: "/utr-landscape#target-standalone-oci" },
+        { label: "OIT K8s band", href: "/utr-landscape#target-standalone-oit-k8s" },
       ],
       counts: { demand: unprovenDemand },
     });
