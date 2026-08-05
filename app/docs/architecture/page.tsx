@@ -109,8 +109,11 @@ github_repo       TEXT           -- e.g. "ui-insight/my-app"
 url               TEXT           -- Production URL
 tier              INTEGER        -- 1-4
 proposed_deployment_environment TEXT
-                                 -- OIT-hosted/Azure/OCI/on-prem, IIDS,
-                                 -- external, not-applicable, or TBD
+                                 -- Five-target vocabulary (Databricks
+                                 -- dashboard, Nexus module, standalone
+                                 -- OCI / OIT K8s / RCDS VM) + meta values
+current_deployment_environment TEXT
+                                 -- Where it runs today; NULL = not running
 enterprise_replacement_status TEXT -- yes | no | to-be-determined
 existing_enterprise_system_name TEXT
 existing_enterprise_system_annual_cost_usd NUMERIC(14,2)

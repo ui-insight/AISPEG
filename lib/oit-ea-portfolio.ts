@@ -185,10 +185,11 @@ export const OIT_EA_PROJECTS: readonly OitEaProject[] = [
       administration: "High",
       systems: "High",
     },
-    portfolioSlug: "data-infrastructure-pilot",
-    crosswalkConfidence: "confirmed",
-    crosswalkNote:
-      "Databricks is the main technical platform deliverable of the Data Infrastructure Pilot — one effort, tracked from both sides (confirmed by Barrie Robison, July 2026).",
+    relatedSurface: {
+      label: "Data Infrastructure Pilot",
+      href: "/portfolio/data-infrastructure-pilot",
+      note: "Related but distinct. OIT's Databricks workspace is OIT-controlled in its entirety; the IIDS pilot serves AI4RA. Corrected 2026-08-05 by Barrie Robison, superseding the July 2026 one-effort crosswalk.",
+    },
   },
   {
     id: "nacubo-dashboards-data-architecture",

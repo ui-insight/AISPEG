@@ -302,7 +302,8 @@ async function seedProject(i: Project): Promise<{ id: string; blockers: number }
        enterprise_replacement_status,
        existing_enterprise_system_name,
        existing_enterprise_system_annual_cost_usd,
-       existing_enterprise_system_renewal_date
+       existing_enterprise_system_renewal_date,
+       current_deployment_environment
      )
      VALUES (
        $1, $2, $3, $4,
@@ -323,7 +324,8 @@ async function seedProject(i: Project): Promise<{ id: string; blockers: number }
        $39, $40, $41,
        $42::jsonb, $43, $44,
        $45, $46,
-       $47, $48, $49, $50, $51
+       $47, $48, $49, $50, $51,
+       $52
      )
      RETURNING id`,
     [
@@ -378,6 +380,7 @@ async function seedProject(i: Project): Promise<{ id: string; blockers: number }
       replacement.status === "yes" ? replacement.systemName : null,
       replacement.status === "yes" ? replacement.annualCostUsd : null,
       replacement.status === "yes" ? replacement.renewalDate ?? null : null,
+      i.currentDeploymentEnvironment ?? null,
     ]
   );
 

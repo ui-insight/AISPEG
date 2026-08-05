@@ -138,6 +138,7 @@ interface ApplicationRow {
   external_deployments: string[];
   institutional_review_status: string | null;
   proposed_deployment_environment: DeploymentEnvironment;
+  current_deployment_environment: DeploymentEnvironment | null;
   enterprise_replacement_status: EnterpriseReplacementStatus;
   existing_enterprise_system_name: string | null;
   existing_enterprise_system_annual_cost_usd: string | number | null;
@@ -218,6 +219,7 @@ function toApplication(row: ApplicationRow): Application {
       (row.institutional_review_status as InstitutionalReviewStatus | null) ??
       undefined,
     proposedDeploymentEnvironment: row.proposed_deployment_environment,
+    currentDeploymentEnvironment: row.current_deployment_environment ?? undefined,
     enterpriseSystemReplacement: toEnterpriseSystemReplacement(row),
 
     // Project — lifecycle taxonomy (ADR 0001)
@@ -308,6 +310,7 @@ const APPLICATION_COLUMNS = `
   ai4ra_relationship, dual_destiny_planned, external_deployments,
   institutional_review_status,
   proposed_deployment_environment,
+  current_deployment_environment,
   enterprise_replacement_status,
   existing_enterprise_system_name,
   existing_enterprise_system_annual_cost_usd,

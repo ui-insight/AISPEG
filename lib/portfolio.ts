@@ -92,7 +92,14 @@ export interface Project {
   // Governance intake — deployment target and incumbent-system economics.
   // Every project records an explicit value; use `to-be-determined` rather
   // than omitting facts that still need confirmation.
+  //
+  // The current/proposed split follows from the RCDS VM being a
+  // transitional target (2026-08-05): where a thing runs now and where
+  // it is headed are separate facts. `currentDeploymentEnvironment` is
+  // omitted when nothing is running yet; `to-be-determined` is not a
+  // valid current value (absence carries that meaning).
   proposedDeploymentEnvironment: DeploymentEnvironment;
+  currentDeploymentEnvironment?: DeploymentEnvironment;
   enterpriseSystemReplacement: EnterpriseSystemReplacement;
 
   // Lifecycle taxonomy — see docs/adr/0001-product-lifecycle-taxonomy.md.
@@ -166,6 +173,7 @@ export const projects: Project[] = [
     status: "production",
     visibility: "Public",
     proposedDeploymentEnvironment: "to-be-determined",
+    currentDeploymentEnvironment: "rcds-vm",
     enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "None",
     iidsSponsor: "Barrie Robison",
@@ -224,6 +232,7 @@ export const projects: Project[] = [
     status: "paused",
     visibility: "Public",
     proposedDeploymentEnvironment: "to-be-determined",
+    currentDeploymentEnvironment: "rcds-vm",
     enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "None",
     iidsSponsor: "Barrie Robison",
@@ -331,7 +340,7 @@ export const projects: Project[] = [
     buildParticipants: ["IIDS"],
     status: "paused",
     visibility: "Public",
-    proposedDeploymentEnvironment: "to-be-determined",
+    proposedDeploymentEnvironment: "nexus-module",
     enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "None",
     iidsSponsor: "Colin Addington",
@@ -358,7 +367,8 @@ export const projects: Project[] = [
     buildParticipants: ["IIDS"],
     status: "production",
     visibility: "Public",
-    proposedDeploymentEnvironment: "oit-hosted",
+    proposedDeploymentEnvironment: "nexus-module",
+    currentDeploymentEnvironment: "nexus-module",
     enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "None",
     iidsSponsor: "Colin Addington",
@@ -476,7 +486,8 @@ export const projects: Project[] = [
     buildParticipants: ["IIDS"],
     status: "piloting",
     visibility: "Public",
-    proposedDeploymentEnvironment: "oit-hosted",
+    proposedDeploymentEnvironment: "nexus-module",
+    currentDeploymentEnvironment: "rcds-vm",
     enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "None",
     iidsSponsor: "Barrie Robison",
@@ -509,7 +520,8 @@ export const projects: Project[] = [
     buildParticipants: ["IIDS"],
     status: "building",
     visibility: "Public",
-    proposedDeploymentEnvironment: "iids-hosted",
+    proposedDeploymentEnvironment: "to-be-determined",
+    currentDeploymentEnvironment: "rcds-vm",
     enterpriseSystemReplacement: { status: "no" },
     ai4raRelationship: "None",
     iidsSponsor: "Luke Sheneman",
@@ -554,6 +566,7 @@ export const projects: Project[] = [
     status: "production",
     visibility: "Public",
     proposedDeploymentEnvironment: "to-be-determined",
+    currentDeploymentEnvironment: "rcds-vm",
     enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "Core",
     dualDestinyPlanned: true,
@@ -585,6 +598,7 @@ export const projects: Project[] = [
     status: "building",
     visibility: "Public",
     proposedDeploymentEnvironment: "to-be-determined",
+    currentDeploymentEnvironment: "rcds-vm",
     enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "Core",
     dualDestinyPlanned: true,
@@ -619,7 +633,8 @@ export const projects: Project[] = [
     buildParticipants: ["IIDS"],
     status: "building",
     visibility: "Partial",
-    proposedDeploymentEnvironment: "oit-hosted",
+    proposedDeploymentEnvironment: "nexus-module",
+    currentDeploymentEnvironment: "rcds-vm",
     enterpriseSystemReplacement: {
       status: "yes",
       systemName: "VERAS",
@@ -658,6 +673,7 @@ export const projects: Project[] = [
     status: "prototype",
     visibility: "Public",
     proposedDeploymentEnvironment: "to-be-determined",
+    currentDeploymentEnvironment: "rcds-vm",
     enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "None",
     iidsSponsor: "Barrie Robison",
@@ -720,7 +736,7 @@ export const projects: Project[] = [
     buildParticipants: ["IIDS"],
     status: "building",
     visibility: "Public",
-    proposedDeploymentEnvironment: "oit-hosted",
+    proposedDeploymentEnvironment: "oit-managed-tbd",
     enterpriseSystemReplacement: { status: "no" },
     ai4raRelationship: "None",
     iidsSponsor: "Barrie Robison",
@@ -804,6 +820,7 @@ export const projects: Project[] = [
     status: "piloting",
     visibility: "Public",
     proposedDeploymentEnvironment: "to-be-determined",
+    currentDeploymentEnvironment: "rcds-vm",
     enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "Adjacent",
     iidsSponsor: "Barrie Robison",
@@ -837,6 +854,7 @@ export const projects: Project[] = [
     status: "piloting",
     visibility: "Public",
     proposedDeploymentEnvironment: "to-be-determined",
+    currentDeploymentEnvironment: "rcds-vm",
     enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "None",
     iidsSponsor: "Barrie Robison",
@@ -879,7 +897,7 @@ export const projects: Project[] = [
     buildParticipants: ["IIDS"],
     status: "production",
     visibility: "Public",
-    proposedDeploymentEnvironment: "iids-hosted",
+    proposedDeploymentEnvironment: "platform",
     enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "Core",
     dualDestinyPlanned: true,
@@ -909,7 +927,7 @@ export const projects: Project[] = [
     buildParticipants: ["IIDS"],
     status: "production",
     visibility: "Public",
-    proposedDeploymentEnvironment: "iids-hosted",
+    proposedDeploymentEnvironment: "platform",
     enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "Adjacent",
     externalDeployments: ["Southern Utah University"],
@@ -930,9 +948,9 @@ export const projects: Project[] = [
     slug: "data-infrastructure-pilot",
     name: "Data Infrastructure Pilot",
     tagline:
-      "Institutional data lakehouse pilot aligning the data behind AI4UI applications.",
+      "AI4RA data lakehouse pilot aligning the data behind the AI4UI application family.",
     description:
-      "Pilot connecting institutional structured and unstructured data sources to a shared data lakehouse, starting with Banner plus at least one other system — fully documented with a data dictionary. The longer vision expands the lake to include ArchAI contract data, targeted core documents from proposals, and other sources the AI4UI application family draws on.",
+      "Pilot connecting structured and unstructured data sources to a shared data lakehouse serving the AI4RA partnership, starting with Banner plus at least one other system — fully documented with a data dictionary. The longer vision expands the lake to include ArchAI contract data, targeted core documents from proposals, and other sources the AI4UI application family draws on. Distinct from OIT's Databricks platform deployment, whose workspace OIT controls in its entirety (clarified 2026-08-05, superseding the July reading that the two were one effort).",
     homeUnits: ["IIDS"],
     operationalOwners: [
       { name: "Arpan Pal" },
@@ -941,7 +959,7 @@ export const projects: Project[] = [
     buildParticipants: ["IIDS"],
     status: "approved",
     visibility: "Public",
-    proposedDeploymentEnvironment: "to-be-determined",
+    proposedDeploymentEnvironment: "platform",
     enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "Adjacent",
     iidsSponsor: "Colin Addington",
@@ -1055,7 +1073,7 @@ export const projects: Project[] = [
     buildParticipants: ["OIT", "IIDS"],
     status: "tracked",
     visibility: "Public",
-    proposedDeploymentEnvironment: "oit-hosted",
+    proposedDeploymentEnvironment: "platform",
     enterpriseSystemReplacement: { status: "no" },
     ai4raRelationship: "None",
     iidsSponsor: "Barrie Robison",
