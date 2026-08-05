@@ -17,6 +17,8 @@
 // land with their tables in ADR 0005 Phase 3; this module carries what
 // Phase 1 writes and renders.
 
+import type { DeploymentEnvironment } from "./project-governance";
+
 // ---- Tracks -----------------------------------------------------------
 // Fast Lane / Track A / B / C from the request routing, plus `external`
 // for work tracked in the inventory that predates (or sits outside) the
@@ -210,6 +212,64 @@ export type RequestProjectLinkType =
 // Request ↔ request (tech_request_links).
 
 export type RequestLinkType = "duplicate-of" | "roi-aggregates-to" | "related";
+
+// ---- Deployment-target classification (ADR 0008) ----------------------
+// Which deployment targets a request may classify to (Migration 025).
+// The values are a subset of the governance vocabulary
+// (lib/project-governance.ts): 'platform' is excluded (a platform-
+// standing request converts to a project first) and 'to-be-determined'
+// is excluded (NULL carries "not yet classified" — the UTR Landscape
+// renders those as an explicit unclassified pool, never silently).
+// 'external-hosted' is included: Track A purchase requests land on the
+// vendor's infrastructure.
+
+export type RequestDeploymentTarget = Extract<
+  DeploymentEnvironment,
+  | "databricks-dashboard"
+  | "nexus-module"
+  | "standalone-oci"
+  | "standalone-oit-k8s"
+  | "rcds-vm"
+  | "oit-managed-tbd"
+  | "external-hosted"
+  | "not-applicable"
+>;
+
+export const REQUEST_DEPLOYMENT_TARGETS: RequestDeploymentTarget[] = [
+  "databricks-dashboard",
+  "nexus-module",
+  "standalone-oci",
+  "standalone-oit-k8s",
+  "rcds-vm",
+  "oit-managed-tbd",
+  "external-hosted",
+  "not-applicable",
+];
+
+export function isRequestDeploymentTarget(
+  value: unknown
+): value is RequestDeploymentTarget {
+  return (
+    typeof value === "string" &&
+    (REQUEST_DEPLOYMENT_TARGETS as string[]).includes(value)
+  );
+}
+
+// Structural (CHECKed in Migration 025): a classification is either a
+// machine proposal with provenance or a named human's confirmation.
+// Surfaces must render 'inferred' distinguishably, always (ADR 0008
+// honesty rules).
+
+export type TargetConfidence = "inferred" | "confirmed";
+
+export const TARGET_CONFIDENCE_LABEL: Record<TargetConfidence, string> = {
+  inferred: "Inferred",
+  confirmed: "Confirmed",
+};
+
+export function isTargetConfidence(value: unknown): value is TargetConfidence {
+  return value === "inferred" || value === "confirmed";
+}
 
 // ---- ROI claim vocabularies (roi_claims) ------------------------------
 // Dimensions extend as the ROI framework the working group is drafting
