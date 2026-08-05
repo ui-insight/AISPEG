@@ -18,7 +18,10 @@
 
 import type { Project, ProjectStatus } from "./portfolio";
 import { portfolioMeta } from "./portfolio-meta";
-import { isDeploymentEnvironment } from "./project-governance";
+import {
+  isDeploymentEnvironment,
+  isOitManagedEnvironment,
+} from "./project-governance";
 
 export interface VerificationProblem {
   slug: string;
@@ -55,12 +58,16 @@ function hasPubliclyAccessibleArtifact(i: Project): boolean {
   // either a liveUrl OR a public repoUrl (the repo IS the deliverable
   // for infrastructure / scaffolds / self-hostable appliances).
   // ADR sub-decision #5 (2026-07-24 amendment): production operated on
-  // an OIT-managed environment (`oit-*`) also satisfies it — internal
-  // enterprise apps (e.g. Nexus modules) are SSO-gated with no anonymous
-  // URL; the operated platform is the artifact.
+  // an OIT-managed environment also satisfies it — internal enterprise
+  // apps (e.g. Nexus modules) are SSO-gated with no anonymous URL; the
+  // operated platform is the artifact. Keyed on the vocabulary's
+  // oitManaged flag, judged where the project actually runs (current)
+  // over where it is headed (proposed).
   if (i.liveUrl && !i.liveUrlIsStaging) return true;
   if (i.repoUrl && !i.isPrivateRepo) return true;
-  if (i.proposedDeploymentEnvironment.startsWith("oit-")) return true;
+  const operatedEnvironment =
+    i.currentDeploymentEnvironment ?? i.proposedDeploymentEnvironment;
+  if (isOitManagedEnvironment(operatedEnvironment)) return true;
   return false;
 }
 
@@ -364,6 +371,26 @@ const verifyUniversal: Verifier = (i) => {
         "proposedDeploymentEnvironment is missing or is not in the governance vocabulary."
       )
     );
+  }
+
+  if (i.currentDeploymentEnvironment !== undefined) {
+    if (!isDeploymentEnvironment(i.currentDeploymentEnvironment)) {
+      problems.push(
+        problem(
+          i,
+          "currentDeploymentEnvironment, when present, must be in the governance vocabulary",
+          "currentDeploymentEnvironment is not in the governance vocabulary."
+        )
+      );
+    } else if (i.currentDeploymentEnvironment === "to-be-determined") {
+      problems.push(
+        problem(
+          i,
+          "currentDeploymentEnvironment must name where the project runs — omit the field when nothing is running",
+          "currentDeploymentEnvironment is 'to-be-determined'; absence carries that meaning."
+        )
+      );
+    }
   }
 
   const replacement = i.enterpriseSystemReplacement;

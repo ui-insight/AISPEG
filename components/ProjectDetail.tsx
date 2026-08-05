@@ -433,12 +433,33 @@ export default function ProjectDetail({
         <dl className="mt-3 grid max-w-3xl gap-3 sm:grid-cols-2">
           <div className="rounded-lg border border-hairline bg-white p-4">
             <dt className="text-xs font-medium uppercase tracking-wider text-brand-silver">
-              Proposed environment
+              Deployment environment
             </dt>
+            {app.currentDeploymentEnvironment &&
+              app.currentDeploymentEnvironment !==
+                app.proposedDeploymentEnvironment && (
+                <>
+                  <dd className="mt-1 text-sm font-semibold text-brand-black">
+                    {DEPLOYMENT_ENVIRONMENT_LABELS[
+                      app.currentDeploymentEnvironment
+                    ]}
+                  </dd>
+                  <dd className="mt-1 text-xs leading-relaxed text-ink-muted">
+                    Currently running here.
+                  </dd>
+                </>
+              )}
             <dd className="mt-1 text-sm font-semibold text-brand-black">
               {DEPLOYMENT_ENVIRONMENT_LABELS[
                 app.proposedDeploymentEnvironment
               ]}
+              {app.currentDeploymentEnvironment &&
+                app.currentDeploymentEnvironment !==
+                  app.proposedDeploymentEnvironment && (
+                  <span className="ml-1 font-normal text-ink-muted">
+                    (proposed)
+                  </span>
+                )}
             </dd>
             <dd className="mt-1 text-xs leading-relaxed text-ink-muted">
               {DEPLOYMENT_ENVIRONMENT_DESCRIPTIONS[
