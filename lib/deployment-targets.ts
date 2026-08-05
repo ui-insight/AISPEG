@@ -52,6 +52,21 @@ export const TARGET_MATURITY_LABEL: Record<TargetMaturity, string> = {
   transitional: "Transitional",
 };
 
+// Tailwind class strings for the maturity chip on Landscape surfaces —
+// colocated with the vocabulary per the PUBLIC_STAGE_CHIP pattern
+// (lib/portfolio.ts). Restraint: the label always carries the meaning;
+// color is reinforcement. Available borrows the "alive" clearwater,
+// transitional the caution amber (the codebase's existing hold signal),
+// aspirational the "future motion" huckleberry, unproven stays neutral.
+export const TARGET_MATURITY_CHIP: Record<TargetMaturity, string> = {
+  available:
+    "border-brand-clearwater/40 bg-brand-clearwater/10 text-brand-clearwater",
+  unproven: "border-brand-silver/40 bg-brand-silver/10 text-brand-silver",
+  aspirational:
+    "border-brand-huckleberry/30 bg-brand-huckleberry/10 text-brand-huckleberry",
+  transitional: "border-amber-300 bg-amber-50 text-amber-700",
+};
+
 export interface DeploymentTargetProfile {
   value: DeploymentTarget;
   name: string;
