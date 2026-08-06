@@ -221,30 +221,39 @@ export const DEPLOYMENT_TARGETS: DeploymentTargetProfile[] = [
       "Named in the OIT drafts as an approved platform; no workload has landed there.",
     exampleSlugs: [],
   },
+  // Defined with Luke Sheneman (RCDS), 2026-08-06 — the first environment
+  // of the definitional pass. Supersedes the repo-inferred v1 profile.
   {
     value: "rcds-vm",
     name: "Standalone app on an RCDS VM",
     formFactor: "standalone-app",
     shipUnit:
-      "A Docker-composed stack on an IIDS/RCDS self-managed VM — the insight.uidaho.edu class.",
+      "Containerized apps on an RCDS-provisioned, RCDS-managed VM. One VM per person, multiple apps per VM; hostnames under insight.uidaho.edu, nkn.uidaho.edu, or other RCDS subdomains.",
     fits: [
-      "Pilots and staged applications iterating with their unit before entering the pathway",
-      "Research-adjacent work outside enterprise governance",
-      "AI-enabled apps needing MindRouter/DGX adjacency during development",
+      "Research-mission tools — the service's intended and permanent purpose",
+      "Agentically-developed apps needing hosting this week at no cost — the stopgap for OIT's missing simple-hosting service",
+      "Pilots iterating with their unit before entering the OIT pathway",
     ],
-    operator: "IIDS/RCDS self-managed.",
-    deployer: "Builders deploy directly — same-day deploys.",
+    operator:
+      "RCDS (Luke Sheneman). RCDS holds root and sudo exclusively and owns the OS layer, patching, backups, monitoring, host and upstream firewalls, the reverse proxy, DNS, and SSL certificates. Builders get non-root, docker-group access — this is a managed container-hosting service, not a self-managed VM.",
+    deployer:
+      "Builders deploy and manage their own containers on their VM. Provisioning is a conversation with Luke Sheneman — no formal process, no cost, approval on judgment, hours-to-days depending on backlog.",
     governancePath:
-      "Outside the OIT pathway. The Builder Guide's term for apps here is 'staged on IIDS infrastructure' — pre-Stage-1.",
+      "Outside the OIT pathway. Request-and-discussion with RCDS covers what's allowable and whether the VM is internal-only or external-facing. The Builder Guide's term for apps here is 'staged on IIDS infrastructure' — pre-Stage-1.",
     standardsBinding:
-      "No OIT acceptance gate. The ADR 0001 accessibility rule is NOT satisfied by the environment — accessibility falls on the project.",
-    techConstraint: "Any Docker-composed stack (10.x address space, not 172.x).",
+      "The data rule (Sheneman, 2026-08-06): external-facing VMs carry Low-risk data only; internal-only VMs may carry low-to-moderate. Compliance is the tenant's responsibility — RCDS does not audit apps on an ongoing basis, and can disable a VM at any time. The ADR 0001 accessibility rule is NOT satisfied by the environment — accessibility falls on the project.",
+    techConstraint:
+      "Any Docker stack. Typical VM: 4–8 vCPU, 16 GB RAM, 256 GB disk, 10 Gbps networking (Dell M640 blades in an RCDS-managed VRTX chassis, UI Library basement). Each VM is configured internal-only or external-facing; per-app exposure via reverse-proxy rules. Behind an RCDS-managed Watchguard appliance (stateless filtering), not the campus Palo Alto — relocatable behind it if needed. Azure AD SSO is arranged app-by-app with RCDS and OIT. Snapshots and NFS backups exist; backups are not off-sited, so no true DR.",
     dataPosture:
-      "The lowest ceiling — not a home for high-risk institutional data per the draft SDLC standard's managed-hosts posture.",
-    timeToDeploy: "Fastest — hours, not stages.",
+      "External-facing: Low risk only. Internal-only: low to moderate. Enforcement is at intake and by tenant honor afterward — no continuous audit. MindRouter traffic from these VMs crosses the Palo Alto border firewall like any other client; same-chassis placement confers no privileged AI adjacency.",
+    timeToDeploy:
+      "Provisioning in hours to days (RCDS backlog); container deploys same-day thereafter.",
     maturity: "transitional",
     maturityNote:
-      "Nine portfolio projects run here today, but the target is staging by decision (2026-08-05): projects are expected to move through the pathway to an OIT-managed target or Databricks, not to stay.",
+      "Sheneman (2026-08-06): 'There is nothing special about RCDS VMs for this purpose. It is serving an immediate unmet need' — if OIT provided fast, free app hosting, RCDS would not need to. The service exists partly so institutional data doesn't scatter to external hosts. Research-mission workloads are the intended, permanent use; everything else is transitional by the service's own definition.",
+    openQuestions: [
+      "Which current external-facing tenants exceed the Low-risk data rule? A per-tenant classification review against the exposure rule has not been done.",
+    ],
     exampleSlugs: [
       "stratplan",
       "openera",
