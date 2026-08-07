@@ -75,6 +75,7 @@ const TARGET_DEFS = (
   [
     "databricks-dashboard",
     "nexus-module",
+    "vandalizer-workflow",
     "standalone-oci",
     "standalone-oit-k8s",
     "rcds-vm",
@@ -89,7 +90,7 @@ const TARGET_DEFS = (
 const SYSTEM_PROMPT = `You classify technology requests at the University of Idaho by the deployment target the requested capability would land on if pursued. Given a request's title, origin, requesting unit, intake track (when assigned), and prose description, return ONLY a JSON object with exactly these fields:
 
 {
-  "target": "databricks-dashboard" | "nexus-module" | "standalone-oci" | "standalone-oit-k8s" | "rcds-vm" | "oit-managed-tbd" | "external-hosted" | "not-applicable" | null,
+  "target": "databricks-dashboard" | "nexus-module" | "vandalizer-workflow" | "standalone-oci" | "standalone-oit-k8s" | "rcds-vm" | "oit-managed-tbd" | "external-hosted" | "not-applicable" | null,
   "rationale": string
 }
 
@@ -99,7 +100,7 @@ ${TARGET_DEFS}
 
 Classify with a two-step decision — form factor first, then hosting:
 
-1. Form factor. Is the substance of the request a report, dashboard, metric, or recurring data product over institutional data? → "databricks-dashboard". Is it a transactional staff workflow (validated intake, review queue, approvals, records over Banner-adjacent data) that fits a template web module? → "nexus-module". Is it the purchase, license, or subscription of an existing commercial product? → "external-hosted" (the vendor hosts it). Is it access to existing data, a report that already exists, a policy question, or otherwise nothing that deploys? → "not-applicable".
+1. Form factor. Is the substance of the request a report, dashboard, metric, or recurring data product over institutional data? → "databricks-dashboard". Is it document extraction, document review, or Q&A over a collection of documents (RFAs, awards, contracts, compliance filings)? → "vandalizer-workflow" (the existing AI document-intelligence platform; no build needed). Is it a transactional staff workflow (validated intake, review queue, approvals, records over Banner-adjacent data) that fits a template web module? → "nexus-module". Is it the purchase, license, or subscription of an existing commercial product? → "external-hosted" (the vendor hosts it). Is it access to existing data, a report that already exists, a policy question, or otherwise nothing that deploys? → "not-applicable".
 2. Hosting, only for builds that don't fit the above: a standalone application needing OIT-managed production goes to "standalone-oci" or "standalone-oit-k8s" (prefer "oit-managed-tbd" unless the text itself indicates on-prem residency, AI-compute adjacency, or a specific platform); an early pilot that would iterate on IIDS research infrastructure before entering the OIT pathway is "rcds-vm".
 
 Intake-track correlation (a hint, not a rule — the description wins):

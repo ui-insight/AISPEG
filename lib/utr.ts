@@ -227,6 +227,7 @@ export type RequestDeploymentTarget = Extract<
   DeploymentEnvironment,
   | "databricks-dashboard"
   | "nexus-module"
+  | "vandalizer-workflow"
   | "standalone-oci"
   | "standalone-oit-k8s"
   | "rcds-vm"
@@ -238,6 +239,7 @@ export type RequestDeploymentTarget = Extract<
 export const REQUEST_DEPLOYMENT_TARGETS: RequestDeploymentTarget[] = [
   "databricks-dashboard",
   "nexus-module",
+  "vandalizer-workflow",
   "standalone-oci",
   "standalone-oit-k8s",
   "rcds-vm",

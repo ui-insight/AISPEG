@@ -2,8 +2,9 @@
 // UTR Landscape — the destination-harmonized activity model
 // ============================================================
 // ADR 0008, PR 3: one read model joining the two activity populations
-// (projects in flight, open requests) against the five-target supply
-// model, plus the computed mismatch ledger the surface leads with.
+// (projects in flight, open requests) against the deployment-target
+// supply model (lib/deployment-targets.ts), plus the computed mismatch
+// ledger the surface leads with.
 //
 // Pure by design: `buildUtrLandscape()` takes its sources as arguments
 // and touches no I/O, so the page composes it from lib/work.ts +
@@ -135,7 +136,7 @@ export interface TargetBand {
 }
 
 /**
- * Activity that classifies outside the five targets. Each pool is a
+ * Activity that classifies outside the concrete targets. Each pool is a
  * deliberate bucket, not a leftover: vendor-hosted demand shapes the
  * Track A story, `oit-managed-tbd` records a made decision awaiting a
  * platform pick, `noDeployment` is request substance that never

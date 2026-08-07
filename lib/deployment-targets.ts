@@ -1,10 +1,11 @@
 // ============================================================
 // Deployment targets — per-environment definitions
 // ============================================================
-// The five deployment targets from the 2026-08-05 definitional session,
-// restructured 2026-08-06 into typed environment definitions: facts are
-// fields, prose is reserved for what is genuinely narrative, and
-// `"unknown"` is a first-class value everywhere. The vocabulary (typed
+// The deployment targets from the 2026-08-05 definitional session
+// (five), plus the Vandalizer workflow (2026-08-07), restructured
+// 2026-08-06 into typed environment definitions: facts are fields,
+// prose is reserved for what is genuinely narrative, and `"unknown"`
+// is a first-class value everywhere. The vocabulary (typed
 // values, labels, the OIT-managed flag) lives in
 // lib/project-governance.ts; this module carries the reference facts a
 // surface renders and the harmonization work classifies against.
@@ -18,24 +19,28 @@
 // difference. Unknown fields stay unknown until a session fills them —
 // do not invent values.
 //
-// The selection model the five targets encode is a two-step decision:
-// form factor first (report-shaped → Databricks dashboard; transactional
-// module fitting the template → Nexus; otherwise a standalone app),
-// then hosting by operator and risk. This maps onto the UTR tracks
-// (lib/utr.ts): Track D requests are Databricks-shaped, Tracks B/C
-// land on Nexus or a standalone target.
+// The selection model the targets encode is a two-step decision:
+// form factor first (report-shaped → Databricks dashboard;
+// document-extraction- or document-Q&A-shaped → Vandalizer workflow;
+// transactional module fitting the template → Nexus; otherwise a
+// standalone app), then hosting by operator and risk. This maps onto
+// the UTR tracks (lib/utr.ts): Track D requests are Databricks-shaped,
+// Tracks B/C land on Nexus or a standalone target, and document-shaped
+// requests from any track may resolve to a Vandalizer workflow — often
+// closing as routed-to-existing rather than becoming a build.
 //
 // Honesty rule: `maturity` states what the target IS today, not what
 // it should become.
 
 import type { DeploymentEnvironment } from "./project-governance";
 
-/** The five concrete targets — the subset of the vocabulary that names
+/** The six concrete targets — the subset of the vocabulary that names
  * a real place work can land (excludes rollup + meta values). */
 export type DeploymentTarget = Extract<
   DeploymentEnvironment,
   | "databricks-dashboard"
   | "nexus-module"
+  | "vandalizer-workflow"
   | "standalone-oci"
   | "standalone-oit-k8s"
   | "rcds-vm"
@@ -389,6 +394,85 @@ export const DEPLOYMENT_TARGETS: DeploymentTargetProfile[] = [
       "ucm-daily-register",
       "out-of-state-tax-tracking",
     ],
+  },
+  // Added 2026-08-07: the sixth target, prompted by the question of
+  // requests satisfiable by existing IIDS platforms. Universal UI
+  // access affirmed by Barrie Robison in that session; an operator
+  // session (John Brunsfeld) was deliberately deferred as unnecessary
+  // at this stage. MindRouter was considered and excluded — it is an
+  // inference gateway apps call (a dependency), not a place work lands.
+  {
+    value: "vandalizer-workflow",
+    name: "Vandalizer workflow",
+    formFactor: "platform-artifact",
+    shipUnit:
+      "An extraction workflow, document collection, or workspace inside the multi-tenant Vandalizer platform at vandalizer.uidaho.edu — no application to host.",
+    definition: { status: "repo-inferred" },
+    existence: "operating",
+    responsibilities: {
+      "os-and-patching": "provider",
+      backups: "provider",
+      monitoring: "provider",
+      "network-and-firewall": "provider",
+      "dns-and-certificates": "provider",
+      "reverse-proxy": "provider",
+      "app-deployment": "tenant",
+      "app-maintenance": "tenant",
+      "data-compliance": "tenant",
+    },
+    access: {
+      approvalAuthority:
+        "None — every UI person already has access (Barrie Robison, 2026-08-07)",
+      formality: "informal",
+      cost: "none",
+      turnaround: "Immediate — self-service with UI credentials",
+    },
+    dataRule: {
+      externalFacing: "low",
+      internalOnly: "unknown",
+      enforcement:
+        "Inherited from the host environment: the platform runs on an external-facing RCDS VM, whose rule caps external-facing at Low risk. Per-collection practice unverified.",
+    },
+    network: {
+      exposureOptions:
+        "SSO-gated web app at vandalizer.uidaho.edu, reachable from the public internet",
+      firewall: "Inherits the host RCDS VM's Watchguard appliance",
+      sso: "UI sign-in — access is universal at UI",
+    },
+    resilience: {
+      backups: "Inherited from the host RCDS VM (snapshots + NFS backup)",
+      offsiteDr: false,
+    },
+    stack: "platform-artifact",
+    valueProposition: {
+      headline:
+        "AI document intelligence every UI person can use today — structured extraction, reusable workflows, and citation-backed Q&A with no build, no approval, and no hosting.",
+      permanentNiche: "Document-extraction and document-Q&A work",
+      strategicRole: "destination",
+      antiFit: [
+        "Transactional workflows",
+        "Report/BI-shaped work over institutional data systems (→ Databricks)",
+        "Anything needing a custom application UI",
+      ],
+    },
+    fits: [
+      "Document-heavy requests: structured extraction from RFAs, awards, contracts, compliance filings",
+      "Citation-backed Q&A over a document collection",
+      "Reusable extraction workflows a unit runs repeatedly",
+    ],
+    governancePath:
+      "None for access — the platform is universally available at UI. Data governance rides on what is uploaded: document classification is the tenant's responsibility. A request fully met here closes as routed-to-existing with an interest link to the vandalizer portfolio entry.",
+    timeToDeploy:
+      "Same day — sign in and build; no provisioning, no pathway gates.",
+    maturity: "available",
+    maturityNote:
+      "In production at UI and Southern Utah University under the AI4RA NSF GRANTED partnership; universal UI access affirmed (Barrie Robison, 2026-08-07).",
+    openQuestions: [
+      "Do research-administration document collections (awards, contracts) fit the Low-risk ceiling inherited from the external-facing RCDS VM host? Per-collection classification review not done.",
+      "Is workflow-building genuinely self-service for a non-technical requestor, or does effective use need IIDS/OSP help? (Deferred operator question — John Brunsfeld.)",
+      "Where does a document process outgrow the platform — the line between a workflow here and work that should classify to a standalone app?",
+    ],
+    exampleSlugs: [],
   },
   {
     value: "standalone-oci",

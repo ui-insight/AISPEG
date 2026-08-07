@@ -21,3 +21,4 @@ its session is pending.
 | Standalone on OCI | pending | — |
 | Standalone on OIT on-prem Kubernetes | pending | — |
 | Databricks dashboard | pending — value proposition affirmed (Barrie Robison, 2026-08-07); full question set on the profile's `openQuestions` | — |
+| Vandalizer workflow | added 2026-08-07 — universal UI access affirmed (Barrie Robison); operator session deliberately deferred | — |
