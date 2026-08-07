@@ -280,6 +280,10 @@ export const DEPLOYMENT_TARGETS: DeploymentTargetProfile[] = [
     },
     resilience: { backups: "Platform-managed (Databricks)", offsiteDr: "unknown" },
     stack: "platform-artifact",
+    // Value proposition affirmed by Barrie Robison, 2026-08-07 — the
+    // one verified field on this profile. Everything else remains
+    // repo-inferred; the openQuestions below are the full question set
+    // for the pending operator session.
     valueProposition: {
       headline:
         "Governed institutional data with per-user entitlements — report-shaped delivery without an application to run or host.",
@@ -302,11 +306,20 @@ export const DEPLOYMENT_TARGETS: DeploymentTargetProfile[] = [
     maturity: "aspirational",
     maturityNote:
       "OIT's Databricks implementation is not finished; the dashboard service is undefined beyond an aspiration (Barrie Robison, 2026-08-05).",
+    // The full question set from the 2026-08-07 definitional session,
+    // recorded here pending an operator to answer them. Only the value
+    // proposition was affirmed in that session.
     openQuestions: [
-      "Who builds dashboards, with what approved tooling (PowerBI, Tableau, custom)?",
-      "What sources are attached to the lakehouse today (Banner assumed, unverified)?",
-      "What does the offered service look like — self-service with entitlements, or central build on request?",
-      "Which lakehouse/API routes are allowed; are direct source-system connections prohibited outright or case-by-case? (Outstanding Decisions Worksheet — confirm with Ben.)",
+      "What is the actual state of OIT's implementation — contracted, stood up, ingesting, producing? When can it accept a first workload?",
+      "What is the offered service — self-service workspace access with entitlements, central build-on-request, or both? Is 'dashboard' the right ship unit, or is it broader (notebooks, jobs, governed datasets)?",
+      "Who builds dashboards, with what approved tooling (Databricks AI/BI, PowerBI, Tableau, custom)?",
+      "What sources are attached to the lakehouse today, and on what roadmap (Banner assumed, unverified)? What refresh cadence — live, nightly, snapshot?",
+      "How do entitlements actually work — Unity Catalog, AD groups, something else — and who administers grants?",
+      "Are dashboards internal-only behind SSO, or is external sharing possible? What is the SSO story?",
+      "Who approves a new dashboard or data product, through what process, at what cost? Is UTR Track D the actual intake, or does OIT run its own queue?",
+      "What data classification ceiling applies, and is enforcement platform-level (entitlements) or process-level (steward review)? Who are the stewards in the loop?",
+      "Are direct source-system connections prohibited outright once the lakehouse route exists, or case-by-case? (Outstanding Decisions Worksheet — confirm with Ben.)",
+      "Where is the anti-fit line between a dashboard-with-inputs and an app that belongs on Nexus?",
     ],
     exampleSlugs: [],
   },

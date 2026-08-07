@@ -17,7 +17,7 @@ its session is pending.
 | Environment | Session | Record |
 |---|---|---|
 | RCDS VM | Luke Sheneman (RCDS), 2026-08-06 | [rcds-vm.md](./rcds-vm.md) |
-| Nexus module | pending | — |
+| Nexus module | questions sent to Colin, 2026-08-07 | — |
 | Standalone on OCI | pending | — |
 | Standalone on OIT on-prem Kubernetes | pending | — |
-| Databricks dashboard | pending | — |
+| Databricks dashboard | pending — value proposition affirmed (Barrie Robison, 2026-08-07); full question set on the profile's `openQuestions` | — |
