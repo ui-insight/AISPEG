@@ -1,22 +1,23 @@
 // Project-level governance fields that cut across the portfolio, registry,
 // and public project detail pages.
 //
-// Deployment values follow the five-target model settled in the
-// 2026-08-05 definitional session (superseding the hosting-only
-// vocabulary from Migration 012): two platform-hosted form factors
-// (Databricks dashboard, Nexus module) plus three standalone-app
-// hosting locations (OCI, OIT on-prem Kubernetes, RCDS VM). The RCDS VM
-// is transitional — a staging home until a project enters the OIT
-// pathway, not a destination. Per-target characteristics live in
-// lib/deployment-targets.ts; Azure was dropped with zero uses and can
-// be re-added the day OIT actually lands something there.
+// Deployment values follow the six-target model: the five targets
+// settled in the 2026-08-05 definitional session (superseding the
+// hosting-only vocabulary from Migration 012) plus the Vandalizer
+// workflow added 2026-08-07 — three platform-hosted form factors
+// (Databricks dashboard, Nexus module, Vandalizer workflow) plus three
+// standalone-app hosting locations (OCI, OIT on-prem Kubernetes, RCDS
+// VM). The RCDS VM is transitional — a staging home until a project
+// enters the OIT pathway, not a destination. Per-target characteristics
+// live in lib/deployment-targets.ts; Azure was dropped with zero uses
+// and can be re-added the day OIT actually lands something there.
 //
 // `oitManaged` drives ADR 0001 sub-decision #5: production operated on
 // an OIT-managed environment satisfies the accessibility rule even
 // without an anonymous URL (lib/portfolio-verification.ts).
 
 export const DEPLOYMENT_ENVIRONMENTS = [
-  // ---- The five targets ----------------------------------------------
+  // ---- The six targets -----------------------------------------------
   {
     value: "databricks-dashboard",
     label: "Databricks dashboard (OIT lakehouse)",
@@ -30,6 +31,13 @@ export const DEPLOYMENT_ENVIRONMENTS = [
     oitManaged: true,
     description:
       "A module inside Nexus, the shared React + FastAPI application platform on OIT-managed secure infrastructure. Reached through the six-stage Builder Guide pathway.",
+  },
+  {
+    value: "vandalizer-workflow",
+    label: "Vandalizer workflow",
+    oitManaged: false,
+    description:
+      "An extraction workflow, document collection, or workspace inside Vandalizer, the multi-tenant AI document-intelligence platform at vandalizer.uidaho.edu — no application to host. Every UI person already has access; document-shaped needs land here self-service.",
   },
   {
     value: "standalone-oci",

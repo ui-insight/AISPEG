@@ -19,7 +19,7 @@ export const dynamic = "force-dynamic";
 export const metadata = {
   title: "UTR Landscape — Institutional AI Initiative",
   description:
-    "Every project and open technology request at the University of Idaho, harmonized against the five deployment targets institutional work can land on — and the mismatches between demand and supply.",
+    "Every project and open technology request at the University of Idaho, harmonized against the six deployment targets institutional work can land on — and the mismatches between demand and supply.",
 };
 
 const linkCls =
@@ -219,8 +219,8 @@ export default async function UtrLandscapePage() {
           <span className="font-semibold text-brand-black">
             {totals.openRequests} open requests
           </span>{" "}
-          — mapped against the five deployment targets institutional work
-          can land on. The targets are not equal: one is proven, two are
+          — mapped against the six deployment targets institutional work
+          can land on. The targets are not equal: two are proven, two are
           approved but untried, one is an aspiration, and one is a staging
           ground. The mismatches between demand and that supply are the
           coordination agenda.
@@ -257,15 +257,15 @@ export default async function UtrLandscapePage() {
         </ul>
       </section>
 
-      {/* ── The five targets ────────────────────────────── */}
+      {/* ── The six targets ─────────────────────────────── */}
       <section>
         <h2 className="text-2xl font-black tracking-tight text-brand-black">
-          The five targets
+          The six targets
         </h2>
         <p className="mt-2 max-w-3xl text-sm leading-relaxed text-ink-muted">
-          Form factor first — a report lands on the lakehouse, a
-          transactional module lands on Nexus — then hosting by operator
-          and risk for everything standalone.
+          Form factor first — a report lands on the lakehouse, document
+          work lands on Vandalizer, a transactional module lands on Nexus
+          — then hosting by operator and risk for everything standalone.
         </p>
         <div className="mt-5 space-y-5">
           {landscape.bands.map((band) => (
@@ -274,10 +274,10 @@ export default async function UtrLandscapePage() {
         </div>
       </section>
 
-      {/* ── Outside the five targets ────────────────────── */}
+      {/* ── Outside the six targets ─────────────────────── */}
       <section id="unclassified" className="scroll-mt-8">
         <h2 className="text-2xl font-black tracking-tight text-brand-black">
-          Outside the five targets
+          Outside the six targets
         </h2>
         <dl className="mt-5 space-y-6">
           {pools.externalHosted.length > 0 && (

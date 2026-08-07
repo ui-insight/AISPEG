@@ -153,3 +153,28 @@ the landing critique arc, taken after the surface exists.
 - When targets firm up (Databricks service defined, first OCI/K8s
   landing), updating `lib/deployment-targets.ts` reflows the ledger
   automatically — the surface argues from data it does not own.
+
+## Amendment — sixth target (2026-08-07)
+
+The five-target supply model gained a sixth: **Vandalizer workflow**
+(`vandalizer-workflow`), a third platform-hosted form factor alongside
+the Databricks dashboard and the Nexus module. The trigger was the
+question of requests satisfiable by existing IIDS platforms: document-
+extraction- and document-Q&A-shaped requests were being forced to a
+standalone target or left unclassified when their honest destination is
+a workflow inside the already-operating, universally-accessible
+Vandalizer platform (Migration 026 widens the CHECKs; the form-factor
+step of the selection model gains a document branch).
+
+Two boundaries drawn in the same decision:
+
+- **MindRouter is not a target.** It is an inference gateway
+  applications call — a dependency, not a place work lands. A request
+  met by "just use chat" closes as `routed-to-existing` with no target;
+  a new app calling MindRouter classifies to wherever the app lands.
+- **`routed-to-existing` and target classification are complementary,
+  not competing.** A request fully met by Vandalizer as it stands
+  closes as `routed-to-existing` (interest-pool link to the
+  `vandalizer` entry); a request needing a *new* workflow built inside
+  the platform classifies to `vandalizer-workflow` and stays in the
+  landscape's demand picture.
