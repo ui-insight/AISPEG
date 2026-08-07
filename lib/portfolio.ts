@@ -514,34 +514,41 @@ export const projects: Project[] = [
     tagline:
       "On-prem text- and image-to-video storyboarding for rapid advertising mockups.",
     description:
-      "Video previsualization workflow requested by University Communications and Marketing to mock up an advertisement before filming. IIDS added a model-agnostic video-generation endpoint to MindRouter, currently backed by the open-weight LTX-Video 2.3 model on a dedicated NVIDIA H200, with integrated voice support. The standalone storyboard web application generates clips from text prompts, generated images, or uploaded keyframes; arranges them on a storyboard with an app-aware AI chatbot guide; and stitches them into a draft video that can be exported and downloaded. Delivered to Melissa Hartley's team in July 2026 for hands-on evaluation and iterative refinement — an example storyboard concept was produced with the tool in about an hour.",
+      "Video previsualization workflow requested by University Communications and Marketing to mock up an advertisement before filming. IIDS added a model-agnostic video-generation endpoint to MindRouter, currently backed by the open-weight LTX-Video 2.3 model on a dedicated NVIDIA H200, with integrated voice support. The standalone storyboard web application generates clips from text prompts, generated images, or uploaded keyframes; refines prompts with an AI function that considers the chosen keyframes; arranges clips on a storyboard with an app-aware AI chatbot guide; and stitches them into a draft video that can be exported and downloaded. Delivered to Melissa Hartley's team in July 2026; first production use is a 30-second UCM advertisement, for which Hartley produced two AI mockup proofs cut to music and voice-over in Premiere. Her first measured comparison (2026-08-06; one project, so directional): storyboard build 1.5 hours per AI mockup versus 3 hours for one static board, and first-cut editing 2 hours of timeline assembly plus a projected 4–6 hours fitting filmed content into the pre-timed timeline, versus 10–12 hours in the typical process — with the AI pre-draft expected to eliminate the first of three review/approval rounds. Fuller numbers are due after the first project completes filming and editing (early September 2026). CETL saw a demo in August 2026 and is likely to adopt the tool in place of the storyboard solution it had planned. Broader release is deliberately gated: UI has no policy for AI-generated media beyond a social-media disclosure request, so IIDS is drafting usage guidelines — surfaced in the application itself — with UCM brand leadership before wider rollout.",
     homeUnits: ["University Communications and Marketing"],
     operationalOwners: [{ name: "Melissa Hartley" }],
     buildParticipants: ["IIDS"],
-    status: "building",
+    status: "piloting",
     visibility: "Public",
     proposedDeploymentEnvironment: "to-be-determined",
     currentDeploymentEnvironment: "rcds-vm",
     enterpriseSystemReplacement: { status: "no" },
     ai4raRelationship: "None",
     iidsSponsor: "Luke Sheneman",
+    pilotCohort: {
+      size: 1,
+      scope:
+        "UCM Video Production Center team — Melissa Hartley active; team accounts requested Aug 2026",
+      namedUsers: ["Melissa Hartley"],
+    },
     repoUrl: "https://github.com/ui-insight/MindRouter",
     liveUrl: "https://storyboard.insight.uidaho.edu",
     liveUrlIsStaging: true,
     operationalFunction:
       "Generates short video clips from prompts, generated images, or uploaded keyframes; adds generated voice or audio; sequences clips on a storyboard with an integrated app-aware AI guide; and stitches them into an exportable draft that UCM can refine in its existing editing workflow.",
     operationalExcellenceOutcome:
-      "Compresses ad concept development from a filming-first process to rapid visual iteration, gives stakeholders a concrete mockup before production resources are committed, and avoids per-clip commercial generation credits during early creative development.",
+      "Compresses ad concept development from a filming-first process to rapid visual iteration, gives stakeholders a concrete mockup before production resources are committed, and avoids per-clip commercial generation credits during early creative development. First measured use (one UCM ad, Aug 2026): 50% faster storyboard builds and a first-cut edit dropping from 10–12 hours to roughly 6–8, with the pre-draft expected to remove an entire review/approval round.",
     features: [
       "Text-to-video clip generation",
       "Image-to-video clip generation with generated or uploaded keyframes",
       "Integrated voice and audio generation",
       "Storyboard sequencing and clip stitching",
       "App-aware AI chatbot guide",
+      "AI prompt refinement informed by the selected keyframes",
       "Export and download of assembled draft videos",
     ],
     usageNote:
-      "Delivered to UCM's creative team for evaluation in July 2026.",
+      "In production use on UCM's first 30-second ad (two AI mockup proofs, July 2026); UCM team accounts requested and CETL evaluating adoption after an Aug 2026 demo.",
     tech: ["MindRouter", "LTX-Video 2.3", "NVIDIA H200"],
     relatedSlugs: ["mindrouter", "dgx-stack", "ucm-daily-register"],
     workCategories: ["process"],
