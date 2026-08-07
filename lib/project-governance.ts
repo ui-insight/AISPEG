@@ -50,7 +50,7 @@ export const DEPLOYMENT_ENVIRONMENTS = [
     label: "Standalone app — RCDS VM (transitional)",
     oitManaged: false,
     description:
-      "A Docker-composed application on an IIDS/RCDS self-managed VM (the insight.uidaho.edu class). Staging and pilot hosting, not a long-term destination — projects here are pre-pathway.",
+      "Containerized apps on an RCDS-provisioned, RCDS-managed VM (RCDS holds root and owns OS, firewalls, proxy, DNS, and backups; builders deploy containers). External-facing VMs carry Low-risk data only; internal-only VMs low-to-moderate. A stopgap for OIT's missing simple-hosting service — permanent home only for research-mission work.",
   },
   // ---- Rollup + meta values ------------------------------------------
   {

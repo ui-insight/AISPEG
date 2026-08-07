@@ -143,6 +143,18 @@ function BandSection({ band }: { band: TargetBand }) {
           {TARGET_MATURITY_LABEL[profile.maturity]}
         </span>
       </div>
+      {profile.definition.status === "defined" ? (
+        <p className="mt-1 text-xs text-ink-subtle">
+          Defined with {profile.definition.definedBy.name} (
+          {profile.definition.definedBy.role}) ·{" "}
+          {profile.definition.definedBy.date}
+        </p>
+      ) : (
+        <p className="mt-1 text-xs italic text-ink-subtle">
+          Not yet defined — characteristics inferred from documents;
+          definition session pending.
+        </p>
+      )}
       <p className="mt-1.5 max-w-3xl text-sm leading-relaxed text-ink-muted">
         {profile.shipUnit}
       </p>
