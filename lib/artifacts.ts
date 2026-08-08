@@ -1,8 +1,9 @@
 // lib/artifacts.ts
 //
 // Unified timeline of public-facing artifacts: written briefs, activity
-// reports, and external presentations. Backs the /reports surface, which
-// is the single index for everything time-stamped.
+// reports, external presentations, and external signals (third-party
+// publications worth the room's attention). Backs the /reports surface,
+// which is the single index for everything time-stamped.
 //
 // Sorting: every artifact carries an ISO-date `dateIso` that drives
 // reverse-chronological order on /reports. `dateLabel` is the
@@ -14,9 +15,10 @@
 // outside the site so the card renders an external-link affordance.
 
 export type ArtifactKind =
-  | "activity-report" // Long-form internal report (e.g. monthly activity)
-  | "brief"           // Executive briefing document
-  | "presentation";   // External presentation, podium talk, etc.
+  | "activity-report"  // Long-form internal report (e.g. monthly activity)
+  | "brief"            // Executive briefing document
+  | "presentation"     // External presentation, podium talk, etc.
+  | "external-signal"; // Third-party publication worth the room's attention
 
 export type ArtifactStatus = "Draft" | "Ready" | "Delivered";
 
@@ -76,6 +78,22 @@ export const artifacts: Artifact[] = [
     tags: ["Executive briefing"],
   },
   {
+    slug: "educause-state-of-play-jun-2026",
+    kind: "external-signal",
+    title:
+      "The Current State of Play: AI in Higher Education and the Road Ahead",
+    audience: "Higher-education leadership (sector-wide)",
+    dateLabel: "June 16, 2026",
+    dateIso: "2026-06-16",
+    author:
+      "Gamby, Kil, Koblic, LeBlanc, Moldoveanu & Siemens — EDUCAUSE Review",
+    abstract:
+      "EDUCAUSE Review's capstone to its six-part AI series names ten structural challenges facing the sector — and puts the broken data foundation first: siloed systems, governance stalemates, and security strain that are organizational and political problems more than technical ones. The diagnosis — tactical fixes applied to a structural crisis, pilots where strategies are needed — is the sector-wide version of the case this initiative makes locally.",
+    href: "https://er.educause.edu/articles/2026/6/the-current-state-of-play-ai-in-higher-education-and-the-road-ahead",
+    external: true,
+    tags: ["External signal", "Sector context"],
+  },
+  {
     slug: "lovable-vibe-coding-2026",
     kind: "brief",
     title: "Cautionary tale: Lovable vibe-coding security crisis",
@@ -94,6 +112,7 @@ const KIND_LABELS: Record<ArtifactKind, string> = {
   "activity-report": "Activity report",
   brief: "Brief",
   presentation: "Presentation",
+  "external-signal": "External signal",
 };
 
 export function kindLabel(kind: ArtifactKind): string {

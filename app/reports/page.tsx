@@ -18,6 +18,7 @@ const kindStyles: Record<ArtifactKind, string> = {
   "activity-report": "bg-brand-clearwater/10 text-brand-clearwater",
   brief: "bg-blue-100 text-blue-800",
   presentation: "bg-emerald-100 text-emerald-800",
+  "external-signal": "bg-brand-huckleberry/10 text-brand-huckleberry",
 };
 
 function ExternalIcon() {
