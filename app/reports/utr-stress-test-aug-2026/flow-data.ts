@@ -24,6 +24,36 @@ import { resolveGovernanceProfile } from "@/lib/governance-profile";
 
 export type RegistryOrigin = "oit-idea" | "clickup" | "site-submission" | "direct";
 
+/** Ingestion source — the channel a demand line arrived through. */
+export type FlowSource =
+  | RegistryOrigin
+  | "ored"
+  | "unit-partnership"
+  | "iids-internal"
+  | "oit-portfolio";
+
+export const SOURCE_LABEL: Record<FlowSource, string> = {
+  "oit-idea": "OIT IDEA form",
+  clickup: "IIDS ClickUp backlog",
+  direct: "Direct entry",
+  "site-submission": "Site submission",
+  ored: "ORED requests",
+  "unit-partnership": "Unit partnership",
+  "iids-internal": "IIDS internal",
+  "oit-portfolio": "OIT portfolio",
+};
+
+export const SOURCE_ORDER: FlowSource[] = [
+  "oit-idea",
+  "clickup",
+  "ored",
+  "unit-partnership",
+  "iids-internal",
+  "oit-portfolio",
+  "direct",
+  "site-submission",
+];
+
 export type FlowRoute =
   // Clean routes under the draft
   | "fast-lane"
@@ -55,34 +85,19 @@ export type FlowDestination =
 
 export type RouteClass = "clean" | "seam" | "muted";
 
-/** Normalized unit consumed by the explorer. */
+/** Normalized demand line consumed by the explorer (one unit of value). */
 export interface FlowUnit {
+  /** Unique id — the layer-0 node key (one node per demand line). */
+  id: string;
   name: string;
-  /** Layer-0 node key: a registry origin slug, or `p:<slug>` per project. */
-  sourceKey: string;
-  sourceLabel: string;
-  /** True when the source node is an individual inventory project. */
-  isProject: boolean;
+  source: FlowSource;
   route: FlowRoute;
   destination: FlowDestination;
+  /** True when the line is an inventory project (vs a registry request). */
+  isProject: boolean;
   /** Hover summary (project tagline). */
   summary?: string;
 }
-
-export const ORIGIN_LABEL: Record<RegistryOrigin, string> = {
-  "oit-idea": "OIT IDEA form",
-  clickup: "ClickUp backlog",
-  "site-submission": "Site submission",
-  direct: "Direct entry",
-};
-
-/** Fixed display order for registry origins in the source column. */
-export const ORIGIN_ORDER: RegistryOrigin[] = [
-  "oit-idea",
-  "clickup",
-  "direct",
-  "site-submission",
-];
 
 export const ROUTE_META: Record<
   FlowRoute,
@@ -131,8 +146,15 @@ export const DESTINATION_LABEL: Record<FlowDestination, string> = {
 };
 
 // ---- Registry snapshot (hand-classified, 2026-08-10) -------------------
-// 107 rows = tech_requests minus 2 merged duplicates. `destination`
-// mirrors proposed_deployment_target (NULL → "unclassified").
+// 98 rows = tech_requests minus 2 merged duplicates, minus the 9
+// ClickUp requests that converted into inventory projects and appear
+// as their project line instead (RPR → retroactive-payment-requests,
+// CAREER Club meter → rfd-career, ExecOrd review → execord, Water Law
+// → water-law-database, Out-of-state tax → out-of-state-tax-tracking,
+// Contract extraction → historical-contracts, Bid-waiver →
+// bid-waiver-document-review, Vendor Invoices → invoice-processing,
+// Daily Register → ucm-daily-register). `destination` mirrors
+// proposed_deployment_target (NULL → "unclassified").
 
 interface RequestRow {
   name: string;
@@ -145,19 +167,15 @@ export const REQUEST_FLOWS: RequestRow[] = [
   // ClickUp backlog (40)
   { name: "AI Chatbot for Training/Manuals", origin: "clickup", route: "track-c", destination: "vandalizer-workflow" },
   { name: "AI-Assisted SAC Pre-Review Tool", origin: "clickup", route: "track-c", destination: "unclassified" },
-  { name: "CAREER Club PI Progress Meter", origin: "clickup", route: "track-c", destination: "unclassified" },
   { name: "Check Cancellations & ACH Returns", origin: "clickup", route: "track-c", destination: "nexus-module" },
   { name: "Clery Act Annual Security Report", origin: "clickup", route: "track-c", destination: "vandalizer-workflow" },
-  { name: "Contract data extraction (State Transparency)", origin: "clickup", route: "track-c", destination: "unclassified" },
   { name: "Drafting RFP/RFQ documents", origin: "clickup", route: "track-c", destination: "vandalizer-workflow" },
   { name: "Employment Verifications", origin: "clickup", route: "track-c", destination: "nexus-module" },
-  { name: "Executive Order Compliance Review & Triage", origin: "clickup", route: "track-c", destination: "unclassified" },
   { name: "Facilities Condition Assessment", origin: "clickup", route: "track-c", destination: "vandalizer-workflow" },
   { name: "Finalizing Payroll (stage)", origin: "clickup", route: "track-c", destination: "not-applicable" },
   { name: "Fund Balance Projections", origin: "clickup", route: "seam-data-product", destination: "databricks-dashboard" },
   { name: "HR Target Pay System", origin: "clickup", route: "track-c", destination: "unclassified" },
   { name: "Hazardous-Waste Tracking (EHS)", origin: "clickup", route: "track-c", destination: "nexus-module" },
-  { name: "Idaho Water Law Repository", origin: "clickup", route: "track-c", destination: "unclassified" },
   { name: "International Employee Payroll", origin: "clickup", route: "track-c", destination: "nexus-module" },
   { name: "Key Control / Building Access", origin: "clickup", route: "track-c", destination: "nexus-module" },
   { name: "Leave Payout", origin: "clickup", route: "track-c", destination: "nexus-module" },
@@ -165,22 +183,17 @@ export const REQUEST_FLOWS: RequestRow[] = [
   { name: "Manual Timesheets", origin: "clickup", route: "track-c", destination: "not-applicable" },
   { name: "Material Safety Data Sheets", origin: "clickup", route: "track-c", destination: "vandalizer-workflow" },
   { name: "My UI (Student Newsletter)", origin: "clickup", route: "track-c", destination: "unclassified" },
-  { name: "Out of State Employee Tax Tracking", origin: "clickup", route: "track-c", destination: "unclassified" },
   { name: "Parking: AI Chatbot", origin: "clickup", route: "track-c", destination: "standalone-oci" },
   { name: "Parking: License-Plate Recognition", origin: "clickup", route: "track-c", destination: "standalone-oci" },
   { name: "Post-Payroll Reconciliation", origin: "clickup", route: "seam-data-product", destination: "databricks-dashboard" },
   { name: "Power-Plant P3 Contract Q&A", origin: "clickup", route: "track-c", destination: "vandalizer-workflow" },
   { name: "Program Inventory Clean-up", origin: "clickup", route: "track-c", destination: "not-applicable" },
   { name: "Public-Safety Threat Assessment (denied)", origin: "clickup", route: "track-c", destination: "unclassified" },
-  { name: "Quote / bid-waiver evaluation", origin: "clickup", route: "track-c", destination: "unclassified" },
-  { name: "Retroactive Pay Request (RPR)", origin: "clickup", route: "track-c", destination: "unclassified" },
   { name: "Staff Fee Waiver System", origin: "clickup", route: "track-c", destination: "nexus-module" },
   { name: "Staff ePAF / HR Reporting", origin: "clickup", route: "seam-data-product", destination: "databricks-dashboard" },
-  { name: "The Daily Register (Employee Newsletter)", origin: "clickup", route: "track-c", destination: "unclassified" },
   { name: "Ticketing & routing — purchasing inbox", origin: "clickup", route: "track-c", destination: "nexus-module" },
   { name: "AI for LaTeX formatting (theses)", origin: "clickup", route: "track-c", destination: "unclassified" },
   { name: "Utility Demand & Billing", origin: "clickup", route: "seam-data-product", destination: "databricks-dashboard" },
-  { name: "Vendor Invoices", origin: "clickup", route: "track-c", destination: "unclassified" },
   { name: "Vendor Registration", origin: "clickup", route: "track-c", destination: "nexus-module" },
   { name: "Work-Order Ticket Analytics (FAMIS)", origin: "clickup", route: "track-c", destination: "nexus-module" },
   // Direct entry (9)
@@ -256,12 +269,50 @@ export const REQUEST_FLOWS: RequestRow[] = [
 ];
 
 // ---- Inventory flows (computed from lib/portfolio.ts) ------------------
-// Each project is its own source node. Routing: built/building in-house
+// Each project is its own demand line. Routing: built/building in-house
 // work is Track B (the draft's own definition — a fully realized app
 // needing review and hosting); not-yet-built ideas are Track C; the
 // platforms and externally-owned programs keep their seam/pool nodes.
 
 const PLATFORM_SLUGS = new Set(["mindrouter", "dgx-stack"]);
+
+// Ingestion source per project — the channel the work arrived through.
+// ORED requests came via research-office channels; "clickup" marks
+// projects whose demand line entered as an AI4UI ClickUp request (the
+// converted rows merged above); unit partnerships arrived by direct
+// relationship with the owning unit; IIDS-internal work is platform and
+// scaffold investment; the OIT portfolio is externally tracked.
+const INVENTORY_SOURCE: Record<string, FlowSource> = {
+  vandalizer: "ored",
+  openera: "ored",
+  processmapping: "ored",
+  execord: "ored",
+  "rfd-companion": "ored",
+  "rfd-career": "ored",
+  "retroactive-payment-requests": "clickup",
+  "water-law-database": "clickup",
+  "out-of-state-tax-tracking": "clickup",
+  "historical-contracts": "clickup",
+  "bid-waiver-document-review": "clickup",
+  "invoice-processing": "clickup",
+  "ucm-daily-register": "clickup",
+  mindrouter: "iids-internal",
+  "dgx-stack": "iids-internal",
+  "template-app": "iids-internal",
+  "data-infrastructure-pilot": "iids-internal",
+  stratplan: "unit-partnership",
+  "audit-dashboard": "unit-partnership",
+  "ongoing-contracts": "unit-partnership",
+  "mindrouter-video-storyboard": "unit-partnership",
+  "sem-experiential": "unit-partnership",
+  "sidearm-pipeline": "unit-partnership",
+  universo: "unit-partnership",
+  "bls-cupa-code-prediction": "unit-partnership",
+  "financial-planning-suite": "unit-partnership",
+  "oit-data-modernization": "oit-portfolio",
+  "ir-reporting-modernization": "oit-portfolio",
+  nexus: "oit-portfolio",
+};
 
 // Deployment target per project — the environment it runs on today (or
 // is targeted at), INFERRED from current hosting. Everything serving
@@ -302,24 +353,24 @@ function inventoryRoute(project: Project): FlowRoute {
 
 export function inventoryFlows(): FlowUnit[] {
   return projects.map((p) => ({
+    id: `p:${p.slug}`,
     name: p.name,
-    sourceKey: `p:${p.slug}`,
-    sourceLabel: p.name,
-    isProject: true,
+    source: INVENTORY_SOURCE[p.slug] ?? "unit-partnership",
     route: inventoryRoute(p),
     destination: INVENTORY_DESTINATION[p.slug] ?? "unclassified",
+    isProject: true,
     summary: p.tagline,
   }));
 }
 
 export function allFlows(): FlowUnit[] {
-  const requests: FlowUnit[] = REQUEST_FLOWS.map((r) => ({
+  const requests: FlowUnit[] = REQUEST_FLOWS.map((r, i) => ({
+    id: `r:${i}`,
     name: r.name,
-    sourceKey: r.origin,
-    sourceLabel: ORIGIN_LABEL[r.origin],
-    isProject: false,
+    source: r.origin,
     route: r.route,
     destination: r.destination,
+    isProject: false,
   }));
   return [...requests, ...inventoryFlows()];
 }
