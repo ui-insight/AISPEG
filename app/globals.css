@@ -20,6 +20,13 @@
   --color-brand-lupine: #5E48FF;      /* vivid violet */
   --color-brand-clearwater: #008080;  /* teal, used for link underlines */
 
+  /* Chart marks (data-viz only — CVD-validated pair; see dataviz skill).
+     chart-clean: routes that fit the UTR draft cleanly (chroma-stepped
+     teal — brand-clearwater fails the chart chroma floor). chart-seam:
+     the codebase's existing amber caution signal, stepped for marks. */
+  --color-chart-clean: #0D9488;
+  --color-chart-seam: #D97706;
+
   /* Surface system */
   --color-surface: #FFFFFF;
   --color-surface-alt: #FAFAF8;       /* very slight warm off-white */

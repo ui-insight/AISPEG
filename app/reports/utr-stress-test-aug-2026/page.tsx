@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { projects, computePublicStage } from "@/lib/portfolio";
 import { resolveGovernanceProfile } from "@/lib/governance-profile";
+import FlowExplorer from "./FlowExplorer";
+import { allFlows } from "./flow-data";
 
 export const metadata = {
   title:
@@ -133,7 +135,7 @@ const patterns: FringePattern[] = [
     id: "no-requestor",
     title: "Institution-wide needs have no requestor",
     evidence:
-      "Eight registry entries derive from the Operational Excellence survey: institution-wide problem statements — onboarding automation, reimbursement tracking, policy search — with no individual requestor, no unit, and no budget line. A ninth, “Sanctioned AI access & literacy,” is not a request for software at all; it is a request for the AI Tools List and its guidance to exist.",
+      "Eight registry entries derive from the Operational Excellence survey: institution-wide problem statements — onboarding automation, reimbursement tracking, policy search — with no individual requestor, no unit, and no budget line. One of them, “Sanctioned AI access & literacy,” is not a request for software at all; it is a request for the AI Tools List and its guidance to exist.",
     miss:
       "The single intake form assumes a named requestor in a named unit. Institution-derived demand — survey themes, strategic-plan commitments, leadership directives — enters nowhere, which means the highest-aggregate-ROI items are the ones the process cannot see.",
     question:
@@ -287,6 +289,23 @@ export default function UtrStressTestPage() {
           </Link>
           .
         </p>
+      </section>
+
+      <section>
+        <h2 className="text-xl font-black tracking-tight text-brand-black">
+          Explore the flow
+        </h2>
+        <p className="mt-2 max-w-3xl text-sm text-gray-700">
+          Every unit of demand — {REGISTRY.total} registry requests plus the
+          project inventory — drawn from its origin, through where it would
+          route under the draft process, to its proposed deployment target.
+          Routing assignments are <strong>inferred</strong> (nothing has been
+          triaged under the draft yet); each unit carries one dominant
+          classification. Amber routes are the six seams from this report.
+        </p>
+        <div className="mt-4 rounded-xl border border-gray-200 bg-white p-5">
+          <FlowExplorer units={allFlows()} />
+        </div>
       </section>
 
       <section className="rounded-xl border border-brand-clearwater/30 bg-brand-clearwater/5 p-6">
