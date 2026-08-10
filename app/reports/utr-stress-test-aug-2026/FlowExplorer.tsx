@@ -5,11 +5,15 @@
 // (every unit path through it, upstream and downstream), right-click to
 // zoom the diagram to that genealogy, hover for per-band detail.
 //
-// Links are built per distinct unit path (origin → route → destination),
+// Links are built per distinct unit path (source → route → destination),
 // not per node pair, so genealogy highlighting is exact: clicking a
-// destination lights only the origins that actually feed it.
+// destination lights only the sources that actually feed it.
+//
+// The diagram bleeds out of the article column to the right edge of
+// the viewport (measured at runtime); on narrow screens it scrolls
+// inside its own container instead of widening the page.
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   sankey,
   sankeyLinkHorizontal,
@@ -17,8 +21,9 @@ import {
   type SankeyLink,
 } from "d3-sankey";
 import {
-  ORIGIN_LABEL,
+  ORIGIN_ORDER,
   ROUTE_META,
+  ROUTE_ORDER,
   DESTINATION_LABEL,
   type FlowUnit,
   type RouteClass,
@@ -34,7 +39,9 @@ interface NodeExtra {
   id: string;
   label: string;
   layer: 0 | 1 | 2;
-  cls: RouteClass | "origin";
+  cls: RouteClass | "origin" | "project";
+  /** Within-column ordering key. */
+  sortKey: number;
 }
 interface LinkExtra {
   pathKey: string;
@@ -44,53 +51,76 @@ interface LinkExtra {
 type SNode = SankeyNode<NodeExtra, LinkExtra>;
 type SLink = SankeyLink<NodeExtra, LinkExtra>;
 
-const WIDTH = 960;
-const HEIGHT = 620;
-const MARGIN = { top: 8, right: 200, bottom: 8, left: 150 };
-
-// Layer-1 display order: clean tracks, then seams, then muted pools.
-const ROUTE_ORDER = [
-  "fast-lane",
-  "track-a",
-  "track-c",
-  "track-d",
-  "seam-estate",
-  "seam-platform",
-  "seam-configure",
-  "seam-research",
-  "seam-data-product",
-  "seam-no-requestor",
-  "external-tracked",
-  "unclear",
-];
+const HEIGHT = 940;
+const MIN_WIDTH = 940;
+const MARGIN = { top: 8, right: 190, bottom: 8, left: 216 };
 
 function nodeId(layer: number, key: string): string {
   return `${layer}:${key}`;
 }
 
 function pathKeyOf(u: FlowUnit): string {
-  return `${u.origin}→${u.route}→${u.destination}`;
+  return `${u.sourceKey}→${u.route}→${u.destination}`;
 }
 
 /** Path keys passing through a node. */
 function pathsThrough(units: FlowUnit[], id: string): Set<string> {
-  const [layerStr, key] = [id.slice(0, 1), id.slice(2)];
-  const field =
-    layerStr === "0" ? "origin" : layerStr === "1" ? "route" : "destination";
+  const layerStr = id.slice(0, 1);
+  const key = id.slice(2);
   return new Set(
-    units.filter((u) => u[field as keyof FlowUnit] === key).map(pathKeyOf)
+    units
+      .filter((u) =>
+        layerStr === "0"
+          ? u.sourceKey === key
+          : layerStr === "1"
+            ? u.route === key
+            : u.destination === key
+      )
+      .map(pathKeyOf)
   );
 }
 
-function buildGraph(units: FlowUnit[]) {
+function truncate(s: string, n: number): string {
+  return s.length > n ? `${s.slice(0, n - 1)}…` : s;
+}
+
+function buildGraph(units: FlowUnit[], width: number) {
   const nodeMap = new Map<string, NodeExtra>();
-  const add = (id: string, label: string, layer: 0 | 1 | 2, cls: NodeExtra["cls"]) => {
-    if (!nodeMap.has(id)) nodeMap.set(id, { id, label, layer, cls });
-  };
   for (const u of units) {
-    add(nodeId(0, u.origin), ORIGIN_LABEL[u.origin], 0, "origin");
-    add(nodeId(1, u.route), ROUTE_META[u.route].label, 1, ROUTE_META[u.route].cls);
-    add(nodeId(2, u.destination), DESTINATION_LABEL[u.destination], 2, "muted");
+    const sid = nodeId(0, u.sourceKey);
+    if (!nodeMap.has(sid)) {
+      nodeMap.set(sid, {
+        id: sid,
+        label: u.sourceLabel,
+        layer: 0,
+        cls: u.isProject ? "project" : "origin",
+        // Registry origins first in fixed order, then projects grouped
+        // by the route they feed (reduces crossings), ties by name.
+        sortKey: u.isProject
+          ? 100 + ROUTE_ORDER.indexOf(u.route)
+          : ORIGIN_ORDER.indexOf(u.sourceKey as (typeof ORIGIN_ORDER)[number]),
+      });
+    }
+    const rid = nodeId(1, u.route);
+    if (!nodeMap.has(rid)) {
+      nodeMap.set(rid, {
+        id: rid,
+        label: ROUTE_META[u.route].label,
+        layer: 1,
+        cls: ROUTE_META[u.route].cls,
+        sortKey: ROUTE_ORDER.indexOf(u.route),
+      });
+    }
+    const did = nodeId(2, u.destination);
+    if (!nodeMap.has(did)) {
+      nodeMap.set(did, {
+        id: did,
+        label: DESTINATION_LABEL[u.destination],
+        layer: 2,
+        cls: "muted",
+        sortKey: 0, // destinations sort by value (assigned below)
+      });
+    }
   }
 
   // One pair of links per distinct full path.
@@ -103,11 +133,11 @@ function buildGraph(units: FlowUnit[]) {
     LinkExtra & { source: string; target: string; value: number }
   > = [];
   for (const [k, members] of byPath) {
-    const { origin, route, destination } = members[0];
+    const { sourceKey, route, destination } = members[0];
     const cls = ROUTE_META[route].cls;
     const names = members.map((m) => m.name);
     links.push({
-      source: nodeId(0, origin),
+      source: nodeId(0, sourceKey),
       target: nodeId(1, route),
       value: members.length,
       pathKey: k,
@@ -127,20 +157,17 @@ function buildGraph(units: FlowUnit[]) {
   const layout = sankey<NodeExtra, LinkExtra>()
     .nodeId((d) => d.id)
     .nodeWidth(12)
-    .nodePadding(14)
+    .nodePadding(8)
     .nodeAlign((d) => d.layer)
     .nodeSort((a, b) => {
       if (a.layer !== b.layer) return 0;
-      if (a.layer === 1) {
-        return (
-          ROUTE_ORDER.indexOf(a.id.slice(2)) - ROUTE_ORDER.indexOf(b.id.slice(2))
-        );
-      }
-      return (b.value ?? 0) - (a.value ?? 0);
+      if (a.layer === 2) return (b.value ?? 0) - (a.value ?? 0);
+      if (a.sortKey !== b.sortKey) return a.sortKey - b.sortKey;
+      return a.label.localeCompare(b.label);
     })
     .extent([
       [MARGIN.left, MARGIN.top],
-      [WIDTH - MARGIN.right, HEIGHT - MARGIN.bottom],
+      [width - MARGIN.right, HEIGHT - MARGIN.bottom],
     ]);
 
   return layout({
@@ -155,13 +182,29 @@ interface TooltipState {
   title: string;
   count: number;
   names: string[];
+  summary?: string;
 }
 
 export default function FlowExplorer({ units }: { units: FlowUnit[] }) {
   const [selected, setSelected] = useState<string | null>(null);
   const [zoomed, setZoomed] = useState<string | null>(null);
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
+  const [width, setWidth] = useState(1100);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Bleed to the right edge of the viewport: the drawing width is the
+  // distance from the container's left edge to the viewport edge, never
+  // narrower than MIN_WIDTH (which then scrolls inside the container).
+  useEffect(() => {
+    const measure = () => {
+      const rect = containerRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      setWidth(Math.max(MIN_WIDTH, Math.floor(window.innerWidth - rect.left - 28)));
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
 
   const visibleUnits = useMemo(() => {
     if (!zoomed) return units;
@@ -169,7 +212,10 @@ export default function FlowExplorer({ units }: { units: FlowUnit[] }) {
     return units.filter((u) => keep.has(pathKeyOf(u)));
   }, [units, zoomed]);
 
-  const graph = useMemo(() => buildGraph(visibleUnits), [visibleUnits]);
+  const graph = useMemo(
+    () => buildGraph(visibleUnits, width),
+    [visibleUnits, width]
+  );
 
   const highlightPaths = useMemo(() => {
     if (!selected) return null;
@@ -187,7 +233,8 @@ export default function FlowExplorer({ units }: { units: FlowUnit[] }) {
     e: React.MouseEvent,
     title: string,
     count: number,
-    names: string[]
+    names: string[],
+    summary?: string
   ) => {
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
@@ -197,6 +244,7 @@ export default function FlowExplorer({ units }: { units: FlowUnit[] }) {
       title,
       count,
       names,
+      summary,
     });
   };
 
@@ -215,13 +263,8 @@ export default function FlowExplorer({ units }: { units: FlowUnit[] }) {
     setZoomed(null);
   };
 
-  const zoomedLabel = zoomed
-    ? (graph.nodes as SNode[]).find((n) => n.id === zoomed)?.label ??
-      zoomed.slice(2)
-    : null;
-
   return (
-    <div ref={containerRef} className="relative">
+    <div ref={containerRef} className="relative" style={{ width }}>
       <div className="mb-2 flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-gray-600">
         <span>
           <span
@@ -258,17 +301,19 @@ export default function FlowExplorer({ units }: { units: FlowUnit[] }) {
             onClick={reset}
             className="rounded border border-hairline bg-surface-alt px-2 py-0.5 font-semibold text-brand-black hover:bg-white"
           >
-            Reset view{zoomed && zoomedLabel ? ` (zoomed)` : ""}
+            Reset view{zoomed ? " (zoomed)" : ""}
           </button>
         )}
       </div>
 
       <div className="overflow-x-auto">
         <svg
-          viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
-          className="min-w-[760px]"
+          width={width}
+          height={HEIGHT}
+          viewBox={`0 0 ${width} ${HEIGHT}`}
+          style={{ minWidth: MIN_WIDTH }}
           role="img"
-          aria-label="Sankey diagram: demand flowing from origins through draft-process routing to proposed deployment targets"
+          aria-label="Sankey diagram: demand flowing from sources through draft-process routing to proposed deployment targets"
           onClick={(e) => {
             if (e.target === e.currentTarget) setSelected(null);
           }}
@@ -302,8 +347,9 @@ export default function FlowExplorer({ units }: { units: FlowUnit[] }) {
           {/* Nodes */}
           {(graph.nodes as SNode[]).map((n) => {
             const active = nodeActive(n);
+            const isProject = n.cls === "project";
             const color =
-              n.cls === "origin"
+              n.cls === "origin" || isProject
                 ? "var(--color-ink)"
                 : CLASS_COLOR[n.cls as RouteClass];
             const labelLeft = n.layer === 0;
@@ -311,6 +357,11 @@ export default function FlowExplorer({ units }: { units: FlowUnit[] }) {
             const x1 = n.x1 ?? 0;
             const y0 = n.y0 ?? 0;
             const y1 = n.y1 ?? 0;
+            const own = visibleUnits.filter(
+              (u) => pathsThrough([u], n.id).size > 0
+            );
+            const summary =
+              isProject && own.length === 1 ? own[0].summary : undefined;
             return (
               <g
                 key={n.id}
@@ -323,11 +374,8 @@ export default function FlowExplorer({ units }: { units: FlowUnit[] }) {
                     e,
                     n.label,
                     n.value ?? 0,
-                    visibleUnits
-                      .filter((u) =>
-                        pathsThrough([u], n.id).size > 0
-                      )
-                      .map((u) => u.name)
+                    isProject ? [] : own.map((u) => u.name),
+                    summary
                   )
                 }
                 onMouseLeave={() => setTooltip(null)}
@@ -336,7 +384,7 @@ export default function FlowExplorer({ units }: { units: FlowUnit[] }) {
                   x={x0}
                   y={y0}
                   width={x1 - x0}
-                  height={Math.max(1, y1 - y0)}
+                  height={Math.max(1.5, y1 - y0)}
                   fill={color}
                   rx={2}
                   stroke="var(--color-surface)"
@@ -348,14 +396,16 @@ export default function FlowExplorer({ units }: { units: FlowUnit[] }) {
                   dy="0.35em"
                   textAnchor={labelLeft ? "end" : "start"}
                   className="select-none"
-                  fontSize={12}
+                  fontSize={isProject ? 10 : 12}
                   fontWeight={n.id === selected || n.id === zoomed ? 700 : 500}
                   fill="var(--color-ink)"
                 >
-                  {n.label}
-                  <tspan fill="var(--color-ink-subtle)" fontWeight={500}>
-                    {` · ${n.value ?? 0}`}
-                  </tspan>
+                  {truncate(n.label, isProject ? 30 : 34)}
+                  {!isProject && (
+                    <tspan fill="var(--color-ink-subtle)" fontWeight={500}>
+                      {` · ${n.value ?? 0}`}
+                    </tspan>
+                  )}
                 </text>
               </g>
             );
@@ -367,28 +417,38 @@ export default function FlowExplorer({ units }: { units: FlowUnit[] }) {
         <div
           className="pointer-events-none absolute z-10 max-w-xs rounded-lg border border-gray-200 bg-white p-3 shadow-lg"
           style={{
-            left: Math.min(tooltip.x + 14, WIDTH - 280),
+            left: Math.min(tooltip.x + 14, width - 300),
             top: tooltip.y + 14,
           }}
         >
           <p className="text-xs font-bold text-brand-black">
             {tooltip.title}
-            <span className="ml-1 font-semibold text-gray-500">
-              · {tooltip.count} {tooltip.count === 1 ? "item" : "items"}
-            </span>
-          </p>
-          <ul className="mt-1.5 space-y-0.5">
-            {tooltip.names.slice(0, 9).map((name) => (
-              <li key={name} className="truncate text-[11px] text-gray-600">
-                {name}
-              </li>
-            ))}
-            {tooltip.names.length > 9 && (
-              <li className="text-[11px] font-semibold text-gray-500">
-                + {tooltip.names.length - 9} more
-              </li>
+            {tooltip.count > 1 && (
+              <span className="ml-1 font-semibold text-gray-500">
+                · {tooltip.count} items
+              </span>
             )}
-          </ul>
+          </p>
+          {tooltip.summary ? (
+            <p className="mt-1.5 text-[11px] leading-relaxed text-gray-600">
+              {tooltip.summary}
+            </p>
+          ) : (
+            tooltip.names.length > 0 && (
+              <ul className="mt-1.5 space-y-0.5">
+                {tooltip.names.slice(0, 9).map((name) => (
+                  <li key={name} className="truncate text-[11px] text-gray-600">
+                    {name}
+                  </li>
+                ))}
+                {tooltip.names.length > 9 && (
+                  <li className="text-[11px] font-semibold text-gray-500">
+                    + {tooltip.names.length - 9} more
+                  </li>
+                )}
+              </ul>
+            )
+          )}
         </div>
       )}
     </div>

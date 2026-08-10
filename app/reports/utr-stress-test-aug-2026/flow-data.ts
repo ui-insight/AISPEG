@@ -3,7 +3,7 @@
 // ============================================================
 // Per-unit classification behind the report's Sankey flow explorer.
 // Every unit (a registry request or an inventory project) carries a
-// three-step path: origin → routing under the draft → destination.
+// three-step path: source → routing under the draft → deployment target.
 //
 // Registry rows are a hand-classified snapshot of tech_requests taken
 // 2026-08-10 (same cut as the report's aggregate numbers; merged
@@ -11,28 +11,27 @@
 // carries no track assignments yet — and each unit gets exactly one
 // dominant classification even where the report's prose lets seams
 // overlap. Inventory rows are computed from lib/portfolio.ts at build
-// time so they can't drift.
+// time; each project is its own source node (its tagline is the hover
+// summary), built/building work routes to Track B (the draft's track
+// for fully realized in-house apps), and its deployment target is the
+// environment it actually runs on today (inferred from hosting;
+// "Not yet targeted" only for work that genuinely has no target).
 
 import { projects, type Project } from "@/lib/portfolio";
 import { resolveGovernanceProfile } from "@/lib/governance-profile";
 
 // ---- Node vocabulary ---------------------------------------------------
 
-export type FlowOrigin =
-  | "oit-idea"
-  | "clickup"
-  | "site-submission"
-  | "direct"
-  | "inventory";
+export type RegistryOrigin = "oit-idea" | "clickup" | "site-submission" | "direct";
 
 export type FlowRoute =
   // Clean routes under the draft
   | "fast-lane"
   | "track-a"
+  | "track-b"
   | "track-c"
   | "track-d"
   // The report's fringe seams
-  | "seam-estate"
   | "seam-platform"
   | "seam-configure"
   | "seam-research"
@@ -49,26 +48,41 @@ export type FlowDestination =
   | "databricks-dashboard"
   | "standalone-oci"
   | "standalone-oit-k8s"
+  | "rcds-vm"
+  | "oit-managed-tbd"
   | "not-applicable"
-  | "unclassified"
-  | "already-operating";
+  | "unclassified";
 
 export type RouteClass = "clean" | "seam" | "muted";
 
+/** Normalized unit consumed by the explorer. */
 export interface FlowUnit {
   name: string;
-  origin: FlowOrigin;
+  /** Layer-0 node key: a registry origin slug, or `p:<slug>` per project. */
+  sourceKey: string;
+  sourceLabel: string;
+  /** True when the source node is an individual inventory project. */
+  isProject: boolean;
   route: FlowRoute;
   destination: FlowDestination;
+  /** Hover summary (project tagline). */
+  summary?: string;
 }
 
-export const ORIGIN_LABEL: Record<FlowOrigin, string> = {
+export const ORIGIN_LABEL: Record<RegistryOrigin, string> = {
   "oit-idea": "OIT IDEA form",
   clickup: "ClickUp backlog",
   "site-submission": "Site submission",
   direct: "Direct entry",
-  inventory: "Project inventory",
 };
+
+/** Fixed display order for registry origins in the source column. */
+export const ORIGIN_ORDER: RegistryOrigin[] = [
+  "oit-idea",
+  "clickup",
+  "direct",
+  "site-submission",
+];
 
 export const ROUTE_META: Record<
   FlowRoute,
@@ -76,9 +90,9 @@ export const ROUTE_META: Record<
 > = {
   "fast-lane": { label: "Fast lane", cls: "clean" },
   "track-a": { label: "Track A · Standard software", cls: "clean" },
+  "track-b": { label: "Track B · Built in-house", cls: "clean" },
   "track-c": { label: "Track C · Idea / concept", cls: "clean" },
   "track-d": { label: "Track D · Data & report access", cls: "clean" },
-  "seam-estate": { label: "Seam · Existing estate", cls: "seam" },
   "seam-platform": { label: "Seam · Platform itself", cls: "seam" },
   "seam-configure": { label: "Seam · Configure what we own", cls: "seam" },
   "seam-research": { label: "Seam · Research boundary", cls: "seam" },
@@ -88,6 +102,21 @@ export const ROUTE_META: Record<
   unclear: { label: "Unclear — needs triage", cls: "muted" },
 };
 
+export const ROUTE_ORDER: FlowRoute[] = [
+  "fast-lane",
+  "track-a",
+  "track-b",
+  "track-c",
+  "track-d",
+  "seam-platform",
+  "seam-configure",
+  "seam-research",
+  "seam-data-product",
+  "seam-no-requestor",
+  "external-tracked",
+  "unclear",
+];
+
 export const DESTINATION_LABEL: Record<FlowDestination, string> = {
   "external-hosted": "External / vendor-hosted",
   "nexus-module": "Nexus module",
@@ -95,16 +124,24 @@ export const DESTINATION_LABEL: Record<FlowDestination, string> = {
   "databricks-dashboard": "Databricks dashboard",
   "standalone-oci": "Standalone (OCI)",
   "standalone-oit-k8s": "Standalone (OIT k8s)",
+  "rcds-vm": "RCDS-managed VM",
+  "oit-managed-tbd": "OIT-managed (TBD)",
   "not-applicable": "Not applicable",
   unclassified: "Not yet targeted",
-  "already-operating": "Already operating",
 };
 
 // ---- Registry snapshot (hand-classified, 2026-08-10) -------------------
 // 107 rows = tech_requests minus 2 merged duplicates. `destination`
 // mirrors proposed_deployment_target (NULL → "unclassified").
 
-export const REQUEST_FLOWS: FlowUnit[] = [
+interface RequestRow {
+  name: string;
+  origin: RegistryOrigin;
+  route: FlowRoute;
+  destination: FlowDestination;
+}
+
+export const REQUEST_FLOWS: RequestRow[] = [
   // ClickUp backlog (40)
   { name: "AI Chatbot for Training/Manuals", origin: "clickup", route: "track-c", destination: "vandalizer-workflow" },
   { name: "AI-Assisted SAC Pre-Review Tool", origin: "clickup", route: "track-c", destination: "unclassified" },
@@ -155,7 +192,7 @@ export const REQUEST_FLOWS: FlowUnit[] = [
   { name: "Sanctioned AI access & literacy", origin: "direct", route: "seam-no-requestor", destination: "not-applicable" },
   { name: "Self-serve unit budget view", origin: "direct", route: "seam-no-requestor", destination: "databricks-dashboard" },
   { name: "Student resource navigator", origin: "direct", route: "seam-no-requestor", destination: "external-hosted" },
-  { name: "VandalChat — campus AI chat on MindRouter", origin: "direct", route: "seam-estate", destination: "standalone-oit-k8s" },
+  { name: "VandalChat — campus AI chat on MindRouter", origin: "direct", route: "track-b", destination: "standalone-oit-k8s" },
   // OIT IDEA form (56)
   { name: "12Twenty migration", origin: "oit-idea", route: "track-a", destination: "external-hosted" },
   { name: "AI options for EMAIL", origin: "oit-idea", route: "track-a", destination: "external-hosted" },
@@ -219,37 +256,70 @@ export const REQUEST_FLOWS: FlowUnit[] = [
 ];
 
 // ---- Inventory flows (computed from lib/portfolio.ts) ------------------
-// Routing rules mirror the report's seams: platforms are their own seam;
-// externally-owned work stays out of the pipeline; not-yet-built ideas
-// could enter Track C cleanly; everything already built or building is
-// the existing-estate seam. Destinations: built things are already
-// operating; ideas have no target yet.
+// Each project is its own source node. Routing: built/building in-house
+// work is Track B (the draft's own definition — a fully realized app
+// needing review and hosting); not-yet-built ideas are Track C; the
+// platforms and externally-owned programs keep their seam/pool nodes.
 
 const PLATFORM_SLUGS = new Set(["mindrouter", "dgx-stack"]);
+
+// Deployment target per project — the environment it runs on today (or
+// is targeted at), INFERRED from current hosting. Everything serving
+// from the insight.uidaho.edu docker host sits on the RCDS-managed VM.
+// Absent from this map → "unclassified" (genuinely not yet targeted).
+const INVENTORY_DESTINATION: Record<string, FlowDestination> = {
+  stratplan: "rcds-vm",
+  "audit-dashboard": "rcds-vm",
+  "invoice-processing": "rcds-vm",
+  "ongoing-contracts": "rcds-vm",
+  "ucm-daily-register": "rcds-vm",
+  "mindrouter-video-storyboard": "rcds-vm",
+  vandalizer: "rcds-vm",
+  processmapping: "rcds-vm",
+  openera: "rcds-vm",
+  execord: "rcds-vm",
+  "sem-experiential": "rcds-vm",
+  "sidearm-pipeline": "rcds-vm",
+  "rfd-companion": "rcds-vm",
+  "rfd-career": "rcds-vm",
+  universo: "rcds-vm",
+  "retroactive-payment-requests": "nexus-module",
+  mindrouter: "not-applicable",
+  "dgx-stack": "not-applicable",
+  "template-app": "not-applicable",
+  nexus: "not-applicable",
+  "oit-data-modernization": "oit-managed-tbd",
+  "ir-reporting-modernization": "oit-managed-tbd",
+};
 
 function inventoryRoute(project: Project): FlowRoute {
   const track = resolveGovernanceProfile(project).intakeTrack;
   if (track === "external") return "external-tracked";
   if (PLATFORM_SLUGS.has(project.slug)) return "seam-platform";
   if (track === "track-c") return "track-c";
-  return "seam-estate";
+  return "track-b";
 }
 
 export function inventoryFlows(): FlowUnit[] {
-  return projects.map((p) => {
-    const route = inventoryRoute(p);
-    return {
-      name: p.name,
-      origin: "inventory" as const,
-      route,
-      destination:
-        route === "track-c"
-          ? ("unclassified" as const)
-          : ("already-operating" as const),
-    };
-  });
+  return projects.map((p) => ({
+    name: p.name,
+    sourceKey: `p:${p.slug}`,
+    sourceLabel: p.name,
+    isProject: true,
+    route: inventoryRoute(p),
+    destination: INVENTORY_DESTINATION[p.slug] ?? "unclassified",
+    summary: p.tagline,
+  }));
 }
 
 export function allFlows(): FlowUnit[] {
-  return [...REQUEST_FLOWS, ...inventoryFlows()];
+  const requests: FlowUnit[] = REQUEST_FLOWS.map((r) => ({
+    name: r.name,
+    sourceKey: r.origin,
+    sourceLabel: ORIGIN_LABEL[r.origin],
+    isProject: false,
+    route: r.route,
+    destination: r.destination,
+  }));
+  return [...requests, ...inventoryFlows()];
 }
