@@ -11,6 +11,9 @@
 // draft, August 2026 revision (one intake form, four tracks — D added
 // 2026-08-03 per worksheet W29 — DATA/AI/BUY flags, two gates):
 // https://bhunter-uidaho.github.io/UnifiedTechnologyRequest/
+// Stage vocabulary re-verified 2026-08-10 against the revision that
+// added the interactive walkthrough + DONE badges — all five stage
+// lists below still match the flowchart boxes exactly.
 // Point-in-time transcription (oit-ea-portfolio posture): the source
 // is a hand-authored page with no machine-readable catalog, so
 // re-transcribe here when the flow revises. Flag and gate vocabularies
