@@ -85,6 +85,43 @@ export type FlowDestination =
 
 export type RouteClass = "clean" | "seam" | "muted";
 
+/** Where a demand line stands today — the status color mode. */
+export type FlowStatus =
+  | "deployed"
+  | "piloting"
+  | "building"
+  | "queued"
+  | "requested"
+  | "halted"
+  | "retired"
+  | "tracked";
+
+/** Legend order + label + mark color (CSS token) per status. */
+export const STATUS_META: Record<
+  FlowStatus,
+  { label: string; color: string }
+> = {
+  deployed: { label: "Deployed", color: "var(--color-chart-clean)" },
+  piloting: { label: "Piloting", color: "var(--color-brand-lupine)" },
+  building: { label: "Building", color: "var(--color-chart-seam)" },
+  queued: { label: "Approved / queued", color: "var(--color-chart-queued)" },
+  requested: { label: "Requested (open)", color: "var(--color-chart-requested)" },
+  halted: { label: "Paused / not pursued", color: "var(--color-chart-halted)" },
+  retired: { label: "Retired", color: "var(--color-chart-retired)" },
+  tracked: { label: "Tracked (external)", color: "var(--color-chart-tracked)" },
+};
+
+export const STATUS_ORDER: FlowStatus[] = [
+  "deployed",
+  "piloting",
+  "building",
+  "queued",
+  "requested",
+  "halted",
+  "retired",
+  "tracked",
+];
+
 /** Normalized demand line consumed by the explorer (one unit of value). */
 export interface FlowUnit {
   /** Unique id — the layer-0 node key (one node per demand line). */
@@ -93,6 +130,7 @@ export interface FlowUnit {
   source: FlowSource;
   route: FlowRoute;
   destination: FlowDestination;
+  status: FlowStatus;
   /** True when the line is an inventory project (vs a registry request). */
   isProject: boolean;
   /** Hover summary (project tagline). */
@@ -343,6 +381,38 @@ const INVENTORY_DESTINATION: Record<string, FlowDestination> = {
   "ir-reporting-modernization": "oit-managed-tbd",
 };
 
+// Registry status: every remaining row is an open request except these
+// (dispositions from the 2026-08-10 snapshot — approved/converted rows
+// that kept their own line, plus the one denial).
+const REQUEST_STATUS_OVERRIDE: Record<string, FlowStatus> = {
+  "My UI (Student Newsletter)": "queued",
+  "HR Target Pay System": "queued",
+  "AI-Assisted SAC Pre-Review Tool": "queued",
+  "AI for LaTeX formatting (theses)": "queued",
+  "Public-Safety Threat Assessment (denied)": "halted",
+};
+
+function inventoryStatus(project: Project): FlowStatus {
+  switch (project.status) {
+    case "production":
+      return "deployed";
+    case "piloting":
+      return "piloting";
+    case "building":
+    case "prototype":
+      return "building";
+    case "paused":
+      return "halted";
+    case "archived":
+      return "retired";
+    case "tracked":
+      return "tracked";
+    default:
+      // idea / scoping / approved — waiting for build capacity.
+      return "queued";
+  }
+}
+
 function inventoryRoute(project: Project): FlowRoute {
   const track = resolveGovernanceProfile(project).intakeTrack;
   if (track === "external") return "external-tracked";
@@ -358,6 +428,7 @@ export function inventoryFlows(): FlowUnit[] {
     source: INVENTORY_SOURCE[p.slug] ?? "unit-partnership",
     route: inventoryRoute(p),
     destination: INVENTORY_DESTINATION[p.slug] ?? "unclassified",
+    status: inventoryStatus(p),
     isProject: true,
     summary: p.tagline,
   }));
@@ -370,6 +441,7 @@ export function allFlows(): FlowUnit[] {
     source: r.origin,
     route: r.route,
     destination: r.destination,
+    status: REQUEST_STATUS_OVERRIDE[r.name] ?? "requested",
     isProject: false,
   }));
   return [...requests, ...inventoryFlows()];
