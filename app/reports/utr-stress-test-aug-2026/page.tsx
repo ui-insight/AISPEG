@@ -304,9 +304,10 @@ export default function UtrStressTestPage() {
           project. Built and building in-house work routes to Track B, the
           draft&apos;s track for fully realized applications. Routing and
           inventory hosting assignments are <strong>inferred</strong>{" "}
-          (nothing has been triaged under the draft yet). Amber is the
-          report&apos;s fringe; hover any line for its name, zoom in to
-          label them.
+          (nothing has been triaged under the draft yet). Color shows UTR
+          fit (amber = the report&apos;s fringe) or, toggled, where each
+          line stands today — deployed, piloting, building, queued,
+          requested. Hover any line for its name; zoom in to label them.
         </p>
         <div className="mt-4 border-t border-hairline pt-4">
           <FlowExplorer units={allFlows()} />

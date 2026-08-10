@@ -28,6 +28,8 @@ import {
   ROUTE_META,
   ROUTE_ORDER,
   DESTINATION_LABEL,
+  STATUS_META,
+  STATUS_ORDER,
   type FlowUnit,
   type RouteClass,
 } from "./flow-data";
@@ -37,6 +39,14 @@ const CLASS_COLOR: Record<RouteClass, string> = {
   seam: "var(--color-chart-seam)",
   muted: "var(--color-brand-silver)",
 };
+
+type ColorMode = "fit" | "status";
+
+function unitColor(u: FlowUnit, mode: ColorMode): string {
+  return mode === "fit"
+    ? CLASS_COLOR[ROUTE_META[u.route].cls]
+    : STATUS_META[u.status].color;
+}
 
 interface NodeExtra {
   id: string;
@@ -184,6 +194,7 @@ export default function FlowExplorer({ units }: { units: FlowUnit[] }) {
   const [zoomed, setZoomed] = useState<string | null>(null);
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
   const [width, setWidth] = useState(1100);
+  const [colorMode, setColorMode] = useState<ColorMode>("fit");
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Bleed to the right edge of the viewport: the drawing width is the
@@ -287,31 +298,80 @@ export default function FlowExplorer({ units }: { units: FlowUnit[] }) {
 
   return (
     <div ref={containerRef} className="relative" style={{ width }}>
-      <div className="mb-2 flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-gray-600">
-        <span>
-          <span
-            aria-hidden="true"
-            className="mr-1.5 inline-block h-2.5 w-2.5 rounded-[2px] align-middle"
-            style={{ background: CLASS_COLOR.clean }}
-          />
-          Routes cleanly under the draft
-        </span>
-        <span>
-          <span
-            aria-hidden="true"
-            className="mr-1.5 inline-block h-2.5 w-2.5 rounded-[2px] align-middle"
-            style={{ background: CLASS_COLOR.seam }}
-          />
-          Lands on a fringe seam
-        </span>
-        <span>
-          <span
-            aria-hidden="true"
-            className="mr-1.5 inline-block h-2.5 w-2.5 rounded-[2px] align-middle"
-            style={{ background: CLASS_COLOR.muted }}
-          />
-          Outside the pipeline / unclear
-        </span>
+      <div className="mb-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-gray-600">
+        <div
+          role="group"
+          aria-label="Color mode"
+          className="inline-flex overflow-hidden rounded-md border border-hairline"
+        >
+          <button
+            type="button"
+            onClick={() => setColorMode("fit")}
+            aria-pressed={colorMode === "fit"}
+            className={`px-2.5 py-1 text-xs font-semibold ${
+              colorMode === "fit"
+                ? "bg-brand-black text-white"
+                : "bg-surface-alt text-brand-black hover:bg-white"
+            }`}
+          >
+            Color by UTR fit
+          </button>
+          <button
+            type="button"
+            onClick={() => setColorMode("status")}
+            aria-pressed={colorMode === "status"}
+            className={`border-l border-hairline px-2.5 py-1 text-xs font-semibold ${
+              colorMode === "status"
+                ? "bg-brand-black text-white"
+                : "bg-surface-alt text-brand-black hover:bg-white"
+            }`}
+          >
+            Color by status
+          </button>
+        </div>
+        {colorMode === "fit" ? (
+          <>
+            <span>
+              <span
+                aria-hidden="true"
+                className="mr-1.5 inline-block h-2.5 w-2.5 rounded-[2px] align-middle"
+                style={{ background: CLASS_COLOR.clean }}
+              />
+              Routes cleanly under the draft
+            </span>
+            <span>
+              <span
+                aria-hidden="true"
+                className="mr-1.5 inline-block h-2.5 w-2.5 rounded-[2px] align-middle"
+                style={{ background: CLASS_COLOR.seam }}
+              />
+              Lands on a fringe seam
+            </span>
+            <span>
+              <span
+                aria-hidden="true"
+                className="mr-1.5 inline-block h-2.5 w-2.5 rounded-[2px] align-middle"
+                style={{ background: CLASS_COLOR.muted }}
+              />
+              Outside the pipeline / unclear
+            </span>
+          </>
+        ) : (
+          STATUS_ORDER.map((s) => {
+            const count = visibleUnits.filter((u) => u.status === s).length;
+            if (count === 0) return null;
+            return (
+              <span key={s}>
+                <span
+                  aria-hidden="true"
+                  className="mr-1.5 inline-block h-2.5 w-2.5 rounded-[2px] align-middle"
+                  style={{ background: STATUS_META[s].color }}
+                />
+                {STATUS_META[s].label} · {count}
+              </span>
+            );
+          })
+        )}
       </div>
 
       <div className="mb-3 flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-gray-500">
@@ -349,7 +409,7 @@ export default function FlowExplorer({ units }: { units: FlowUnit[] }) {
                 <path
                   key={`${l.unitId}-${i}`}
                   d={sankeyLinkHorizontal()(l) ?? undefined}
-                  stroke={CLASS_COLOR[l.cls]}
+                  stroke={unit ? unitColor(unit, colorMode) : CLASS_COLOR[l.cls]}
                   strokeWidth={Math.max(1, l.width ?? 1)}
                   strokeOpacity={active ? (highlightUnits ? 0.75 : 0.4) : 0.05}
                   style={{ transition: "stroke-opacity 150ms" }}
@@ -369,9 +429,9 @@ export default function FlowExplorer({ units }: { units: FlowUnit[] }) {
             const unit = isUnit ? unitById.get(n.id.slice(2)) : undefined;
             const color = isUnit
               ? unit
-                ? CLASS_COLOR[ROUTE_META[unit.route].cls]
+                ? unitColor(unit, colorMode)
                 : "var(--color-ink)"
-              : n.cls === "neutral"
+              : n.cls === "neutral" || colorMode === "status"
                 ? "var(--color-ink)"
                 : CLASS_COLOR[n.cls as RouteClass];
             const labelLeft = n.layer === 0;
