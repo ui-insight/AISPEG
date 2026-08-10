@@ -49,6 +49,36 @@ export interface Artifact {
 
 export const artifacts: Artifact[] = [
   {
+    slug: "utr-stress-test-aug-2026",
+    kind: "brief",
+    title:
+      "Stress-testing the Unified Technology Request draft against real demand",
+    audience: "UTR working group (B. Hunter · D. Ewart · B. Robison)",
+    dateLabel: "August 10, 2026",
+    dateIso: "2026-08-10",
+    author: "IIDS",
+    abstract:
+      "Every inventoried project and every request in the unified registry — 29 projects, 107 requests from four origins — run through the August 2026 draft process. Most demand routes cleanly onto the four tracks; what doesn't concentrates in six nameable seams: the existing estate, platform certification, configure-what-we-own, the research boundary, data products on Track D's seam, and requests with no requestor. Each seam ends in a single question for the spec sheet.",
+    href: "/reports/utr-stress-test-aug-2026",
+    featured: true,
+    tags: ["UTR process", "Governance"],
+  },
+  {
+    slug: "utr-flowchart-aug-2026",
+    kind: "external-signal",
+    title:
+      "Unified Technology Request Process — flowchart & interactive walkthrough",
+    audience: "UTR working group and campus stakeholders",
+    dateLabel: "August 10, 2026",
+    dateIso: "2026-08-10",
+    author: "Ben Hunter — CDAO office",
+    abstract:
+      "The August 2026 revision of the draft intake process, incorporating answers recorded across the Governance Decision Worksheets: one intake form, four tracks (Track D for data & report access added August 3), DATA/AI/BUY governance flags, and two gates — now with a choose-your-own-adventure interactive walkthrough alongside the static flowchart, and DONE badges marking stages with settled answers.",
+    href: "https://bhunter-uidaho.github.io/UnifiedTechnologyRequest/",
+    external: true,
+    tags: ["UTR process", "External signal"],
+  },
+  {
     slug: "dev-activity-report-feb-2026",
     kind: "activity-report",
     title: "Development Activity Report — February 1–26, 2026",
