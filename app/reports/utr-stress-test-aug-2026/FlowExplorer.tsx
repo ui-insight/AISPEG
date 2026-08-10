@@ -5,11 +5,10 @@
 // (every demand line through it, upstream and downstream), right-click
 // to zoom the diagram to that genealogy, hover for per-band detail.
 //
-// Four layers: individual demand lines (one thin band each) →
-// ingestion source → routing under the draft → deployment target.
-// Every link carries exactly one demand line, so genealogy is exact.
-// Demand-line labels appear only when few enough lines are visible to
-// stay legible (i.e. after zooming); identity is otherwise on hover.
+// Three layers: ingestion source → routing under the draft →
+// deployment target. Every link carries exactly one demand line, so
+// genealogy highlighting and per-line status coloring stay exact;
+// identity is on hover (a band names its request or project).
 //
 // The diagram bleeds out of the article column to the right edge of
 // the viewport (measured at runtime); on narrow screens it scrolls
@@ -51,8 +50,8 @@ function unitColor(u: FlowUnit, mode: ColorMode): string {
 interface NodeExtra {
   id: string;
   label: string;
-  layer: 0 | 1 | 2 | 3;
-  cls: RouteClass | "neutral" | "unit";
+  layer: 0 | 1 | 2;
+  cls: RouteClass | "neutral";
   /** Within-column ordering key. */
   sortKey: number;
 }
@@ -65,10 +64,9 @@ interface LinkExtra {
 type SNode = SankeyNode<NodeExtra, LinkExtra>;
 type SLink = SankeyLink<NodeExtra, LinkExtra>;
 
-const HEIGHT = 940;
+const HEIGHT = 640;
 const MIN_WIDTH = 960;
-/** Demand-line labels render only when this few lines are visible. */
-const UNIT_LABEL_LIMIT = 45;
+const MARGIN = { left: 170, right: 190 };
 
 function nodeId(layer: number, key: string): string {
   return `${layer}:${key}`;
@@ -82,12 +80,10 @@ function unitsThrough(units: FlowUnit[], id: string): Set<string> {
     units
       .filter((u) =>
         layerStr === "0"
-          ? u.id === key
+          ? u.source === key
           : layerStr === "1"
-            ? u.source === key
-            : layerStr === "2"
-              ? u.route === key
-              : u.destination === key
+            ? u.route === key
+            : u.destination === key
       )
       .map((u) => u.id)
   );
@@ -97,81 +93,68 @@ function truncate(s: string, n: number): string {
   return s.length > n ? `${s.slice(0, n - 1)}…` : s;
 }
 
-function buildGraph(units: FlowUnit[], width: number, marginLeft: number) {
+function buildGraph(units: FlowUnit[], width: number) {
   const nodeMap = new Map<string, NodeExtra>();
   for (const u of units) {
     const routeIdx = ROUTE_ORDER.indexOf(u.route);
     const sourceIdx = SOURCE_ORDER.indexOf(u.source);
-    const uid = nodeId(0, u.id);
-    if (!nodeMap.has(uid)) {
-      nodeMap.set(uid, {
-        id: uid,
-        label: u.name,
-        layer: 0,
-        cls: "unit",
-        // Group lines by their source, then by the route they feed —
-        // keeps the thin bands from crossing.
-        sortKey: sourceIdx * 100 + routeIdx,
-      });
-    }
-    const sid = nodeId(1, u.source);
+    const sid = nodeId(0, u.source);
     if (!nodeMap.has(sid)) {
       nodeMap.set(sid, {
         id: sid,
         label: SOURCE_LABEL[u.source],
-        layer: 1,
+        layer: 0,
         cls: "neutral",
         sortKey: sourceIdx,
       });
     }
-    const rid = nodeId(2, u.route);
+    const rid = nodeId(1, u.route);
     if (!nodeMap.has(rid)) {
       nodeMap.set(rid, {
         id: rid,
         label: ROUTE_META[u.route].label,
-        layer: 2,
+        layer: 1,
         cls: ROUTE_META[u.route].cls,
         sortKey: routeIdx,
       });
     }
-    const did = nodeId(3, u.destination);
+    const did = nodeId(2, u.destination);
     if (!nodeMap.has(did)) {
       nodeMap.set(did, {
         id: did,
         label: DESTINATION_LABEL[u.destination],
-        layer: 3,
+        layer: 2,
         cls: "neutral",
         sortKey: 0, // destinations sort by value
       });
     }
   }
 
-  // Three links per demand line — genealogy stays exact per line.
+  // Two links per demand line — genealogy stays exact per line.
   const links: Array<
     LinkExtra & { source: string; target: string; value: number }
   > = [];
   for (const u of units) {
     const cls = ROUTE_META[u.route].cls;
     const base = { unitId: u.id, cls, name: u.name, value: 1 };
-    links.push({ ...base, source: nodeId(0, u.id), target: nodeId(1, u.source) });
-    links.push({ ...base, source: nodeId(1, u.source), target: nodeId(2, u.route) });
-    links.push({ ...base, source: nodeId(2, u.route), target: nodeId(3, u.destination) });
+    links.push({ ...base, source: nodeId(0, u.source), target: nodeId(1, u.route) });
+    links.push({ ...base, source: nodeId(1, u.route), target: nodeId(2, u.destination) });
   }
 
   const layout = sankey<NodeExtra, LinkExtra>()
     .nodeId((d) => d.id)
-    .nodeWidth(10)
-    .nodePadding(units.length > UNIT_LABEL_LIMIT ? 3 : 8)
+    .nodeWidth(12)
+    .nodePadding(10)
     .nodeAlign((d) => d.layer)
     .nodeSort((a, b) => {
       if (a.layer !== b.layer) return 0;
-      if (a.layer === 3) return (b.value ?? 0) - (a.value ?? 0);
+      if (a.layer === 2) return (b.value ?? 0) - (a.value ?? 0);
       if (a.sortKey !== b.sortKey) return a.sortKey - b.sortKey;
       return a.label.localeCompare(b.label);
     })
     .extent([
-      [marginLeft, 8],
-      [width - 190, HEIGHT - 8],
+      [MARGIN.left, 8],
+      [width - MARGIN.right, HEIGHT - 8],
     ]);
 
   return layout({
@@ -223,21 +206,18 @@ export default function FlowExplorer({ units }: { units: FlowUnit[] }) {
     return units.filter((u) => keep.has(u.id));
   }, [units, zoomed]);
 
-  const showUnitLabels = visibleUnits.length <= UNIT_LABEL_LIMIT;
-  const marginLeft = showUnitLabels ? 250 : 16;
-
   const graph = useMemo(
-    () => buildGraph(visibleUnits, width, marginLeft),
-    [visibleUnits, width, marginLeft]
+    () => buildGraph(visibleUnits, width),
+    [visibleUnits, width]
   );
 
-  // Label de-collision: within each labeled column, nudge label centers
-  // apart so 14px-tall text never overlaps even where adjacent nodes are
-  // only a few units tall.
+  // Label de-collision: within each column, nudge label centers apart
+  // so 14px-tall text never overlaps even where adjacent nodes are only
+  // a few units tall.
   const labelY = useMemo(() => {
     const MIN_GAP = 13;
     const out = new Map<string, number>();
-    for (const layer of [1, 2, 3]) {
+    for (const layer of [0, 1, 2]) {
       const col = (graph.nodes as SNode[])
         .filter((n) => n.layer === layer)
         .sort((a, b) => (a.y0 ?? 0) - (b.y0 ?? 0));
@@ -375,8 +355,10 @@ export default function FlowExplorer({ units }: { units: FlowUnit[] }) {
       </div>
 
       <div className="mb-3 flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-gray-500">
-        <span>Hover a line for its name · left-click to highlight genealogy · right-click to zoom</span>
-        <span>Zooming in far enough labels the individual lines</span>
+        <span>
+          Hover a band for its request or project · left-click a node to
+          highlight its genealogy · right-click to zoom
+        </span>
         {(selected || zoomed) && (
           <button
             type="button"
@@ -395,7 +377,7 @@ export default function FlowExplorer({ units }: { units: FlowUnit[] }) {
           viewBox={`0 0 ${width} ${HEIGHT}`}
           style={{ minWidth: MIN_WIDTH }}
           role="img"
-          aria-label="Sankey diagram: individual demand lines flowing through ingestion sources and draft-process routing to deployment targets"
+          aria-label="Sankey diagram: demand flowing from ingestion sources through draft-process routing to deployment targets"
           onClick={(e) => {
             if (e.target === e.currentTarget) setSelected(null);
           }}
@@ -425,17 +407,11 @@ export default function FlowExplorer({ units }: { units: FlowUnit[] }) {
           {/* Nodes */}
           {(graph.nodes as SNode[]).map((n) => {
             const active = nodeActive(n);
-            const isUnit = n.cls === "unit";
-            const unit = isUnit ? unitById.get(n.id.slice(2)) : undefined;
-            const color = isUnit
-              ? unit
-                ? unitColor(unit, colorMode)
-                : "var(--color-ink)"
-              : n.cls === "neutral" || colorMode === "status"
+            const color =
+              n.cls === "neutral" || colorMode === "status"
                 ? "var(--color-ink)"
                 : CLASS_COLOR[n.cls as RouteClass];
             const labelLeft = n.layer === 0;
-            const showLabel = !isUnit || showUnitLabels;
             const x0 = n.x0 ?? 0;
             const x1 = n.x1 ?? 0;
             const y0 = n.y0 ?? 0;
@@ -458,12 +434,9 @@ export default function FlowExplorer({ units }: { units: FlowUnit[] }) {
                     e,
                     n.label,
                     n.value ?? 0,
-                    isUnit
-                      ? []
-                      : visibleUnits
-                          .filter((u) => unitsThrough([u], n.id).size > 0)
-                          .map((u) => u.name),
-                    unit?.summary
+                    visibleUnits
+                      .filter((u) => unitsThrough([u], n.id).size > 0)
+                      .map((u) => u.name)
                   )
                 }
                 onMouseLeave={() => setTooltip(null)}
@@ -474,31 +447,25 @@ export default function FlowExplorer({ units }: { units: FlowUnit[] }) {
                   width={x1 - x0}
                   height={Math.max(1.5, y1 - y0)}
                   fill={color}
-                  rx={isUnit ? 1 : 2}
+                  rx={2}
                   stroke="var(--color-surface)"
-                  strokeWidth={isUnit ? 0.5 : 1}
+                  strokeWidth={1}
                 />
-                {showLabel && (
-                  <text
-                    x={labelLeft ? x0 - 8 : x1 + 8}
-                    y={isUnit ? (y0 + y1) / 2 : labelY.get(n.id) ?? (y0 + y1) / 2}
-                    dy="0.35em"
-                    textAnchor={labelLeft ? "end" : "start"}
-                    className="select-none"
-                    fontSize={isUnit ? 10 : 12}
-                    fontWeight={
-                      n.id === selected || n.id === zoomed ? 700 : 500
-                    }
-                    fill="var(--color-ink)"
-                  >
-                    {truncate(n.label, isUnit ? 38 : 34)}
-                    {!isUnit && (
-                      <tspan fill="var(--color-ink-subtle)" fontWeight={500}>
-                        {` · ${n.value ?? 0}`}
-                      </tspan>
-                    )}
-                  </text>
-                )}
+                <text
+                  x={labelLeft ? x0 - 8 : x1 + 8}
+                  y={labelY.get(n.id) ?? (y0 + y1) / 2}
+                  dy="0.35em"
+                  textAnchor={labelLeft ? "end" : "start"}
+                  className="select-none"
+                  fontSize={12}
+                  fontWeight={n.id === selected || n.id === zoomed ? 700 : 500}
+                  fill="var(--color-ink)"
+                >
+                  {truncate(n.label, 34)}
+                  <tspan fill="var(--color-ink-subtle)" fontWeight={500}>
+                    {` · ${n.value ?? 0}`}
+                  </tspan>
+                </text>
               </g>
             );
           })}

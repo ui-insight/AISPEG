@@ -296,18 +296,18 @@ export default function UtrStressTestPage() {
           Explore the flow
         </h2>
         <p className="mt-2 max-w-3xl text-sm text-gray-700">
-          Every demand line the university has in hand, one thin band each —
-          registry requests and inventory projects alike — flowing through
-          its ingestion source, to where it would route under the draft
-          process, to its deployment target. The nine ClickUp requests that
-          already converted into inventory projects appear once, as the
-          project. Built and building in-house work routes to Track B, the
-          draft&apos;s track for fully realized applications. Routing and
-          inventory hosting assignments are <strong>inferred</strong>{" "}
-          (nothing has been triaged under the draft yet). Color shows UTR
-          fit (amber = the report&apos;s fringe) or, toggled, where each
-          line stands today — deployed, piloting, building, queued,
-          requested. Hover any line for its name; zoom in to label them.
+          Every demand line the university has in hand — registry requests
+          and inventory projects alike — flowing from its ingestion source,
+          to where it would route under the draft process, to its
+          deployment target. Each band is one request or project; hover it
+          for the name. The nine ClickUp requests that already converted
+          into inventory projects appear once, as the project. Built and
+          building in-house work routes to Track B, the draft&apos;s track
+          for fully realized applications. Routing and inventory hosting
+          assignments are <strong>inferred</strong> (nothing has been
+          triaged under the draft yet). Color shows UTR fit (amber = the
+          report&apos;s fringe) or, toggled, where each line stands today —
+          deployed, piloting, building, queued, requested.
         </p>
         <div className="mt-4 border-t border-hairline pt-4">
           <FlowExplorer units={allFlows()} />
