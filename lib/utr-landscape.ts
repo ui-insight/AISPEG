@@ -31,6 +31,10 @@ import {
   type DeploymentTarget,
 } from "./deployment-targets";
 import { REQUEST_ORIGIN_LABEL } from "./utr";
+import {
+  PROJECT_INGESTION_SOURCE,
+  type IngestionSource,
+} from "./ingestion-sources";
 import type { TechRequest } from "./requests";
 
 // ---- Sources ----------------------------------------------------------
@@ -83,6 +87,13 @@ export interface LandscapeActivity {
   ownerName: string | null;
   /** Human-readable position: operational status or request origin. */
   position: string;
+  /** The channel this activity arrived through; null when a project
+   *  slug has no recorded channel yet (rendered as unattributed). */
+  source: IngestionSource | null;
+  /** Standalone status label: operational status for projects,
+   *  "Open request" for registry rows (the landscape only carries
+   *  open dispositions). */
+  statusLabel: string;
   currentTarget: DeploymentEnvironment | null;
   proposedTarget: DeploymentEnvironment | null;
   provenance: TargetProvenance | null;
@@ -99,6 +110,8 @@ function projectActivity(p: LandscapeProjectSource): LandscapeActivity {
     unit: p.homeUnits[0] ?? null,
     ownerName: p.operationalOwners[0]?.name ?? null,
     position: OPERATIONAL_LABEL[p.status],
+    source: PROJECT_INGESTION_SOURCE[p.slug] ?? null,
+    statusLabel: OPERATIONAL_LABEL[p.status],
     currentTarget: p.currentDeploymentEnvironment ?? null,
     proposedTarget: p.proposedDeploymentEnvironment,
     provenance: "authored",
@@ -115,6 +128,8 @@ function requestActivity(r: LandscapeRequestSource): LandscapeActivity {
     unit: r.requestorUnit,
     ownerName: r.requestorName,
     position: `Open request · ${REQUEST_ORIGIN_LABEL[r.origin]}`,
+    source: r.origin,
+    statusLabel: "Open request",
     currentTarget: null,
     proposedTarget: r.proposedDeploymentTarget,
     provenance: r.targetConfidence,
@@ -175,6 +190,9 @@ export interface LandscapeFinding {
 }
 
 export interface UtrLandscape {
+  /** Every activity on the map, flat — projects first, then open
+   *  requests — for table/list projections of the whole landscape. */
+  activities: LandscapeActivity[];
   bands: TargetBand[];
   pools: LandscapePools;
   findings: LandscapeFinding[];
@@ -247,6 +265,7 @@ export function buildUtrLandscape(
   const findings = computeFindings(bands, pools, openRequests.length, classifiedOpenRequests.length);
 
   return {
+    activities: [...projects, ...openRequests],
     bands,
     pools,
     findings,

@@ -13,6 +13,7 @@ import {
   TARGET_MATURITY_LABEL,
 } from "@/lib/deployment-targets";
 import { DEPLOYMENT_ENVIRONMENT_LABELS } from "@/lib/project-governance";
+import ActivityTable from "./ActivityTable";
 
 export const dynamic = "force-dynamic";
 
@@ -238,6 +239,24 @@ export default async function UtrLandscapePage() {
           </Link>
           .
         </p>
+      </section>
+
+      {/* ── The activity table ──────────────────────────── */}
+      <section id="activity-table" className="scroll-mt-8">
+        <h2 className="text-2xl font-black tracking-tight text-brand-black">
+          Every activity, one table
+        </h2>
+        <p className="mt-2 max-w-3xl text-sm leading-relaxed text-ink-muted">
+          All {totals.projects} projects and {totals.openRequests} open
+          requests, filterable by ingestion source, status, unit, and
+          hosting destination. For open requests the owner shown is the
+          requestor. A destination marked <em>proposed</em> is where a
+          project is headed, not where it runs; <em>Inferred</em> request
+          classifications await triage confirmation.
+        </p>
+        <div className="mt-5">
+          <ActivityTable rows={landscape.activities} />
+        </div>
       </section>
 
       {/* ── The mismatch ledger ─────────────────────────── */}
