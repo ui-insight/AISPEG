@@ -146,6 +146,16 @@ const wizardShapeBySlug: Record<string, WizardShape> = {
     university_systems: ["Banner Student", "CAS / SSO"],
     output_types: ["Read-only reporting", "Generates documents"],
   },
+  accessforge: {
+    sensitivity: [],
+    complexity: "Complex pipelines",
+    userbase: "University-wide",
+    auth_level: "University SSO",
+    integrations: ["AI / LLM integration", "File storage"],
+    data_sources: ["Flat files / spreadsheets"],
+    university_systems: [],
+    output_types: ["Generates documents"],
+  },
   mindrouter: {
     sensitivity: ["No sensitive data"],
     complexity: "Real-time / streaming",

@@ -890,6 +890,57 @@ export const projects: Project[] = [
   },
 
   // ============================================================
+  // IIDS — Applications
+  // ============================================================
+  {
+    slug: "accessforge",
+    name: "AccessForge",
+    tagline:
+      "Agentic PDF accessibility remediation with human review where automation stops.",
+    description:
+      "Working prototype that scans PDFs for accessibility issues, uses MindRouter-backed agent workflows and PDF tooling to iteratively remediate the document, and flags issues that still require human judgment. The review interface compares original and remediated accessibility scores, organizes findings by severity and rule, and exports the remediated PDF. The need (Seth Vieux, Office of the President, 2026-09-03, with input from Chad Neilson and Sukha Worob): units already run disparate checkers (Siteimprove, Adobe Acrobat Pro) that score PDFs but do not fix them, so remediation is manual and scales with document complexity. The university's marketing website carries well over 2,000 PDFs that fail WCAG 2.1 AA, UCM turned away an estimated 4–8 PDFs per week over summer 2026 for lack of trained remediators, and the intranet likely holds several thousand more (UCM and OIT are sizing that risk). Today's cost pool: CETL employs 10 part-time students (20 hours/week each, funded by a strategic-plan initiative grant) plus its own experts to remediate courses (30 completed to date); UCM Creative Services remediates on request at $85/hour, 1–5 hours per document; UCM's web team spends significant time reviewing submitted PDFs. State and local government entities must meet WCAG 2.1 AA by April 26, 2027; two Idaho state agencies have already been sued over accessibility. Pilot users will come from CETL's ad-hoc accessibility advisory committee (stood up 2025–26) and the UCM Web Team; Sukha Worob (one of two campus web-accessibility SMEs, with Beth Ropski in CETL) has offered to help develop and test. CDAR is separately exploring a commercial AI remediation product, so remediation cost avoided is the primary ROI measure, with staff hours saved, processing time, and tool usage as secondary metrics. The Provost has expressed interest in replicating CETL's student-remediator model for non-academic units. Seth Vieux judges there is no rush to put the tool in users' hands ahead of the deadline; training on existing tools is available meanwhile. A user-side product owner is still to be named.",
+    homeUnits: ["IIDS"],
+    operationalOwners: [
+      { name: "Luke Sheneman", title: "Lead developer" },
+      {
+        name: "Seth Vieux",
+        title: "User-side coordinator, Office of the President (product owner to be named)",
+      },
+      {
+        name: "Sukha Worob",
+        title: "Web-accessibility SME — development and test partner",
+      },
+    ],
+    buildParticipants: ["IIDS"],
+    status: "prototype",
+    visibility: "Public",
+    proposedDeploymentEnvironment: "to-be-determined",
+    enterpriseSystemReplacement: { status: "to-be-determined" },
+    ai4raRelationship: "None",
+    iidsSponsor: "Luke Sheneman",
+    featureComplete: true,
+    operationalFunction:
+      "Scans uploaded PDFs against WCAG 2.1 AA and ADA Title II accessibility rules, applies iterative automated remediation, rescans the result, and presents unresolved findings for human review before download. Intended for every faculty and staff member who publishes digital content; requested that it eventually assist authors while creating accessible documents, not only after the fact.",
+    operationalExcellenceOutcome:
+      "Reduces the manual effort required to make institutional PDFs accessible while preserving a clear human-review step for issues automation cannot resolve reliably. Primary measure is remediation cost avoided against the $85/hour, 1–5 hours-per-document Creative Services benchmark, across a marketing-site backlog of 2,000+ non-compliant PDFs and an inflow of 4–8 per week (UCM estimate, summer 2026); secondary measures are staff hours saved, processing time, documents remediated, and tool usage. Institutional stake: the April 26, 2027 WCAG 2.1 AA deadline for state and local government entities.",
+    features: [
+      "Original and remediated accessibility scoring",
+      "Iterative agentic PDF remediation",
+      "WCAG 2.1 AA and ADA Title II rule checks",
+      "Severity-ranked issue review",
+      "Human-review flags for unresolved findings",
+      "Original/remediated document comparison",
+      "Remediated PDF export",
+    ],
+    tech: ["MindRouter", "Agentic workflows", "PDF remediation tooling"],
+    relatedSlugs: ["mindrouter"],
+    workCategories: ["documents", "process"],
+    strategicPlanAlignment: ["E.2"],
+    usageNote:
+      "First working remediation test completed 2026-08-28 after an overnight prototype build; pilot users identified from CETL's accessibility advisory committee and the UCM Web Team (2026-09-03).",
+  },
+
+  // ============================================================
   // IIDS — Infrastructure
   // ============================================================
   {
@@ -918,7 +969,13 @@ export const projects: Project[] = [
     operationalExcellenceOutcome:
       "Enables every downstream AI app at UI. Keeps data on-prem for compliance. Avoids per-seat vendor lock-in. Institutional audit trail. Fair access across research and operations workloads.",
     tech: ["Python 3.11+", "Docker", "Ollama", "vLLM", "Azure AD SSO"],
-    relatedSlugs: ["dgx-stack", "audit-dashboard", "vandalizer", "ucm-daily-register"],
+    relatedSlugs: [
+      "dgx-stack",
+      "audit-dashboard",
+      "vandalizer",
+      "ucm-daily-register",
+      "accessforge",
+    ],
     workCategories: ["ai-infrastructure"],
     strategicPlanAlignment: ["A.3", "E.2"],
   },
