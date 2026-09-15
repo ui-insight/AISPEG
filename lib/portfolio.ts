@@ -711,7 +711,7 @@ export const projects: Project[] = [
       { name: "Dean Kahler", title: "Vice Provost of SEM" },
     ],
     buildParticipants: ["IIDS", "SEM"],
-    status: "building",
+    status: "prototype",
     visibility: "Public",
     proposedDeploymentEnvironment: "to-be-determined",
     enterpriseSystemReplacement: { status: "to-be-determined" },
