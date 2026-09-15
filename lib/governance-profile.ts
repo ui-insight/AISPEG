@@ -98,6 +98,13 @@ export const governanceOverrides: Record<string, GovernanceOverride> = {
   "ucm-daily-register": {
     dataDomains: ["Editorial submissions", "Newsletter content", "AP/UI style rules"],
   },
+  "dissertation-formatter": {
+    dataDomains: [
+      "Student-authored theses and dissertations (.docx)",
+      "Title-page metadata (author, degree, major, committee, graduation date)",
+      "Conversion-job diagnostics",
+    ],
+  },
   vandalizer: {
     dataDomains: [
       "Research-admin documents (RFAs, awards, contracts)",
