@@ -149,6 +149,13 @@ export const governanceOverrides: Record<string, GovernanceOverride> = {
   "dgx-stack": {
     dataDomains: ["Model inference payloads", "OCR document images"],
   },
+  accessforge: {
+    dataDomains: [
+      "Institutional PDFs (public marketing site, intranet, course materials)",
+      "Accessibility findings (WCAG 2.1 AA / Title II)",
+      "Remediated PDF output",
+    ],
+  },
   "template-app": {
     dataDomains: ["None — development scaffold; carries no institutional data"],
   },

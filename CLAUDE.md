@@ -143,7 +143,7 @@ sprint sequencing.
   ADR 0001 also gained the `paused` and `scoping` operational states and
   the OIT-managed-production accessibility rule.
 
-The inventory currently holds **30 projects across 14 home units**. Don't
+The inventory currently holds **31 projects across 14 home units**. Don't
 copy a count out of this file into UI copy — compute it from
 `lib/portfolio.ts` at build time.
 
