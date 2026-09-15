@@ -705,12 +705,12 @@ export const projects: Project[] = [
     tagline:
       "Co-built with SEM — experiential learning and student engagement records.",
     description:
-      "Platform for managing experiential learning and student engagement records. MVP covers organizations, events, attendance, dashboard metrics, and admin user lifecycle. Scaffolded from TEMPLATE-app following OpenERA patterns. This is an early example of IIDS diffusing agentic-coding capability out into partner units: SEM is co-building alongside IIDS, not just consuming.",
+      "Platform for managing experiential learning and student engagement records. MVP covers organizations, events, attendance, dashboard metrics, and admin user lifecycle. Scaffolded from TEMPLATE-app following OpenERA patterns. This is an early example of IIDS diffusing agentic-coding capability out into partner units: SEM is co-building alongside IIDS, not just consuming. As of September 2026, OIT owns deployment of the application; the deployment target and go-live status are not visible to IIDS and should be confirmed with OIT.",
     homeUnits: ["Strategic Enrollment Management"],
     operationalOwners: [
       { name: "Dean Kahler", title: "Vice Provost of SEM" },
     ],
-    buildParticipants: ["IIDS", "SEM"],
+    buildParticipants: ["IIDS", "SEM", "OIT (deployment)"],
     status: "prototype",
     visibility: "Public",
     proposedDeploymentEnvironment: "to-be-determined",
@@ -787,6 +787,7 @@ export const projects: Project[] = [
     status: "building",
     visibility: "Public",
     proposedDeploymentEnvironment: "to-be-determined",
+    currentDeploymentEnvironment: "rcds-vm",
     enterpriseSystemReplacement: {
       status: "yes",
       systemName: "InfoReady",
@@ -797,6 +798,8 @@ export const projects: Project[] = [
     iidsSponsor: "Barrie Robison",
     repoUrl: "https://github.com/ui-insight/RFDModule",
     isPrivateRepo: true,
+    liveUrl: "https://rfd-companion-dev.insight.uidaho.edu",
+    liveUrlIsStaging: true,
     operationalFunction:
       "Coordinates RFD service requests, proposal checklists and task schedules, faculty-development programs and cohorts, competitions, events, reviews, shared deadlines, and role-scoped next actions while exchanging authoritative proposal and award data with OpenERA.",
     operationalExcellenceOutcome:
@@ -868,7 +871,7 @@ export const projects: Project[] = [
     pilotCohort: { size: 10, scope: "UI Library and IIDS staff" },
     repoUrl: "https://github.com/ui-iids/universo",
     isPrivateRepo: true,
-    liveUrl: "https://universo.insight.uidaho.edu",
+    liveUrl: "https://universo.uidaho.edu",
     operationalFunction:
       "Conversational interface for discovering UI research: search across researchers, projects, and outputs; AI-generated overviews summarise discovery results in context.",
     operationalExcellenceOutcome:
