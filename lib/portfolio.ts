@@ -890,6 +890,57 @@ export const projects: Project[] = [
   },
 
   // ============================================================
+  // College of Graduate Studies
+  // ============================================================
+  {
+    slug: "dissertation-formatter",
+    name: "COGS Dissertation & Thesis Formatter",
+    tagline:
+      "Applies the official College of Graduate Studies template to a thesis or dissertation without rewriting a word of student text.",
+    description:
+      "Graduate students upload a Word thesis or dissertation and get it back in the official College of Graduate Studies template. MindRouter reads the document's structure — title-page metadata, chapter starts, heading hierarchy, appendices — and returns block-index ranges only; the student confirms each detected decision, and the generator transplants the original OOXML blocks into the COGS template deterministically. A mandatory verbatim-verification pass compares every retained block before the download is released, so formatting changes while student-authored content does not. Direct response to the COGS unit strategic-plan tactic \"Create an AI tool for dissertation or thesis formatting.\" IIDS build led by Colin Addington. A refreshed pilot release went live 8 September 2026 after a first round of COGS feedback; COGS staff are testing it against real submitted dissertations and logging formatting defects for the next round.",
+    homeUnits: ["College of Graduate Studies"],
+    operationalOwners: [
+      { name: "Molly Sheffler" },
+      { name: "Jerry McMurtry", title: "Dean, College of Graduate Studies" },
+    ],
+    buildParticipants: ["IIDS"],
+    status: "piloting",
+    visibility: "Public",
+    proposedDeploymentEnvironment: "to-be-determined",
+    currentDeploymentEnvironment: "rcds-vm",
+    enterpriseSystemReplacement: { status: "no" },
+    ai4raRelationship: "None",
+    iidsSponsor: "Barrie Robison",
+    pilotCohort: {
+      size: 2,
+      scope:
+        "College of Graduate Studies staff testing against real submitted theses and dissertations",
+      namedUsers: ["Molly Sheffler", "Jerry McMurtry"],
+    },
+    repoUrl: "https://github.com/ui-AI4UI/dissertation",
+    isPrivateRepo: true,
+    liveUrl: "https://dissertation.insight.uidaho.edu",
+    operationalFunction:
+      "Upload .docx → AI structure mapping (block ranges only) → student confirms title-page metadata, font, chapter starts, heading hierarchy, and paragraph layout → deterministic transplant into the COGS template with isolated chapter numbering, landscape-aware page numbering, and updateable contents and caption lists → margin, page-number, text-size, and caption checks → verbatim verification → download. Students see actionable follow-ups; COGS administrators see the full diagnostic report.",
+    operationalExcellenceOutcome:
+      "Removes the format-review bottleneck at thesis and dissertation submission. Students stop learning Word template internals under deadline; COGS staff review substance instead of margins and page numbers; the verbatim guarantee gives advisers and committees confidence that content was untouched.",
+    tech: [
+      "React 19",
+      "TypeScript",
+      "Vite",
+      "Tailwind v4",
+      "FastAPI",
+      "PostgreSQL 16",
+      "MindRouter",
+      "Docker",
+    ],
+    relatedSlugs: ["mindrouter"],
+    workCategories: ["documents", "process"],
+    strategicPlanAlignment: ["A.3", "E.2"],
+  },
+
+  // ============================================================
   // IIDS — Infrastructure
   // ============================================================
   {
@@ -1165,6 +1216,7 @@ export const HOME_UNIT_GROUP_ORDER = [
   "Office of Research and Economic Development",
   "Research Faculty Development (ORED)",
   "UI Library",
+  "College of Graduate Studies",
   "Division of Financial Affairs",
   "Strategic Enrollment Management",
   "Athletics",

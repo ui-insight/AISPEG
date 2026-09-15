@@ -679,6 +679,7 @@ export const DEPLOYMENT_TARGETS: DeploymentTargetProfile[] = [
       "rfd-career",
       "universo",
       "vandalizer",
+      "dissertation-formatter",
     ],
   },
 ];

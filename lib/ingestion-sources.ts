@@ -80,6 +80,7 @@ export const PROJECT_INGESTION_SOURCE: Record<string, ProjectIngestionSource> =
     "sem-experiential": "unit-partnership",
     "sidearm-pipeline": "unit-partnership",
     universo: "unit-partnership",
+    "dissertation-formatter": "unit-partnership",
     "bls-cupa-code-prediction": "unit-partnership",
     "financial-planning-suite": "unit-partnership",
     "oit-data-modernization": "oit-portfolio",
