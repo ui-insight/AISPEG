@@ -13,6 +13,7 @@
 import { query } from "./db";
 import {
   SCORECARD_FIELDS,
+  SCORECARD_RUBRIC_VERSION,
   isEvaluatorKind,
   isNumericKind,
   isScorecardFieldKey,
@@ -21,6 +22,7 @@ import {
   type GateStatus,
   type DataConfidence,
   type NetFiveYear,
+  type ScorecardFieldKey,
   type ScorecardValues,
 } from "./build-scorecard";
 import { getProjectBySlug, type ProjectStatus } from "./portfolio";
@@ -68,6 +70,10 @@ export interface ScorecardEvaluation {
   net: NetFiveYear;
   gate: GateStatus | null;
   confidence: DataConfidence | null;
+  /** The three bucket judgments (null = unscored). Risk: 10 = worst. */
+  risk: number | null;
+  impact: number | null;
+  feasibility: number | null;
 }
 
 /** URL segment pair for a subject's detail page. */
@@ -109,12 +115,19 @@ function toRun(row: RunRow): ScorecardRun {
   };
 }
 
-/** Every run, newest first. */
+/**
+ * Every run scored against the current rubric version, newest first.
+ * Runs against a superseded draft stay in the database (and their
+ * interchange files in data/scorecards/) but are not compared with
+ * current runs: their field sets differ.
+ */
 export async function listScorecardRuns(): Promise<ScorecardRun[]> {
   const rows = await query<RunRow>(
     `SELECT r.*, (SELECT COUNT(*) FROM scorecard_evaluations e WHERE e.run_id = r.id) AS evaluation_count
      FROM scorecard_runs r
-     ORDER BY r.scored_at DESC, r.created_at DESC`
+     WHERE r.rubric_version = $1
+     ORDER BY r.scored_at DESC, r.created_at DESC`,
+    [SCORECARD_RUBRIC_VERSION]
   );
   return rows.map(toRun);
 }
@@ -171,6 +184,11 @@ function toSubject(row: EvaluationRow): ScorecardSubject {
   };
 }
 
+function numericValue(values: ScorecardValues, key: ScorecardFieldKey): number | null {
+  const v = values[key]?.value;
+  return typeof v === "number" ? v : null;
+}
+
 async function loadEvaluations(where: string, params: unknown[]): Promise<ScorecardEvaluation[]> {
   const runs = new Map((await listScorecardRuns()).map((r) => [r.id, r]));
   const rows = await query<EvaluationRow>(
@@ -180,8 +198,9 @@ async function loadEvaluations(where: string, params: unknown[]): Promise<Scorec
             tr.disposition AS req_disposition
      FROM scorecard_evaluations e
      LEFT JOIN tech_requests tr ON tr.id = e.request_id
-     ${where}`,
-    params
+     ${where}
+       AND e.run_id = ANY($${params.length + 1}::uuid[])`,
+    [...params, [...runs.keys()]]
   );
   if (rows.length === 0) return [];
 
@@ -225,6 +244,9 @@ async function loadEvaluations(where: string, params: unknown[]): Promise<Scorec
         net: netFiveYear(values),
         gate: (values.gate_status?.value as GateStatus | null) ?? null,
         confidence: (values.financial_data_confidence?.value as DataConfidence | null) ?? null,
+        risk: numericValue(values, "risk_score"),
+        impact: numericValue(values, "impact_score"),
+        feasibility: numericValue(values, "feasibility_score"),
       },
     ];
   });

@@ -675,11 +675,11 @@ export const projects: Project[] = [
   // ============================================================
   {
     slug: "execord",
-    name: "EL Compliance",
+    name: "Compliance AI",
     tagline:
       "Legal-risk triage of federal and Idaho law against University of Idaho policy.",
     description:
-      "Compliance app, formerly the ExecOrd / EO Compliance Tool, that ingests federal Executive Orders, Federal Register rules and notices, the parts of the Code of Federal Regulations the university is bound by, the U.S. Code, enacted Idaho law, the Idaho Code, active-session bills, Idaho administrative rules, State Board of Education policy, and the University of Idaho's policy manuals. It scores each document for legal risk, extracts the obligations it creates, and cross-references the corpora against each other, so a compliance reviewer can ask what a document requires and which UI policy already covers it. In 2026 it was refactored from a standalone repository into the flagship app of RET, a multi-app retrieval platform in which one backend and one frontend serve several independently configured apps; Entra ID single sign-on was added in September 2026. The app seeds user groups for General Counsel, OSP, ORED, and IIDS.",
+      "Compliance app, formerly the ExecOrd / EO Compliance Tool (the \"EL Compliance\" app in its codebase), that ingests federal Executive Orders, Federal Register rules and notices, the parts of the Code of Federal Regulations the university is bound by, the U.S. Code, enacted Idaho law, the Idaho Code, active-session bills, Idaho administrative rules, State Board of Education policy, and the University of Idaho's policy manuals. It scores each document for legal risk, extracts the obligations it creates, and cross-references the corpora against each other, so a compliance reviewer can ask what a document requires and which UI policy already covers it. In 2026 it was refactored from a standalone repository into the flagship app of RET, a multi-app retrieval platform in which one backend and one frontend serve several independently configured apps (the platform's second app is the RAG Evaluation Tool); Entra ID single sign-on was added in September 2026. The app seeds user groups for General Counsel, OSP, ORED, and IIDS.",
     homeUnits: ["Office of Research and Economic Development", "Office of General Counsel"],
     operationalOwners: [{ name: "Sarah Martonick" }],
     buildParticipants: ["IIDS", "Justin Riggs"],
@@ -699,8 +699,36 @@ export const projects: Project[] = [
     operationalExcellenceOutcome:
       "Systematic EO response posture. Reduces scramble when new EOs drop. Living view of EO-driven obligations for leadership.",
     tech: ["FastAPI", "Next.js", "PostgreSQL", "Qdrant", "Redis", "Dramatiq", "MindRouter"],
+    relatedSlugs: ["rag-eval"],
     workCategories: ["documents", "process"],
     strategicPlanAlignment: ["E.4"],
+  },
+  {
+    slug: "rag-eval",
+    name: "RAG Evaluation Tool",
+    tagline:
+      "Measures whether a change to the retrieval pipeline made answers better, against published benchmarks.",
+    description:
+      "The second app on RET, the multi-app retrieval platform that also runs Compliance AI. It imports public benchmark corpora that ship their own questions and relevance judgments, runs the same retrieval-augmented generation stack every other RET app runs, and scores the answers against that published ground truth, layer by layer, so a retrieval-only run costs no LLM calls. It is the platform's control case: it declares no app-specific prompts, configuration, or schedulers, so anything that works here works on the shared platform alone. Researchers create datasets, run benchmarks, and chat; platform admins import and manage the standardized corpora. As of September 2026 the benchmarking function itself is switched off by default behind a configuration flag; ingestion, retrieval, and chat still run.",
+    homeUnits: ["IIDS"],
+    operationalOwners: [{ name: "Justin Riggs" }],
+    buildParticipants: ["IIDS", "Justin Riggs"],
+    status: "building",
+    visibility: "Public",
+    proposedDeploymentEnvironment: "to-be-determined",
+    enterpriseSystemReplacement: { status: "no" },
+    ai4raRelationship: "Adjacent",
+    iidsSponsor: "Barrie Robison",
+    repoUrl: "https://github.com/ui-insight/RAG_evaluation_tool",
+    isPrivateRepo: true,
+    operationalFunction:
+      "Imports standardized benchmark corpora with their published questions and relevance judgments, runs RET's hybrid retrieval (dense, BM25, and knowledge-graph channels fused and reranked) and generation over them, and scores retrieval and answers against the published ground truth.",
+    operationalExcellenceOutcome:
+      "Changes to the retrieval pipeline that Compliance AI and future RET apps depend on are measured against public ground truth before they ship, instead of judged by impression.",
+    tech: ["FastAPI", "Next.js", "PostgreSQL", "Qdrant", "Redis", "Dramatiq", "MindRouter"],
+    relatedSlugs: ["execord", "mindrouter"],
+    workCategories: ["ai-infrastructure", "knowledge-retrieval"],
+    strategicPlanAlignment: ["E.2"],
   },
 
   // ============================================================

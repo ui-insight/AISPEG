@@ -8,7 +8,8 @@ a discussion draft pending Steering/DGC ratification (OD21).
 (the request registry and the "prioritization model TBD" this fills in),
 `lib/rubric.ts` (Prioritization Rubric v2, the model this replaces on
 ratification), workbook *UTR - Build Evaluation Scorecard (Four-Bucket,
-DRAFT).xlsx* (2026-09-13)
+DRAFT).xlsx* (2026-09-13), superseded by the *second DRAFT* workbook
+(2026-09-21) — see the amendment below
 
 ## Context
 
@@ -72,3 +73,26 @@ replaces it.
   facts by adding a human run, not by editing a model's run.
 - Subjects are soft-keyed to the portfolio by slug, so a portfolio
   re-seed never wipes scores.
+
+## Amendment — 2026-09-24: second draft adds three bucket scores
+
+The second draft workbook (2026-09-21) keeps all 30 fact fields and
+adds one 1–10 judgment score at the end of each of Buckets 2–4, read
+against a banded Scoring Guide. Directions differ: **Risk 10 = worst**,
+**Impact and Feasibility 10 = best**. Financial stays a dollar figure.
+The four figures are read side by side and never combined.
+
+- `lib/build-scorecard.ts` moves to rubric version
+  `utr-four-bucket-draft-2026-09-21`: three `score` fields
+  (`risk_score`, `impact_score`, `feasibility_score`) with a
+  `direction`, and `SCORE_GUIDE` carrying the bands verbatim. No
+  migration: scores store in `value_numeric` like any numeric field.
+- Surfaces show only runs against the current rubric version, since the
+  field sets differ. The first-draft run stays in the database and in
+  `data/scorecards/` as history.
+- Every score column and score value states its direction, the failure
+  the second draft calls out by name.
+- The second-draft run carries the first run's facts forward (same
+  evaluator, same day), corrects the ones that day's status changes made
+  stale, and adds the three scores with band-anchored justifications.
+  Its method text says so.

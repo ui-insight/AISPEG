@@ -1,19 +1,22 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
+  DIRECTION_LABEL,
   EVALUATOR_KIND_LABEL,
   SCORECARD_BUCKETS,
   fieldsInBucket,
   formatFieldValue,
   formatUsd,
+  scoreBand,
   type ScorecardFieldDef,
   type ScorecardFieldKey,
+  type ScoredBucket,
 } from "@/lib/build-scorecard";
 import {
   listSubjectEvaluations,
   type ScorecardEvaluation,
 } from "@/lib/scorecard-data";
-import { NetFiveYearValue, SubjectKindChip } from "@/components/Scorecard";
+import { NetFiveYearValue, ScoreValue, SubjectKindChip } from "@/components/Scorecard";
 
 export const dynamic = "force-dynamic";
 
@@ -82,10 +85,18 @@ function FieldCell({ field, ev }: { field: ScorecardFieldDef; ev: ScorecardEvalu
     return <p className="text-xs text-ink-subtle">Not scored in this run.</p>;
   }
   const unknown = entry.value === null;
+  const band =
+    field.kind === "score" && typeof entry.value === "number"
+      ? scoreBand(field.bucket as ScoredBucket, entry.value)
+      : null;
   return (
     <div>
       <p className={`text-sm ${unknown ? "text-ink-subtle" : "font-semibold text-brand-black"}`}>
         {formatFieldValue(field, entry.value)}
+        {band && <span className="ml-2 font-normal text-ink-muted">{band.band}</span>}
+        {field.direction && (
+          <span className="ml-2 text-xs font-normal text-ink-subtle">({DIRECTION_LABEL[field.direction]})</span>
+        )}
       </p>
       <p className="mt-1 text-xs leading-relaxed text-ink-muted">{entry.justification}</p>
       {entry.evidence && (
@@ -141,6 +152,24 @@ export default async function ScorecardSubjectPage({ params }: { params: Params 
               {ev.run.evaluatorLabel} · {runDate(ev.run.scoredAt)}
             </p>
             <p className="mt-3 max-w-3xl text-sm leading-relaxed text-ink-muted">{ev.summary}</p>
+            <dl className="mt-4 grid grid-cols-3 gap-3 border-t border-hairline pt-3">
+              {(
+                [
+                  ["risk", "Risk", ev.risk, "10 = worst"],
+                  ["impact", "Impact", ev.impact, "10 = best"],
+                  ["feasibility", "Feasibility", ev.feasibility, "10 = best"],
+                ] as const
+              ).map(([bucket, label, score, direction]) => (
+                <div key={bucket}>
+                  <dt className="text-xs font-semibold text-brand-black">
+                    {label} <span className="font-normal text-ink-subtle">· {direction}</span>
+                  </dt>
+                  <dd className="mt-0.5 text-sm">
+                    <ScoreValue bucket={bucket} score={score} showBand />
+                  </dd>
+                </div>
+              ))}
+            </dl>
             <div className="mt-4 border-t border-hairline pt-3">
               <p className="text-xs font-semibold text-brand-black">
                 Net 5-year $ <span className="ml-2 text-base"><NetFiveYearValue net={ev.net} /></span>
