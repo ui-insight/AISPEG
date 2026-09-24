@@ -1,16 +1,21 @@
 // lib/build-scorecard.ts
 //
-// The UTR Build Evaluation Scorecard — the Four-Bucket Model (discussion
-// draft, workbook "UTR - Build Evaluation Scorecard (Four-Bucket,
-// DRAFT).xlsx", 2026-09-13). It replaces the weighted Prioritization
+// The UTR Build Evaluation Scorecard — the Four-Bucket Model (second
+// discussion draft, workbook "UTR - Build Evaluation Scorecard
+// (Four-Bucket, second DRAFT).xlsx", 2026-09-21; supersedes the
+// 2026-09-13 first draft). It replaces the weighted Prioritization
 // Rubric v2 (lib/rubric.ts) once Steering/DGC ratify it (OD21); until
 // then both are published.
 //
-// The model deliberately has no composite score and no weights. Each
-// candidate build gets one row of real numbers and named facts across
-// four buckets, plus a gate that pulls locked-constrained items out of
-// comparison entirely. The only calculation is Bucket 1's Net 5-Year $,
-// a plain sum (netFiveYear below — the workbook's column L formula).
+// The model has no composite index and no weights. Each candidate
+// build gets one row of named facts across four buckets, plus a gate
+// that pulls locked-constrained items out of comparison entirely.
+// Bucket 1 (Financial) stays a real dollar figure — Net 5-Year $, a
+// plain sum (netFiveYear below, the workbook's column L). Buckets 2–4
+// each end in one 1–10 judgment score read against the banded Scoring
+// Guide (SCORE_GUIDE below). The scores run different directions:
+// Risk 10 = worst; Impact and Feasibility 10 = best. The four figures
+// are read side by side and never added together.
 //
 // This module is the typed source of truth for the field vocabulary the
 // scorecard tables (Migration 030) deliberately leave un-CHECKed:
@@ -24,9 +29,9 @@
 // evaluators can score the same subject, and the surfaces show them
 // side by side rather than averaging them.
 
-export const SCORECARD_RUBRIC_VERSION = "utr-four-bucket-draft-2026-09-13";
+export const SCORECARD_RUBRIC_VERSION = "utr-four-bucket-draft-2026-09-21";
 export const SCORECARD_SOURCE =
-  "UTR - Build Evaluation Scorecard (Four-Bucket, DRAFT).xlsx";
+  "UTR - Build Evaluation Scorecard (Four-Bucket, second DRAFT).xlsx";
 export const SCORECARD_STATUS_NOTE =
   "Discussion draft. Needs the same Steering/DGC ratification the v2 rubric was pending (OD21) before it replaces v2 as the standing W01 model.";
 
@@ -56,28 +61,28 @@ export const SCORECARD_BUCKETS: readonly ScorecardBucketDef[] = [
     label: "Bucket 1 — Financial Case (5-Year)",
     short: "Financial",
     description:
-      "Subscription dollars avoided and the actual contract exit date, personnel dollars avoided, the priced cost of the status-quo workaround being eliminated, build cost, ongoing maintenance cost, and a plain Net 5-Year $ total. Includes whether the cost-avoidance moves are reversible if the build stalls, and by when.",
+      "Stays a real dollar figure, never a score. Subscription dollars avoided and the actual contract exit date, personnel dollars avoided, the priced cost of the status-quo workaround being eliminated, build cost, ongoing maintenance cost, and a plain Net 5-Year $ total anyone can check by hand. Includes whether the cost-avoidance moves are reversible if the build stalls, and by when.",
   },
   {
     key: "risk",
     label: "Bucket 2 — Risk",
     short: "Risk",
     description:
-      "Data sensitivity and how many people a breach would affect; what breaks and who's affected if the system goes offline and whether a reviewed fallback exists; key-person risk (how many people could maintain it, is it documented); and how hard it would be to exit this build later.",
+      "Data sensitivity and how many people a breach would affect; what breaks and who's affected if the system goes offline and whether a reviewed fallback exists; key-person risk (how many people could maintain it, is it documented); and how hard it would be to exit this build later. Ends in one 1–10 Risk score — 10 is the worst outcome.",
   },
   {
     key: "impact",
     label: "Bucket 3 — Impact",
     short: "Impact",
     description:
-      "How many people would use it, how central it is to their work, which specific strategic priority it ties to, any named compliance mandate it satisfies (with citation, not a vague claim), and whether another unit is already building or buying the same thing.",
+      "How many people would use it, how central it is to their work, which specific strategic priority it ties to, any named compliance mandate it satisfies (with citation, not a vague claim), and whether another unit is already building or buying the same thing. Ends in one 1–10 Impact score — 10 is the best outcome.",
   },
   {
     key: "feasibility",
     label: "Bucket 4 — Feasibility",
     short: "Feasibility",
     description:
-      "Whether this is a proven pattern or something novel, whether the team has the skills and the bandwidth right now, what else that team's time is spoken for, and a realistic time to a usable version — checked against Bucket 1's savings-start assumption.",
+      "Whether this is a proven pattern or something novel, whether the team has the skills and the bandwidth right now, what else that team's time is spoken for, and a realistic time to a usable version — checked against Bucket 1's savings-start assumption. Ends in one 1–10 Feasibility score — 10 is the best outcome.",
   },
 ] as const;
 
@@ -129,14 +134,102 @@ export const TECHNICAL_READINESS_LABEL = {
   novel: "Novel",
 } as const;
 
+// ---- Bucket scores and the Scoring Guide ------------------------------
+// Buckets 2–4 each end in one 1–10 score: a judgment made after reading
+// the bucket's facts, not a formula. The bands are the workbook's
+// "Scoring Guide" tab, verbatim. Direction differs by bucket and is the
+// error the second draft calls out explicitly — every surface that
+// shows a score must say which end is good.
+
+export type ScoreDirection = "higher-is-better" | "higher-is-worse";
+
+export type ScoredBucket = "risk" | "impact" | "feasibility";
+
+export interface ScoreBand {
+  /** Inclusive range, e.g. [3, 4]. */
+  range: readonly [number, number];
+  band: string;
+  description: string;
+}
+
+export interface ScoreGuide {
+  bucket: ScoredBucket;
+  fieldKey: "risk_score" | "impact_score" | "feasibility_score";
+  title: string;
+  direction: ScoreDirection;
+  /** What the score weighs, from the guide. */
+  weighs: string;
+  bands: readonly ScoreBand[];
+}
+
+export const SCORE_GUIDE: readonly ScoreGuide[] = [
+  {
+    bucket: "risk",
+    fieldKey: "risk_score",
+    title: "Risk score — 10 is the worst outcome (highest risk)",
+    direction: "higher-is-worse",
+    weighs:
+      "Weigh data sensitivity + # people affected, operational/failure exposure, key-person risk, and exit difficulty together; the score is the team's overall read across all four.",
+    bands: [
+      { range: [1, 2], band: "Minimal", description: "No meaningful new exposure. Same or lower data sensitivity than the status quo, no new single points of failure, fully documented, more than one person could maintain it, easy to unwind." },
+      { range: [3, 4], band: "Low", description: "Slightly elevated exposure but well-controlled. A reviewed fallback exists if it goes down; more than one person understands it well enough to keep it running." },
+      { range: [5, 6], band: "Moderate", description: "Some genuine new exposure not fully mitigated — a step up in data sensitivity or a real single point of failure — documentation is partial, and unwinding the build later would take real effort." },
+      { range: [7, 8], band: "High", description: "Meaningful new exposure: sensitive data at meaningful new scale, no reviewed fallback if it fails, or a single-person maintenance dependency with no documentation." },
+      { range: [9, 10], band: "Critical", description: "Severe or high-likelihood exposure — a large population of sensitive records with weak controls, a payment-class or life-safety implication, no fallback, no documented succession, and very hard to exit." },
+    ],
+  },
+  {
+    bucket: "impact",
+    fieldKey: "impact_score",
+    title: "Impact score — 10 is the best outcome (highest impact)",
+    direction: "higher-is-better",
+    weighs:
+      "Weigh reach (# users), intensity of use, strategic tie, named compliance mandate, and whether the work is already duplicated elsewhere; the score is the overall read.",
+    bands: [
+      { range: [1, 2], band: "Minimal", description: "Affects a handful of people, no strategic tie, no compliance angle, occasional use at most." },
+      { range: [3, 4], band: "Limited", description: "Department or small-team reach, a weak or indirect strategic tie." },
+      { range: [5, 6], band: "Moderate", description: "Multi-unit reach, or a real but secondary tie to a stated strategic priority, regular (weekly-ish) use." },
+      { range: [7, 8], band: "Significant", description: "College-wide or university-wide reach, or directly supports a named strategic priority, daily use for the people who touch it." },
+      { range: [9, 10], band: "Exceptional", description: "University-wide reach AND resolves a specific named compliance mandate or deadline, or is a direct executive priority, with heavy daily use." },
+    ],
+  },
+  {
+    bucket: "feasibility",
+    fieldKey: "feasibility_score",
+    title: "Feasibility score — 10 is the best outcome (most feasible)",
+    direction: "higher-is-better",
+    weighs:
+      "Weigh technical readiness, team/skill fit, real available capacity, competing priorities, and time to a usable version; the score is the overall read.",
+    bands: [
+      { range: [1, 2], band: "Not ready", description: "No proven pattern, no available capacity, major unknowns, or would displace clearly higher-priority work." },
+      { range: [3, 4], band: "Weak", description: "Novel approach, limited capacity, notable unknowns in the technical path." },
+      { range: [5, 6], band: "Moderate", description: "A generally standard pattern with some unknowns; capacity is available but only with real trade-offs against other work." },
+      { range: [7, 8], band: "Strong", description: "Well-understood approach, a team is assigned with the right skills, minor unknowns only." },
+      { range: [9, 10], band: "Ready now", description: "A proven pattern already built here, the team is assigned and available now, minimal unknowns, and the estimated timeline lines up with the Financial Case's savings-start assumption." },
+    ],
+  },
+] as const;
+
+/** The band a score falls in, for a bucket. */
+export function scoreBand(bucket: ScoredBucket, score: number): ScoreBand | null {
+  const guide = SCORE_GUIDE.find((g) => g.bucket === bucket);
+  return guide?.bands.find((b) => score >= b.range[0] && score <= b.range[1]) ?? null;
+}
+
+export const DIRECTION_LABEL: Record<ScoreDirection, string> = {
+  "higher-is-better": "10 = best",
+  "higher-is-worse": "10 = worst",
+};
+
 // ---- Fields -----------------------------------------------------------
 
 /**
- * Value kinds. `usd`, `count`, `months`, and `year` store in
- * value_numeric; `date` (ISO yyyy-mm-dd), `text`, and `enum` (a slug
+ * Value kinds. `score` (a 1–10 bucket judgment), `usd`, `count`,
+ * `months`, and `year` store in value_numeric; `date` (ISO yyyy-mm-dd), `text`, and `enum` (a slug
  * from `options`) store in value_text.
  */
 export type ScorecardFieldKind =
+  | "score"
   | "usd"
   | "count"
   | "months"
@@ -157,6 +250,8 @@ export interface ScorecardFieldDef {
   options?: Readonly<Record<string, string>>;
   /** Scoring guidance: what a good answer names. */
   help: string;
+  /** For `score` fields: which end of 1–10 is the good one. */
+  direction?: ScoreDirection;
 }
 
 export const SCORECARD_FIELDS = [
@@ -321,12 +416,21 @@ export const SCORECARD_FIELDS = [
     options: EXIT_DIFFICULTY_LABEL,
     help: "How hard it would be to leave this build later — data lock-in, integrations, retraining.",
   },
+  {
+    key: "risk_score",
+    bucket: "risk",
+    label: "Risk Score (1-10, 10 = worst)",
+    column: "W",
+    kind: "score",
+    direction: "higher-is-worse",
+    help: "The overall read across data sensitivity and people affected, operational exposure, key-person risk, and exit difficulty, anchored to the Scoring Guide bands.",
+  },
   // Bucket 3 — Impact
   {
     key: "user_count",
     bucket: "impact",
     label: "# Users",
-    column: "W",
+    column: "X",
     kind: "count",
     help: "People who would use it directly.",
   },
@@ -334,7 +438,7 @@ export const SCORECARD_FIELDS = [
     key: "usage_frequency",
     bucket: "impact",
     label: "Usage Frequency",
-    column: "X",
+    column: "Y",
     kind: "enum",
     options: USAGE_FREQUENCY_LABEL,
     help: "How often a typical user touches it — a proxy for how central it is to their work.",
@@ -343,7 +447,7 @@ export const SCORECARD_FIELDS = [
     key: "strategic_tie",
     bucket: "impact",
     label: "Strategic Tie",
-    column: "Y",
+    column: "Z",
     kind: "text",
     help: "The specific strategic-plan priority (with code, e.g. D.3) it advances, or none.",
   },
@@ -351,7 +455,7 @@ export const SCORECARD_FIELDS = [
     key: "compliance_mandate",
     bucket: "impact",
     label: "Compliance Mandate (named)",
-    column: "Z",
+    column: "AA",
     kind: "text",
     help: "A named mandate with citation (e.g. ADA Title II, 28 CFR 35.200), or 'None identified'.",
   },
@@ -359,16 +463,25 @@ export const SCORECARD_FIELDS = [
     key: "known_duplication",
     bucket: "impact",
     label: "Known Duplication?",
-    column: "AA",
+    column: "AB",
     kind: "text",
     help: "Another unit already building or buying the same thing, or 'None known'.",
+  },
+  {
+    key: "impact_score",
+    bucket: "impact",
+    label: "Impact Score (1-10, 10 = best)",
+    column: "AC",
+    kind: "score",
+    direction: "higher-is-better",
+    help: "The overall read across reach, intensity of use, strategic tie, named compliance mandate, and duplication elsewhere, anchored to the Scoring Guide bands.",
   },
   // Bucket 4 — Feasibility
   {
     key: "technical_readiness",
     bucket: "feasibility",
     label: "Technical Readiness",
-    column: "AB",
+    column: "AD",
     kind: "enum",
     options: TECHNICAL_READINESS_LABEL,
     help: "Proven Pattern = the team has shipped this shape before. Novel = nobody has.",
@@ -377,7 +490,7 @@ export const SCORECARD_FIELDS = [
     key: "team_skill_fit",
     bucket: "feasibility",
     label: "Team Assigned & Skill Fit",
-    column: "AC",
+    column: "AE",
     kind: "text",
     help: "Who would build it and whether they have shipped comparable work.",
   },
@@ -385,7 +498,7 @@ export const SCORECARD_FIELDS = [
     key: "capacity_available_now",
     bucket: "feasibility",
     label: "Capacity Available Now?",
-    column: "AD",
+    column: "AF",
     kind: "enum",
     options: YES_NO_PARTIAL_LABEL,
     help: "Does that team have the time now, not in principle.",
@@ -394,7 +507,7 @@ export const SCORECARD_FIELDS = [
     key: "competing_priorities",
     bucket: "feasibility",
     label: "Competing Priorities",
-    column: "AE",
+    column: "AG",
     kind: "text",
     help: "What else the same team's time is spoken for.",
   },
@@ -402,7 +515,7 @@ export const SCORECARD_FIELDS = [
     key: "months_to_usable",
     bucket: "feasibility",
     label: "Est. Time to Usable Version (months)",
-    column: "AF",
+    column: "AH",
     kind: "months",
     help: "Realistic months to a version people can use. Zero if already in use.",
   },
@@ -410,10 +523,19 @@ export const SCORECARD_FIELDS = [
     key: "timing_consistent_with_financial_case",
     bucket: "feasibility",
     label: "Timing Consistent w/ Financial Case?",
-    column: "AG",
+    column: "AI",
     kind: "enum",
     options: YES_NO_LABEL,
     help: "Does the time to usable version land before Bucket 1's savings-start year?",
+  },
+  {
+    key: "feasibility_score",
+    bucket: "feasibility",
+    label: "Feasibility Score (1-10, 10 = best)",
+    column: "AJ",
+    kind: "score",
+    direction: "higher-is-better",
+    help: "The overall read across technical readiness, team and skill fit, available capacity, competing priorities, and time to a usable version, anchored to the Scoring Guide bands.",
   },
 ] as const satisfies readonly ScorecardFieldDef[];
 
@@ -440,7 +562,13 @@ export function fieldsInBucket(bucket: ScorecardBucket): ScorecardFieldDef[] {
 
 /** Numeric kinds store in value_numeric; the rest in value_text. */
 export function isNumericKind(kind: ScorecardFieldKind): boolean {
-  return kind === "usd" || kind === "count" || kind === "months" || kind === "year";
+  return (
+    kind === "score" ||
+    kind === "usd" ||
+    kind === "count" ||
+    kind === "months" ||
+    kind === "year"
+  );
 }
 
 // ---- Values -----------------------------------------------------------
@@ -467,6 +595,10 @@ export function validateFieldValue(
 ): string | null {
   if (value === null) return null;
   switch (field.kind) {
+    case "score":
+      return typeof value === "number" && Number.isInteger(value) && value >= 1 && value <= 10
+        ? null
+        : `${field.key}: expected an integer 1–10`;
     case "usd":
     case "count":
     case "months":
@@ -519,7 +651,10 @@ const NET_INPUTS = [
  * which inputs were blank so the surface can say the total is partial.
  * A blank savings-start year with non-zero savings has no honest
  * reading (the sheet would silently count six years), so the total is
- * null in that case. All five dollar inputs blank → null, not $0.
+ * null in that case. All five dollar inputs blank → null, not $0 — and
+ * the same when every entered input is $0 but some are unknown: a total
+ * built only from "nothing retired here" zeros says nothing about the
+ * build's cost or return.
  */
 export function netFiveYear(values: ScorecardValues): NetFiveYear {
   const num = (key: ScorecardFieldKey): number | null => {
@@ -530,6 +665,9 @@ export function netFiveYear(values: ScorecardValues): NetFiveYear {
     (k) => num(k) === null
   );
   if (missingInputs.length === NET_INPUTS.length) {
+    return { total: null, missingInputs };
+  }
+  if (missingInputs.length > 0 && NET_INPUTS.every((k) => (num(k) ?? 0) === 0)) {
     return { total: null, missingInputs };
   }
   const annualSavings =
@@ -576,6 +714,8 @@ export function formatFieldValue(
 ): string {
   if (value === null) return "Unknown";
   switch (field.kind) {
+    case "score":
+      return `${value} / 10`;
     case "usd":
       return formatUsd(value as number);
     case "count":

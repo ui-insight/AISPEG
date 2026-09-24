@@ -4,12 +4,16 @@
 
 import {
   DATA_CONFIDENCE_LABEL,
+  DIRECTION_LABEL,
   GATE_STATUS_LABEL,
+  SCORE_GUIDE,
   formatUsd,
+  scoreBand,
   scorecardField,
   type DataConfidence,
   type GateStatus,
   type NetFiveYear,
+  type ScoredBucket,
 } from "@/lib/build-scorecard";
 import { OPERATIONAL_LABEL } from "@/lib/portfolio";
 import { REQUEST_DISPOSITION_LABEL, REQUEST_ORIGIN_LABEL } from "@/lib/utr";
@@ -82,6 +86,36 @@ export function NetFiveYearValue({ net }: { net: NetFiveYear }) {
     >
       {formatUsd(net.total)}
       {partial && <span className="ml-0.5 text-ink-subtle">*</span>}
+    </span>
+  );
+}
+
+/**
+ * A 1–10 bucket score with its band. The number carries no color: the
+ * direction differs by bucket (Risk 10 = worst), so the band name does
+ * the reading and the header states the direction.
+ */
+export function ScoreValue({
+  bucket,
+  score,
+  showBand = false,
+}: {
+  bucket: ScoredBucket;
+  score: number | null;
+  showBand?: boolean;
+}) {
+  if (score === null) {
+    return <span className="text-ink-subtle">–</span>;
+  }
+  const band = scoreBand(bucket, score);
+  const guide = SCORE_GUIDE.find((g) => g.bucket === bucket)!;
+  return (
+    <span
+      className="tabular-nums"
+      title={band ? `${band.band} (${DIRECTION_LABEL[guide.direction]}): ${band.description}` : undefined}
+    >
+      <span className="font-semibold text-brand-black">{score}</span>
+      {showBand && band && <span className="ml-1.5 text-ink-muted">{band.band}</span>}
     </span>
   );
 }

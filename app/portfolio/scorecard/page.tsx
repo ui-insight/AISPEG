@@ -1,13 +1,11 @@
 import Link from "next/link";
 import {
+  DIRECTION_LABEL,
   EVALUATOR_KIND_LABEL,
   SCORECARD_BUCKETS,
   SCORECARD_SOURCE,
   SCORECARD_STATUS_NOTE,
-  TECHNICAL_READINESS_LABEL,
-  USAGE_FREQUENCY_LABEL,
-  YES_NO_LABEL,
-  YES_NO_PARTIAL_LABEL,
+  SCORE_GUIDE,
   fieldsInBucket,
   scorecardField,
   type ScorecardFieldKey,
@@ -23,6 +21,7 @@ import {
   ConfidenceText,
   GateChip,
   NetFiveYearValue,
+  ScoreValue,
   SubjectKindChip,
 } from "@/components/Scorecard";
 
@@ -35,13 +34,16 @@ export const metadata = {
 };
 
 type SubjectFilter = "all" | "project" | "request";
-type SortKey = "net" | "users" | "months" | "breach";
+type SortKey = "net" | "risk" | "impact" | "feasibility" | "months";
 
+// Each sort reads its bucket's direction: lowest risk first, highest
+// impact and feasibility first.
 const SORTS: { key: SortKey; label: string; description: string }[] = [
   { key: "net", label: "Net 5-year $", description: "Largest Net 5-Year $ first; not computable last." },
-  { key: "users", label: "Users", description: "Most users first." },
+  { key: "risk", label: "Lowest risk", description: "Risk score ascending — 10 is the worst risk." },
+  { key: "impact", label: "Highest impact", description: "Impact score descending — 10 is the best." },
+  { key: "feasibility", label: "Most feasible", description: "Feasibility score descending — 10 is the best." },
   { key: "months", label: "Time to usable", description: "Soonest usable version first." },
-  { key: "breach", label: "Breach exposure", description: "Most people affected by a breach first." },
 ];
 
 interface SearchParams {
@@ -75,15 +77,17 @@ function sortEvaluations(evs: ScorecardEvaluation[], sort: SortKey): ScorecardEv
     switch (sort) {
       case "net":
         return ev.net.total;
-      case "users":
-        return num(ev, "user_count");
+      case "risk":
+        return ev.risk;
+      case "impact":
+        return ev.impact;
+      case "feasibility":
+        return ev.feasibility;
       case "months":
         return num(ev, "months_to_usable");
-      case "breach":
-        return num(ev, "people_affected_if_breached");
     }
   };
-  const ascending = sort === "months";
+  const ascending = sort === "months" || sort === "risk";
   return [...evs].sort((a, b) => {
     const ma = metric(a);
     const mb = metric(b);
@@ -134,15 +138,6 @@ function FilterChip({
   );
 }
 
-function enumCell(
-  ev: ScorecardEvaluation,
-  key: ScorecardFieldKey,
-  labels: Readonly<Record<string, string>>
-) {
-  const v = text(ev, key);
-  return v ? (labels[v] ?? v) : <span className="text-ink-subtle">–</span>;
-}
-
 function countCell(ev: ScorecardEvaluation, key: ScorecardFieldKey) {
   const v = num(ev, key);
   return v === null ? <span className="text-ink-subtle">–</span> : v.toLocaleString("en-US");
@@ -163,9 +158,12 @@ const TH = "px-2 py-2 text-[10px] font-semibold uppercase tracking-wider text-in
 const TD = "px-2 py-2.5 text-xs text-ui-charcoal";
 
 function ScoreTable({ evaluations }: { evaluations: ScorecardEvaluation[] }) {
+  const riskHelp = SCORE_GUIDE.find((g) => g.bucket === "risk")!.weighs;
+  const impactHelp = SCORE_GUIDE.find((g) => g.bucket === "impact")!.weighs;
+  const feasibilityHelp = SCORE_GUIDE.find((g) => g.bucket === "feasibility")!.weighs;
   return (
     <div className="overflow-x-auto rounded-xl border border-hairline bg-white">
-      <table className="w-full min-w-[1180px] border-collapse text-left">
+      <table className="w-full min-w-[1080px] border-collapse text-left">
         <thead>
           <tr className="border-b border-hairline bg-surface-alt">
             <th className="px-4 py-2 text-xs font-semibold text-brand-black" rowSpan={2}>
@@ -177,13 +175,11 @@ function ScoreTable({ evaluations }: { evaluations: ScorecardEvaluation[] }) {
             <th className="border-l border-hairline px-2 pt-2 text-xs font-semibold text-brand-black" colSpan={2}>
               Financial
             </th>
-            <th className="border-l border-hairline px-2 pt-2 text-xs font-semibold text-brand-black" colSpan={3}>
-              Risk
-            </th>
+            <th className="border-l border-hairline px-2 pt-2 text-xs font-semibold text-brand-black">Risk</th>
             <th className="border-l border-hairline px-2 pt-2 text-xs font-semibold text-brand-black" colSpan={3}>
               Impact
             </th>
-            <th className="border-l border-hairline px-2 pt-2 text-xs font-semibold text-brand-black" colSpan={3}>
+            <th className="border-l border-hairline px-2 pt-2 text-xs font-semibold text-brand-black" colSpan={2}>
               Feasibility
             </th>
           </tr>
@@ -194,29 +190,20 @@ function ScoreTable({ evaluations }: { evaluations: ScorecardEvaluation[] }) {
             <th className={TH} title={scorecardField("financial_data_confidence").help}>
               Confidence
             </th>
-            <th className={`${TH} border-l border-hairline text-right`} title={scorecardField("people_affected_if_breached").help}>
-              Breach #
+            <th className={`${TH} border-l border-hairline`} title={riskHelp}>
+              Score · 10 = worst
             </th>
-            <th className={TH} title={scorecardField("reviewed_fallback_exists").help}>
-              Fallback
+            <th className={`${TH} border-l border-hairline`} title={impactHelp}>
+              Score · 10 = best
             </th>
-            <th className={`${TH} text-right`} title={scorecardField("maintainer_count").help}>
-              Maintainers
-            </th>
-            <th className={`${TH} border-l border-hairline text-right`} title={scorecardField("user_count").help}>
+            <th className={`${TH} text-right`} title={scorecardField("user_count").help}>
               Users
-            </th>
-            <th className={TH} title={scorecardField("usage_frequency").help}>
-              Frequency
             </th>
             <th className={TH} title={scorecardField("compliance_mandate").help}>
               Mandate
             </th>
-            <th className={`${TH} border-l border-hairline`} title={scorecardField("technical_readiness").help}>
-              Readiness
-            </th>
-            <th className={TH} title={scorecardField("capacity_available_now").help}>
-              Capacity
+            <th className={`${TH} border-l border-hairline`} title={feasibilityHelp}>
+              Score · 10 = best
             </th>
             <th className={`${TH} text-right`} title={scorecardField("months_to_usable").help}>
               Months
@@ -226,7 +213,7 @@ function ScoreTable({ evaluations }: { evaluations: ScorecardEvaluation[] }) {
         <tbody>
           {evaluations.map((ev) => (
             <tr key={ev.id} className="border-b border-hairline align-top last:border-b-0 hover:bg-surface-alt/60">
-              <td className="max-w-[280px] px-4 py-2.5">
+              <td className="max-w-[300px] px-4 py-2.5">
                 <Link href={subjectHref(ev.subject)} className="text-sm font-semibold leading-snug">
                   {ev.subject.title}
                 </Link>
@@ -246,20 +233,17 @@ function ScoreTable({ evaluations }: { evaluations: ScorecardEvaluation[] }) {
               <td className={TD}>
                 <ConfidenceText confidence={ev.confidence} />
               </td>
-              <td className={`${TD} border-l border-hairline text-right tabular-nums`}>
-                {countCell(ev, "people_affected_if_breached")}
+              <td className={`${TD} border-l border-hairline`}>
+                <ScoreValue bucket="risk" score={ev.risk} showBand />
               </td>
-              <td className={TD}>{enumCell(ev, "reviewed_fallback_exists", YES_NO_LABEL)}</td>
-              <td className={`${TD} text-right tabular-nums`}>{countCell(ev, "maintainer_count")}</td>
-              <td className={`${TD} border-l border-hairline text-right tabular-nums`}>
-                {countCell(ev, "user_count")}
+              <td className={`${TD} border-l border-hairline`}>
+                <ScoreValue bucket="impact" score={ev.impact} showBand />
               </td>
-              <td className={TD}>{enumCell(ev, "usage_frequency", USAGE_FREQUENCY_LABEL)}</td>
+              <td className={`${TD} text-right tabular-nums`}>{countCell(ev, "user_count")}</td>
               <td className={`${TD} max-w-[160px]`}>{mandateCell(ev)}</td>
               <td className={`${TD} border-l border-hairline`}>
-                {enumCell(ev, "technical_readiness", TECHNICAL_READINESS_LABEL)}
+                <ScoreValue bucket="feasibility" score={ev.feasibility} showBand />
               </td>
-              <td className={TD}>{enumCell(ev, "capacity_available_now", YES_NO_PARTIAL_LABEL)}</td>
               <td className={`${TD} text-right tabular-nums`}>{countCell(ev, "months_to_usable")}</td>
             </tr>
           ))}
@@ -334,13 +318,15 @@ export default async function ScorecardPage({
         </h1>
         <p className="mt-4 max-w-3xl text-base leading-relaxed text-ink-muted">
           The Unified Technology Request four-bucket scorecard reads each
-          candidate build as real numbers and named facts — its five-year
-          financial case, its risk, its impact, and its feasibility — with no
-          weights and no composite score. Anything locked by a contract,
-          consortium agreement, or statute is pulled out of comparison first.
-          Every value below carries a written justification and the name of
-          the evaluator who gave it; where evaluators disagree, the subject
-          page shows them side by side.
+          candidate build as four figures side by side: a real five-year
+          dollar case, and one 1–10 score each for risk, impact, and
+          feasibility, each resting on the named facts in its bucket. Nothing
+          is weighted or added together. Read the direction: a high risk
+          score is bad; high impact and feasibility scores are good. Anything
+          locked by a contract, consortium agreement, or statute is pulled
+          out of comparison first. Every value carries a written
+          justification and the name of the evaluator who gave it; where
+          evaluators disagree, the subject page shows them side by side.
         </p>
         <p className="mt-3 max-w-3xl text-sm text-ink-subtle">{SCORECARD_STATUS_NOTE}</p>
 
@@ -513,6 +499,35 @@ export default async function ScorecardPage({
                   </dl>
                 </details>
               ))}
+            </div>
+            <div className="space-y-3 pt-2">
+              <h3 className="text-base font-black tracking-tight text-brand-black">Scoring guide</h3>
+              <p className="max-w-3xl text-sm leading-relaxed text-ink-muted">
+                Each score is a judgment made after reading the bucket&apos;s facts, not a formula,
+                anchored to these bands.
+              </p>
+              <div className="grid gap-4 lg:grid-cols-3">
+                {SCORE_GUIDE.map((guide) => (
+                  <div key={guide.bucket} className="rounded-xl border border-hairline bg-white p-5">
+                    <p className="text-sm font-semibold text-brand-black">{guide.title}</p>
+                    <p className="mt-1 text-xs leading-relaxed text-ink-muted">{guide.weighs}</p>
+                    <dl className="mt-3 space-y-2">
+                      {guide.bands.map((band) => (
+                        <div key={band.band} className="grid grid-cols-[3rem_1fr] gap-2">
+                          <dt className="text-xs font-semibold tabular-nums text-brand-black">
+                            {band.range[0]}–{band.range[1]}
+                          </dt>
+                          <dd className="text-xs leading-relaxed text-ink-muted">
+                            <span className="font-semibold text-brand-black">{band.band}.</span>{" "}
+                            {band.description}
+                          </dd>
+                        </div>
+                      ))}
+                    </dl>
+                    <p className="mt-3 text-[11px] text-ink-subtle">{DIRECTION_LABEL[guide.direction]}</p>
+                  </div>
+                ))}
+              </div>
             </div>
             <details className="rounded-xl border border-hairline bg-surface-alt p-5">
               <summary className="cursor-pointer text-sm font-semibold text-brand-black">

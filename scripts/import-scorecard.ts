@@ -10,9 +10,9 @@
 // runs side by side; nothing here merges or averages evaluators.
 //
 //   {
-//     "rubricVersion": "utr-four-bucket-draft-2026-09-13",
+//     "rubricVersion": "utr-four-bucket-draft-2026-09-21",
 //     "evaluator": { "kind": "model" | "human", "id": "...", "label": "..." },
-//     "runLabel": "2026-09-24 initial pass",
+//     "runLabel": "2026-09-24 second-draft pass",
 //     "scoredAt": "2026-09-24",
 //     "method": "How the run was produced — instructions, conventions.",
 //     "evaluations": [
