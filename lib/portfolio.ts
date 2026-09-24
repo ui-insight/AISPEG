@@ -675,15 +675,15 @@ export const projects: Project[] = [
   // ============================================================
   {
     slug: "execord",
-    name: "ExecOrd",
+    name: "EL Compliance",
     tagline:
-      "Executive Order compliance tracker.",
+      "Legal-risk triage of federal and Idaho law against University of Idaho policy.",
     description:
-      "Compliance tracking prototype for federal Executive Order impacts on the institution.",
+      "Compliance app, formerly the ExecOrd / EO Compliance Tool, that ingests federal Executive Orders, Federal Register rules and notices, the parts of the Code of Federal Regulations the university is bound by, the U.S. Code, enacted Idaho law, the Idaho Code, active-session bills, Idaho administrative rules, State Board of Education policy, and the University of Idaho's policy manuals. It scores each document for legal risk, extracts the obligations it creates, and cross-references the corpora against each other, so a compliance reviewer can ask what a document requires and which UI policy already covers it. In 2026 it was refactored from a standalone repository into the flagship app of RET, a multi-app retrieval platform in which one backend and one frontend serve several independently configured apps; Entra ID single sign-on was added in September 2026. The app seeds user groups for General Counsel, OSP, ORED, and IIDS.",
     homeUnits: ["Office of Research and Economic Development", "Office of General Counsel"],
     operationalOwners: [{ name: "Sarah Martonick" }],
-    buildParticipants: ["IIDS"],
-    status: "prototype",
+    buildParticipants: ["IIDS", "Justin Riggs"],
+    status: "building",
     visibility: "Public",
     proposedDeploymentEnvironment: "to-be-determined",
     currentDeploymentEnvironment: "rcds-vm",
@@ -691,13 +691,14 @@ export const projects: Project[] = [
     ai4raRelationship: "None",
     iidsSponsor: "Barrie Robison",
     liveUrlIsStaging: true,
-    repoUrl: "https://github.com/ui-insight/eo-compliance",
+    repoUrl: "https://github.com/ui-insight/RAG_evaluation_tool",
     isPrivateRepo: true,
     liveUrl: "https://eocompliance.insight.uidaho.edu",
     operationalFunction:
-      "Tracks federal Executive Orders, applicability to UI, required actions, deadlines, responsible parties, and current posture.",
+      "Ingests federal and Idaho legal corpora and UI policy manuals on scheduled crawls, triages each document for legal risk, extracts obligations, cross-references corpora, and answers compliance questions through cited chat, reports, and daily and weekly digests.",
     operationalExcellenceOutcome:
       "Systematic EO response posture. Reduces scramble when new EOs drop. Living view of EO-driven obligations for leadership.",
+    tech: ["FastAPI", "Next.js", "PostgreSQL", "Qdrant", "Redis", "Dramatiq", "MindRouter"],
     workCategories: ["documents", "process"],
     strategicPlanAlignment: ["E.4"],
   },
