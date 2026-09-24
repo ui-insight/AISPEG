@@ -157,7 +157,7 @@ line they answer to — see [ADR 0006](docs/adr/0006-coordination-surface-split.
 
 | Surface | Route | Source of truth |
 |---|---|---|
-| Projects | `/portfolio` | Postgres `applications` table (read via `lib/work.ts`); `lib/portfolio.ts` is the TS shadow + seed source for `scripts/seed-portfolio.ts`. Filter UI is two-tier: public stage (rollup) → operational status (drill-in), per [ADR 0001](docs/adr/0001-product-lifecycle-taxonomy.md). The category filter (chips driven by `lib/work-categories.ts`) is the by-problem entry point. Sub-route `/portfolio/pipeline` is the **unified request queue** — every requested/suggested project from every origin (`tech_requests` registry via `lib/requests.ts`, ClickUp rubric enrichment via `lib/clickup-data.ts`), per [ADR 0005](docs/adr/0005-unified-technology-request-registry.md). There is no internal copy: the site tells one story (owner decision 2026-07-24). |
+| Projects | `/portfolio` | Postgres `applications` table (read via `lib/work.ts`); `lib/portfolio.ts` is the TS shadow + seed source for `scripts/seed-portfolio.ts`. Filter UI is two-tier: public stage (rollup) → operational status (drill-in), per [ADR 0001](docs/adr/0001-product-lifecycle-taxonomy.md). The category filter (chips driven by `lib/work-categories.ts`) is the by-problem entry point. Sub-route `/portfolio/pipeline` is the **unified request queue** — every requested/suggested project from every origin (`tech_requests` registry via `lib/requests.ts`, ClickUp rubric enrichment via `lib/clickup-data.ts`), per [ADR 0005](docs/adr/0005-unified-technology-request-registry.md). There is no internal copy: the site tells one story (owner decision 2026-07-24). Sub-route `/portfolio/scorecard` is the **build scorecard explorer** — active projects and open/approved requests on the UTR four-bucket model (`lib/build-scorecard.ts`), read via `lib/scorecard-data.ts`; every field value is evaluator-attributed and justified, and evaluators are shown side by side, never averaged ([ADR 0009](docs/adr/0009-evaluator-attributed-build-scorecard.md)). |
 | Submit a Project | `/builder-guide` | `lib/builder-guide-data.ts` (quiz definition); Postgres `submissions` (responses) |
 | Coordination | `/coordination` | **Process** surfaces — how a request becomes tracked institutional work. Overview page is composed from the typed modules below; sub-nav covers Intake Crosswalk (`lib/governance-profile.ts`), OIT Pathway (`lib/oit-pathway.ts`), OIT Portfolio (`lib/oit-ea-portfolio.ts`), and the Op Excellence Survey (`lib/surveys/*`). Split out of `/standards` in July 2026 — see [ADR 0006](docs/adr/0006-coordination-surface-split.md). |
 | Standards | `/standards` | **Reference** surfaces — what the work is measured against. `lib/standards-watch.ts` (ledger entries; commit-worthy). Sub-nav covers Data Model, Strategic Plan, and the strategic-plan coverage Map (per [ADR 0003](docs/adr/0003-strategic-plan-map-home.md)). |
@@ -226,6 +226,7 @@ app/                       # Next.js App Router
   about/                   # About — strategic frame, AI4RA partnership, IIDS operator note
   portfolio/               # Projects
     pipeline/              # Unified all-origin request queue (ADR 0005)
+    scorecard/             # Build scorecard explorer + per-subject evaluator comparison (ADR 0009)
   builder-guide/           # Submit a Project (assessment quiz)
   intake/[token]/          # Submitter-visible status page (Sprint 3a)
   reports/                 # Reports surface
@@ -288,7 +289,9 @@ lib/                       # Domain logic
   project-value.ts         # Replacement-cost / bottom-line-ROI facts
   project-map-graph.ts     # Graph model behind the strategic-plan coverage map
   roi-rubric.ts            # ROI dimensions + fiscal-year helpers (CADSO rubric pending)
-  rubric.ts                # ClickUp 11-criterion request-scoring rubric
+  rubric.ts                # ClickUp 11-criterion request-scoring rubric (v2; superseded on ratification)
+  build-scorecard.ts       # UTR four-bucket build scorecard — fields, enums, Net 5-yr formula (ADR 0009)
+  scorecard-data.ts        # Postgres read module for scorecard runs/evaluations/field scores
   agent/                   # Site assistant — tool registry, loop, prompts,
                            #   rate limiting, query logging (POST /api/ask)
   surveys/                 # Operational Excellence survey — themes, responses,
@@ -308,11 +311,12 @@ lib/                       # Domain logic
     project-alignment.ts   # Reverse lookup — projects advancing each priority
     catalog.ts             # AUTO-GENERATED — pillars + priorities (do not edit)
 
-db/migrations/             # SQL migrations (001 → 019). Landmarks: 005 = friction
+db/migrations/             # SQL migrations (001 → 030). Landmarks: 005 = friction
                            #   ledger, 007 = lifecycle, 008 = strategic-plan
                            #   alignment, 009 = agent query log, 010–011 = clickup
                            #   ingestion, 012 = enterprise-replacement facts,
-                           #   018 = UTR registry, 019 = survey candidates
+                           #   018 = UTR registry, 019 = survey candidates,
+                           #   030 = evaluator-attributed build scorecard
 
 evals/agent/               # Site-assistant eval harness (`npm run eval:agent`)
 
@@ -327,6 +331,7 @@ scripts/                   # Node scripts run via tsx
   verify-portfolio.ts             # ADR 0001 status-rule enforcer
   refresh-commit-dates.ts         # GitHub API → lib/portfolio-meta.ts (weekly Action)
   sync-clickup.ts                 # ClickUp IIDS-AI4UI space → clickup_* tables (ADR 0004)
+  import-scorecard.ts             # data/scorecards/*.json → scorecard_* tables (ADR 0009)
 
 vendor/                    # Vendored dependencies (git submodules)
   data-governance/         # ui-insight/data-governance — UDM + controlled vocabs
@@ -364,6 +369,7 @@ normative version of any of these lives in **Agent Rules** above).
 | A sub-section under `/standards` or `/coordination` | `app/<surface>/<sub>/page.tsx` + add a row to `subNavItems` in that surface's `layout.tsx` | Pick the surface by the Coordination/Standards split — process vs. reference ([ADR 0006](docs/adr/0006-coordination-surface-split.md)). The eyebrow and `subNavItems` sit together in `layout.tsx`, rendered through `components/SectionSubNav.tsx`. Each sub-page owns its own H1. Sidebar stays at one entry per surface — never edit `Sidebar.tsx` for sub-sections. |
 | A canonical UDM table tag | `lib/governance/canonical-udm-tables.ts` | Hand-curated v1 list. The data-governance catalog JSONs do not yet carry canonical/extension classification — once they do, this module retires. |
 | An OIT FY portfolio row, or a crosswalk to one | `lib/oit-ea-portfolio.ts` | Point-in-time transcription of OIT's spreadsheet — re-transcribe on a new cut and bump `SOURCE_AS_OF`. Keep OIT's columns in OIT's vocabulary; `portfolioSlug` is the only seam to `lib/portfolio.ts`, and a claimed match needs both `crosswalkConfidence` and `crosswalkNote`. `npm run verify:portfolio` polices both. |
+| A build-scorecard run (a new model or person scoring) | `data/scorecards/<date>-<evaluator>.json`, then `npm run import:scorecard -- <file>` | Interchange shape is documented in `scripts/import-scorecard.ts`. Every field on every subject needs a justification; `null` is an honest unknown. A run is keyed by (evaluator, runLabel) and re-imports replace it. Never edit another evaluator's run — add your own ([ADR 0009](docs/adr/0009-evaluator-attributed-build-scorecard.md)). |
 | A presentation or external talk | `lib/artifacts.ts` (entry with `kind: "presentation"`, `external: true`, `href` pointing at the hosted deck) | The artifact appears in the /reports timeline. |
 | A report | `app/reports/page.tsx` and (if needed) a route under `app/reports/<slug>` | Time-stamped, reverse-chron. |
 
@@ -392,6 +398,7 @@ npm run verify:portfolio       # ADR 0001 status-rule enforcer (CI runs this).
                                # with the vendored iids-portfolio vocabulary —
                                # adding a status is a two-repo change.
 npm run refresh:commit-dates   # Hit GitHub API → regenerate lib/portfolio-meta.ts
+npm run import:scorecard -- <file> [--dry-run]  # Build-scorecard run → scorecard_* tables
 
 # ClickUp ingestion (ADR 0004; needs CLICKUP_API_TOKEN)
 npm run sync:clickup           # IIDS-AI4UI space → clickup_* tables (status, ROI, rubric)

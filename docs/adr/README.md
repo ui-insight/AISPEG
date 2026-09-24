@@ -90,3 +90,4 @@ ADRs are **append-only**. To change a decision:
 | [0006](./0006-coordination-surface-split.md) | Split `/coordination` out of `/standards` | Accepted | 2026-07-25 |
 | [0007](./0007-site-assistant-tool-grounded-qa.md) | Site Assistant: Tool-Grounded Q&A with Strict Citation | Accepted | 2026-07-27 |
 | [0008](./0008-utr-landscape.md) | UTR Landscape: the Destination-Harmonized Activity View | Accepted | 2026-08-05 |
+| [0009](./0009-evaluator-attributed-build-scorecard.md) | Evaluator-Attributed Build Scorecard | Accepted (data model); rubric draft pending OD21 | 2026-09-24 |
