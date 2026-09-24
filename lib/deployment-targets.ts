@@ -676,7 +676,6 @@ export const DEPLOYMENT_TARGETS: DeploymentTargetProfile[] = [
       "audit-dashboard",
       "mindrouter-video-storyboard",
       "execord",
-      "rfd-career",
       "universo",
       "vandalizer",
       "dissertation-formatter",

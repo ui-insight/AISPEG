@@ -254,14 +254,14 @@ export const projects: Project[] = [
     tagline:
       "AI extraction and validation for Accounts Payable vendor invoices.",
     description:
-      "Automates the front of the AP invoice pipeline: emailed invoices are captured, invoices without a PO number are auto-rejected back to the submitter, and the rest have key fields extracted (PO number, dates, invoice number, amount, remit-to address) and compared against PO data in Banner. AP staff work a review queue in a dashboard — correcting low-confidence extractions, requesting fixes from submitters, and marking invoices processed. User testing with Accounts Payable resumed in July 2026.",
+      "Automates the front of the AP invoice pipeline: emailed invoices are captured, invoices without a PO number are auto-rejected back to the submitter, and the rest have key fields extracted (PO number, dates, invoice number, amount, remit-to address) and compared against PO data in Banner. AP staff work a review queue in a dashboard — correcting low-confidence extractions, requesting fixes from submitters, and marking invoices processed. Paused after user acceptance testing: at a July 27, 2026 review, IIDS and Accounts Payable concluded that the wide variance in invoice formats made meaningful ROI unlikely without significant ongoing AP staff time, and the team redirected effort to Financial Affairs' bank reconciliation work. The build is roughly 75% feature-complete and can resume if the case changes.",
     homeUnits: ["Division of Financial Affairs"],
     operationalOwners: [
       { name: "Daniele Ramona Bodden", title: "AP team lead" },
       { name: "Jake Milleson", title: "Purchasing lead" },
     ],
     buildParticipants: ["IIDS"],
-    status: "building",
+    status: "paused",
     visibility: "Public",
     proposedDeploymentEnvironment: "to-be-determined",
     enterpriseSystemReplacement: { status: "to-be-determined" },
@@ -449,16 +449,22 @@ export const projects: Project[] = [
     tagline:
       "Automated BLS occupation-code suggestions from job descriptions.",
     description:
-      "A Vandalizer module that suggests Bureau of Labor Statistics occupation codes from a job description, replacing manual code identification in HR's classification workflow. Originally scoped to cover CUPA codes as well; narrowed to BLS for the first delivery.",
+      "A Vandalizer module that suggests Bureau of Labor Statistics occupation codes from a job description, replacing manual code identification in HR's classification workflow. Originally scoped to cover CUPA codes as well; narrowed to BLS for the first delivery. The simplified single-step SOC coding workflow was delivered in June 2026 and is in use by HR classification staff; HR testing and training on the workflow remain before broader rollout.",
     homeUnits: ["Human Resources"],
     operationalOwners: [{ name: "Brooke Dahmen" }],
     buildParticipants: ["IIDS"],
-    status: "approved",
+    status: "piloting",
     visibility: "Public",
     proposedDeploymentEnvironment: "to-be-determined",
     enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "Reference",
     iidsSponsor: "Colin Addington",
+    pilotCohort: {
+      size: 3,
+      scope: "HR classification staff",
+      namedUsers: ["Emma Grizzell", "Brandi Terwilliger", "Brooke Dahmen"],
+    },
+    liveUrl: "https://vandalizer.uidaho.edu",
     operationalFunction:
       "Reads a job description and proposes candidate BLS occupation codes for HR classification staff to confirm.",
     operationalExcellenceOutcome:
@@ -775,7 +781,7 @@ export const projects: Project[] = [
     tagline:
       "One accountable workspace for Research and Faculty Development operations.",
     description:
-      "Standalone operational workspace for proposal-development support, faculty-development programs, internal competitions, events, reviews, shared calendars, and staff and faculty next actions. RFD Companion integrates with OpenERA through explicit least-privilege APIs, is intended to replace RFD's InfoReady workflows after parity and migration validation, and will replace TDX for proposal-development operations after a controlled cutover.",
+      "Standalone operational workspace for proposal-development support, faculty-development programs, internal competitions, events, reviews, shared calendars, and staff and faculty next actions. It supersedes the standalone RFD CAREER Dashboard: CAREER Club program and cohort tracking now live here. RFD Companion integrates with OpenERA through explicit least-privilege APIs, is intended to replace RFD's InfoReady workflows after parity and migration validation, and will replace TDX for proposal-development operations after a controlled cutover.",
     homeUnits: ["Research Faculty Development (ORED)"],
     operationalOwners: [
       {
@@ -818,22 +824,22 @@ export const projects: Project[] = [
   {
     slug: "rfd-career",
     name: "RFD CAREER Dashboard",
-    tagline: "Cohort progress dashboard for the CAREER Club program.",
+    tagline:
+      "Cohort progress dashboard for the CAREER Club program, superseded by RFD Companion.",
     description:
-      "Interactive cohort dashboard tracking participant progress through CAREER Club workbook data. Supports faculty development program leaders in identifying stuck participants and evaluating program effectiveness.",
+      "Interactive cohort dashboard that tracked participant progress through CAREER Club workbook data, helping faculty development program leaders identify stuck participants and evaluate program effectiveness. Piloted with a 12-person CAREER Club cohort. Superseded by RFD Companion, which carries CAREER Club program and cohort tracking inside RFD's single operational workspace; the standalone dashboard was taken offline in September 2026.",
     homeUnits: ["Research Faculty Development (ORED)"],
     operationalOwners: [{ name: "Eric Torok" }],
     buildParticipants: ["IIDS"],
-    status: "piloting",
+    status: "archived",
     visibility: "Public",
     proposedDeploymentEnvironment: "to-be-determined",
-    currentDeploymentEnvironment: "rcds-vm",
     enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "Adjacent",
     iidsSponsor: "Barrie Robison",
-    pilotCohort: { size: 12, scope: "CAREER Club cohort" },
+    sunsetDate: "2026-09-15",
+    replacedBy: "rfd-companion",
     repoUrl: "https://github.com/ui-insight/RFD-career",
-    liveUrl: "https://rfdcareerclub.insight.uidaho.edu",
     operationalFunction:
       "Visualizes CAREER Club cohort and individual-participant progress against workbook rubric milestones.",
     operationalExcellenceOutcome:
