@@ -166,7 +166,7 @@ Known open documentation drift: `app/docs/*`
 This site is built collaboratively using agentic coding tools (Claude Code,
 Codex, Cursor, Copilot, etc.). Two key files for any new contributor:
 
-- **[`CLAUDE.md`](./CLAUDE.md)** — project-level instructions and
+- **[`AGENTS.md`](./AGENTS.md)** — project-level instructions and
   conventions for AI coding agents. Point your agent at this when starting
   a session.
 - **[`CONTRIBUTING.md`](./CONTRIBUTING.md)** — how to add content, where

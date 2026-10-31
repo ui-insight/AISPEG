@@ -6,7 +6,7 @@
 //
 // Required env: MINDROUTER_API_KEY, DATABASE_URL (the search_portfolio
 // tool reads the live applications table). For local runs, an SSH tunnel
-// to the dev DB on :5433 is the easy path — see CLAUDE.md.
+// to the dev DB on :5433 is the easy path — see AGENTS.md.
 //
 // Usage:
 //   npm run eval:agent                  # full set, default thresholds
