@@ -18,6 +18,8 @@
     "migrate": "tsx --env-file=.env.local scripts/migrate.ts",
     "seed:portfolio": "tsx --env-file=.env.local scripts/seed-portfolio.ts",
     "verify:portfolio": "tsx scripts/verify-portfolio.ts",
+    "verify:agents": "tsx scripts/verify-agent-config.ts",
+    "check": "npm run lint && tsc --noEmit && npm run verify:portfolio && npm run verify:agents && npm run build",
     "verify:standards": "tsx scripts/validate-standards-drafts.ts",
     "refresh:commit-dates": "tsx scripts/refresh-commit-dates.ts",
     "sync:clickup": "tsx --env-file=.env.local scripts/sync-clickup.ts",

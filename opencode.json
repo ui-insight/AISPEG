@@ -1,0 +1,44 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permission": {
+    "read": {
+      "*": "allow",
+      "*.env": "deny",
+      "*.env.*": "deny",
+      "*.env.example": "allow",
+      "*.pem": "deny",
+      "*.docx": "deny",
+      "*.xlsx": "deny",
+      "*.eml": "deny",
+      "*.pdf": "deny",
+      "*public/requests/*": "allow"
+    },
+    "edit": {
+      "*": "allow",
+      "*lib/governance/catalog.ts": "deny",
+      "*lib/governance/vocabularies.ts": "deny",
+      "*lib/strategic-plan/catalog.ts": "deny",
+      "*lib/portfolio-meta.ts": "deny"
+    },
+    "bash": {
+      "*": "deny",
+      "git status*": "allow",
+      "git diff*": "allow",
+      "git log*": "allow",
+      "git show*": "allow",
+      "ls*": "allow",
+      "wc *": "allow",
+      "npm run check*": "allow",
+      "npm run lint*": "allow",
+      "npm run build*": "allow",
+      "npm run verify:*": "allow",
+      "npx tsc --noEmit*": "allow",
+      "npm run import:scorecard -- * --dry-run*": "allow"
+    },
+    "external_directory": "deny",
+    "webfetch": "deny",
+    "websearch": "deny",
+    "task": "deny",
+    "doom_loop": "deny"
+  }
+}

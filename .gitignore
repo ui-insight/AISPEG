@@ -43,5 +43,13 @@ agentic-ai-lessons.pptx
 *.pptx
 .test-governance/output.md
 
+# Working documents kept in the repo root stay out of commits and worktrees
+/*.docx
+/*.pdf
+/*.xlsx
+/*.eml
+/*.png
+/DataGovernance Docs/
+
 # Agent worktrees (created by Claude Code background agents)
 .claude/worktrees/

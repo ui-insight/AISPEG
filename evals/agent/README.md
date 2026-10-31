@@ -27,7 +27,7 @@ The runner needs a live agent session, so:
   `/api/ask` uses).
 - `DATABASE_URL` must point at a Postgres with the seeded `applications`
   table. For local runs against the dev DB, open the SSH tunnel
-  documented in `CLAUDE.md` and `.env.local` already targets
+  documented in `AGENTS.md` and `.env.local` already targets
   `localhost:5433`.
 
 The harness does **not** spin up `npm run dev`; it imports `runAgent`
