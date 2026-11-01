@@ -125,10 +125,13 @@ export const governanceOverrides: Record<string, GovernanceOverride> = {
   },
   execord: {
     dataDomains: [
-      "Federal Executive Orders",
-      "Applicability assessments",
-      "Required-action deadlines",
+      "Federal and Idaho legal corpora",
+      "UI policy manuals",
+      "Legal-risk triage and extracted obligations",
     ],
+  },
+  "rag-eval": {
+    dataDomains: ["Public benchmark corpora", "Relevance judgments", "Benchmark results"],
   },
   "sem-experiential": {
     dataDomains: [

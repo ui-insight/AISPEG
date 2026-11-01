@@ -372,7 +372,7 @@ auth_level             5%     Exact match
 
       <h2>Project Structure</h2>
       <p>
-        Abbreviated — see <code>CLAUDE.md</code> for the annotated tree, which
+        Abbreviated — see <code>AGENTS.md</code> for the annotated tree, which
         is kept current as the normative reference.
       </p>
       <pre className="not-prose rounded-lg bg-gray-900 p-4 text-sm text-green-400 overflow-x-auto">{`

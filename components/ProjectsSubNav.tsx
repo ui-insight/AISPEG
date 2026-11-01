@@ -6,13 +6,16 @@ import { usePathname } from "next/navigation";
 const projectSections = [
   { href: "/portfolio", label: "Active projects" },
   { href: "/portfolio/pipeline", label: "Requested projects" },
+  { href: "/portfolio/scorecard", label: "Build scorecard" },
 ] as const;
 
 function activeHrefFor(pathname: string): string {
-  return pathname === "/portfolio/pipeline" ||
-    pathname.startsWith("/portfolio/pipeline/")
-    ? "/portfolio/pipeline"
-    : "/portfolio";
+  const section = projectSections.find(
+    (item) =>
+      item.href !== "/portfolio" &&
+      (pathname === item.href || pathname.startsWith(`${item.href}/`))
+  );
+  return section?.href ?? "/portfolio";
 }
 
 export default function ProjectsSubNav() {

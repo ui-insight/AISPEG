@@ -9,7 +9,7 @@ Copilot**, or any LLM-powered coding assistant.
 The site was built collaboratively this way and is designed to keep working
 that way.
 
-> Before you make non-trivial changes: read [`CLAUDE.md`](./CLAUDE.md)
+> Before you make non-trivial changes: read [`AGENTS.md`](./AGENTS.md)
 > for the normative Agent Rules, project conventions, and the IA; and
 > [`docs/adr/`](./docs/adr/) for the durable decisions and why they were
 > made. [`REFACTOR.md`](./REFACTOR.md) gives the May 2026 strategic
@@ -45,7 +45,7 @@ them. If you already cloned without it, run
 The site runs at <http://localhost:3000>.
 
 > **Tip for agentic tools**: at the start of a session, point your agent at
-> [`CLAUDE.md`](./CLAUDE.md) — it carries the normative Agent Rules, the
+> [`AGENTS.md`](./AGENTS.md) — it carries the normative Agent Rules, the
 > IA, and the project structure. [`docs/adr/`](./docs/adr/) is where the
 > durable decisions live. [`REFACTOR.md`](./REFACTOR.md) is the May 2026
 > plan document, useful for *why* things were cut but superseded by the
@@ -71,7 +71,7 @@ of that line it answers to — see
 [ADR 0006](./docs/adr/0006-coordination-surface-split.md).
 
 Plus `/ai4ra-ecosystem`, `/about`, `/internal` (auth-gated),
-`/docs/*`, `/admin/*`. See [`CLAUDE.md`](./CLAUDE.md) for the full
+`/docs/*`, `/admin/*`. See [`AGENTS.md`](./AGENTS.md) for the full
 route inventory and what's been archived.
 
 ### The site assistant
@@ -131,7 +131,7 @@ Source-of-truth boundaries:
 
 A note on why so much is typed TS rather than DB rows: each change to a
 governance vocabulary is a commit-worthy decision, and the git log is the
-audit trail. That's Agent Rule 9 in `CLAUDE.md`.
+audit trail. That's Agent Rule 9 in `AGENTS.md`.
 
 ---
 
@@ -370,7 +370,7 @@ index.
 ## Workflow
 
 **All work lands via PR. Never commit directly to `main`** — this is
-Agent Rule 1 in [`CLAUDE.md`](./CLAUDE.md), and it applies to solo work
+Agent Rule 1 in [`AGENTS.md`](./AGENTS.md), and it applies to solo work
 and human contributors too, not just agents. The value isn't review
 gating (often there's only one reviewer); it's that the PR body is where
 the *why* gets written down, and CI runs before the branch is live.
@@ -406,7 +406,7 @@ catalogs.
 
 Give your agent the strategic context first. A good opening:
 
-> Read `CLAUDE.md` and skim `docs/adr/` to understand the project. This
+> Read `AGENTS.md` and skim `docs/adr/` to understand the project. This
 > is a Next.js 16 site that's the coordination nexus for the University
 > of Idaho's institutional AI initiative, operated by IIDS. The IA is
 > five primary surfaces: Projects, Submit a Project, Coordination,
@@ -435,7 +435,7 @@ Give your agent the strategic context first. A good opening:
 
 ### What your agent needs to know
 
-- `CLAUDE.md` is the primary orientation doc, and its **Agent Rules**
+- `AGENTS.md` is the primary orientation doc, and its **Agent Rules**
   section is normative — it wins over anything else, including this
   file, if they ever conflict.
 - `docs/adr/` holds the durable decisions. Read the relevant ADR before
@@ -549,7 +549,7 @@ No display serif pairing. The brand is sans-only.
 ## Where to ask for help
 
 For project context (why a thing is the way it is): start with
-`docs/adr/` and `CLAUDE.md`, then `REFACTOR.md` for the May 2026
+`docs/adr/` and `AGENTS.md`, then `REFACTOR.md` for the May 2026
 cuts. For technical specifics: see
 [`/docs`](http://localhost:3000/docs) on the running site. For anything
 else: ping the IIDS team through the usual UI channels.

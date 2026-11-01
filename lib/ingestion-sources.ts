@@ -60,6 +60,7 @@ export const PROJECT_INGESTION_SOURCE: Record<string, ProjectIngestionSource> =
     openera: "ored",
     processmapping: "ored",
     execord: "ored",
+    "rag-eval": "iids-internal",
     "rfd-companion": "ored",
     "rfd-career": "ored",
     "retroactive-payment-requests": "clickup",

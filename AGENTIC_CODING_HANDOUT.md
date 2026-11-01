@@ -61,7 +61,7 @@ The session will likely move through four stages:
 
 1. **Environment setup** — connect GitHub, confirm the repo opens
    correctly, make sure the tools can inspect files and run commands.
-2. **Repo orientation** — read `README.md`, `CLAUDE.md`, and `REFACTOR.md`.
+2. **Repo orientation** — read `README.md`, `AGENTS.md`, and `REFACTOR.md`.
    Identify where content lives. Distinguish static pages from pages that
    depend on Postgres or live GitHub data.
 3. **Simple wins** — make a few small, useful changes that are visible,
@@ -143,7 +143,7 @@ These are good first wins because they are:
 
 ### Good starter prompts
 
-- "Read `REFACTOR.md` and `CLAUDE.md`, then summarize how this project is
+- "Read `REFACTOR.md` and `AGENTS.md`, then summarize how this project is
   structured and what's being refactored."
 - "Suggest three safe, useful first changes for a new contributor."
 - "Implement one small improvement, explain what changed, and run the
