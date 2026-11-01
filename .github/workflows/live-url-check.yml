@@ -1,0 +1,46 @@
+name: Live URL Check
+
+# Keeps one open issue while any active project's liveUrl is down, so a
+# stopped deployment surfaces without someone happening to visit it.
+
+on:
+  schedule:
+    - cron: "0 15 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    name: Probe portfolio live URLs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+
+      - name: Probe URLs
+        id: probe
+        run: npm run check:live-urls -- --report live-url-report.md
+
+      - name: Update the tracking issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DOWN: ${{ steps.probe.outputs.down }}
+        run: |
+          gh label create live-url-check --color B60205 --description "Opened by Live URL Check" --force
+          issue=$(gh issue list --state open --label live-url-check --json number --jq '.[0].number // empty')
+          if [ "$DOWN" != "0" ]; then
+            if [ -n "$issue" ]; then
+              gh issue edit "$issue" --body-file live-url-report.md
+            else
+              gh issue create --title "Portfolio live URLs are down" --label live-url-check --body-file live-url-report.md
+            fi
+          elif [ -n "$issue" ]; then
+            gh issue close "$issue" --comment "All live URLs answered."
+          fi

@@ -382,6 +382,8 @@ npm run build:strategic-plan   # Regenerate lib/strategic-plan/catalog.ts
                                # from vendor/strategic-plan/ submodule
 npm run lint                   # ESLint
 npm run check                  # Everything required before declaring work done
+npm run deploy:dev             # Deploy main to dev: rebuild, reseed if needed, smoke-test
+npm run status:collect -- --out <dir>  # Status review evidence (status-review skill)
 npm run verify:agents          # AGENTS.md size + harness config guardrails
 
 # Portfolio data + ADR 0001 enforcement
