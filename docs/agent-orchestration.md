@@ -22,6 +22,7 @@ Pick the provider in this order.
 | Coordination, verification, final judgment | Claude | Held the context and ran the gates |
 | Quick work, or anything needing a shell, on committed content | GPT via Codex (`gpt-6.1-sol`) | 5 minutes on the test brief; ran commands unattended |
 | On-prem work that only reads and writes files | Kimi K3 via OpenCode (`mindrouter/moonshotai/kimi-k3`) | 36 minutes on the same brief, including waits for human edit approvals; no unattended shell |
+| Anything a rule can decide | A script | In the status run, Kimi's only two status changes were rule results |
 
 Models read evidence differently: on the test brief GPT left 91 of 165 facts
 unknown where Kimi left 54, and Kimi rated risk lower on every subject. Keep
@@ -32,6 +33,10 @@ with valid citations but made one false claim about its own evidence, missed
 signals in three packets, and rated 20 of 32 calls high confidence. Treat a
 clean format as a format result only: verify the substance, and check facts
 no packet holds, such as whether a deployment is running.
+
+For status work, use the `status-review` skill. A script computes the
+exceptions, and Kimi drafts summaries and owner questions for those projects
+only. That cut the inline evidence from about 40 KB to about 7 KB.
 
 ## Isolate every child
 
@@ -45,11 +50,15 @@ no packet holds, such as whether a deployment is running.
 - Keep the orchestrating thread in `auto`. Children inherit its mode, and a
   full-access parent gives every child full access. Switch it only for T3
   project settings, then switch back. An agent cannot change its own thread's
-  mode, so when a parent is in `full-access`, pass `runtimeMode` on every child.
+  mode, and T3 has no project default for it, so choose `auto` when you start
+  the thread. When a parent is in `full-access`, pass `runtimeMode` on every
+  child.
 
-A worktree cannot receive non-public evidence, and committing it would publish
-it. Put that evidence inline in a Kimi brief, as compact digests with citable
-IDs, so the orchestrator can check every citation by script.
+Do not put non-public evidence in a worktree file, because committing it would
+publish it. Put it inline in a Kimi brief, as compact digests with citable IDs,
+so the orchestrator can check every citation by script. Kimi cannot write outside
+its worktree, so its derived output goes to the gitignored `status-proposals/`.
+Copy that out of the repo, then delete it from the worktree.
 
 Set the OpenCode runtime mode explicitly on every child:
 
@@ -88,12 +97,15 @@ against the output.
 | Any code | `npm run check` |
 | Scorecard run | `npm run import:scorecard -- <file> --dry-run` |
 | `lib/portfolio.ts` | `npm run verify:portfolio` (part of `check`) |
+| Status review proposals | `npm run status:check -- --out <dir> <file>` |
+| Deployed to dev | `npm run deploy:dev` smoke test |
 
 Delegated worktrees have no `node_modules`, so a Codex brief that needs a gate
 starts with `npm ci --prefer-offline --no-audit --no-fund` (16 seconds in the
 probe). Kimi has no unattended shell, so the orchestrator runs its gates from a
 checkout with dependencies. The orchestrator commits, pushes and opens PRs.
-Children leave their output in their worktree.
+Children leave their output in their worktree, and non-public output stays in
+`status-proposals/`.
 
 ## Keep the setup working
 
