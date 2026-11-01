@@ -28,7 +28,12 @@ export interface RepoFacts {
   archived?: boolean;
   lastCommitDate?: string | null;
   lastHumanCommitDate?: string | null;
+  /** Commits read from the default branch, capped at one page. */
+  commitCount?: number;
+  /** Undefined when the full issue list could not be read; never assume zero. */
   openFeatureIssues?: number;
+  /** Evidence that could not be read, so its rules did not run. */
+  gaps?: string[];
   error?: string;
 }
 
@@ -40,9 +45,14 @@ export type ExceptionKind =
   | "cadence-building-near-limit"
   | "cadence-prototype"
   | "cadence-maintained"
+  | "maintained-feature-issues"
   | "maintained-candidate"
   | "production-repo-quiet"
-  | "archived-still-active";
+  | "archived-still-active"
+  | "archived-still-live"
+  | "idea-has-commits"
+  | "approved-has-activity"
+  | "evidence-incomplete";
 
 export interface StatusException {
   slug: string;
@@ -133,6 +143,9 @@ export function findExceptions(
       `${probe.url} returned ${probe.status ?? probe.error}; one probe, so confirm before acting.`
     );
   }
+  if (project.status === "archived" && probe?.state === "up") {
+    add("archived-still-live", "act", `${probe.url} still answers, but archived requires a stopped service.`);
+  }
   if (!repo) return found;
 
   if (repo.error) {
@@ -142,10 +155,24 @@ export function findExceptions(
   if (repo.fullName && repo.fullName.toLowerCase() !== repo.requested.toLowerCase()) {
     add("repo-moved", "act", `${repo.requested} now resolves to ${repo.fullName}.`);
   }
+  if (repo.gaps?.length) {
+    add("evidence-incomplete", "act", `Could not read ${repo.gaps.join(", ")}; dependent rules did not run.`);
+  }
+  if (project.status === "maintained" && repo.openFeatureIssues) {
+    add("maintained-feature-issues", "act", `${repo.openFeatureIssues} open feature issues; ADR allows none.`);
+  }
   if (!repo.lastCommitDate) return found;
 
   const days = daysBetween(repo.lastCommitDate, asOf);
   switch (project.status) {
+    case "idea":
+      add("idea-has-commits", "act", "Repo has commits; ADR expects an idea to have none.");
+      break;
+    case "approved":
+      if (days <= 14 && (repo.commitCount ?? 0) >= 10) {
+        add("approved-has-activity", "act", `Committed ${days} days ago, so this looks like active building.`);
+      }
+      break;
     case "building":
       if (days > 60) {
         add("cadence-building", "act", `Last default-branch commit ${days} days ago; ADR limit is 60.`);

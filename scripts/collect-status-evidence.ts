@@ -5,6 +5,8 @@
 // lib/status-review.ts, and writes:
 //
 //   evidence-ids.json   every citable ID, per project
+//                       tags: P portfolio, G GitHub, U URL, C ClickUp statement,
+//                       D database, X exception, N evidence gap
 //   exceptions.json     what needs a human or model to look at it
 //   packets.md          exception projects only, ready to paste into a brief
 //   all-packets.md      every project
@@ -19,8 +21,8 @@
 // Set DATABASE_URL to add open blockers, linked requests and ClickUp sync
 // freshness. Without it the database evidence is recorded as a gap.
 
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, join, relative, resolve, isAbsolute } from "node:path";
+import { existsSync, mkdirSync, readFileSync, realpathSync, writeFileSync } from "node:fs";
+import { basename, dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { Pool } from "pg";
 import { slugForListId } from "../lib/clickup-map.js";
@@ -35,7 +37,7 @@ import {
   type UrlProbe,
 } from "../lib/status-review.js";
 
-const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const REPO_ROOT = realpathSync(resolve(dirname(fileURLToPath(import.meta.url)), ".."));
 const API = "https://api.github.com";
 
 interface GitHubEvidence extends RepoFacts {
@@ -51,13 +53,21 @@ interface DbEvidence {
   bySlug: Record<string, string[]>;
 }
 
+/** Resolves symlinks through the deepest part of a path that exists yet. */
+function canonicalPath(path: string): string {
+  if (existsSync(path)) return realpathSync(path);
+  const parent = dirname(path);
+  return parent === path ? path : join(canonicalPath(parent), basename(path));
+}
+
 function parseArgs(): { out: string } {
   const index = process.argv.indexOf("--out");
   const value = index >= 0 ? process.argv[index + 1] : undefined;
   if (!value) throw new Error("Usage: npm run status:collect -- --out <dir outside the repo>");
   const out = resolve(value);
-  const rel = relative(REPO_ROOT, out);
-  if (rel === "" || (!rel.startsWith("..") && !isAbsolute(rel))) {
+  const rel = relative(REPO_ROOT, canonicalPath(out));
+  const outside = rel === ".." || rel.startsWith(`..${sep}`) || isAbsolute(rel);
+  if (!outside) {
     throw new Error(`--out must be outside the repository; evidence is non-public (${out}).`);
   }
   return { out };
@@ -72,6 +82,28 @@ async function github<T>(path: string): Promise<{ data?: T; error?: string }> {
   const res = await fetch(`${API}${path}`, { headers });
   if (!res.ok) return { error: `HTTP ${res.status}` };
   return { data: (await res.json()) as T };
+}
+
+interface OpenIssue {
+  number: number;
+  title: string;
+  updated_at: string;
+  pull_request?: unknown;
+  labels: { name: string }[];
+}
+
+/** Reads every open issue. Returns null if any page fails or the cap is hit. */
+async function allOpenIssues(name: string): Promise<OpenIssue[] | null> {
+  const issues: OpenIssue[] = [];
+  for (let page = 1; page <= 10; page++) {
+    const res = await github<OpenIssue[]>(
+      `/repos/${name}/issues?state=open&sort=updated&direction=desc&per_page=100&page=${page}`
+    );
+    if (!res.data) return null;
+    issues.push(...res.data);
+    if (res.data.length < 100) return issues;
+  }
+  return null;
 }
 
 function repoPath(url: string): string | null {
@@ -98,15 +130,7 @@ async function collectRepo(requested: string): Promise<GitHubEvidence> {
     github<{ number: number; state: string; updated_at: string; title: string; merged_at: string | null }[]>(
       `/repos/${name}/pulls?state=all&sort=updated&direction=desc&per_page=8`
     ),
-    github<
-      {
-        number: number;
-        title: string;
-        updated_at: string;
-        pull_request?: unknown;
-        labels: { name: string }[];
-      }[]
-    >(`/repos/${name}/issues?state=open&sort=updated&direction=desc&per_page=100`),
+    allOpenIssues(name),
     github<{ tag_name: string; published_at: string | null }[]>(`/repos/${name}/releases?per_page=2`),
   ]);
 
@@ -115,7 +139,13 @@ async function collectRepo(requested: string): Promise<GitHubEvidence> {
     author: c.author?.login ?? c.commit.author.name,
     message: c.commit.message.split("\n")[0]!.slice(0, 80),
   }));
-  const openIssues = (issues.data ?? []).filter((i) => !i.pull_request);
+  const openIssues = (issues ?? []).filter((i) => !i.pull_request);
+  const gaps = [
+    commits.data ? null : "commits",
+    issues ? null : "open issues",
+    pulls.data ? null : "pull requests",
+    releases.data ? null : "releases",
+  ].filter((gap): gap is string => gap !== null);
 
   return {
     requested,
@@ -124,9 +154,11 @@ async function collectRepo(requested: string): Promise<GitHubEvidence> {
     archived: repo.data.archived,
     lastCommitDate: history[0]?.date ?? null,
     lastHumanCommitDate: history.find((c) => !isBotAuthor(c.author))?.date ?? null,
-    openFeatureIssues: openIssues.filter((i) =>
-      isFeatureIssue(i.labels.map((label) => label.name))
-    ).length,
+    commitCount: history.length,
+    openFeatureIssues: issues
+      ? openIssues.filter((i) => isFeatureIssue(i.labels.map((label) => label.name))).length
+      : undefined,
+    gaps,
     commits: history.slice(0, 5),
     prs: (pulls.data ?? []).slice(0, 4).map((p) => ({
       number: p.number,
@@ -221,7 +253,7 @@ function packet(
   } else {
     add(
       "G",
-      `repo ${repo.fullName} private=${repo.isPrivate} archived=${repo.archived}; last commit ${repo.lastCommitDate?.slice(0, 10)}; last non-bot commit ${repo.lastHumanCommitDate?.slice(0, 10) ?? "none in last 100"}; open feature issues ${repo.openFeatureIssues}; releases ${repo.releases.join(", ") || "none"}`
+      `repo ${repo.fullName} private=${repo.isPrivate} archived=${repo.archived}; last commit ${repo.lastCommitDate?.slice(0, 10)}; last non-bot commit ${repo.lastHumanCommitDate?.slice(0, 10) ?? "none in last 100"}; open feature issues ${repo.openFeatureIssues ?? "unknown"}; releases ${repo.releases.join(", ") || "none"}`
     );
     if (sharedWith.length) add("G", `repo shared with ${sharedWith.join(", ")}: activity cannot be attributed to one project`);
     if (repo.commits.length) {
@@ -239,7 +271,7 @@ function packet(
     add("U", `${probe.url} probed: HTTP ${probe.status ?? probe.error} (${probe.state})${cert}`);
   }
   for (const note of notes) add("C", note);
-  if (!notes.length) add("C", "no ClickUp notes supplied");
+  if (!notes.length) add("N", "no ClickUp notes supplied");
   for (const line of db) add("D", line);
   for (const e of exceptions) add("X", `${e.kind} (${e.severity}): ${e.detail}`);
 

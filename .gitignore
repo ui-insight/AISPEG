@@ -35,6 +35,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# status review child output (non-public; see docs/agent-orchestration.md)
+/status-proposals/
+
 # source documents
 Development_Activity_Report_Feb2026.docx
 Updates and lessons.docx

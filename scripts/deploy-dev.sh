@@ -4,6 +4,7 @@
 # rebuilds the dev profile, reseeds when lib/portfolio.ts changed, and
 # smoke-tests. Seeding alone leaves pages that read lib/*.ts on old code, and
 # rebuilding alone leaves /portfolio on old rows, so this does both.
+# A failed run exits non-zero and leaves the seed pending for the next run.
 #
 #   npm run deploy:dev            # seed only if lib/portfolio.ts changed
 #   npm run deploy:dev -- --seed  # always reseed
@@ -28,18 +29,22 @@ if [[ -n "$(git status --porcelain --untracked-files=no)" ]]; then
 fi
 [[ "$(git branch --show-current)" == "main" ]] || { echo "Host is not on main; stopping." >&2; exit 1; }
 
-before=$(git rev-parse HEAD)
+# Records the last commit seeded, so a failed deploy still reseeds on retry.
+SEEDED_MARKER="$HOME/.aispeg-dev-seeded"
+seeded=$(cat "$SEEDED_MARKER" 2>/dev/null || true)
 git pull --ff-only origin main
 git submodule update --init
 docker compose --profile dev up -d --build
 echo "Deployed $(git log -1 --format='%h %s')"
 
-if [[ "$FORCE_SEED" == "yes" ]] || ! git diff --quiet "$before" HEAD -- lib/portfolio.ts; then
-  set -a; . ./.env; set +a
+if [[ "$FORCE_SEED" == "yes" || -z "$seeded" ]] || ! git diff --quiet "$seeded" HEAD -- lib/portfolio.ts; then
+  # Use the running app's own connection, so the seed cannot reach another database.
+  database_url=$(docker exec aispeg-dev printenv DATABASE_URL)
   docker run --rm --network aispeg_aispeg-net -v "$PWD":/app -w /app \
-    -e DATABASE_URL="postgresql://${POSTGRES_USER:-aispeg}:${POSTGRES_PASSWORD:-aispeg_secret}@10.10.9.11:5432/${POSTGRES_DEV_DB:-aispeg_dev}" \
+    -e DATABASE_URL="$database_url" \
     node:20-alpine \
     sh -c "npm install --silent --no-save --no-fund --no-audit pg tsx && npx tsx scripts/seed-portfolio.ts" | tail -1
+  git rev-parse HEAD > "$SEEDED_MARKER"
 else
   echo "lib/portfolio.ts unchanged; seed skipped."
 fi

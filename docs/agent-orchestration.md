@@ -54,9 +54,11 @@ only. That cut the inline evidence from about 40 KB to about 7 KB.
   the thread. When a parent is in `full-access`, pass `runtimeMode` on every
   child.
 
-A worktree cannot receive non-public evidence, and committing it would publish
-it. Put that evidence inline in a Kimi brief, as compact digests with citable
-IDs, so the orchestrator can check every citation by script.
+Do not put non-public evidence in a worktree file, because committing it would
+publish it. Put it inline in a Kimi brief, as compact digests with citable IDs,
+so the orchestrator can check every citation by script. Kimi cannot write outside
+its worktree, so its derived output goes to the gitignored `status-proposals/`.
+Copy that out of the repo, then delete it from the worktree.
 
 Set the OpenCode runtime mode explicitly on every child:
 
@@ -102,7 +104,8 @@ Delegated worktrees have no `node_modules`, so a Codex brief that needs a gate
 starts with `npm ci --prefer-offline --no-audit --no-fund` (16 seconds in the
 probe). Kimi has no unattended shell, so the orchestrator runs its gates from a
 checkout with dependencies. The orchestrator commits, pushes and opens PRs.
-Children leave their output in their worktree.
+Children leave their output in their worktree, and non-public output stays in
+`status-proposals/`.
 
 ## Keep the setup working
 
