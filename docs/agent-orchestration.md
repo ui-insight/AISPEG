@@ -27,6 +27,12 @@ Models read evidence differently: on the test brief GPT left 91 of 165 facts
 unknown where Kimi left 54, and Kimi rated risk lower on every subject. Keep
 parallel judgments side by side rather than picking a winner.
 
+The 2026-10-31 portfolio status run added evidence. Kimi covered 32 subjects
+with valid citations but made one false claim about its own evidence, missed
+signals in three packets, and rated 20 of 32 calls high confidence. Treat a
+clean format as a format result only: verify the substance, and check facts
+no packet holds, such as whether a deployment is running.
+
 ## Isolate every child
 
 - Use `isolation: "worktree"` for every Codex and OpenCode child. Worktrees
@@ -38,7 +44,12 @@ parallel judgments side by side rather than picking a winner.
 
 - Keep the orchestrating thread in `auto`. Children inherit its mode, and a
   full-access parent gives every child full access. Switch it only for T3
-  project settings, then switch back.
+  project settings, then switch back. An agent cannot change its own thread's
+  mode, so when a parent is in `full-access`, pass `runtimeMode` on every child.
+
+A worktree cannot receive non-public evidence, and committing it would publish
+it. Put that evidence inline in a Kimi brief, as compact digests with citable
+IDs, so the orchestrator can check every citation by script.
 
 Set the OpenCode runtime mode explicitly on every child:
 

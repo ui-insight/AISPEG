@@ -254,14 +254,14 @@ export const projects: Project[] = [
     tagline:
       "AI extraction and validation for Accounts Payable vendor invoices.",
     description:
-      "Automates the front of the AP invoice pipeline: emailed invoices are captured, invoices without a PO number are auto-rejected back to the submitter, and the rest have key fields extracted (PO number, dates, invoice number, amount, remit-to address) and compared against PO data in Banner. AP staff work a review queue in a dashboard — correcting low-confidence extractions, requesting fixes from submitters, and marking invoices processed. Paused after user acceptance testing: at a July 27, 2026 review, IIDS and Accounts Payable concluded that the wide variance in invoice formats made meaningful ROI unlikely without significant ongoing AP staff time, and the team redirected effort to Financial Affairs' bank reconciliation work. The build is roughly 75% feature-complete and can resume if the case changes.",
+      "Automates the front of the AP invoice pipeline: emailed invoices are captured, invoices without a PO number are auto-rejected back to the submitter, and the rest have key fields extracted (PO number, dates, invoice number, amount, remit-to address) and compared against PO data in Banner. AP staff work a review queue in a dashboard — correcting low-confidence extractions, requesting fixes from submitters, and marking invoices processed. Retired after user acceptance testing: at a July 27, 2026 review, IIDS and Accounts Payable concluded that the wide variance in invoice formats made meaningful ROI unlikely without significant ongoing AP staff time, and the team redirected effort to Financial Affairs' bank reconciliation work. Stop-work was approved with the build roughly 75% feature-complete; the record is kept for institutional memory.",
     homeUnits: ["Division of Financial Affairs"],
     operationalOwners: [
       { name: "Daniele Ramona Bodden", title: "AP team lead" },
       { name: "Jake Milleson", title: "Purchasing lead" },
     ],
     buildParticipants: ["IIDS"],
-    status: "paused",
+    status: "archived",
     visibility: "Public",
     proposedDeploymentEnvironment: "to-be-determined",
     enterpriseSystemReplacement: { status: "to-be-determined" },
@@ -482,7 +482,7 @@ export const projects: Project[] = [
     name: "UCM Daily Register",
     tagline: "AI-assisted newsletter production pipeline for UCM.",
     description:
-      "Editorial pipeline for The Daily Register and My UI. Submission intake, AI-assisted style editing (Claude or OpenAI via MindRouter, with AP + UI style enforcement), word-level diff review, section-organized auto-assembly, and branded .docx export. The application is in advanced user testing with the UCM newsletter team and is ready for repository migration to ui-AI4UI.",
+      "Editorial pipeline for The Daily Register and My UI. Submission intake, AI-assisted style editing (Claude or OpenAI via MindRouter, with AP + UI style enforcement), word-level diff review, section-organized auto-assembly, and branded .docx export. The application is in advanced user testing with the UCM newsletter team, is nearing a soft rollout, and is ready for repository migration to ui-AI4UI.",
     homeUnits: ["University Communications and Marketing"],
     operationalOwners: [
       { name: "Joy Bauer" },
@@ -497,7 +497,6 @@ export const projects: Project[] = [
     enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "None",
     iidsSponsor: "Barrie Robison",
-    liveUrlIsStaging: true,
     pilotCohort: {
       size: 3,
       scope: "University Communications and Marketing newsletter team",
@@ -638,7 +637,7 @@ export const projects: Project[] = [
     tagline:
       "Open electronic research administration system — canonical UDM implementor for sponsored research.",
     description:
-      "Institutional sponsored-research administration system, operated by IIDS for the Office of Research and Economic Development. The canonical implementor of the AI4RA Unified Data Model in research administration: 32 tables spanning 20 canonical UDM tables and 12 project-specific extensions. AI4RA Core dual-destiny project; designed to be deployable beyond UI as the partnership matures. As of July 2026, the team has outlined the VERAS-replacement MVP and the required dual-operation period, with three to four developers contributing; transfer of the repository to the ui-AI4UI GitHub organization is pending.",
+      "Institutional sponsored-research administration system, operated by IIDS for the Office of Research and Economic Development. The canonical implementor of the AI4RA Unified Data Model in research administration: 32 tables spanning 20 canonical UDM tables and 12 project-specific extensions. AI4RA Core dual-destiny project; designed to be deployable beyond UI as the partnership matures. As of July 2026, the team has outlined the VERAS-replacement MVP and the required dual-operation period, with three to four developers contributing; the repository has since moved to the ui-AI4UI GitHub organization.",
     homeUnits: ["Office of Research and Economic Development"],
     operationalOwners: [
       { name: "Sarah Martonick", title: "UI implementation owner" },
@@ -658,8 +657,8 @@ export const projects: Project[] = [
     dualDestinyPlanned: true,
     iidsSponsor: "Barrie Robison",
     liveUrlIsStaging: true,
-    repoUrl: "https://github.com/ui-insight/OpenERA",
-    liveUrl: "https://openera.insight.uidaho.edu",
+    repoUrl: "https://github.com/ui-AI4UI/OpenERA",
+    liveUrl: "https://openera-dev.insight.uidaho.edu",
     operationalFunction:
       "Sponsored-research administration: proposal lifecycle, award management, compliance, and reporting for ORED. Anchors the institutional research-admin data layer that Vandalizer, ProcessMapping, and adjacent ORED tools build against.",
     operationalExcellenceOutcome:
@@ -679,18 +678,19 @@ export const projects: Project[] = [
     tagline:
       "Legal-risk triage of federal and Idaho law against University of Idaho policy.",
     description:
-      "Compliance app, formerly the ExecOrd / EO Compliance Tool (the \"EL Compliance\" app in its codebase), that ingests federal Executive Orders, Federal Register rules and notices, the parts of the Code of Federal Regulations the university is bound by, the U.S. Code, enacted Idaho law, the Idaho Code, active-session bills, Idaho administrative rules, State Board of Education policy, and the University of Idaho's policy manuals. It scores each document for legal risk, extracts the obligations it creates, and cross-references the corpora against each other, so a compliance reviewer can ask what a document requires and which UI policy already covers it. In 2026 it was refactored from a standalone repository into the flagship app of RET, a multi-app retrieval platform in which one backend and one frontend serve several independently configured apps (the platform's second app is the RAG Evaluation Tool); Entra ID single sign-on was added in September 2026. The app seeds user groups for General Counsel, OSP, ORED, and IIDS.",
+      "Compliance app, formerly the ExecOrd / EO Compliance Tool (the \"EL Compliance\" app in its codebase), that ingests federal Executive Orders, Federal Register rules and notices, the parts of the Code of Federal Regulations the university is bound by, the U.S. Code, enacted Idaho law, the Idaho Code, active-session bills, Idaho administrative rules, State Board of Education policy, and the University of Idaho's policy manuals. It scores each document for legal risk, extracts the obligations it creates, and cross-references the corpora against each other, so a compliance reviewer can ask what a document requires and which UI policy already covers it. In 2026 it was refactored from a standalone repository into the flagship app of RET, a multi-app retrieval platform in which one backend and one frontend serve several independently configured apps (the platform's second app is the RAG Evaluation Tool); Entra ID single sign-on was added in September 2026. The app seeds user groups for General Counsel, OSP, ORED, and IIDS, and is in pilot with the Office of General Counsel.",
     homeUnits: ["Office of Research and Economic Development", "Office of General Counsel"],
     operationalOwners: [{ name: "Sarah Martonick" }],
     buildParticipants: ["IIDS", "Justin Riggs"],
-    status: "building",
+    status: "piloting",
     visibility: "Public",
     proposedDeploymentEnvironment: "to-be-determined",
     currentDeploymentEnvironment: "rcds-vm",
     enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "None",
     iidsSponsor: "Barrie Robison",
-    liveUrlIsStaging: true,
+    // size is a floor: OGC headcount not yet confirmed.
+    pilotCohort: { size: 1, scope: "Office of General Counsel pilot users" },
     repoUrl: "https://github.com/ui-insight/RAG_evaluation_tool",
     isPrivateRepo: true,
     liveUrl: "https://eocompliance.insight.uidaho.edu",
@@ -776,7 +776,7 @@ export const projects: Project[] = [
     homeUnits: ["Athletics"],
     operationalOwners: [],
     buildParticipants: ["IIDS"],
-    status: "building",
+    status: "prototype",
     visibility: "Public",
     proposedDeploymentEnvironment: "oit-managed-tbd",
     enterpriseSystemReplacement: { status: "no" },
@@ -1078,7 +1078,7 @@ export const projects: Project[] = [
     homeUnits: ["IIDS"],
     operationalOwners: [{ name: "Luke Sheneman" }],
     buildParticipants: ["IIDS"],
-    status: "production",
+    status: "maintained",
     visibility: "Public",
     proposedDeploymentEnvironment: "platform",
     enterpriseSystemReplacement: { status: "to-be-determined" },
@@ -1217,7 +1217,7 @@ export const projects: Project[] = [
     tagline:
       "OIT-managed application platform where UI application modules are deployed.",
     description:
-      "React + FastAPI application platform running on OIT-managed secure infrastructure, built collaboratively by OIT and IIDS. Nexus is the institutional template where University of Idaho application modules are deployed, providing a shared, audited, and security-hardened runtime for AI-enabled and traditional unit-level apps. Complements TEMPLATE-app: where TEMPLATE-app is the development scaffold, Nexus is the production landing zone. Governed by OIT's Enterprise AI Development Framework (the approved tech stack) and AI-Assisted Builder Guide (the six-stage pathway for teams outside OIT). The Retroactive Payment Requests module is deployed on Nexus and in production use by Payroll; OpenERA and UCM Daily Register are next through the pathway. Nexus continues to receive regular updates; recurring security-review tickets and approval steps on pull requests are the main reported delivery friction.",
+      "React + FastAPI application platform running on OIT-managed secure infrastructure, built collaboratively by OIT and IIDS. Nexus is the institutional template where University of Idaho application modules are deployed, providing a shared, audited, and security-hardened runtime for AI-enabled and traditional unit-level apps. Complements the archived TEMPLATE-app: TEMPLATE-app was the development scaffold, and Nexus is the production landing zone. Governed by OIT's Enterprise AI Development Framework (the approved tech stack) and AI-Assisted Builder Guide (the six-stage pathway for teams outside OIT). The Retroactive Payment Requests module is deployed on Nexus and in production use by Payroll; OpenERA and UCM Daily Register are next through the pathway. Nexus continues to receive regular updates; recurring security-review tickets and approval steps on pull requests are the main reported delivery friction.",
     homeUnits: ["Office of Information Technology"],
     operationalOwners: [
       { name: "Kali Armitage" },

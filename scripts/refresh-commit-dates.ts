@@ -11,7 +11,8 @@
 //
 // Auth:
 //   Uses GITHUB_TOKEN if set (avoids the 60 req/hr unauth rate limit).
-//   In CI, the GITHUB_TOKEN secret is automatically available.
+//   Private repos need a token that can read them; the default Actions
+//   token cannot, so CI prefers the PORTFOLIO_GITHUB_TOKEN secret.
 //
 // Usage:
 //   npm run refresh:commit-dates
@@ -24,6 +25,7 @@ import { writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { projects } from "../lib/portfolio.js";
+import { portfolioMeta, type PortfolioMetaEntry } from "../lib/portfolio-meta.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const OUTPUT_PATH = join(__dirname, "..", "lib", "portfolio-meta.ts");
@@ -63,10 +65,10 @@ async function fetchLastCommitDate(
     return { slug, lastCommitDate: null, error: `unparseable repoUrl: ${repoUrl}` };
   }
 
-  // GET /repos/{owner}/{repo} returns default_branch + pushed_at;
-  // pushed_at is good enough for cadence rules and avoids a second
-  // call to fetch a specific commit.
-  const url = `https://api.github.com/repos/${info.owner}/${info.repo}`;
+  // ADR 0001 measures cadence on commits to the default branch. A repo's
+  // pushed_at also moves when a bot pushes to any other branch, so a quiet
+  // project with Dependabot PRs would read as active.
+  const url = `https://api.github.com/repos/${info.owner}/${info.repo}/commits?per_page=1`;
   const res = await fetch(url, { headers });
 
   if (res.status === 404) {
@@ -80,21 +82,33 @@ async function fetchLastCommitDate(
     };
   }
 
-  const data = (await res.json()) as { pushed_at?: string };
-  if (!data.pushed_at) {
-    return { slug, lastCommitDate: null, error: "no pushed_at on response" };
+  const commits = (await res.json()) as {
+    commit?: { committer?: { date?: string } };
+  }[];
+  const date = commits[0]?.commit?.committer?.date;
+  if (!date) {
+    return { slug, lastCommitDate: null, error: "no commits on default branch" };
   }
-  return { slug, lastCommitDate: data.pushed_at };
+  return { slug, lastCommitDate: date };
 }
 
 function emit(results: CommitResult[]): string {
   const fetchedAt = new Date().toISOString();
-  const entries = results
-    .filter((r) => r.lastCommitDate)
-    .sort((a, b) => a.slug.localeCompare(b.slug))
+  // A failed lookup keeps the slug's last known entry, so one bad token
+  // cannot erase the commit dates the verifier depends on.
+  const merged: [string, PortfolioMetaEntry][] = [];
+  for (const r of results) {
+    if (r.lastCommitDate) {
+      merged.push([r.slug, { lastCommitDate: r.lastCommitDate, fetchedAt }]);
+    } else if (portfolioMeta[r.slug]) {
+      merged.push([r.slug, portfolioMeta[r.slug]!]);
+    }
+  }
+  const entries = merged
+    .sort(([a], [b]) => a.localeCompare(b))
     .map(
-      (r) =>
-        `  "${r.slug}": { lastCommitDate: "${r.lastCommitDate}", fetchedAt: "${fetchedAt}" },`
+      ([slug, e]) =>
+        `  "${slug}": { lastCommitDate: "${e.lastCommitDate}", fetchedAt: "${e.fetchedAt}" },`
     )
     .join("\n");
 
@@ -140,7 +154,7 @@ async function main(): Promise<void> {
   writeFileSync(OUTPUT_PATH, emit(results), "utf8");
   const ok = results.filter((r) => r.lastCommitDate).length;
   const failed = results.length - ok;
-  console.log(`\nWrote ${ok} entries to lib/portfolio-meta.ts (${failed} failed).`);
+  console.log(`\nRefreshed ${ok} entries in lib/portfolio-meta.ts (${failed} failed; last known values kept).`);
 }
 
 main().catch((err) => {
