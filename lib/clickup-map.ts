@@ -46,6 +46,7 @@ export const CLICKUP_PROJECT_LISTS: readonly ClickUpProjectMapping[] = [
   { listId: "901713962307", listName: "Retroactive Payment Requests", slug: "retroactive-payment-requests" },
   { listId: "901713962350", listName: "Document Review - Bid Waivers", slug: "bid-waiver-document-review" },
   { listId: "901713962295", listName: "Data Infrastructure Pilot", slug: "data-infrastructure-pilot" },
+  { listId: "901716834216", listName: "RFDModule", slug: "rfd-companion" },
 ] as const;
 
 export function slugForListId(listId: string): string | null {

@@ -311,7 +311,7 @@ export const PATHWAY_PROJECTS: PathwayProject[] = [
     standingFacts: [
       "Built on FastAPI, React, TypeScript, SQLAlchemy 2.0, and PostgreSQL 16 — the core of the framework's approved stack",
       "Named UI implementation owner: Sarah Martonick (Office of Research and Economic Development)",
-      "Currently staged on IIDS infrastructure at openera.insight.uidaho.edu",
+      "Currently staged on IIDS infrastructure at openera-dev.insight.uidaho.edu",
       "AI4RA Core dual-destiny project (NSF GRANTED) — the open-source distribution remains out of the framework's scope",
     ],
     gateQuestions: [

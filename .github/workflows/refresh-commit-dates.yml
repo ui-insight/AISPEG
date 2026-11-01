@@ -34,7 +34,7 @@ jobs:
       - name: Refresh commit dates
         run: npm run refresh:commit-dates
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PORTFOLIO_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}
 
       - name: Open PR if changed
         uses: peter-evans/create-pull-request@v6
