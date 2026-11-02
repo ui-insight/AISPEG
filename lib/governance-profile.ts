@@ -105,6 +105,20 @@ export const governanceOverrides: Record<string, GovernanceOverride> = {
       "Conversion-job diagnostics",
     ],
   },
+  "curriculum-atlas": {
+    dataDomains: [
+      "Published catalog programs and requirements",
+      "Course records and prerequisites",
+      "General Education categories",
+    ],
+  },
+  "governance-registry": {
+    dataDomains: [
+      "Council source documents and their versions",
+      "Meeting, decision, and matter records",
+      "Council roster and data domains",
+    ],
+  },
   vandalizer: {
     dataDomains: [
       "Research-admin documents (RFAs, awards, contracts)",

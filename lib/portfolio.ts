@@ -977,6 +977,95 @@ export const projects: Project[] = [
     usageNote:
       "First working remediation test completed 2026-08-28 after an overnight prototype build; pilot users identified from CETL's accessibility advisory committee and the UCM Web Team (2026-09-03).",
   },
+  {
+    slug: "governance-registry",
+    name: "Data Governance Council Registry",
+    tagline:
+      "One versioned record of what the Data Governance Council considered, decided, and communicated.",
+    description:
+      "Application and versioned repository for the Data Governance Council's record: source documents, meetings, decisions, roster, data domains, and action items, each with version history and a visible approval status. The council charter asks the co-chairs to maintain a repository of council work with OIT, and the co-chairs adopted this one as a pilot in September 2026, in place of keeping the record in SharePoint, Teams, and email. Meetings and decisions reach published status only through co-chair review. Staff intake uses MindRouter to read uploaded documents and extract cited findings, and a person reviews those findings before anything enters the library. A learning glossary explains council vocabulary while members read. The registry records authority and outcomes. It does not replace the Unified Technology Request workflow or an enterprise data catalog, and it links to requests by identifier. Council content stays private until the co-chairs decide otherwise.",
+    homeUnits: ["Data Governance Council", "IIDS"],
+    operationalOwners: [
+      { name: "Barrie Robison", title: "Co-chair, Data Governance Council" },
+      { name: "Ben Hunter", title: "Co-chair, Data Governance Council" },
+    ],
+    buildParticipants: ["IIDS"],
+    status: "building",
+    visibility: "Public",
+    proposedDeploymentEnvironment: "oit-managed-tbd",
+    currentDeploymentEnvironment: "rcds-vm",
+    enterpriseSystemReplacement: { status: "no" },
+    ai4raRelationship: "None",
+    iidsSponsor: "Barrie Robison",
+    repoUrl: "https://github.com/ui-AI4UI/governance-registry",
+    isPrivateRepo: true,
+    operationalFunction:
+      "Holds the council's documents and versions, records meetings and decisions with their evidence, routes records through co-chair review before publication, and gives members and the campus a role-based reading view. University single sign-on is built and waits on the university app registration.",
+    operationalExcellenceOutcome:
+      "Gives a new member or chair one place to find what the council decided, on what evidence, and which version is current, without searching email threads and Teams channels.",
+    features: [
+      "Document library with version history and comparison",
+      "Meeting, decision, and matter records with cited evidence",
+      "Co-chair review before publication",
+      "AI-assisted document intake with human review",
+      "Learning glossary for council vocabulary",
+      "Role-based access through Entra ID",
+    ],
+    tech: [
+      "React 19",
+      "TypeScript",
+      "Vite",
+      "Tailwind v4",
+      "FastAPI",
+      "PostgreSQL 16",
+      "MindRouter",
+      "Microsoft Entra ID",
+      "Docker",
+    ],
+    relatedSlugs: ["template-app", "mindrouter"],
+    workCategories: ["documents", "process"],
+    strategicPlanAlignment: ["E.2", "E.4"],
+  },
+  {
+    slug: "curriculum-atlas",
+    name: "Curriculum Atlas",
+    tagline:
+      "Shows how degree programs and departments rely on courses taught by other departments.",
+    description:
+      "Working draft that reads the public University of Idaho catalog and maps the curriculum as a network: which programs depend on which departments, which courses carry the most programs, and how prerequisites chain across units. Erin James asked for it in consultation with Gwen Gorzelsky, as part of assessing and revising campus program health processes and explaining the curricular ecosystem to the State Board of Education. Luke Sheneman built the current draft with AI assistance. It reports catalog structure, not enrollment, and it logs catalog issues as it finds them. The catalog publishes no requirements for 58 of 160 graduate programs, so the atlas cannot yet show how those programs depend on other units. The team considers it finished when they are confident it has no major errors or inconsistencies in how it represents the catalog.",
+    homeUnits: ["Academic Initiatives", "IIDS"],
+    operationalOwners: [
+      { name: "Erin James", title: "Director of Curricular Innovation" },
+      {
+        name: "Gwen Gorzelsky",
+        title: "Vice-Provost of Academic Initiatives",
+      },
+      { name: "Luke Sheneman", title: "Lead developer" },
+    ],
+    buildParticipants: ["IIDS"],
+    status: "prototype",
+    visibility: "Public",
+    proposedDeploymentEnvironment: "to-be-determined",
+    enterpriseSystemReplacement: { status: "no" },
+    ai4raRelationship: "None",
+    iidsSponsor: "Luke Sheneman",
+    operationalFunction:
+      "Crawls the published catalog each edition, parses program requirements and course prerequisites, and answers questions about how units and programs depend on each other through network views, program and department profiles, and a chat agent. Current users are the Director of Curricular Innovation and the Vice-Provost of Academic Initiatives.",
+    operationalExcellenceOutcome:
+      "Gives program health reviews a shared, evidence-linked view of how the curriculum connects, so questions about which programs depend on a department no longer need manual catalog work. No measure of time saved is defined yet.",
+    features: [
+      "Department-to-department dependency network",
+      "Program and department profiles with evidence",
+      "Keystone course and hidden-prerequisite analysis",
+      "What-if view of removing a unit's courses",
+      "Catalog data-quality log",
+      "Plain-language chat over the catalog data",
+    ],
+    tech: ["React", "TypeScript", "Vite"],
+    relatedSlugs: ["execord"],
+    workCategories: ["executive-analytics", "knowledge-retrieval"],
+    strategicPlanAlignment: ["A.1", "E.2"],
+  },
 
   // ============================================================
   // College of Graduate Studies
