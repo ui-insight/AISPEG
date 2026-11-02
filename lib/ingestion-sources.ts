@@ -82,6 +82,8 @@ export const PROJECT_INGESTION_SOURCE: Record<string, ProjectIngestionSource> =
     "sidearm-pipeline": "unit-partnership",
     universo: "unit-partnership",
     "dissertation-formatter": "unit-partnership",
+    "governance-registry": "unit-partnership",
+    "curriculum-atlas": "unit-partnership",
     "bls-cupa-code-prediction": "unit-partnership",
     "financial-planning-suite": "unit-partnership",
     "oit-data-modernization": "oit-portfolio",
