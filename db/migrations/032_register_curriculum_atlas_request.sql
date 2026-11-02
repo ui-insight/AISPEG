@@ -17,15 +17,22 @@
 -- exists yet. Robison's one timed question is in the need statement as an
 -- anecdote, not a claim.
 --
--- Related rows are looked up by title, and an absent row skips its link.
--- Depends on Migration 031 for the handbook request.
+-- Related rows are looked up by origin and title, and an absent row skips
+-- its link. Ordering: depends on the handbook request from Migration 031.
+-- The exception fires loudly if that row is missing, because the runner
+-- records this migration as applied either way.
 
 DO $mig$
 DECLARE
   atlas_title CONSTANT TEXT := 'Curriculum Atlas: how programs and units rely on each other''s courses';
+  handbook_title CONSTANT TEXT := 'EPPN graduate student handbook refresh and upkeep system';
   rid UUID;
   related_id UUID;
 BEGIN
+
+IF NOT EXISTS (SELECT 1 FROM tech_requests WHERE origin = 'direct' AND title = handbook_title) THEN
+  RAISE EXCEPTION 'Migration 032 requires the EPPN handbook request from Migration 031 — apply 031 first.';
+END IF;
 
 IF NOT EXISTS (SELECT 1 FROM tech_requests WHERE origin = 'direct' AND title = atlas_title) THEN
   INSERT INTO tech_requests (origin, requestor_name, requestor_email, requestor_unit, title, need_statement, disposition, received_at)
@@ -61,7 +68,7 @@ Robison wants to link it to the compliance tool. Related work: Sande Schlueter's
       'Robison wants to link the atlas to the compliance tool.')
   ON CONFLICT (request_id, application_slug, link_type) DO NOTHING;
 
-  SELECT id INTO related_id FROM tech_requests WHERE title = 'Program Inventory Clean-up' LIMIT 1;
+  SELECT id INTO related_id FROM tech_requests WHERE origin = 'clickup' AND title = 'Program Inventory Clean-up';
   IF related_id IS NOT NULL THEN
     INSERT INTO tech_request_links (request_id, related_request_id, link_type, created_by, note)
     VALUES (rid, related_id, 'related', 'migration-032',
@@ -72,20 +79,17 @@ END IF;
 
 -- ── The EPPN handbook request draws on the atlas ──────────────
 
-SELECT id INTO rid FROM tech_requests
-WHERE origin = 'direct' AND title = 'EPPN graduate student handbook refresh and upkeep system';
-IF rid IS NOT NULL THEN
-  INSERT INTO tech_request_project_links (request_id, application_slug, link_type, created_by, note)
-  VALUES (rid, 'curriculum-atlas', 'informs', 'migration-032',
-    'Supplies catalog course data and the Plant Pathology M.S. requirements. The handbook is the requirements source the catalog points to for Entomology, so the two can inform each other.')
-  ON CONFLICT (request_id, application_slug, link_type) DO NOTHING;
+SELECT id INTO rid FROM tech_requests WHERE origin = 'direct' AND title = handbook_title;
+INSERT INTO tech_request_project_links (request_id, application_slug, link_type, created_by, note)
+VALUES (rid, 'curriculum-atlas', 'informs', 'migration-032',
+  'Supplies catalog course data and the Plant Pathology M.S. requirements. The handbook is the requirements source the catalog points to for Entomology, so the two can inform each other.')
+ON CONFLICT (request_id, application_slug, link_type) DO NOTHING;
 
-  SELECT id INTO related_id FROM tech_requests WHERE origin = 'direct' AND title = atlas_title;
-  INSERT INTO tech_request_links (request_id, related_request_id, link_type, created_by, note)
-  VALUES (rid, related_id, 'related', 'migration-032',
-    'Handbooks may hold the requirements the catalog does not publish, which is the atlas''s largest coverage gap for graduate programs.')
-  ON CONFLICT (request_id, related_request_id, link_type) DO NOTHING;
-END IF;
+SELECT id INTO related_id FROM tech_requests WHERE origin = 'direct' AND title = atlas_title;
+INSERT INTO tech_request_links (request_id, related_request_id, link_type, created_by, note)
+VALUES (rid, related_id, 'related', 'migration-032',
+  'Handbooks may hold the requirements the catalog does not publish, which is the atlas''s largest coverage gap for graduate programs.')
+ON CONFLICT (request_id, related_request_id, link_type) DO NOTHING;
 
 END
 $mig$;

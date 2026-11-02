@@ -75,18 +75,18 @@ Next step: Hohstadt shares the site with Robison and Addington and flags anythin
   ON CONFLICT (request_id, application_slug, link_type) DO NOTHING;
 
   FOR lnk IN
-    SELECT t.title, t.note FROM (VALUES
-      ('Admin-Ops/ESS Tech Work Orders',
+    SELECT t.origin, t.title, t.note FROM (VALUES
+      ('oit-idea', 'Admin-Ops/ESS Tech Work Orders',
        'Same requestor and same AV support load. The IDEA row asks to track the work; this request asks to deflect the repeat questions.'),
-      ('VandalChat — campus-wide AI chat on MindRouter',
+      ('direct', 'VandalChat — campus-wide AI chat on MindRouter',
        'Hohstadt said delivery through VandalChat would be acceptable if a SharePoint widget is not.'),
-      ('Institutional knowledge & policy search',
+      ('direct', 'Institutional knowledge & policy search',
        'Same RAG pattern, cited answers over internal documents, at institutional scope.'),
-      ('AI Chatbot for Training/Manuals',
+      ('clickup', 'AI Chatbot for Training/Manuals',
        'Same demand in another unit: Payroll staff asking an assistant about SOPs and manuals.')
-    ) AS t(title, note)
+    ) AS t(origin, title, note)
   LOOP
-    SELECT id INTO related_id FROM tech_requests WHERE title = lnk.title LIMIT 1;
+    SELECT id INTO related_id FROM tech_requests WHERE origin = lnk.origin AND title = lnk.title;
     IF related_id IS NOT NULL THEN
       INSERT INTO tech_request_links (request_id, related_request_id, link_type, created_by, note)
       VALUES (rid, related_id, 'related', 'migration-031', lnk.note)
@@ -103,13 +103,13 @@ IF NOT EXISTS (SELECT 1 FROM tech_requests WHERE origin = 'direct' AND title = h
     handbook_title,
     $t$The EPPN graduate student handbook has not been updated in seven years. Asked whether they wanted a quick fix or a sustainable path, Mark Schwarzlaender chose the sustainable path. Shirley Luckhart, who did the last update, put the goal as something easy to update from year to year, because she expects major changes this year and in the years after.
 
-Known content work: add the MS in plant pathology, which the handbook never included; fix curriculum listings for courses the department requires but does not teach; check every link and resource; revisit qualifying exam paths with faculty, including a literature review option Luckhart doubts anyone uses; review PhD and master's expectations; and add an up-front section on resources available to students. COGS is working on changes to PhD credit requirements that may affect the curriculum, so that part waits until the change is formal.
+Known content work: add the MS in plant pathology, which the handbook never included; fix curriculum listings for courses the department requires but does not teach; check every link and resource; revisit qualifying exam paths with faculty, including the literature review option; review PhD and master's expectations; and add an up-front section on resources available to students. COGS is working on changes to PhD credit requirements that may affect the curriculum, so that part waits until the change is formal.
 
 Current process: someone takes the initiative and drafts an update, faculty vote on it, and the result goes to COGS. Nobody in the meeting could say whether COGS keeps official copies or still circulates a university-wide template. Schwarzlaender recalled a template from about three years ago and a request to directors of graduate studies for current handbooks.
 
-Boundaries the requestors set: no automatic updates of any kind. AI-generated text is acceptable, but every generated passage has to show where it came from, internally and with a link, so faculty can judge whether it fits their programs. Luckhart reports that AI-cited sources fail to support the claim about half the time in her experience. Robison's answer is that IIDS apps carry provenance and audit records, and for high-stakes work require the exact quotation with a link to it. Robison and Schwarzlaender agreed on at least two human reviews, by the person initiating a change and then by faculty. Schwarzlaender is comfortable with MindRouter because it keeps the data internal.
+Boundaries the requestors set: no automatic updates of any kind. AI-generated text is acceptable, but every generated passage has to show where it came from, internally and with a link, so faculty can judge whether it fits their programs. IIDS apps carry provenance and audit records, and for high-stakes work can require the exact quotation with a link to it. Robison and Schwarzlaender agreed on at least two human reviews, by the person initiating a change and then by faculty. Schwarzlaender is comfortable with MindRouter because it keeps the data internal.
 
-Sources: Schwarzlaender can forward curriculum fact sheets for the MS and PhD in entomology and the MS in plant pathology, developed for the department's stakeholder input process. They are accurate except for one course in the PhD sheet that should not be listed. He found the degree finder and catalog not good enough to answer those questions. His suggested method gives the model the newest COGS template, the existing handbook, and an exemplary handbook from another STEM degree, then has it move the handbook text into the template.
+Sources: Schwarzlaender can forward curriculum fact sheets for the MS and PhD in entomology and the MS in plant pathology, developed for the department's stakeholder input process. They are accurate except for one course in the PhD sheet that should not be listed. The fact sheets, not the degree finder or catalog, are the intended source for those requirements. His suggested method gives the model the newest COGS template, the existing handbook, and an exemplary handbook from another STEM degree, then has it move the handbook text into the template.
 
 What the current handbook shows (24 pages, revised 21 March 2019): it covers only the M.S. and Ph.D. in Entomology. About two pages carry course and credit requirements. Much of the rest restates university policy that other offices own, and it names people where it could name roles. The 2026-27 catalog's Entomology M.S. page sends readers to this handbook for program requirements, while the handbook calls itself unofficial and sends readers to the catalog, so a 2019 document is the working source of those requirements. Insect Anatomy and Physiology, a handbook core course, does not appear in the 2026-27 catalog data, and the catalog now uses four-digit course codes. The Curriculum Atlas holds an enumerated Plant Pathology M.S., but no requirements for either Entomology degree, because the catalog publishes none.
 
@@ -119,7 +119,7 @@ Where it lives is open. Robison's starting assumption is the department's intran
 
 Reuse: Robison rates campus-wide ROI for this kind of template as very high, and Luckhart expects other departments to want it, since many lack the staff to do this work. Robison says a sister application for the new data governance council is the closest match he is building now.
 
-Cost and next step: Robison and Addington will scope it and estimate the cost. Robison intends to ask Ben Hunter to fund it from the money the president set aside for helping units with this kind of work, so the department is not charged. That funding has not been approved. Robison set a goal of giving Schwarzlaender and Luckhart an update or a proposed scope by the end of the week of the meeting.$t$,
+Cost and next step: Robison and Addington will scope it and estimate the cost. Funding is not decided. Robison set a goal of giving Schwarzlaender and Luckhart an update or a proposed scope by the end of the week of the meeting.$t$,
     'open', '2026-11-02T18:00:00Z')
   RETURNING id INTO rid;
 
