@@ -48,7 +48,8 @@ export function comparables({ items, alt }) {
   items.forEach((item, i) => {
     const y = top + rowH * i + rowH / 2;
     const days = Math.round((new Date(item.end) - new Date(item.start)) / 864e5);
-    const span = days < 120 ? `${days} days` : `${Math.round(days / 30.4)} months, still active`;
+    const length = days < 120 ? `${days} days` : `${Math.round(days / 30.4)} months`;
+    const span = item.active ? `${length}, still active` : length;
     const a = x(item.start), b = Math.max(x(item.end), a + 4);
     body += text(0, y - 3, item.name, { size: 11, weight: 700 });
     body += text(0, y + 11, `${item.status}, ${item.commits} commits`, { size: 9.5, fill: "var(--color-ink-muted)" });

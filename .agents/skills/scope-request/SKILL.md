@@ -9,7 +9,7 @@ The product is a proposal the requester can read, correct, and approve. Named ap
 
 ## Rules
 
-- This repository and `/portfolio/pipeline` are public. Transcripts, emails, supplied documents, and the proposal itself stay outside the repo. Work in a scratch directory beside it, and delete derived copies of transcripts when done.
+- This repository and `/portfolio/pipeline` are public. Transcripts, emails, supplied documents, and the proposal itself stay outside the repo. Work in `Scoping-Proposals/<request-name>/`, beside the repo, one directory per proposal, and delete derived copies of transcripts when done.
 - The proposal goes to the requester, so it carries the ask, the requirements, and the open questions. Leave out funding intentions, personal estimates, jokes, and opinions about offices or people, even if they appear in the source.
 - Attribute a requirement to a person only if they stated it as one.
 - Hours are draft estimates, never a quote. A person who would do the work confirms them before the proposal goes out.
@@ -43,14 +43,14 @@ The product is a proposal the requester can read, correct, and approve. Named ap
 
 5. **Recommend.** Pick the smallest option that meets the stated request, unless your findings argue otherwise. Give the reason each other option lost, and the conditions for moving up the ladder. A dependency nobody controls yet, such as university sign-on, counts against an option.
 
-6. **Estimate.** Use commit spans from comparable repositories as evidence, and give ranges. Commits are not hours, so say that in the proposal. Do not state precision the comparison cannot support.
+6. **Estimate.** Use commit spans from repositories of similar scope as evidence, and give ranges. Similar scope means a build of about the same size, not a project the request connects to. Commits are not hours, so say that in the proposal. Do not state precision the comparison cannot support.
 
 7. **Build the figures.** Write `figures.json` as described in [report-template.md](report-template.md). Figures are data, so take them from the registry, commit history, and APM 30.11, not from memory.
 
 8. **Write and render.** Fill the template as `proposal.md` in the scratch directory, then run:
 
    ```bash
-   node .agents/skills/scope-request/scripts/render-proposal.mjs <scratch-dir>
+   node .agents/skills/scope-request/scripts/render-proposal.mjs ../Scoping-Proposals/<request-name>
    ```
 
    Rasterize the PDF with `pdftoppm` and look at every page. Check figures for label collisions and small text. Apply the `unslop` skill if it is installed.
