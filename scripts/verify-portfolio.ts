@@ -31,6 +31,11 @@ import { verifyAll, type VerificationProblem } from "../lib/portfolio-verificati
 import { priorities } from "../lib/strategic-plan/catalog.js";
 import { OIT_EA_PROJECTS } from "../lib/oit-ea-portfolio.js";
 import { vocabularyGroups } from "../lib/governance/vocabularies.js";
+import {
+  MEASURED_OUTSIDE_PORTFOLIO,
+  SHARES_REPOSITORY_WITH,
+  listCodeHealthSnapshots,
+} from "../lib/code-health.js";
 
 function format(p: VerificationProblem): string {
   const tag = p.severity === "error" ? "ERROR " : "WARN  ";
@@ -60,6 +65,51 @@ function verifyStrategicPlanAlignment(): VerificationProblem[] {
 // The crosswalk in lib/oit-ea-portfolio.ts is the one seam between OIT's
 // FY2027 inventory and ours. A `portfolioSlug` that no longer resolves —
 // or a claimed match with no stated basis — is drift, not a match.
+// Code-health summaries (ADR 0010) arrive by a PR the debt ledger opens.
+// Every file must parse against the published allowlist, and every project
+// slug must be a portfolio slug or declared as measured outside the
+// portfolio, so a renamed or newly measured repository can't publish
+// numbers under a slug nobody chose.
+function verifyCodeHealth(): VerificationProblem[] {
+  const problems: VerificationProblem[] = [];
+  const err = (slug: string, problem: string): VerificationProblem => ({
+    slug,
+    claimedStatus: "tracked",
+    problem,
+    rule: "code-health-summary",
+    severity: "error",
+  });
+  const slugs = new Set(projects.map((p) => p.slug));
+  for (const [alias, target] of Object.entries(SHARES_REPOSITORY_WITH)) {
+    if (!slugs.has(alias)) problems.push(err(alias, "SHARES_REPOSITORY_WITH names a slug not in lib/portfolio.ts"));
+    if (!slugs.has(target)) problems.push(err(target, "SHARES_REPOSITORY_WITH points at a slug not in lib/portfolio.ts"));
+  }
+  for (const slug of MEASURED_OUTSIDE_PORTFOLIO) {
+    if (slugs.has(slug)) {
+      problems.push(err(slug, "listed in MEASURED_OUTSIDE_PORTFOLIO but is a portfolio slug; remove it from the list"));
+    }
+  }
+  let snapshots;
+  try {
+    snapshots = listCodeHealthSnapshots();
+  } catch (e) {
+    return [...problems, err("data/code-health", e instanceof Error ? e.message : String(e))];
+  }
+  for (const s of snapshots) {
+    for (const p of s.projects) {
+      if (!slugs.has(p.slug) && !MEASURED_OUTSIDE_PORTFOLIO.has(p.slug)) {
+        problems.push(
+          err(p.slug, `summary-${s.asOf}.json names a project that is neither in lib/portfolio.ts nor in MEASURED_OUTSIDE_PORTFOLIO (lib/code-health.ts)`)
+        );
+      }
+      if (p.slug in SHARES_REPOSITORY_WITH) {
+        problems.push(err(p.slug, `summary-${s.asOf}.json measures a repository under its alias; it should be under ${SHARES_REPOSITORY_WITH[p.slug]}`));
+      }
+    }
+  }
+  return problems;
+}
+
 function verifyOitCrosswalk(): VerificationProblem[] {
   const validSlugs = new Set(projects.map((p) => p.slug));
   const problems: VerificationProblem[] = [];
@@ -238,12 +288,14 @@ async function main(): Promise<void> {
   const stratPlanProblems = verifyStrategicPlanAlignment();
   const oitCrosswalkProblems = verifyOitCrosswalk();
   const vocabParityProblems = verifyGovernanceVocabularyParity();
+  const codeHealthProblems = verifyCodeHealth();
   const dbStatusProblems = await verifyDatabaseStatuses();
   const all = [
     ...lifecycleProblems,
     ...stratPlanProblems,
     ...oitCrosswalkProblems,
     ...vocabParityProblems,
+    ...codeHealthProblems,
     ...dbStatusProblems,
   ];
   const errors = all.filter((p) => p.severity === "error");
