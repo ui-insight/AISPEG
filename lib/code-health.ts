@@ -361,6 +361,7 @@ const hasNumbers = (p: CodeHealthProject) =>
 
 /** Fixed, user-facing reasons. Never the collector's error text. */
 export const NOT_MEASURED_REASON = {
+  archived: "Archived project, so it is no longer measured.",
   noRepository: "No code repository listed, so there is nothing to measure.",
   notListed: "Repository not yet in the collector's list.",
   error: "The collector could not read the repository on the last capture date.",
@@ -369,7 +370,11 @@ export const NOT_MEASURED_REASON = {
   noSnapshot: "No code-health snapshot has been published yet.",
 } as const;
 
-export function codeHealthForProject(slug: string, repoUrl: string | undefined): ProjectCodeHealth {
+export function codeHealthForProject(
+  slug: string,
+  repoUrl: string | undefined,
+  status?: string
+): ProjectCodeHealth {
   const snapshots = listCodeHealthSnapshots();
   const latest = snapshots.at(-1);
   if (!latest) return { state: "not measured", reason: NOT_MEASURED_REASON.noSnapshot, asOf: null };
@@ -381,7 +386,12 @@ export function codeHealthForProject(slug: string, repoUrl: string | undefined):
   if (!current) {
     return {
       state: "not measured",
-      reason: repoUrl ? NOT_MEASURED_REASON.notListed : NOT_MEASURED_REASON.noRepository,
+      reason:
+        status === "archived"
+          ? NOT_MEASURED_REASON.archived
+          : repoUrl
+            ? NOT_MEASURED_REASON.notListed
+            : NOT_MEASURED_REASON.noRepository,
       asOf: latest.asOf,
     };
   }

@@ -64,7 +64,7 @@ const TD = "px-3 py-2 text-sm text-ui-charcoal";
 export default function CodeHealthPage() {
   const snapshots = listCodeHealthSnapshots();
   const latest = snapshots.at(-1) ?? null;
-  const rows = listed.map((p) => ({ project: p, health: codeHealthForProject(p.slug, p.repoUrl) }));
+  const rows = listed.map((p) => ({ project: p, health: codeHealthForProject(p.slug, p.repoUrl, p.status) }));
   const measured = rows.filter((r) => r.health.state === "measured");
   const notMeasured = rows.filter((r) => r.health.state === "not measured");
   const byReason = new Map<string, (typeof listed)[number][]>();

@@ -293,7 +293,7 @@ export default function ProjectDetail({
     buildParticipantsLabel && buildParticipantsLabel !== homeUnitLabel;
   const replacement = replacementSummary(app.enterpriseSystemReplacement);
   const oitRow = oitProjectForSlug(app.slug);
-  const codeHealth = codeHealthForProject(app.slug, app.repoUrl);
+  const codeHealth = codeHealthForProject(app.slug, app.repoUrl, app.status);
 
   return (
     <div className="space-y-12">
