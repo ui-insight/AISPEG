@@ -9,6 +9,7 @@ import {
   PUBLIC_STAGE_CHIP,
   PUBLIC_STAGE_LABEL,
   isProjectStatus,
+  projects as portfolioProjects,
   publicStageFromStatus,
 } from "@/lib/portfolio";
 import {
@@ -23,6 +24,8 @@ import {
   oitProjectForSlug,
   type OitEaProject,
 } from "@/lib/oit-ea-portfolio";
+import { codeHealthForProject, latestCodeHealthSnapshot } from "@/lib/code-health";
+import { CodeHealthSection } from "@/components/CodeHealth";
 
 // Blocker severity is a documented exception to the brand-token rule —
 // the amber/red signals are functional alerting, not status decoration.
@@ -290,6 +293,7 @@ export default function ProjectDetail({
     buildParticipantsLabel && buildParticipantsLabel !== homeUnitLabel;
   const replacement = replacementSummary(app.enterpriseSystemReplacement);
   const oitRow = oitProjectForSlug(app.slug);
+  const codeHealth = codeHealthForProject(app.slug, app.repoUrl);
 
   return (
     <div className="space-y-12">
@@ -694,6 +698,16 @@ export default function ProjectDetail({
           </div>
         </section>
       )}
+
+      <CodeHealthSection
+        health={codeHealth}
+        windowDays={latestCodeHealthSnapshot()?.thresholds.churn_days ?? 90}
+        measuredAsName={
+          codeHealth.state === "measured" && codeHealth.measuredAs
+            ? portfolioProjects.find((p) => p.slug === codeHealth.measuredAs)?.name
+            : undefined
+        }
+      />
 
       {related.length > 0 && (
         <section>

@@ -7,6 +7,7 @@ const projectSections = [
   { href: "/portfolio", label: "Active projects" },
   { href: "/portfolio/pipeline", label: "Requested projects" },
   { href: "/portfolio/scorecard", label: "Build scorecard" },
+  { href: "/portfolio/code-health", label: "Code health" },
 ] as const;
 
 function activeHrefFor(pathname: string): string {

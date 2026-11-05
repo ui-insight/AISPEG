@@ -222,6 +222,7 @@ app/                       # Next.js App Router
   portfolio/               # Projects
     pipeline/              # Unified all-origin request queue (ADR 0005)
     scorecard/             # Build scorecard explorer + per-subject evaluator comparison (ADR 0009)
+    code-health/           # Code health overview, listed not ranked (ADR 0010)
   builder-guide/           # Submit a Project (assessment quiz)
   intake/[token]/          # Submitter-visible status page (Sprint 3a)
   reports/                 # Reports surface
@@ -287,6 +288,7 @@ lib/                       # Domain logic
   rubric.ts                # ClickUp 11-criterion request-scoring rubric (v2; superseded on ratification)
   build-scorecard.ts       # UTR four-bucket build scorecard — fields, enums, Net 5-yr formula (ADR 0009)
   scorecard-data.ts        # Postgres read module for scorecard runs/evaluations/field scores
+  code-health.ts           # Allowlist parser over data/code-health/ ledger summaries (ADR 0010)
   agent/                   # Site assistant — tool registry, loop, prompts,
                            #   rate limiting, query logging (POST /api/ask)
   surveys/                 # Operational Excellence survey — themes, responses,
@@ -365,6 +367,7 @@ normative version of any of these lives in **Agent Rules** above).
 | A canonical UDM table tag | `lib/governance/canonical-udm-tables.ts` | Hand-curated v1 list. The data-governance catalog JSONs do not yet carry canonical/extension classification — once they do, this module retires. |
 | An OIT FY portfolio row, or a crosswalk to one | `lib/oit-ea-portfolio.ts` | Point-in-time transcription of OIT's spreadsheet — re-transcribe on a new cut and bump `SOURCE_AS_OF`. Keep OIT's columns in OIT's vocabulary; `portfolioSlug` is the only seam to `lib/portfolio.ts`, and a claimed match needs both `crosswalkConfidence` and `crosswalkNote`. `npm run verify:portfolio` polices both. |
 | A build-scorecard run (a new model or person scoring) | `data/scorecards/<date>-<evaluator>.json`, then `npm run import:scorecard -- <file>` | Interchange shape is documented in `scripts/import-scorecard.ts`. Every field on every subject needs a justification; `null` is an honest unknown. A run is keyed by (evaluator, runLabel) and re-imports replace it. Never edit another evaluator's run — add your own ([ADR 0009](docs/adr/0009-evaluator-attributed-build-scorecard.md)). |
+| A code-health summary | Nothing: the debt ledger opens the PR | Unknown slugs fail `verify:portfolio`; see [ADR 0010](docs/adr/0010-portfolio-code-health-display.md). |
 | A scoping proposal for a request | No repo file; use the `scope-request` skill | Renders a branded PDF with an AI statement, the author's full name, and named approvers. Source material and the proposal stay outside this public repo. |
 | A presentation or external talk | `lib/artifacts.ts` (entry with `kind: "presentation"`, `external: true`, `href` pointing at the hosted deck) | The artifact appears in the /reports timeline. |
 | A report | `app/reports/page.tsx` and (if needed) a route under `app/reports/<slug>` | Time-stamped, reverse-chron. |

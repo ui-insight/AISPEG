@@ -1,6 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "standalone",
+  // Code-health summaries are read from disk at request time (ADR 0010);
+  // standalone output only ships files it traces, so include them.
+  outputFileTracingIncludes: {
+    "/portfolio/**": ["./data/code-health/**"],
+  },
   async redirects() {
     return [
       // /explore?view=map → strategic-plan map (per ADR 0003).
