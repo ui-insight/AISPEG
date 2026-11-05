@@ -983,7 +983,7 @@ export const projects: Project[] = [
     tagline:
       "Phone-first inventory, maintenance logging, and life-cycle tracking for Campus Services buildings and equipment.",
     description:
-      "Web application, called VandalWorks in its codebase, that gives Campus Services one shared place to inventory the equipment and building systems it owns, schedule and log maintenance, and support repair-or-replace decisions. Today those records live in scattered spreadsheets or nowhere. Technicians log a completed service or repair against equipment or a place in a few taps on a phone. Admins keep the inventory, schedules, parts, and technician assignments current. Everyone can find a unit on a building map and open its floor plan. The pilot dataset is the South Hill complex: 14 buildings, 234 units, and about 8,800 pieces of equipment and furniture. The governing constraint is simple, small, and affordable. It complements StarRez and FAMIS and replaces neither, and version 1 has no integrations. The prototype meets every acceptance criterion in its requirements. Pilot use waits on Entra sign-on and hosting, and production waits on the OIT Enterprise AI Framework stages.",
+      "Web application, called VandalWorks in its codebase, that gives Campus Services one shared place to inventory the equipment and building systems it owns, schedule and log maintenance, and support repair-or-replace decisions. Today those records live in scattered spreadsheets or nowhere. Technicians log a completed service or repair against equipment or a place in a few taps on a phone. Admins keep the inventory, schedules, parts, and technician assignments current. Everyone can find a unit on a building map and open its floor plan. The pilot dataset is the South Hill complex: 14 buildings, 234 units, and about 8,800 pieces of equipment and furniture. The governing constraint is simple, small, and affordable. It complements StarRez and FAMIS and replaces neither, and version 1 has no integrations. The prototype meets every acceptance criterion in its requirements. Entra ID sign-on is built and waits on the university's app registration. Pilot use waits on that and on hosting, and production waits on the OIT Enterprise AI Framework stages.",
     homeUnits: ["Campus Services"],
     operationalOwners: [
       { name: "Greg Fizzell", title: "App owner, Campus Services" },
@@ -1007,7 +1007,7 @@ export const projects: Project[] = [
       "Equipment and building-system inventory",
       "Maintenance schedules and a what's-due view",
       "Building maps and floor plans for the South Hill complex",
-      "Admin and technician roles through Entra ID",
+      "Admin and technician roles, with Entra ID sign-on awaiting app registration",
     ],
     tech: [
       "React",

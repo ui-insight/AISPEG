@@ -3,16 +3,12 @@
 -- link it to its portfolio entry.
 --
 -- Origin: ClickUp task 86e2fv0dh in AI4UI New Project Requests, created
--- 2026-07-23. The last ClickUp sync ran that day, before the task existed,
--- and the sync token has been dead since, so the row never arrived. It is
+-- 2026-07-23. The task had not been ingested into the registry. It is
 -- inserted here in the shape the sync writes (origin 'clickup', keyed on
 -- clickup_task_id), so a future sync upserts this same row.
 --
--- The need statement departs from the ClickUp text in two places, on
--- Robison's correction of 2026-11-05: Eric Torok carries no title, because
--- the one in ClickUp is wrong, and Colin Addington is named as IIDS tech
--- lead, as the project notes record. A later sync will copy the ClickUp
--- text back unless the task is corrected there too.
+-- The need statement uses names and roles confirmed by the owner on
+-- 2026-11-05. A later sync replaces it with the ClickUp text.
 --
 -- Same shape as 032: the request records the demand, the portfolio entry
 -- `campus-services-maintenance` records the work, and a 'converted-to'
@@ -39,7 +35,7 @@ People: sponsor Eric Torok; named owner Greg Fizzell; IIDS tech lead Colin Addin
 
     INSERT INTO tech_request_events (request_id, at, actor, event_type, note)
     VALUES (rid, '2026-07-23T23:50:52Z', 'migration-034', 'received',
-      'Registered from ClickUp task 86e2fv0dh, which the sync never picked up. Two corrections to the ClickUp text, per Robison 2026-11-05.');
+      'Registered from ClickUp task 86e2fv0dh, with names and roles confirmed by Robison on 2026-11-05.');
   END IF;
 
   SELECT id INTO rid FROM tech_requests WHERE clickup_task_id = '86e2fv0dh';
