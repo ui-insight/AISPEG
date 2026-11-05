@@ -1,0 +1,48 @@
+/* Brand rules: Public Sans only, weight contrast for hierarchy, Pride Gold
+   used once, links in Clearwater. Colors arrive as --color-* from
+   app/globals.css; do not add hex values here. */
+@page {
+  size: Letter;
+  margin: 0.8in 0.85in 0.85in;
+  @bottom-left {
+    content: var(--footer);
+    font: 400 7.5pt "Public Sans", Arial, sans-serif;
+    color: var(--color-ink-muted);
+    white-space: pre-line;
+    width: 90%;
+  }
+  @bottom-right {
+    content: counter(page) " of " counter(pages);
+    font: 400 7.5pt "Public Sans", Arial, sans-serif;
+    color: var(--color-ink-muted);
+  }
+}
+* { box-sizing: border-box; }
+html { font-family: "Public Sans", Arial, sans-serif; color: var(--color-ink); }
+body { margin: 0; font-size: 10.5pt; line-height: 1.5; font-weight: 400; }
+.masthead { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30pt; }
+.masthead img { height: 42pt; width: auto; display: block; }
+.unit { font-size: 8.5pt; color: var(--color-ink-muted); text-align: right; line-height: 1.35; }
+h1 { font-size: 25pt; line-height: 1.12; font-weight: 900; letter-spacing: -0.01em; margin: 0 0 6pt; }
+.byline { font-size: 10.5pt; color: var(--color-ink-muted); margin: 0 0 14pt; }
+.byline strong { color: var(--color-ink); font-weight: 700; }
+.rule { width: 44pt; height: 4pt; background: var(--color-brand-gold); margin: 0 0 14pt; }
+h2 { font-size: 15pt; line-height: 1.2; font-weight: 900; margin: 22pt 0 6pt; break-after: avoid; }
+h3 { font-size: 11pt; font-weight: 700; margin: 14pt 0 3pt; break-after: avoid; }
+p { margin: 0 0 7pt; }
+ul, ol { margin: 0 0 8pt; padding-left: 16pt; }
+li { margin-bottom: 2.5pt; }
+a { color: var(--color-ink); text-decoration: underline; text-decoration-color: var(--color-brand-clearwater); text-underline-offset: 2pt; }
+table { width: 100%; border-collapse: collapse; font-size: 8.7pt; line-height: 1.35; margin: 6pt 0 10pt; }
+thead { display: table-header-group; }
+tr { break-inside: avoid; }
+th { text-align: left; font-weight: 700; border-bottom: 1pt solid var(--color-ink); padding: 3pt 6pt 3pt 0; vertical-align: bottom; }
+td { border-bottom: 0.5pt solid var(--color-hairline); padding: 4pt 6pt 4pt 0; vertical-align: top; }
+table.glance { font-size: 9.5pt; }
+table.glance th { border-bottom: 0.5pt solid var(--color-hairline); width: 28%; vertical-align: top; padding: 4pt 6pt 4pt 0; }
+.ai-statement { background: var(--color-surface-alt); border: 0.5pt solid var(--color-hairline); padding: 9pt 11pt; margin: 12pt 0 4pt; font-size: 9.5pt; line-height: 1.45; break-inside: avoid; }
+.ai-statement .label { font-weight: 700; display: block; margin-bottom: 2pt; }
+figure { margin: 10pt 0 12pt; break-inside: avoid; }
+figure svg { width: 100%; height: auto; display: block; font-family: "Public Sans", Arial, sans-serif; }
+figcaption { font-size: 8.7pt; line-height: 1.4; color: var(--color-ink-muted); margin-top: 5pt; }
+figcaption strong { color: var(--color-ink); font-weight: 700; }
