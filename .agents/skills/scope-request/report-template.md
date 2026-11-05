@@ -98,13 +98,13 @@ Each `{{figure:key}}` sits alone on a line and matches a key in `figures.json`. 
   },
   "dataFlow": {
     "type": "dataFlow", "caption": "", "alt": "",
-    "boundaryLabel": "", "boundaryColumns": 3, "excluded": "",
+    "boundaryLabel": "", "boundaryColumns": 1, "excluded": "",
     "columns": [{ "title": "", "items": [{ "label": "", "risk": "Low Risk, proposed" }] }]
   }
 }
 ```
 
-Connections come only from registry links (`tech_request_project_links`, `tech_request_links`), at most six nodes. Use public stage and status labels from `lib/portfolio.ts`. Comparables show the development timelines of projects of similar scope to the options being estimated, not the projects in the connections figure: a project that connects to the request belongs in Figure 1, and it is a comparable only if its own build is similar in size. Each needs a stated reason, three to five rows. Set `active: true` only when the repository has commits in the last 30 days. Mark a risk level "proposed" until the data owner confirms it.
+Connections come only from registry links (`tech_request_project_links`, `tech_request_links`), at most six nodes. Use public stage and status labels from `lib/portfolio.ts`. Comparables show the development timelines of projects of similar scope to the options being estimated, not the projects in the connections figure: a project that connects to the request belongs in Figure 1, and it is a comparable only if its own build is similar in size. Each needs a stated reason, three to five rows. Set `active: true` only when the repository has commits in the last 30 days. Mark a risk level "proposed" until the data owner confirms it. `boundaryColumns` counts the data-flow columns, from the left, that sit inside the university boundary.
 
 ## Brand
 

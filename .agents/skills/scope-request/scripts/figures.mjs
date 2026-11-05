@@ -65,6 +65,11 @@ export function connections({ center, nodes, alt }) {
   const cardW = 188, cardH = 80, gap = 14, midW = 146;
   const midX = (W - midW) / 2;
   const sides = { left: [], right: [] };
+  const titles = new Set(nodes.map((n) => n.title));
+  if (titles.size !== nodes.length) throw new Error("connection node titles must be unique.");
+  for (const n of nodes) {
+    if (n.via && !nodes.some((m) => m.title === n.via && !m.via)) throw new Error(`"${n.title}" has via "${n.via}", which is not a direct node.`);
+  }
   const direct = nodes.filter((n) => !n.via);
   direct.forEach((node, i) => {
     const side = i % 2 === 0 ? "left" : "right";
@@ -113,6 +118,10 @@ export function connections({ center, nodes, alt }) {
 
 // ── Data flow: stages left to right, with the university boundary drawn ──
 export function dataFlow({ columns, boundaryLabel, boundaryColumns, excluded, alt }) {
+  if (!columns?.length || columns.some((c) => !c.items?.length)) throw new Error("every data-flow column needs at least one item.");
+  if (!Number.isInteger(boundaryColumns) || boundaryColumns < 1 || boundaryColumns > columns.length) {
+    throw new Error(`boundaryColumns must be a whole number from 1 to ${columns.length}.`);
+  }
   const n = columns.length, gutter = 26, pad = 9;
   const colW = (W - pad * 2 - gutter * (n - 1)) / n;
   const itemH = 62, itemGap = 8, top = 44;

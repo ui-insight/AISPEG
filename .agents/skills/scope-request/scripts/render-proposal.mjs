@@ -6,8 +6,8 @@
 // Keep the scratch directory outside this public repo.
 
 import { execFileSync } from "node:child_process";
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { existsSync, readFileSync, realpathSync, writeFileSync } from "node:fs";
+import { dirname, join, relative, resolve, isAbsolute } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { figures } from "./figures.mjs";
 
@@ -22,22 +22,32 @@ const fail = (message) => {
   console.error(message);
   process.exit(1);
 };
-const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
 const dir = process.argv[2] ? resolve(process.argv[2]) : fail("Usage: render-proposal.mjs <scratch-dir>");
-const source = readFileSync(join(dir, "proposal.md"), "utf8");
+// The repo is public, so nothing the renderer writes may land inside it.
+const inside = (child, parent) => {
+  const rel = relative(parent, child);
+  return rel === "" || (!rel.startsWith("..") && !isAbsolute(rel));
+};
+if (!existsSync(dir)) fail(`No such directory: ${dir}`);
+if (inside(realpathSync(dir), realpathSync(repo))) fail("The proposal directory must be outside this public repo, such as ../Scoping-Proposals/<request-name>.");
+const source = readFileSync(join(dir, "proposal.md"), "utf8").replace(/\r\n?/g, "\n");
 const match = source.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
 if (!match) fail("proposal.md must start with a --- front matter block.");
 
 const meta = Object.fromEntries(
   match[1].split("\n").filter(Boolean).map((line) => {
     const at = line.indexOf(":");
-    return [line.slice(0, at).trim(), line.slice(at + 1).trim()];
+    // One "key: value" per line. Matching outer quotes are dropped; nothing else is YAML.
+    const value = line.slice(at + 1).trim().replace(/^(["'])(.*)\1$/, "$2");
+    return [line.slice(0, at).trim(), value];
   }),
 );
 const missing = REQUIRED.filter((key) => !meta[key]);
 if (missing.length) fail(`Front matter is missing: ${missing.join(", ")}`);
 if (meta.author.trim().split(/\s+/).length < 2) fail("author must be the author's full name.");
+if (!/^[\w][\w.-]*$/.test(meta.output) || meta.output.includes("..")) fail("output must be a plain file name, with no path.");
 for (const flag of ["author_reviewed", "approved"]) {
   if (!["true", "false"].includes(meta[flag])) fail(`${flag} must be true or false.`);
 }
@@ -70,11 +80,21 @@ const footerAi = reviewed
 const figureData = existsSync(join(dir, "figures.json")) ? JSON.parse(readFileSync(join(dir, "figures.json"), "utf8")) : {};
 let figureNumber = 0;
 let body = execFileSync("pandoc", ["-f", "gfm", "-t", "html", "--wrap=none"], { input: match[2], encoding: "utf8", maxBuffer: 1 << 26 });
+// Pandoc's GFM reader passes raw HTML through. Markup that can restyle or
+// script the page could hide the AI and approval statements, so refuse it.
+const unsafe = body.match(/<\s*(style|script|link|meta|base|iframe|object|embed|svg|form)\b|\s(style|on\w+)\s*=|class\s*=\s*["']?ai-statement/i);
+if (unsafe) fail(`proposal.md contains raw HTML that is not allowed: ${unsafe[0].trim()}`);
 body = body.replace(/<p>\{\{figure:(\w+)\}\}<\/p>/g, (_, key) => {
   const spec = figureData[key];
   if (!spec || !figures[spec.type]) fail(`No usable figure "${key}" in figures.json.`);
   figureNumber += 1;
-  return `<figure>${figures[spec.type](spec)}<figcaption><strong>Figure ${figureNumber}.</strong> ${esc(spec.caption)}</figcaption></figure>`;
+  let drawn;
+  try {
+    drawn = figures[spec.type](spec);
+  } catch (error) {
+    fail(`Figure "${key}": ${error.message}`);
+  }
+  return `<figure>${drawn}<figcaption><strong>Figure ${figureNumber}.</strong> ${esc(spec.caption)}</figcaption></figure>`;
 });
 if (body.includes("{{figure:")) fail("A {{figure:...}} marker must sit alone on its own line.");
 
@@ -118,5 +138,5 @@ ${body}</body></html>`;
 const htmlPath = join(dir, "proposal.html");
 const pdfPath = join(dir, `${meta.output}.pdf`);
 writeFileSync(htmlPath, html);
-execFileSync(CHROME, ["--headless=new", "--disable-gpu", "--no-pdf-header-footer", "--generate-pdf-document-outline", "--virtual-time-budget=4000", `--print-to-pdf=${pdfPath}`, pathToFileURL(htmlPath).href], { stdio: "ignore" });
+execFileSync(CHROME, ["--headless=new", "--disable-gpu", "--no-pdf-header-footer", "--generate-pdf-document-outline", "--virtual-time-budget=4000", `--print-to-pdf=${pdfPath}`, pathToFileURL(htmlPath).href], { stdio: ["ignore", "ignore", "pipe"] });
 console.log(`${approved ? "Approved" : reviewed ? "Reviewed, requires approval" : "UNREVIEWED DRAFT"}: ${pdfPath}`);
