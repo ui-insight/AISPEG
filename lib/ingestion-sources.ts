@@ -71,6 +71,7 @@ export const PROJECT_INGESTION_SOURCE: Record<string, ProjectIngestionSource> =
     "invoice-processing": "clickup",
     "ucm-daily-register": "clickup",
     mindrouter: "iids-internal",
+    "mindrouter-365": "iids-internal",
     "dgx-stack": "iids-internal",
     "template-app": "iids-internal",
     "data-infrastructure-pilot": "iids-internal",

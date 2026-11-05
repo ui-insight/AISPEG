@@ -1158,6 +1158,41 @@ export const projects: Project[] = [
     strategicPlanAlignment: ["A.3", "E.2"],
   },
   {
+    slug: "mindrouter-365",
+    name: "MindRouter 365",
+    tagline:
+      "A MindRouter chat panel inside Excel, Word, PowerPoint, Outlook, OneNote, and Teams.",
+    description:
+      "Microsoft 365 add-in that puts a chat panel backed by MindRouter in Excel, Word, PowerPoint, Outlook, and OneNote on the web, and runs the same panel as a Teams tab. Users send the current selection as context and insert answers back into the file. With tools on, the model reads and edits the open workbook, document, or deck, and every change waits behind a confirmation card. Tools and skills come from MCP servers listed in one index, starting with the AI4RA MCP server's federal, scholarly, and University of Idaho sources. Workflows run several skills in order with the panel in charge and keep an append-only log, and in Excel three worksheet functions let a model answer in a cell. The add-in is static files plus a proxy that forwards each user's own MindRouter key and stores nothing. In Teams it reads nothing from Teams and writes nothing into it, so it needs no Entra registration or Graph permissions. It runs today from a demo host. The production path on mindrouter.uidaho.edu is not yet served, and central deployment through the Microsoft 365 and Teams admin centers has not happened.",
+    homeUnits: ["IIDS"],
+    operationalOwners: [{ name: "Nathan Layman", title: "Lead developer" }],
+    buildParticipants: ["IIDS"],
+    status: "building",
+    visibility: "Public",
+    proposedDeploymentEnvironment: "to-be-determined",
+    currentDeploymentEnvironment: "rcds-vm",
+    enterpriseSystemReplacement: { status: "no" },
+    ai4raRelationship: "Adjacent",
+    iidsSponsor: "Nathan Layman",
+    repoUrl: "https://github.com/ui-insight/mindrouter-365",
+    isPrivateRepo: true,
+    operationalFunction:
+      "Brings MindRouter's on-prem models into the Microsoft 365 apps staff already use, with document tools behind confirmation cards, MCP tool servers for outside and institutional sources, and skills that encode how an office does a job.",
+    operationalExcellenceOutcome:
+      "Staff use AI where the work already sits, on university-hosted models, without pasting university data into consumer tools or leaving the document they are working in.",
+    features: [
+      "Chat panel in Excel, Word, PowerPoint, Outlook, OneNote on the web, and Teams",
+      "Document tools that act only after a confirmation card",
+      "MCP tool servers and skills listed from one index",
+      "Workflows that run skills in order with an append-only log",
+      "Excel cell functions: ASK, CLASSIFY, EXTRACT",
+    ],
+    tech: ["JavaScript", "Office.js", "Microsoft Teams JS", "MCP", "MindRouter", "Caddy"],
+    relatedSlugs: ["mindrouter", "vandalizer"],
+    workCategories: ["ai-infrastructure", "documents"],
+    strategicPlanAlignment: ["E.2"],
+  },
+  {
     slug: "dgx-stack",
     name: "DGX Stack",
     tagline:
