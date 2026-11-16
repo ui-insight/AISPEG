@@ -56,3 +56,6 @@ agentic-ai-lessons.pptx
 
 # Agent worktrees (created by Claude Code background agents)
 .claude/worktrees/
+
+# UTR export output (carries owner emails; see scripts/export-utr.ts)
+/utr-export/
