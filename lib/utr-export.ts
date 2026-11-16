@@ -150,6 +150,8 @@ export const utrExportOverrides: Record<string, UtrExportOverride> = {
     intendedUse: ["My group/department"],
   },
   "historical-contracts": {
+    // Runs on ArchAI, the same tool as ongoing-contracts.
+    requestType: "Enhancement or change to current application",
     shortDescription:
       "As a Purchasing staff member, I need the required fields pulled from about 1,400 older contracts so that I can submit them to the State Transparency Database without keying each one by hand.",
     intendedUse: ["My group/department"],
@@ -172,6 +174,8 @@ export const utrExportOverrides: Record<string, UtrExportOverride> = {
       "As a payroll analyst, I need retroactive pay requests to arrive complete and already checked against Banner so that I can process late or missed hours without chasing corrections.",
   },
   "bid-waiver-document-review": {
+    // A module of Vandalizer, which is in production.
+    requestType: "Enhancement or change to current application",
     shortDescription:
       "As a purchasing approver, I need purchase quotes and bid-waiver justifications checked against procurement rules so that I can approve sourcing decisions with a clear record that auditors can follow.",
     intendedUse: ["My group/department"],
@@ -182,6 +186,8 @@ export const utrExportOverrides: Record<string, UtrExportOverride> = {
     intendedUse: ["My group/department"],
   },
   "bls-cupa-code-prediction": {
+    // A module of Vandalizer, which is in production.
+    requestType: "Enhancement or change to current application",
     shortDescription:
       "As an HR classification specialist, I need suggested occupation codes for each job description so that I can confirm a code instead of looking each one up.",
     intendedUse: ["My group/department"],
