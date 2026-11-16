@@ -30,6 +30,7 @@ import {
 import { resolveGovernanceProfile } from "./governance-profile";
 import { isOitManagedEnvironment } from "./project-governance";
 import { formatAnnualUsd } from "./roi-rubric";
+import { utrPersonEmails } from "./utr-owner-emails";
 
 // ---- Form vocabulary (mirror of the TDX form) ------------------------
 
@@ -154,6 +155,9 @@ export const utrExportOverrides: Record<string, UtrExportOverride> = {
     intendedUse: ["My group/department"],
   },
   "ongoing-contracts": {
+    // Runs on ArchAI; paused on requested improvements to that app, so
+    // the request is a change to an existing application, not a deploy.
+    requestType: "Enhancement or change to current application",
     shortDescription:
       "As a Purchasing staff member, I need the required fields pulled from new contracts as they arrive so that our State Transparency Database uploads stay complete and current.",
     intendedUse: ["My group/department"],
@@ -363,8 +367,8 @@ function deriveRequestType(project: Project): UtrField<UtrRequestType> {
   };
 }
 
-function toPerson(owner: { name: string; email?: string }): UtrPerson {
-  return { name: owner.name, email: owner.email ?? null };
+function toPerson(name: string): UtrPerson {
+  return { name, email: utrPersonEmails[name] ?? null };
 }
 
 function deriveJustification(project: Project): string {
@@ -413,10 +417,10 @@ export function buildUtrRecord(project: Project): UtrRecord {
   const profile = resolveGovernanceProfile(project);
   const [first, ...rest] = project.operationalOwners;
 
-  const contacts: UtrPerson[] = rest.map(toPerson);
+  const contacts: UtrPerson[] = rest.map((o) => toPerson(o.name));
   if (profile.technicalLead && profile.technicalLead !== first?.name) {
     if (!contacts.some((c) => c.name === profile.technicalLead)) {
-      contacts.push({ name: profile.technicalLead, email: null });
+      contacts.push(toPerson(profile.technicalLead));
     }
   }
 
@@ -426,7 +430,7 @@ export function buildUtrRecord(project: Project): UtrRecord {
       ? { value: o.requestType, source: "override" }
       : deriveRequestType(project),
     requestor: first
-      ? { value: toPerson(first), source: "derived", note: "functional owner (operationalOwners[0])" }
+      ? { value: toPerson(first.name), source: "derived", note: "functional owner (operationalOwners[0])" }
       : { value: null, source: "missing", note: "no operationalOwners" },
     contacts:
       contacts.length > 0

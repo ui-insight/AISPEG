@@ -57,10 +57,7 @@ export const lookupPortfolioEntryTool: ToolHandler = {
         tagline: app.tagline,
         description: app.description,
         homeUnits: app.homeUnits,
-        operationalOwners: app.operationalOwners.map(({ name, title }) => ({
-          name,
-          title,
-        })),
+        operationalOwners: app.operationalOwners,
         buildParticipants: app.buildParticipants,
         status: app.status,
         publicStage: publicStageFromStatus(app.status),

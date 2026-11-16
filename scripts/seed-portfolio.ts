@@ -346,8 +346,7 @@ async function seedProject(i: Project): Promise<{ id: string; blockers: number }
       owner_primary?.name ?? null,
       home_unit_primary, // legacy `department` column populated for backward compat
       i.homeUnits,
-      // Emails exist for the UTR exporter only; they stay out of the DB.
-      JSON.stringify(i.operationalOwners.map(({ name, title }) => ({ name, title }))),
+      JSON.stringify(i.operationalOwners),
       i.buildParticipants,
       i.tags ?? [],
       tier,

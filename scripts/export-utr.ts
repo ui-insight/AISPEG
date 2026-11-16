@@ -5,7 +5,8 @@
 //   npm run export:utr -- --out <dir>     # write somewhere else
 //   npm run export:utr -- --report-only   # gaps only, no files
 //
-// Files (the output dir is gitignored — records carry owner emails):
+// Files (the output dir is gitignored — records carry owner emails
+// from lib/utr-owner-emails.ts):
 //   utr-export.json   full records with per-field provenance
 //   utr-export.csv    one row per project, columns = form labels
 //   utr-gaps.csv      every missing field, blocking vs. recommended
@@ -31,6 +32,10 @@ const args = process.argv.slice(2);
 const reportOnly = args.includes("--report-only");
 const outIdx = args.indexOf("--out");
 const outDir = outIdx >= 0 ? args[outIdx + 1] : "utr-export";
+if (!outDir || outDir.startsWith("--")) {
+  console.error("--out needs a directory");
+  process.exit(1);
+}
 
 const unknown = unknownUtrOverrideSlugs();
 if (unknown.length > 0) {
@@ -41,8 +46,15 @@ if (unknown.length > 0) {
 const records = buildUtrRecords();
 const gaps: UtrGap[] = records.flatMap(utrGaps);
 
+// A cell starting with one of these runs as a formula when the CSV is
+// opened in Excel. Quoting doesn't prevent it, and prefixing an
+// apostrophe would corrupt the value TDX imports, so refuse instead.
+const FORMULA_LEAD = /^[=+\-@\t\r]/;
+const formulaCells: string[] = [];
+
 function csvCell(v: string): string {
-  return /[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v;
+  if (FORMULA_LEAD.test(v)) formulaCells.push(v.slice(0, 40));
+  return /[",\r\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v;
 }
 function toCsv(rows: Record<string, string>[]): string {
   if (rows.length === 0) return "";
@@ -79,12 +91,20 @@ for (const [field, n] of [...byField].sort((a, b) => b[1].blocking - a[1].blocki
 }
 
 if (!reportOnly) {
+  const exportCsv = toCsv(records.map(utrRecordToRow));
+  const gapsCsv = toCsv(
+    gaps.map((g) => ({ slug: g.slug, field: g.field, severity: g.severity, message: g.message })),
+  );
+  if (formulaCells.length > 0) {
+    console.error(
+      `\nRefusing to write CSV: ${formulaCells.length} cell(s) would run as spreadsheet formulas:`,
+    );
+    for (const c of formulaCells) console.error(`  ${JSON.stringify(c)}`);
+    process.exit(1);
+  }
   mkdirSync(outDir, { recursive: true });
   writeFileSync(join(outDir, "utr-export.json"), JSON.stringify(records, null, 2) + "\n");
-  writeFileSync(join(outDir, "utr-export.csv"), toCsv(records.map(utrRecordToRow)));
-  writeFileSync(
-    join(outDir, "utr-gaps.csv"),
-    toCsv(gaps.map((g) => ({ slug: g.slug, field: g.field, severity: g.severity, message: g.message }))),
-  );
+  writeFileSync(join(outDir, "utr-export.csv"), exportCsv);
+  writeFileSync(join(outDir, "utr-gaps.csv"), gapsCsv);
   console.log(`\nWrote ${outDir}/utr-export.json, utr-export.csv, utr-gaps.csv`);
 }

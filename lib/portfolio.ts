@@ -71,12 +71,6 @@ export type InstitutionalReviewStatus =
 export interface OperationalOwner {
   name: string;
   title?: string;
-  /**
-   * Institutional email. Used only by the UTR exporter
-   * (lib/utr-export.ts) so TDX can resolve the person. Never rendered,
-   * never seeded into Postgres (scripts/seed-portfolio.ts strips it).
-   */
-  email?: string;
 }
 
 export interface Project {
