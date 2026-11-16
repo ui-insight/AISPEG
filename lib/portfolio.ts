@@ -607,7 +607,7 @@ export const projects: Project[] = [
     homeUnits: ["Office of Sponsored Programs (ORED)"],
     operationalOwners: [{ name: "Barrie Robison" }],
     buildParticipants: ["IIDS"],
-    status: "building",
+    status: "prototype",
     visibility: "Public",
     proposedDeploymentEnvironment: "to-be-determined",
     currentDeploymentEnvironment: "rcds-vm",
