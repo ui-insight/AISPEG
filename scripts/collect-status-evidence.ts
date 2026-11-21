@@ -271,6 +271,7 @@ function collectUsage(asOf: Date): UsageEvidence {
       if (!days.length) continue;
       const t = { requests: 0, pageViews: 0, apiCalls: 0, writes: 0, maxVisitors: 0, full: 0, partial: 0, missing: 0 };
       let hasPages = false;
+      let hasApi = false;
       for (const d of days) {
         const a = d.apps[slug]!;
         t[a.coverage] += 1;
@@ -278,19 +279,23 @@ function collectUsage(asOf: Date): UsageEvidence {
         t.apiCalls += a.apiCalls ?? 0;
         t.writes += a.writes ?? 0;
         if (a.pageViews !== undefined) hasPages = true;
+        if (a.apiCalls !== undefined) hasApi = true;
         t.pageViews += a.pageViews ?? 0;
         t.maxVisitors = Math.max(t.maxVisitors, a.visitors ?? 0);
       }
       if (t.full + t.partial === 0) {
         (bySlug[slug] ??= []).push(
-          `usage last ${window}d: no access-log coverage (container logs lost to a redeploy); use unknown, not zero`
+          `usage last ${window}d: no access-log coverage (logs lost to a redeploy or unreadable); use unknown, not zero`
         );
         continue;
       }
       const coverage = `${t.full} full, ${t.partial} partial, ${t.missing} missing of ${days.length} counted days (first ${days[0]!.day})`;
-      const pages = hasPages ? `, ${t.pageViews} page views, busiest day ${t.maxVisitors} distinct clients` : " (method-only log: no page views or clients)";
+      const api = hasApi ? `, ${t.apiCalls} API calls` : "";
+      const pages = hasPages
+        ? `, ${t.pageViews} page views, busiest day ${t.maxVisitors} distinct clients`
+        : " (method-only log: API calls, page views and clients not recorded)";
       (bySlug[slug] ??= []).push(
-        `usage last ${window}d from frontend access logs: ${t.requests} requests, ${t.apiCalls} API calls, ${t.writes} writes${pages}; ${coverage}`
+        `usage last ${window}d from frontend access logs: ${t.requests} requests${api}, ${t.writes} writes${pages}; ${coverage}`
       );
     }
   }

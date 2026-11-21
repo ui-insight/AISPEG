@@ -13,9 +13,10 @@ and adds them to status-review packets.
     python3.11 ~/AISPEG/scripts/host/usage-count.py            # yesterday
     python3.11 ~/AISPEG/scripts/host/usage-count.py --days 90  # backfill
 
-A finished day's counts never change, so an existing file is kept unless
---force is given; a later run cannot replace good counts with "missing"
-after a redeploy. Cron runs it hourly with --days 2, so the first run
+A finished day's counts never change, so once an app has counts for a day
+they are kept unless --force is given; a later run cannot replace them
+with "missing" after a redeploy. Apps recorded as missing are retried on
+each run while the day is in the --days window. Cron runs it hourly with --days 2, so the first run
 after UTC midnight records the day just ended:
 
     7 * * * * python3.11 $HOME/AISPEG/scripts/host/usage-count.py --days 2 >> $HOME/logs/usage-count.log 2>&1
@@ -36,8 +37,9 @@ Counting rules
   in memory and discarded. The client IP is the first X-Forwarded-For
   address when nginx logs one. The Insight proxy can collapse many people
   into one address, so treat this as a floor, not a head count.
-- coverage:  "full", or "partial" with coverageFrom when the container
-  started during the day, or "missing" when it did not exist.
+- coverage:  "full", or "partial" with coverageFrom when the oldest log
+  line Docker holds falls inside the day (recreate or rotation), or
+  "missing" when the log starts after the day or Docker could not read it.
 """
 
 import argparse
@@ -82,23 +84,40 @@ def docker(*args):
     return subprocess.run(["docker", *args], capture_output=True, text=True)
 
 
-def started_at(container):
-    r = docker("inspect", "-f", "{{.State.StartedAt}}", container)
-    if r.returncode != 0:
-        return None
+def parse_ts(raw):
     # Docker prints nanoseconds; Python parses microseconds.
-    raw = r.stdout.strip()
-    raw = re.sub(r"(\.\d{6})\d*", r"\1", raw).replace("Z", "+00:00")
+    raw = re.sub(r"(\.\d{6})\d*", r"\1", raw.strip()).replace("Z", "+00:00")
     return datetime.fromisoformat(raw)
+
+
+def first_log_at(container):
+    """Time of the oldest log line Docker still holds, or None.
+
+    This, not .State.StartedAt, bounds coverage: a restart keeps the log, a
+    recreate starts a new one, and rotation (max-size) drops the oldest part.
+    """
+    if docker("inspect", container).returncode != 0:
+        return None
+    p = subprocess.Popen(
+        ["docker", "logs", "--timestamps", container],
+        stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
+    )
+    line = p.stdout.readline()
+    p.kill()
+    p.wait()
+    try:
+        return parse_ts(line.split(" ", 1)[0]) if line else None
+    except ValueError:
+        return None
 
 
 def count_day(container, fmt, day_start):
     day_end = day_start + timedelta(days=1)
-    started = started_at(container)
+    started = first_log_at(container)
     if started is None:
         return {"container": container, "coverage": "missing"}
     if started >= day_end:
-        return {"container": container, "coverage": "missing", "startedAt": started.isoformat()}
+        return {"container": container, "coverage": "missing", "logsFrom": started.isoformat()}
 
     r = docker(
         "logs", "--timestamps",
@@ -106,7 +125,7 @@ def count_day(container, fmt, day_start):
         container,
     )
     if r.returncode != 0:
-        return {"container": container, "coverage": "missing", "error": r.stderr.strip()[:200]}
+        return {"container": container, "coverage": "missing", "error": "docker logs failed"}
 
     counts = {"requests": 0, "apiCalls": 0, "writes": 0, "errors5xx": 0}
     if fmt == "combined":
@@ -170,9 +189,22 @@ def main():
         day_start = today - timedelta(days=back)
         day = day_start.date().isoformat()
         path = os.path.join(OUT_DIR, f"{day}.json")
+        apps = {}
         if os.path.exists(path) and not args.force:
+            with open(path) as f:
+                apps = json.load(f)["apps"]
+        # Count apps the file lacks or recorded as missing (Docker may have
+        # been down); keep counts already taken, since logs only shrink.
+        todo = {
+            slug: target for slug, target in TARGETS.items()
+            if apps.get(slug, {}).get("coverage", "missing") == "missing"
+        }
+        if not todo:
             continue
-        apps = {slug: count_day(c, fmt, day_start) for slug, (c, fmt) in TARGETS.items()}
+        fresh = {slug: count_day(c, fmt, day_start) for slug, (c, fmt) in todo.items()}
+        if apps and all(a["coverage"] == "missing" for a in fresh.values()):
+            continue
+        apps.update(fresh)
         record = {
             "day": day,
             "generatedAt": datetime.now(timezone.utc).isoformat(timespec="seconds"),
