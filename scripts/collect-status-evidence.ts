@@ -6,7 +6,8 @@
 //
 //   evidence-ids.json   every citable ID, per project
 //                       tags: P portfolio, G GitHub, U URL, C ClickUp statement,
-//                       D database, X exception, N evidence gap
+//                       D database, A access-log usage, X exception,
+//                       N evidence gap
 //   exceptions.json     what needs a human or model to look at it
 //   packets.md          exception projects only, ready to paste into a brief
 //   all-packets.md      every project
@@ -20,7 +21,12 @@
 //
 // Set DATABASE_URL to add open blockers, linked requests and ClickUp sync
 // freshness. Without it the database evidence is recorded as a gap.
+//
+// Usage counts come over ssh from the files scripts/host/usage-count.py
+// writes nightly on the app host. USAGE_HOST overrides the ssh target; set it
+// empty to skip. Projects the host does not count get no A line.
 
+import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, realpathSync, writeFileSync } from "node:fs";
 import { basename, dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -215,6 +221,87 @@ async function collectDb(): Promise<DbEvidence> {
   }
 }
 
+interface UsageDay {
+  day: string;
+  apps: Record<
+    string,
+    {
+      coverage: "full" | "partial" | "missing";
+      requests?: number;
+      pageViews?: number;
+      apiCalls?: number;
+      writes?: number;
+      visitors?: number;
+    }
+  >;
+}
+
+interface UsageEvidence {
+  gap?: string;
+  days: number;
+  bySlug: Record<string, string[]>;
+}
+
+const USAGE_WINDOWS = [30, 90];
+
+/** Reads the host's daily usage files and summarizes each app over 30 and 90 days. */
+function collectUsage(asOf: Date): UsageEvidence {
+  const host = process.env.USAGE_HOST ?? "devops@openera.insight.uidaho.edu";
+  if (!host) return { gap: "USAGE_HOST empty; usage skipped", days: 0, bySlug: {} };
+  let raw: string;
+  try {
+    raw = execFileSync(
+      "ssh",
+      ["-o", "BatchMode=yes", "-o", "ConnectTimeout=10", host,
+        "ls ~/usage/*.json >/dev/null 2>&1 && jq -c . ~/usage/*.json"],
+      { encoding: "utf8", maxBuffer: 32 * 1024 * 1024 }
+    );
+  } catch (err) {
+    return { gap: `usage files unreadable on ${host}: ${(err as Error).message.split("\n")[0]}`, days: 0, bySlug: {} };
+  }
+  const all = raw.split("\n").filter(Boolean).map((l) => JSON.parse(l) as UsageDay);
+  if (!all.length) return { gap: `no usage files on ${host}`, days: 0, bySlug: {} };
+
+  const bySlug: Record<string, string[]> = {};
+  const slugs = new Set(all.flatMap((d) => Object.keys(d.apps)));
+  for (const slug of slugs) {
+    for (const window of USAGE_WINDOWS) {
+      const since = new Date(asOf.getTime() - window * 86_400_000).toISOString().slice(0, 10);
+      const days = all.filter((d) => d.day >= since && d.apps[slug]);
+      if (!days.length) continue;
+      const t = { requests: 0, pageViews: 0, apiCalls: 0, writes: 0, maxVisitors: 0, full: 0, partial: 0, missing: 0 };
+      let hasPages = false;
+      let hasApi = false;
+      for (const d of days) {
+        const a = d.apps[slug]!;
+        t[a.coverage] += 1;
+        t.requests += a.requests ?? 0;
+        t.apiCalls += a.apiCalls ?? 0;
+        t.writes += a.writes ?? 0;
+        if (a.pageViews !== undefined) hasPages = true;
+        if (a.apiCalls !== undefined) hasApi = true;
+        t.pageViews += a.pageViews ?? 0;
+        t.maxVisitors = Math.max(t.maxVisitors, a.visitors ?? 0);
+      }
+      if (t.full + t.partial === 0) {
+        (bySlug[slug] ??= []).push(
+          `usage last ${window}d: no access-log coverage (logs lost to a redeploy or unreadable); use unknown, not zero`
+        );
+        continue;
+      }
+      const coverage = `${t.full} full, ${t.partial} partial, ${t.missing} missing of ${days.length} counted days (first ${days[0]!.day})`;
+      const api = hasApi ? `, ${t.apiCalls} API calls` : "";
+      const pages = hasPages
+        ? `, ${t.pageViews} page views, busiest day ${t.maxVisitors} distinct clients`
+        : " (method-only log: API calls, page views and clients not recorded)";
+      (bySlug[slug] ??= []).push(
+        `usage last ${window}d from frontend access logs: ${t.requests} requests${api}, ${t.writes} writes${pages}; ${coverage}`
+      );
+    }
+  }
+  return { days: all.length, bySlug };
+}
+
 function readNotes(out: string): Record<string, string[]> {
   const path = join(out, "clickup-notes.json");
   if (!existsSync(path)) return {};
@@ -228,7 +315,8 @@ function packet(
   probe: UrlProbe | null,
   exceptions: StatusException[],
   notes: string[],
-  db: string[]
+  db: string[],
+  usage: string[]
 ): { text: string; ids: string[] } {
   const lines: string[] = [];
   const counts: Record<string, number> = {};
@@ -273,6 +361,7 @@ function packet(
   for (const note of notes) add("C", note);
   if (!notes.length) add("N", "no ClickUp notes supplied");
   for (const line of db) add("D", line);
+  for (const line of usage) add("A", line);
   for (const e of exceptions) add("X", `${e.kind} (${e.severity}): ${e.detail}`);
 
   return {
@@ -297,6 +386,7 @@ async function main(): Promise<void> {
   const probes = new Map((await Promise.all(urls.map((u) => probeUrl(u)))).map((p) => [p.url, p]));
 
   const db = await collectDb();
+  const usage = collectUsage(asOf);
   const notes = readNotes(out);
 
   const texts: Record<string, string> = {};
@@ -311,7 +401,7 @@ async function main(): Promise<void> {
       .map((p) => p.slug);
     const found = findExceptions(project, repo, probe, asOf);
     exceptions.push(...found);
-    const built = packet(project, repo, sharedWith, probe, found, notes[project.slug] ?? [], db.bySlug[project.slug] ?? []);
+    const built = packet(project, repo, sharedWith, probe, found, notes[project.slug] ?? [], db.bySlug[project.slug] ?? [], usage.bySlug[project.slug] ?? []);
     texts[project.slug] = built.text;
     ids[project.slug] = built.ids;
   }
@@ -329,6 +419,7 @@ async function main(): Promise<void> {
   const certIssues = [...probes.values()].filter((p) => p.certIssue).length;
   if (certIssues) console.log(`Certificate chain issues: ${certIssues} of ${probes.size} URLs (see packets).`);
   console.log(`Database: ${db.gap ?? `read; last good ClickUp sync ${db.syncedAt ?? "never"}`}`);
+  console.log(`Usage: ${usage.gap ?? `${usage.days} daily files, ${Object.keys(usage.bySlug).length} apps`}`);
   console.log(`ClickUp notes: ${Object.keys(notes).length} projects`);
   console.log(`packets.md is ${flaggedPackets.length} bytes. Wrote to ${out}`);
 }
