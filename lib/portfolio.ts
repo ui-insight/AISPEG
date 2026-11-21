@@ -225,20 +225,18 @@ export const projects: Project[] = [
     tagline:
       "AI-assisted audit observation lifecycle tracking for Internal Audit.",
     description:
-      "Full-stack dashboard for tracking internal audit observations, corrective action items, and responsible-party assignments. Ingests audit report PDFs via OCR + LLM extraction (MindRouter dots.OCR + Qwen3), with human review before persistence.",
+      "Full-stack dashboard for tracking internal audit observations, corrective action items, and responsible-party assignments. Ingests audit report PDFs via OCR + LLM extraction (MindRouter dots.OCR + Qwen3), with human review before persistence. Work stopped in 2026 and the service is no longer running; the record is kept for institutional memory.",
     homeUnits: ["Division of Financial Affairs"],
     operationalOwners: [{ name: "Kim Salisbury" }],
     buildParticipants: ["IIDS"],
-    status: "paused",
+    status: "archived",
     visibility: "Public",
     proposedDeploymentEnvironment: "to-be-determined",
     currentDeploymentEnvironment: "rcds-vm",
     enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "None",
     iidsSponsor: "Barrie Robison",
-    liveUrlIsStaging: true,
     repoUrl: "https://github.com/ui-insight/AuditDashboard",
-    liveUrl: "https://auditdashboard.insight.uidaho.edu",
     operationalFunction:
       "Audit observation lifecycle: ingest report PDF → extract observations and action items → assign responsible parties → monitor closure with overdue alerts. Replaces spreadsheet tracking.",
     operationalExcellenceOutcome:
@@ -267,8 +265,6 @@ export const projects: Project[] = [
     enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "None",
     iidsSponsor: "Colin Addington",
-    repoUrl: "https://github.com/ui-iids/ai4ui-integrated-dashboard",
-    isPrivateRepo: true,
     operationalFunction:
       "Invoice intake for AP processors and departmental requesters: automated rejection of non-PO invoices, field extraction from PDFs and images, Banner PO matching, and a human-review queue with edit / request-correction / mark-processed actions.",
     operationalExcellenceOutcome:
@@ -806,11 +802,11 @@ export const projects: Project[] = [
   // ============================================================
   {
     slug: "rfd-companion",
-    name: "RFD Companion",
+    name: "RFD Hub",
     tagline:
       "One accountable workspace for Research and Faculty Development operations.",
     description:
-      "Standalone operational workspace for proposal-development support, faculty-development programs, internal competitions, events, reviews, shared calendars, and staff and faculty next actions. It supersedes the standalone RFD CAREER Dashboard: CAREER Club program and cohort tracking now live here. RFD Companion integrates with OpenERA through explicit least-privilege APIs, is intended to replace RFD's InfoReady workflows after parity and migration validation, and will replace TDX for proposal-development operations after a controlled cutover.",
+      "Standalone operational workspace for proposal-development support, faculty-development programs, internal competitions, events, reviews, shared calendars, and staff and faculty next actions. It supersedes the standalone RFD CAREER Dashboard: CAREER Club program and cohort tracking now live here. RFD Hub (built as RFD Companion) is deployed and in use by RFD, has replaced InfoReady for RFD's internal competitions, integrates with OpenERA through explicit least-privilege APIs, and will replace TDX for proposal-development operations after a controlled cutover.",
     homeUnits: ["Research Faculty Development (ORED)"],
     operationalOwners: [
       {
@@ -819,7 +815,9 @@ export const projects: Project[] = [
       },
     ],
     buildParticipants: ["IIDS", "Research and Faculty Development"],
-    status: "building",
+    status: "production",
+    productionScope: "home-unit",
+    supportContact: "Barrie Robison",
     visibility: "Public",
     proposedDeploymentEnvironment: "to-be-determined",
     currentDeploymentEnvironment: "rcds-vm",
@@ -833,12 +831,11 @@ export const projects: Project[] = [
     iidsSponsor: "Barrie Robison",
     repoUrl: "https://github.com/ui-insight/RFDModule",
     isPrivateRepo: true,
-    liveUrl: "https://rfd-companion-dev.insight.uidaho.edu",
-    liveUrlIsStaging: true,
+    liveUrl: "https://rfdhub.insight.uidaho.edu",
     operationalFunction:
       "Coordinates RFD service requests, proposal checklists and task schedules, faculty-development programs and cohorts, competitions, events, reviews, shared deadlines, and role-scoped next actions while exchanging authoritative proposal and award data with OpenERA.",
     operationalExcellenceOutcome:
-      "Replaces fragmented spreadsheets and vendor-shaped workflows with one RFD-owned operating model, reduces duplicate entry across research-administration systems, and positions RFD to retire the approximately $17,000-per-year InfoReady contract after validated parity and migration.",
+      "Replaces fragmented spreadsheets and vendor-shaped workflows with one RFD-owned operating model, reduces duplicate entry across research-administration systems, and retires the approximately $17,000-per-year InfoReady contract.",
     tech: [
       "React",
       "TypeScript",
@@ -857,9 +854,9 @@ export const projects: Project[] = [
     slug: "rfd-career",
     name: "RFD CAREER Dashboard",
     tagline:
-      "Cohort progress dashboard for the CAREER Club program, superseded by RFD Companion.",
+      "Cohort progress dashboard for the CAREER Club program, superseded by RFD Hub.",
     description:
-      "Interactive cohort dashboard that tracked participant progress through CAREER Club workbook data, helping faculty development program leaders identify stuck participants and evaluate program effectiveness. Piloted with a 12-person CAREER Club cohort. Superseded by RFD Companion, which carries CAREER Club program and cohort tracking inside RFD's single operational workspace; the standalone dashboard was taken offline in September 2026.",
+      "Interactive cohort dashboard that tracked participant progress through CAREER Club workbook data, helping faculty development program leaders identify stuck participants and evaluate program effectiveness. Piloted with a 12-person CAREER Club cohort. Superseded by RFD Hub, which carries CAREER Club program and cohort tracking inside RFD's single operational workspace; the standalone dashboard was taken offline in September 2026.",
     homeUnits: ["Research Faculty Development (ORED)"],
     operationalOwners: [{ name: "Eric Torok" }],
     buildParticipants: ["IIDS"],
