@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { query, queryOne } from "@/lib/db";
 import {
-  isDeploymentEnvironment,
+  isProposedDeploymentEnvironment,
   isEnterpriseReplacementStatus,
 } from "@/lib/project-governance";
 import { isProjectStatus, PROJECT_STATUSES, type ProjectStatus } from "@/lib/portfolio";
@@ -145,7 +145,7 @@ export async function POST(request: NextRequest) {
     const replacementStatus =
       enterprise_replacement_status ?? "to-be-determined";
 
-    if (!isDeploymentEnvironment(deploymentEnvironment)) {
+    if (!isProposedDeploymentEnvironment(deploymentEnvironment)) {
       return NextResponse.json(
         { error: "Invalid proposed deployment environment" },
         { status: 400 }

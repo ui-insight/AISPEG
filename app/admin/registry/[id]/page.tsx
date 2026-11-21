@@ -12,7 +12,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import {
-  DEPLOYMENT_ENVIRONMENTS,
+  PROPOSED_DEPLOYMENT_ENVIRONMENTS,
   ENTERPRISE_REPLACEMENT_STATUSES,
   type DeploymentEnvironment,
   type EnterpriseReplacementStatus,
@@ -723,7 +723,7 @@ export default function RegistryDetailPage() {
               }
               className={inputCls}
             >
-              {DEPLOYMENT_ENVIRONMENTS.map((environment) => (
+              {PROPOSED_DEPLOYMENT_ENVIRONMENTS.map((environment) => (
                 <option key={environment.value} value={environment.value}>
                   {environment.label}
                 </option>

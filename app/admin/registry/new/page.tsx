@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
-  DEPLOYMENT_ENVIRONMENTS,
+  PROPOSED_DEPLOYMENT_ENVIRONMENTS,
   ENTERPRISE_REPLACEMENT_STATUSES,
   type DeploymentEnvironment,
   type EnterpriseReplacementStatus,
@@ -330,7 +330,7 @@ export default function NewRegistryEntryPage() {
                 }
                 className={inputCls}
               >
-                {DEPLOYMENT_ENVIRONMENTS.map((environment) => (
+                {PROPOSED_DEPLOYMENT_ENVIRONMENTS.map((environment) => (
                   <option key={environment.value} value={environment.value}>
                     {environment.label}
                   </option>
