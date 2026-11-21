@@ -20,6 +20,7 @@ import type { Project, ProjectStatus } from "./portfolio";
 import { portfolioMeta } from "./portfolio-meta";
 import {
   isDeploymentEnvironment,
+  isProposedDeploymentEnvironment,
   isOitManagedEnvironment,
 } from "./project-governance";
 
@@ -363,12 +364,12 @@ const verifyUniversal: Verifier = (i) => {
     );
   }
 
-  if (!isDeploymentEnvironment(i.proposedDeploymentEnvironment)) {
+  if (!isProposedDeploymentEnvironment(i.proposedDeploymentEnvironment)) {
     problems.push(
       problem(
         i,
         "every project requires a valid proposed deployment environment",
-        "proposedDeploymentEnvironment is missing or is not in the governance vocabulary."
+        "proposedDeploymentEnvironment is missing, not in the governance vocabulary, or a current-only value such as nkn-hosted."
       )
     );
   }

@@ -12,7 +12,9 @@
 // live in lib/deployment-targets.ts; Azure was dropped with zero uses
 // and can be re-added the day OIT actually lands something there.
 // `nkn-hosted` (Migration 035) is a meta value, not a seventh target: it
-// records an existing project running on NKN, and requests can't use it.
+// records an existing project running on NKN. It is current-only (never
+// a proposed environment or a request target), so the UTR landscape's
+// destination summary needs no pool for it.
 //
 // `oitManaged` drives ADR 0001 sub-decision #5: production operated on
 // an OIT-managed environment satisfies the accessibility rule even
@@ -129,6 +131,24 @@ export function isDeploymentEnvironment(
 ): value is DeploymentEnvironment {
   return DEPLOYMENT_ENVIRONMENTS.some((item) => item.value === value);
 }
+
+/** Values that record where existing work runs but never where work is
+ * headed. Excluded from proposed-environment pickers and checks. */
+export const CURRENT_ONLY_DEPLOYMENT_ENVIRONMENTS: readonly DeploymentEnvironment[] =
+  ["nkn-hosted"];
+
+export function isProposedDeploymentEnvironment(
+  value: unknown
+): value is DeploymentEnvironment {
+  return (
+    isDeploymentEnvironment(value) &&
+    !CURRENT_ONLY_DEPLOYMENT_ENVIRONMENTS.includes(value)
+  );
+}
+
+export const PROPOSED_DEPLOYMENT_ENVIRONMENTS = DEPLOYMENT_ENVIRONMENTS.filter(
+  ({ value }) => isProposedDeploymentEnvironment(value)
+);
 
 /**
  * ADR 0001 sub-decision #5: production operated on an OIT-managed

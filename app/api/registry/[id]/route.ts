@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { query, queryOne } from "@/lib/db";
 import {
-  isDeploymentEnvironment,
+  isProposedDeploymentEnvironment,
   isEnterpriseReplacementStatus,
 } from "@/lib/project-governance";
 import { isProjectStatus, PROJECT_STATUSES } from "@/lib/portfolio";
@@ -91,7 +91,7 @@ export async function PATCH(
 
     if (
       "proposed_deployment_environment" in body &&
-      !isDeploymentEnvironment(body.proposed_deployment_environment)
+      !isProposedDeploymentEnvironment(body.proposed_deployment_environment)
     ) {
       return NextResponse.json(
         { error: "Invalid proposed deployment environment" },
