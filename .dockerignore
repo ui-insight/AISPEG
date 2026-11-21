@@ -4,6 +4,9 @@ node_modules
 .gitignore
 *.md
 .DS_Store
-.env*.local
+# Secrets reach the containers through compose `environment:`, never the image.
+.env
+.env.*
+!.env.example
 npm-debug.log*
 *.docx
