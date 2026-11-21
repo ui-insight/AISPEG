@@ -17,9 +17,24 @@ const MINDROUTER_KEY = process.env.MINDROUTER_API_KEY || "";
 // accuracy.
 const MINDROUTER_MODEL = process.env.MINDROUTER_MODEL || "qwen/qwen3.6-27b";
 
+// Model for the offline inference passes (scripts/infer-*.ts), separate
+// from the default because the two jobs scored differently. On 2026-11-21
+// Kimi K3 validated cleanly on both passes, but on the site-assistant eval
+// (evals/agent) it scored 77% tool selection and 82% citation accuracy
+// against qwen3.6-27b's 97% and 100%. So batch classification uses Kimi
+// and the assistant keeps the default. Override with
+// MINDROUTER_INFERENCE_MODEL.
+const MINDROUTER_INFERENCE_MODEL =
+  process.env.MINDROUTER_INFERENCE_MODEL || "moonshotai/kimi-k3";
+
 /** The model identifier requests will be sent to. Used by the agent log. */
 export function currentMindRouterModel(): string {
   return MINDROUTER_MODEL;
+}
+
+/** The model the offline inference passes use. */
+export function inferenceMindRouterModel(): string {
+  return MINDROUTER_INFERENCE_MODEL;
 }
 
 export interface ToolCall {
@@ -64,6 +79,8 @@ export type ReasoningEffort = "none" | "low" | "medium" | "high";
 
 export interface ChatCompletionOptions {
   messages: ChatMessage[];
+  /** Overrides the default model for this call. */
+  model?: string;
   temperature?: number;
   max_tokens?: number;
   stream?: boolean;
@@ -156,7 +173,7 @@ export async function chatCompletion(
   }
 
   const body: Record<string, unknown> = {
-    model: MINDROUTER_MODEL,
+    model: opts.model ?? MINDROUTER_MODEL,
     messages: opts.messages,
     temperature: opts.temperature ?? 0.3,
     max_tokens: opts.max_tokens ?? 2048,
@@ -228,7 +245,7 @@ export async function ask(
   jsonMode?: boolean,
   opts?: Pick<
     ChatCompletionOptions,
-    "max_tokens" | "temperature" | "reasoning_effort"
+    "max_tokens" | "temperature" | "reasoning_effort" | "model"
   >
 ): Promise<string> {
   const messages: ChatMessage[] = [];

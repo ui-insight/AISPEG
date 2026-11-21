@@ -27,7 +27,7 @@
 // appended, then the row is skipped with a warning — junk is never
 // written.
 //
-// Usage (needs DATABASE_URL + MINDROUTER_API_KEY; MINDROUTER_MODEL
+// Usage (needs DATABASE_URL + MINDROUTER_API_KEY; MINDROUTER_INFERENCE_MODEL
 // optional):
 //   npm run infer:request-targets                # open rows not yet inferred
 //   npm run infer:request-targets -- --limit 3   # smoke test
@@ -38,7 +38,7 @@ import { Pool } from "pg";
 import {
   ask,
   parseJsonLoose,
-  currentMindRouterModel,
+  inferenceMindRouterModel,
   MindRouterError,
 } from "../lib/mindrouter.js";
 import {
@@ -165,6 +165,7 @@ async function callModel(row: TargetRow, correction?: string): Promise<unknown> 
   try {
     raw = await ask(message, SYSTEM_PROMPT, true, {
       max_tokens: MAX_TOKENS,
+      model: inferenceMindRouterModel(),
       temperature: 0.1,
       reasoning_effort: "low",
     });
@@ -173,6 +174,7 @@ async function callModel(row: TargetRow, correction?: string): Promise<unknown> 
     if (error instanceof MindRouterError && error.isReasoningBudgetExhausted) {
       raw = await ask(message, SYSTEM_PROMPT, true, {
         max_tokens: RETRY_MAX_TOKENS,
+        model: inferenceMindRouterModel(),
         temperature: 0.1,
         reasoning_effort: "none",
       });
@@ -243,7 +245,7 @@ async function main(): Promise<void> {
     return;
   }
 
-  const model = currentMindRouterModel();
+  const model = inferenceMindRouterModel();
   console.log(`Model: ${model}, concurrency ${CONCURRENCY}.\n`);
 
   const failures: { title: string; error: string }[] = [];
