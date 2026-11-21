@@ -885,20 +885,21 @@ export const projects: Project[] = [
     tagline:
       "AI-powered research discovery for the University of Idaho.",
     description:
-      "Conversational research discovery platform: users search and discover UI research through natural-language queries, powered by vector search (ChromaDB) and LLM-generated overviews. Surfaces researchers, projects, and outputs across the university to internal and external audiences. Uniquely uses a MongoDB + ChromaDB stack rather than the Postgres + UDM line shared by the AI4RA-aligned projects.",
+      "Conversational research discovery platform: users search and discover UI research through natural-language queries, powered by vector search (ChromaDB) and LLM-generated overviews. Surfaces researchers, projects, and outputs across the university to internal and external audiences; the site is public and needs no sign-in. Every default model runs on MindRouter: gpt-oss-120b writes overviews, qwen3.6-27b classifies queries and checks relevance, qwen3.8-27b writes summaries, and Qwen3-Embedding-8B produces embeddings. An administrator can switch any of them to OpenAI at runtime. Uniquely uses a MongoDB + ChromaDB stack rather than the Postgres + UDM line shared by the AI4RA-aligned projects.",
     homeUnits: ["UI Library"],
     operationalOwners: [
       { name: "Devin Becker", title: "Associate Dean of the Library" },
     ],
     buildParticipants: ["IIDS"],
-    status: "piloting",
+    status: "production",
     visibility: "Public",
     proposedDeploymentEnvironment: "to-be-determined",
     currentDeploymentEnvironment: "rcds-vm",
     enterpriseSystemReplacement: { status: "to-be-determined" },
     ai4raRelationship: "None",
     iidsSponsor: "Barrie Robison",
-    pilotCohort: { size: 10, scope: "UI Library and IIDS staff" },
+    productionScope: "institution-wide",
+    supportContact: "Devin Becker",
     repoUrl: "https://github.com/ui-iids/universo",
     isPrivateRepo: true,
     liveUrl: "https://universo.uidaho.edu",
@@ -1139,7 +1140,7 @@ export const projects: Project[] = [
     tagline:
       "Shows how degree programs and departments rely on courses taught by other departments.",
     description:
-      "Working draft that reads the public University of Idaho catalog and maps the curriculum as a network: which programs depend on which departments, which courses carry the most programs, and how prerequisites chain across units. Erin James asked for it in consultation with Gwen Gorzelsky, as part of assessing and revising campus program health processes and explaining the curricular ecosystem to the State Board of Education. Luke Sheneman built the current draft with AI assistance. It reports catalog structure, not enrollment, and it logs catalog issues as it finds them. The catalog publishes no requirements for 58 of 160 graduate programs, so the atlas cannot yet show how those programs depend on other units. The team considers it finished when they are confident it has no major errors or inconsistencies in how it represents the catalog.",
+      "Working draft that reads the public University of Idaho catalog and maps the curriculum as a network: which programs depend on which departments, which courses carry the most programs, and how prerequisites chain across units. Erin James asked for it in consultation with Gwen Gorzelsky, as part of assessing and revising campus program health processes and explaining the curricular ecosystem to the State Board of Education. Luke Sheneman built the current draft with AI assistance. It reports catalog structure, not enrollment. Its issue log keeps catalog problems apart from its own parsing limits: of 398 logged issues, 319 come from the catalog, 67 from the atlas's parsing, and 12 from the legacy tool. The catalog publishes no requirements for 58 of 160 graduate programs, so the atlas cannot yet show how those programs depend on other units. The team considers it finished when they are confident it has no major errors or inconsistencies in how it represents the catalog.",
     homeUnits: ["Academic Initiatives", "IIDS"],
     operationalOwners: [
       { name: "Erin James", title: "Director of Curricular Innovation" },
@@ -1153,9 +1154,11 @@ export const projects: Project[] = [
     status: "prototype",
     visibility: "Public",
     proposedDeploymentEnvironment: "to-be-determined",
+    currentDeploymentEnvironment: "nkn-hosted",
     enterpriseSystemReplacement: { status: "no" },
     ai4raRelationship: "None",
     iidsSponsor: "Luke Sheneman",
+    liveUrl: "https://courseview.nkn.uidaho.edu",
     operationalFunction:
       "Crawls the published catalog each edition, parses program requirements and course prerequisites, and answers questions about how units and programs depend on each other through network views, program and department profiles, and a chat agent. Current users are the Director of Curricular Innovation and the Vice-Provost of Academic Initiatives.",
     operationalExcellenceOutcome:
@@ -1168,8 +1171,8 @@ export const projects: Project[] = [
       "Catalog data-quality log",
       "Plain-language chat over the catalog data",
     ],
-    tech: ["React", "TypeScript", "Vite"],
-    relatedSlugs: ["execord"],
+    tech: ["React", "TypeScript", "Vite", "FastAPI", "MindRouter", "nginx"],
+    relatedSlugs: ["execord", "mindrouter"],
     workCategories: ["executive-analytics", "knowledge-retrieval"],
     strategicPlanAlignment: ["A.1", "E.2"],
   },
