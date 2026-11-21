@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { projects } from "@/lib/portfolio";
+import { getListedProjects } from "@/lib/portfolio";
 import { Callout } from "@/components/Callout";
 
 // AI4RA reference projects — open-source assets produced by the AI4RA
@@ -75,8 +75,8 @@ const referenceProjects: AI4RAReference[] = [
   },
 ];
 
-const ai4raCoreProjects = projects.filter(
-  (i) => i.ai4raRelationship === "Core" && i.visibility !== "Internal-only"
+const ai4raCoreProjects = getListedProjects().filter(
+  (i) => i.ai4raRelationship === "Core"
 );
 
 export default function AI4RAEcosystemPage() {

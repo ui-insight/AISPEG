@@ -15,7 +15,7 @@
 
 import {
   computePublicStage,
-  getPubliclyVisible,
+  getListedProjects,
   type PublicStage,
 } from "./portfolio";
 import { pillars, priorities } from "./strategic-plan/catalog";
@@ -74,7 +74,7 @@ export function buildProjectMapGraph(
       pillarName: pillarNameByCode.get(p.pillar) ?? p.pillar,
     }));
 
-  const sourceProjects = getPubliclyVisible();
+  const sourceProjects = getListedProjects();
 
   const mapProjects: ProjectMapProject[] = [...sourceProjects]
     .sort((a, b) => a.name.localeCompare(b.name))

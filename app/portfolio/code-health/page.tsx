@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { projects } from "@/lib/portfolio";
+import { getListedProjects } from "@/lib/portfolio";
 import {
   COLLECTOR_REPO_URL,
   COVERAGE_STATUS_LABEL,
@@ -19,9 +19,8 @@ export const metadata = {
     "Independent monthly measurements of size, tests, complexity, duplication, coverage, delivery, and dependency age for each IIDS portfolio project's code.",
 };
 
-// Only projects shown on the public site, and each repository once.
-const listed = projects
-  .filter((p) => p.visibility !== "Internal-only")
+// Only projects /portfolio lists by default, and each repository once.
+const listed = getListedProjects()
   .filter((p) => !(p.slug in SHARES_REPOSITORY_WITH))
   .sort((a, b) => a.name.localeCompare(b.name));
 

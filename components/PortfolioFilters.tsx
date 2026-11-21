@@ -48,6 +48,8 @@ export interface PortfolioFiltersProps {
   stageOptions: StageFilterOption[];
   operationalOptions: OperationalFilterOption[];
   totalCount: number;
+  /** Non-retired projects — the count behind the default "Current" chip. */
+  currentCount: number;
   filteredCount: number;
   blockerCount: number;
   selected: {
@@ -156,6 +158,7 @@ export default function PortfolioFilters({
   stageOptions,
   operationalOptions,
   totalCount,
+  currentCount,
   filteredCount,
   blockerCount,
   selected,
@@ -279,8 +282,8 @@ export default function PortfolioFilters({
         </p>
         <div className="flex flex-wrap gap-1.5">
           <Chip
-            label="All"
-            count={totalCount}
+            label="Current"
+            count={currentCount}
             active={!selected.stage && !selected.status}
             href={buildHref({ ...baseParams, stage: null, status: null })}
           />
