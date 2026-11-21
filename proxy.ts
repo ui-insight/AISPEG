@@ -1,3 +1,4 @@
+import { createHash, timingSafeEqual } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 
 // Basic auth gate for /internal/*. v1 only — replace with UI SSO later.
@@ -5,6 +6,14 @@ import { NextRequest, NextResponse } from "next/server";
 // Requires BASIC_AUTH_USER and BASIC_AUTH_PASS in the environment. If
 // either is unset this fails closed (503) rather than letting the route
 // through without authentication.
+//
+// Credentials are compared as SHA-256 digests with timingSafeEqual, so
+// the check takes the same time whatever the guess. State-changing
+// requests (POST /internal/sync) must also come from this site: a
+// browser that has cached the Basic-auth credentials would otherwise
+// send them along with a cross-site form post. Requests with no
+// browser headers, such as the host cron's curl, pass. Throttling of
+// failed logins belongs at the ingress, not here.
 //
 // Named `proxy` per the Next 16 file convention that supersedes
 // `middleware` — the function name has to match the filename (#267).
@@ -40,18 +49,49 @@ export function proxy(req: NextRequest) {
     );
   }
 
-  const auth = req.headers.get("authorization");
+  const auth = req.headers.get("authorization") ?? "";
   const expected =
     "Basic " + Buffer.from(`${user}:${pass}`).toString("base64");
 
-  if (auth !== expected) {
+  if (!sameDigest(auth, expected)) {
     return new NextResponse("Authentication required", {
       status: 401,
       headers: { "WWW-Authenticate": 'Basic realm="IIDS Internal"' },
     });
   }
 
+  if (!SAFE_METHODS.has(req.method) && isCrossSite(req)) {
+    return new NextResponse("Cross-site request refused", { status: 403 });
+  }
+
   return NextResponse.next();
+}
+
+const SAFE_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
+
+function sameDigest(a: string, b: string): boolean {
+  const da = createHash("sha256").update(a).digest();
+  const db = createHash("sha256").update(b).digest();
+  return timingSafeEqual(da, db);
+}
+
+// Sec-Fetch-Site is set by every current browser and cannot be forged
+// by page script. Fall back to Origin for older browsers, compared with
+// the Host the browser addressed (behind the Insight proxy,
+// req.nextUrl.origin is the container's own address, not the public one).
+function isCrossSite(req: NextRequest): boolean {
+  const site = req.headers.get("sec-fetch-site");
+  if (site) return site !== "same-origin" && site !== "none";
+
+  const origin = req.headers.get("origin");
+  if (!origin) return false;
+  const host =
+    req.headers.get("x-forwarded-host") ?? req.headers.get("host") ?? "";
+  try {
+    return new URL(origin).host !== host.split(",")[0].trim();
+  } catch {
+    return true;
+  }
 }
 
 export const config = {
