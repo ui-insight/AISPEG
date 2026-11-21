@@ -8,7 +8,7 @@
 // retires, swap this to read from Postgres via lib/work.ts.
 // ============================================================
 
-import { projects, type Project } from "../portfolio";
+import { getListedProjects, type Project } from "../portfolio";
 
 export interface AlignedProject {
   slug: string;
@@ -32,17 +32,12 @@ function toAlignedProject(i: Project): AlignedProject {
   };
 }
 
-// Public-facing lookup. Excludes "Internal-only" entries so the
-// strategic-plan UI matches what /portfolio surfaces to anonymous
-// readers. Embargoed ("Partial") entries are included — same rule
+// Public-facing lookup. Excludes "Internal-only" and retired entries so
+// the strategic-plan UI matches what /portfolio lists by default. Embargoed ("Partial") entries are included — same rule
 // PortfolioCard / lib/work.ts uses for the public audience.
 export function getProjectsForPriority(code: string): AlignedProject[] {
-  return projects
-    .filter(
-      (i) =>
-        i.visibility !== "Internal-only" &&
-        (i.strategicPlanAlignment ?? []).includes(code),
-    )
+  return getListedProjects()
+    .filter((i) => (i.strategicPlanAlignment ?? []).includes(code))
     .map(toAlignedProject)
     .sort((a, b) => a.name.localeCompare(b.name));
 }

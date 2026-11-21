@@ -1531,8 +1531,19 @@ export function getRelatedProjects(i: Project): Project[] {
     .filter((x): x is Project => x !== undefined);
 }
 
-export function getPubliclyVisible(): Project[] {
-  return projects.filter((i) => i.visibility !== "Internal-only");
+// Retired = sunsetting or archived. Retired projects keep their detail
+// pages (links to them circulate), but list views leave them out by
+// default; /portfolio shows them under its Retired stage filter.
+export function isRetiredStatus(status: string): boolean {
+  return publicStageFromStatus(status) === "retired";
+}
+
+// The projects a public list view shows by default: not Internal-only,
+// not retired.
+export function getListedProjects(): Project[] {
+  return projects.filter(
+    (i) => i.visibility !== "Internal-only" && !isRetiredStatus(i.status)
+  );
 }
 
 // Group ordering for display — home-unit groups appear in this order.

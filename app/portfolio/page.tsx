@@ -29,6 +29,7 @@ import {
   PUBLIC_STAGE_ORDER,
   STAGE_OPERATIONAL_ROLLUP,
   isProjectStatus,
+  isRetiredStatus,
   publicStageFromStatus,
   type ProjectStatus,
   type PublicStage,
@@ -112,12 +113,22 @@ export default async function PortfolioPage({
   const blockersOnly = params.blockers === "1";
   const sortMode: SortMode = isSortMode(params.sort) ? params.sort : "default";
 
-  const [allApps, latestUpdates, pendingRequestCount, roiBySlug] = await Promise.all([
+  const [everyApp, latestUpdates, pendingRequestCount, roiBySlug] = await Promise.all([
     listApplications({ audience: "public" }),
     getCardStatusLines(),
     countPendingRequests(),
     getRoiBySlug(),
   ]);
+
+  // Retired projects (sunsetting, archived) are hidden unless the reader
+  // picks the Retired stage or one of its operational statuses. Everything
+  // else on the page, headline counts included, describes current work.
+  const showingRetired =
+    selectedStage === "retired" ||
+    (!!selectedStatus && isRetiredStatus(selectedStatus));
+  const currentApps = everyApp.filter((a) => !isRetiredStatus(a.status));
+  const retiredCount = everyApp.length - currentApps.length;
+  const allApps = showingRetired ? everyApp : currentApps;
 
   const valueEvidenceBySlug = new Map(
     allApps.map((app) => [
@@ -148,12 +159,14 @@ export default async function PortfolioPage({
   const stageCounts = new Map<PublicStage, number>();
   const operationalCounts = new Map<ProjectStatus, number>();
   const categoryCounts = new Map<WorkCategory, number>();
+  for (const app of everyApp) {
+    const stage = publicStageFromStatus(app.status);
+    stageCounts.set(stage, (stageCounts.get(stage) ?? 0) + 1);
+  }
   for (const app of allApps) {
     for (const unit of app.homeUnits) {
       homeUnitCounts.set(unit, (homeUnitCounts.get(unit) ?? 0) + 1);
     }
-    const stage = publicStageFromStatus(app.status);
-    stageCounts.set(stage, (stageCounts.get(stage) ?? 0) + 1);
     if (isProjectStatus(app.status)) {
       operationalCounts.set(
         app.status,
@@ -205,6 +218,9 @@ export default async function PortfolioPage({
     return true;
   });
 
+  const currentUnitCount = new Set(currentApps.flatMap((a) => a.homeUnits))
+    .size;
+
   const blockerCount = allApps.reduce(
     (sum, a) => sum + a.activeBlockers.length,
     0
@@ -234,13 +250,15 @@ export default async function PortfolioPage({
         {/* Stat-strip lede — the page's headline answer per ADR 0001 */}
         <div>
           <p className="text-2xl font-black tracking-tight text-brand-black md:text-3xl">
-            <span className="tabular-nums">{allApps.length}</span> projects
+            <span className="tabular-nums">{currentApps.length}</span> projects
             across{" "}
-            <span className="tabular-nums">{homeUnitOptions.length}</span>{" "}
+            <span className="tabular-nums">{currentUnitCount}</span>{" "}
             home units
           </p>
           <p className="mt-1 flex flex-wrap items-baseline gap-x-2 text-base font-medium text-ink-muted">
-            {PUBLIC_STAGE_ORDER.filter((s) => (stageCounts.get(s) ?? 0) > 0).map(
+            {PUBLIC_STAGE_ORDER.filter(
+              (s) => s !== "retired" && (stageCounts.get(s) ?? 0) > 0
+            ).map(
               (stage, idx) => (
                 <span key={stage} className="inline-flex items-baseline">
                   {idx > 0 && (
@@ -308,6 +326,23 @@ export default async function PortfolioPage({
               </span>{" "}
               entr{embargoedCount === 1 ? "y has" : "ies have"} deployment
               detail embargoed.
+            </>
+          )}
+          {retiredCount > 0 && !showingRetired && (
+            <>
+              {" "}
+              <span className="tabular-nums font-medium text-brand-black">
+                {retiredCount}
+              </span>{" "}
+              retired project{retiredCount === 1 ? " is" : "s are"} not
+              listed;{" "}
+              <Link
+                href="/portfolio?stage=retired"
+                className="font-medium text-brand-black underline decoration-hairline underline-offset-2"
+              >
+                show retired
+              </Link>
+              .
             </>
           )}
         </p>
@@ -525,6 +560,7 @@ export default async function PortfolioPage({
         stageOptions={stageFilterOptions}
         operationalOptions={operationalFilterOptions}
         totalCount={allApps.length}
+        currentCount={currentApps.length}
         filteredCount={filtered.length}
         blockerCount={blockerCount}
         selected={{

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import {
-  getPubliclyVisible,
+  getListedProjects,
   computePublicStage,
   type Project,
 } from "@/lib/portfolio";
@@ -13,9 +13,9 @@ import {
 } from "@/lib/governance-profile";
 
 export default async function Home() {
-  const all = getPubliclyVisible();
+  const all = getListedProjects();
   // Use lane requires an openable production URL. Live projects without a
-  // public liveUrl (e.g. dev infrastructure like DGX Stack and TEMPLATE-app)
+  // public liveUrl (e.g. dev infrastructure like DGX Stack)
   // surface in /portfolio's full inventory but not here — "Use" means
   // there is something for a stakeholder to click and open.
   const liveProjects = all.filter(

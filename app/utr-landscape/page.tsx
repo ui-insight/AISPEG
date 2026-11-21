@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { listApplications } from "@/lib/work";
+import { isRetiredStatus } from "@/lib/portfolio";
 import { listTechRequests } from "@/lib/requests";
 import {
   buildUtrLandscape,
@@ -194,7 +195,11 @@ export default async function UtrLandscapePage() {
     listApplications({ audience: "public" }),
     listTechRequests(),
   ]);
-  const landscape = buildUtrLandscape(applications, requests);
+  // Retired projects no longer land anywhere; leave them off the map.
+  const landscape = buildUtrLandscape(
+    applications.filter((a) => !isRetiredStatus(a.status)),
+    requests
+  );
   const { totals, pools } = landscape;
 
   const unclassifiedProjects = pools.unclassified.filter(
