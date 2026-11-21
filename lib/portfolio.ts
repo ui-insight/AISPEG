@@ -354,7 +354,7 @@ export const projects: Project[] = [
     tagline:
       "Electronic retro-pay intake and payroll analyst dashboard.",
     description:
-      "Replaces the paper/email retroactive payment request process with a validated electronic submission flow plus a dashboard for payroll analysts. Submissions are checked for completeness and verified against Banner data before they reach an analyst, so corrections happen at intake instead of mid-process. Deployed on OIT's Nexus platform and in production use by Payroll since July 2026; payroll-staff feedback now drives the enhancement backlog.",
+      "Replaces the paper/email retroactive payment request process with a validated electronic submission flow plus a dashboard for payroll analysts. Submissions are checked for completeness and verified against Banner data before they reach an analyst, so corrections happen at intake instead of mid-process. Deployed on OIT's Nexus platform and in production use by Payroll since July 2026; payroll-staff feedback now drives the enhancement backlog. The deployed source lives in an OIT repository that IIDS cannot access, so this site cannot track its development activity directly; status here rests on reports from Payroll and the build team.",
     homeUnits: ["Division of Financial Affairs"],
     operationalOwners: [
       { name: "Lisa Davis" },
@@ -370,8 +370,6 @@ export const projects: Project[] = [
     iidsSponsor: "Colin Addington",
     productionScope: "home-unit",
     supportContact: "Colin Addington",
-    repoUrl: "https://github.com/ui-insight/reactfast",
-    isPrivateRepo: true,
     liveUrl: "https://nexus.uidaho.edu",
     usageNote:
       "In production use by Payroll on OIT's Nexus platform since July 2026.",
