@@ -107,7 +107,9 @@ services:
     ports:
       # Publish to host port 5433 so local migration / seed scripts can
       # connect via DATABASE_URL=postgresql://...@localhost:5433/...
-      - "5433:5432"
+      # Bound to 127.0.0.1 so the database is reachable only from the host
+      # itself, never from the network.
+      - "127.0.0.1:5433:5432"
     profiles:
       - dev
     healthcheck:
