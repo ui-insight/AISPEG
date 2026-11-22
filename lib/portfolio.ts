@@ -1140,7 +1140,7 @@ export const projects: Project[] = [
     tagline:
       "Shows how degree programs and departments rely on courses taught by other departments.",
     description:
-      "Working draft that reads the public University of Idaho catalog and maps the curriculum as a network: which programs depend on which departments, which courses carry the most programs, and how prerequisites chain across units. Erin James asked for it in consultation with Gwen Gorzelsky, as part of assessing and revising campus program health processes and explaining the curricular ecosystem to the State Board of Education. Luke Sheneman built the current draft with AI assistance. It reports catalog structure, not enrollment. Its issue log keeps catalog problems apart from its own parsing limits: of 398 logged issues, 319 come from the catalog, 67 from the atlas's parsing, and 12 from the legacy tool. The catalog publishes no requirements for 58 of 160 graduate programs, so the atlas cannot yet show how those programs depend on other units. The team considers it finished when they are confident it has no major errors or inconsistencies in how it represents the catalog.",
+      "Working draft that reads the public University of Idaho catalog and maps the curriculum as a network: which programs depend on which departments, which courses carry the most programs, and how prerequisites chain across units. Erin James asked for it in consultation with Gwen Gorzelsky, as part of assessing and revising campus program health processes and explaining the curricular ecosystem to the State Board of Education. Luke Sheneman built the current draft with AI assistance. It reports catalog structure, not enrollment. Its issue log keeps catalog problems apart from its own parsing limits: of 398 logged issues, 319 come from the catalog, 67 from the atlas's parsing, and 12 from the legacy tool. The catalog publishes no requirements for 58 of 160 graduate programs, so the atlas cannot yet show how those programs depend on other units. The production source is the curriculum-atlas branch of its repository, not the default branch. The team considers it finished when they are confident it has no major errors or inconsistencies in how it represents the catalog.",
     homeUnits: ["Academic Initiatives", "IIDS"],
     operationalOwners: [
       { name: "Erin James", title: "Director of Curricular Innovation" },
@@ -1159,6 +1159,7 @@ export const projects: Project[] = [
     ai4raRelationship: "None",
     iidsSponsor: "Luke Sheneman",
     liveUrl: "https://courseview.nkn.uidaho.edu",
+    repoUrl: "https://github.com/ejamesuidaho/ui-dependency-networks",
     operationalFunction:
       "Crawls the published catalog each edition, parses program requirements and course prerequisites, and answers questions about how units and programs depend on each other through network views, program and department profiles, and a chat agent. Current users are the Director of Curricular Innovation and the Vice-Provost of Academic Initiatives.",
     operationalExcellenceOutcome:
@@ -1171,7 +1172,7 @@ export const projects: Project[] = [
       "Catalog data-quality log",
       "Plain-language chat over the catalog data",
     ],
-    tech: ["React", "TypeScript", "Vite", "FastAPI", "MindRouter", "nginx"],
+    tech: ["React", "TypeScript", "Vite", "Python", "FastAPI", "SQLite", "MindRouter", "nginx", "Docker"],
     relatedSlugs: ["execord", "mindrouter"],
     workCategories: ["executive-analytics", "knowledge-retrieval"],
     strategicPlanAlignment: ["A.1", "E.2"],
